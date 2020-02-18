@@ -1,0 +1,25 @@
+{
+  "name": "@kurone-kito/dantalion",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Practice for npm package with monorepo",
+  "license": "MIT",
+  "author": "kurone-kito <krone@kit.black>",
+  "bugs": {
+    "url": "https://github.com/kurone-kito/dantalion/issues"
+  },
+  "homepage": "https://github.com/kurone-kito/dantalion#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurone-kito/dantalion.git"
+  },
+  "scripts": {
+    "postinstall": "lerna bootstrap"
+  },
+  "engines": {
+    "node": ">=10.17"
+  },
+  "devDependencies": {
+    "lerna": "^3.20.2"
+  }
+}
