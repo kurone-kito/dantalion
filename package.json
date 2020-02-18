@@ -5,6 +5,13 @@
   "description": "Practice for npm package with monorepo",
   "license": "MIT",
   "author": "kurone-kito <krone@kit.black>",
+  "keywords": [
+    "bazi",
+    "Chinese Astrology",
+    "divination",
+    "four pillars",
+    "psychology"
+  ],
   "bugs": {
     "url": "https://github.com/kurone-kito/dantalion/issues"
   },
@@ -12,6 +19,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kurone-kito/dantalion.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "postinstall": "lerna bootstrap"
