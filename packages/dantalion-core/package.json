@@ -23,6 +23,7 @@
     "access": "public"
   },
   "scripts": {
+    "lint": "eslint --fix './**/*'",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "engines": {
