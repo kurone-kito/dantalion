@@ -1,6 +1,5 @@
 {
-  "name": "@kurone-kito/dantalion",
-  "private": true,
+  "name": "@kurone-kito/dantalion-core",
   "version": "0.1.0",
   "description": "Practice for npm package with monorepo",
   "license": "MIT",
@@ -15,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/kurone-kito/dantalion/issues"
   },
-  "homepage": "https://github.com/kurone-kito/dantalion#readme",
+  "homepage": "https://github.com/kurone-kito/dantalion/tree/master/packages/dantalion-core#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kurone-kito/dantalion.git"
@@ -24,12 +23,9 @@
     "access": "public"
   },
   "scripts": {
-    "postinstall": "lerna bootstrap"
+    "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "engines": {
     "node": ">=10.17"
-  },
-  "devDependencies": {
-    "lerna": "^3.20.2"
   }
 }
