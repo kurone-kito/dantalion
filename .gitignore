@@ -62,3 +62,7 @@ typings/
 
 # Lerna
 *.lerna_backup
+
+# My projects
+packages/**/dist/
+*.d.ts
