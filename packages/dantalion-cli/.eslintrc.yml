@@ -6,29 +6,30 @@ extends:
   # I don't know it, but this so many extends are enough to make it feel non-exemplary.
   - eslint:recommended
   - airbnb-base
-  - "plugin:@typescript-eslint/recommended"
-  - "plugin:@typescript-eslint/eslint-recommended"
+  - 'plugin:@typescript-eslint/recommended'
+  - 'plugin:@typescript-eslint/eslint-recommended'
   - prettier
   - plugin:prettier/recommended
   - prettier/@typescript-eslint
-parser: "@typescript-eslint/parser"
+parser: '@typescript-eslint/parser'
 parserOptions:
   ecmaVersion: 2020
   sourceType: module
 plugins:
-  - "@typescript-eslint"
+  - '@typescript-eslint'
   - import
   - prettier
 rules:
+  '@typescript-eslint/explicit-function-return-type':
+    - 'off'
+  import/no-extraneous-dependencies:
+    - error
+    - devDependencies:
+        - '*.config.?s'
   no-console:
-    - warn
+    - 'off'
 settings:
   import/resolver:
     node:
-      extensions:
-        - .js
-        - .jsx
-        - .ts
-        - .tsx
-    typescript:
-      directory: .
+    webpack:
+      config: webpack.config.ts
