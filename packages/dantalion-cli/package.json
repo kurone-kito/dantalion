@@ -23,8 +23,14 @@
     "access": "public"
   },
   "scripts": {
+    "dantalion": "dist/index.js",
     "lint": "eslint --fix './**/*'",
+    "prepack": "webpack",
+    "start": "webpack --watch",
     "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bin": {
+    "dantalion": "dist/index.js"
   },
   "engines": {
     "node": ">=10.17"
