@@ -25,7 +25,7 @@
   },
   "scripts": {
     "lint": "lerna run lint --stream",
-    "postinstall": "lerna bootstrap"
+    "postinstall": "lerna clean --yes && lerna bootstrap --hoist"
   },
   "engines": {
     "node": ">=10.17"
