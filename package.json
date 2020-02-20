@@ -24,7 +24,10 @@
     "access": "public"
   },
   "scripts": {
+    "dantalion": "lerna run dantalion --stream --scope=@kurone-kito/dantalion-cli",
     "lint": "lerna run lint --stream",
+    "prepack": "lerna run prepack --stream",
+    "start": "lerna run start --parallel --stream",
     "postinstall": "lerna clean --yes && lerna bootstrap --hoist"
   },
   "engines": {
