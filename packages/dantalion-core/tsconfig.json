@@ -2,9 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
+    "declaration": true,
     "paths": {
       "~/*": ["src/*"]
     }
   },
-  "exclude": ["node_modules", "index.js"]
+  "exclude": ["dist", "node_modules"]
 }
