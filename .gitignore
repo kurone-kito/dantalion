@@ -59,3 +59,10 @@ typings/
 
 # next.js build output
 .next
+
+# Lerna
+*.lerna_backup
+
+# My projects
+packages/**/dist/
+*.d.ts

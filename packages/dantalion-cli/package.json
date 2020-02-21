@@ -23,12 +23,39 @@
     "access": "public"
   },
   "scripts": {
+    "dantalion": "dist/index.js",
+    "lint": "eslint --fix './**/*'",
+    "prepack": "webpack",
+    "start": "webpack --watch",
     "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bin": {
+    "dantalion": "dist/index.js"
   },
   "engines": {
     "node": ">=10.17"
   },
   "dependencies": {
-    "@kurone-kito/dantalion-core": "^0.1.0"
+    "@kurone-kito/dantalion-core": "^0.1.0",
+    "ts-polyfill": "^3.8.1-rc"
+  },
+  "devDependencies": {
+    "@types/webpack": "^4.41.6",
+    "@typescript-eslint/eslint-plugin": "^2.20.0",
+    "@typescript-eslint/parser": "^2.20.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-import-resolver-typescript": "^2.0.0",
+    "eslint-loader": "^3.0.3",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1",
+    "ts-loader": "^6.2.1",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.7.5",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11",
+    "webpack-shell-plugin-next": "^1.1.5"
   }
 }
