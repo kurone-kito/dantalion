@@ -1,0 +1,6 @@
+coverage/
+dist/
+node_modules/
+*.d.ts
+*.json
+*.md
