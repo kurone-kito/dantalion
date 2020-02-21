@@ -1,14 +1,16 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "lib": ["es2019.object"],
     "module": "commonjs",
     "moduleResolution": "node",
+    "paths": {},
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
     "target": "ES2017"
-  }
+  },
+  "exclude": ["dist", "node_modules"]
 }
