@@ -19,17 +19,22 @@ plugins:
   - '@typescript-eslint'
   - import
   - prettier
+root: true
 rules:
   '@typescript-eslint/explicit-function-return-type':
     - 'off'
+  import/extensions:
+    - error
+    - ignorePackages
+    - ts: never
   import/no-extraneous-dependencies:
     - error
     - devDependencies:
-        - '*.config.?s'
-  no-console:
-    - 'off'
+        - '**/*.config.?s'
 settings:
   import/resolver:
     node:
-    webpack:
-      config: webpack.config.ts
+      extensions:
+        - .ts
+      path:
+        - src
