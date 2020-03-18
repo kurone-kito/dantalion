@@ -19,6 +19,7 @@ parserOptions:
 plugins:
   - '@typescript-eslint'
   - import
+  - jest
   - prettier
 root: true
 rules:
