@@ -27,7 +27,7 @@
     "lint": "eslint --fix './**/*'",
     "prepack": "webpack",
     "start": "webpack --watch",
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "echo \"Warn: run tests from root\""
   },
   "bin": {
     "dantalion": "dist/index.js"
