@@ -30,7 +30,7 @@ console.log(getPersonality('1993-10-09'));
 
 #### Result
 
-In actually, The function gets the raw object, not the JSON.
+In strictly, The function gets the raw object, not the JSON.
 
 ```json
 {
@@ -43,6 +43,60 @@ In actually, The function gets the raw object, not the JSON.
 }
 ```
 
+### Get detailed information on personality
+
+```js
+const { getDetail } = require('@kurone-kito/dantalion-core');
+
+console.log(getDetail('555'));
+```
+
+#### Result
+
+In strictly, The function gets the raw object, not the JSON.
+
+```json
+{
+  "affinity": {
+    "biz": {
+      "100": 0,
+      "108": 3,
+      "125": 2,
+      "555": 3,
+      "789": 1,
+      "888": 2,
+      "919": 1,
+      "000": 0,
+      "001": 2,
+      "012": 2,
+      "024": 0,
+      "025": 0
+    },
+    "love": {
+      "100": 0,
+      "108": 0,
+      "125": 3,
+      "555": 2,
+      "789": 2,
+      "888": 2,
+      "919": 0,
+      "000": 2,
+      "001": 2,
+      "012": 3,
+      "024": 0,
+      "025": 2
+    }
+  },
+  "brain": "left",
+  "communication": "fix",
+  "management": "hope",
+  "motivation": "skillUp",
+  "position": "quick",
+  "response": "action",
+  "vector": "economically"
+}
+```
+
 ## API
 
 ### `getDetail`
@@ -51,9 +105,13 @@ In actually, The function gets the raw object, not the JSON.
 type getDetail = (genius: Genius) => Detail | undefined;
 ```
 
-### Parameters
+#### Parameters
 
-- `genius`:
+- `genius`: The types of personality.
+
+#### Returns
+
+Detailed information on the personality. If the param is invalid, it will be `undefined`.
 
 ### `getPersonality`
 
@@ -65,18 +123,103 @@ type getPersonality = (
 ) => Personality | undefined;
 ```
 
-### Parameters
+#### Parameters
 
 - `birth`: Specify a birthday within the range from February 1, 1873,
   to December 31, 2050.
-  Ignore the time information.
+  Ignore the _time_ information.
 
-### Returns
+#### Returns
 
 The object that the personality information. If the date is over the range,
 it will be `undefined`.
 
 ## Types (for TypeScript)
+
+### `Affinity`
+
+The lists of affinity by genius type.
+
+```ts
+interface Affinity {
+  biz: Record<Genius, AffinityLevel>;
+  love: Record<Genius, AffinityLevel>;
+}
+```
+
+| Property | Type                            | Description   |
+| :------- | :------------------------------ | :------------ |
+| `biz`    | `Record<Genius, AffinityLevel>` | for business. |
+| `love`   | `Record<Genius, AffinityLevel>` | for romance.  |
+
+### `AffinityLevel`
+
+Affinity level.
+
+```ts
+type AffinityLevel = 0 | 1 | 2 | 3;
+```
+
+| Key | Value        |
+| :-: | :----------- |
+| `0` | Hmm :/       |
+| `1` | Good.        |
+| `2` | Great!       |
+| `3` | Fantastic!!! |
+
+### `Brain`
+
+The types of thought method.
+
+```ts
+type Brain = 'left' | 'right';
+```
+
+|   Key   | Value                                             |
+| :-----: | :------------------------------------------------ |
+| `left`  | Left brain type. Logical thinking is superior.    |
+| `right` | Right brain type. Intuitive thinking is superior. |
+
+### `Communication`
+
+The types of dialogue policy.
+
+```ts
+type Communication = 'fix' | 'flex';
+```
+
+|  Key   | Value                                                             |
+| :----: | :---------------------------------------------------------------- |
+| `fix`  | This type of person would like to find a way from the conclusion. |
+| `flex` | This type of person would like to express conclude fluidly.       |
+
+### `Detail`
+
+The detail for genius type.
+
+```ts
+interface Detail {
+  affinity: Affinity;
+  brain: Brain;
+  communication: Communication;
+  management: Management;
+  motivation: Motivation;
+  position: Position;
+  response: Response;
+  vector: Vector;
+}
+```
+
+| Property        | Type            | Description                                     |
+| :-------------- | :-------------- | :---------------------------------------------- |
+| `affinity`      | `Affinity`      | The lists of affinity by genius type.           |
+| `brain`         | `Brain`         | The types of thought method.                    |
+| `communication` | `Communication` | The types of dialogue policy.                   |
+| `management`    | `Management`    | The types that the risk management method.      |
+| `motivation`    | `Motivation`    | The types of easy to the motivated environment. |
+| `position`      | `Position`      | The types for role.                             |
+| `response`      | `Response`      | The types for role.                             |
+| `vector`        | `Vector`        | Vector of genius type.                          |
 
 ### `Genius`
 
@@ -105,6 +248,7 @@ type Genius =
 | `012` | This type of person will like new somethings. They also value discussions, especially.  |
 | `024` | This type of person is good at turning anxiety into action. They have a strong memory.  |
 | `025` | This type of person has a strong camaraderie. And also, they have a lot of friends.     |
+| `100` | This type of person is serious and perfectionist. They expose weak point when praised.  |
 | `108` | This type of person is shy and honest. And they have a strong sense of responsibility.  |
 | `125` | This type of person can accept temporary abstinence to fulfill their long-term goals.   |
 | `555` | This type of person is quick to learn and can do anything. Also, they are dignified.    |
@@ -143,12 +287,48 @@ type LifeBase =
 | `selfMind`     | This type of person would like to be a leader of the team.               |
 | `selfReliance` | This type of person would like to be a lone wolf.                        |
 
+### `Management`
+
+The types that the risk management method.
+
+```ts
+type Management = 'care' | 'hope';
+```
+
+| Key    | Value                                                                                       |
+| :----- | :------------------------------------------------------------------------------------------ |
+| `care` | This type of person has a good intuition for risk but weak for chance perception.           |
+| `hope` | This type of person has a good intuition for great opportunities, but weak risk perception. |
+
+### `Motivation`
+
+The types of easy to the motivated environment.
+
+```ts
+type Motivation =
+  | 'competition'
+  | 'ownMind'
+  | 'power'
+  | 'safety'
+  | 'skillUp'
+  | 'status';
+```
+
+| Key           | Value                                                            |
+| :------------ | :--------------------------------------------------------------- |
+| `competition` | The environment that can be compared with other peoples.         |
+| `ownMind`     | The environment that they can do on their plan.                  |
+| `power`       | The environment that they can do as soon as they think about it. |
+| `safety`      | The environment that they can pursue security and peace.         |
+| `skillUp`     | The environment that daily improvement can be felt.              |
+| `status`      | The environment that they can be different from others.          |
+
 ### `Personality`
 
 The details for Personality.
 
 ```ts
-export interface Personality {
+interface Personality {
   cycle: number;
   inner: Genius;
   lifeBase: LifeBase;
@@ -166,6 +346,34 @@ export interface Personality {
 | `outer`      | `Genius`                 | The outer personality.       |
 | `potentials` | `[Potential, Potential]` | The potential.               |
 | `workStyle`  | `Genius`                 | The personality at working.  |
+
+### `Position`
+
+The types for role.
+
+```ts
+type Position = 'adjust' | 'brain' | 'direct' | 'quick';
+```
+
+| Key      | Value                                                        |
+| :------- | :----------------------------------------------------------- |
+| `adjust` | This type of person can solve interpersonal problems.        |
+| `brain`  | This type of person can create interesting ideas.            |
+| `direct` | This type of person has all abilities little by little.      |
+| `quick`  | This type of person has a lot of energy, like a salesperson. |
+
+### `Response`
+
+The types for role.
+
+```ts
+type Response = 'action' | 'mind';
+```
+
+| Key      | Value                                                |
+| :------- | :--------------------------------------------------- |
+| `action` | This type of person would like to blue-collar role.  |
+| `mind`   | This type of person would like to white-collar role. |
 
 ### `Potential`
 
@@ -186,6 +394,20 @@ type Potential =
 ```
 
 _I'm not familiar with it yet._
+
+### `Vector`
+
+Personality types.
+
+```ts
+type Vector = 'authority' | 'economically' | 'humanely';
+```
+
+| Key            | Value                                                                  |
+| :------------- | :--------------------------------------------------------------------- |
+| `authority`    | This type of person would like to do the action for self-authority.    |
+| `economically` | This type of person would like to do the action to build their wealth. |
+| `humanely`     | This type of person would like to do the action for self-virtue.       |
 
 ## License
 
