@@ -1,8 +1,9 @@
 import { Personality } from '../utils/getPersonality';
-import json from './source.json';
+import personality from './personality.json';
 
-export interface TestData extends Personality {
+export interface PersonalityTestData extends Personality {
   date: string;
 }
 
-export default () => json as TestData[];
+export const getPersonalityTestData = () =>
+  personality as PersonalityTestData[];
