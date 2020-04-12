@@ -23,7 +23,7 @@
     "access": "public"
   },
   "scripts": {
-    "dantalion": "dist/index.js",
+    "dantalion": "node dist/index.js",
     "lint": "eslint --fix './**/*'",
     "prepack": "webpack",
     "start": "webpack --watch",
