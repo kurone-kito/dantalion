@@ -1,6 +1,7 @@
 import details from './records/details';
 import { Genius } from './types/genius';
 
+export { default as types, AllTypes } from './types';
 export { Affinity, Detail } from './records/details';
 export { AffinityLevel } from './types/AffinityLevel';
 export { Brain } from './types/brain';

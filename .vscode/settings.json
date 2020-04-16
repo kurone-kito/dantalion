@@ -1,3 +1,14 @@
 {
+  "eslint.enable": true,
+  "eslint.workingDirectories": [
+    {
+      "changeProcessCWD": true,
+      "directory": "./packages/dantalion-cli"
+    },
+    {
+      "changeProcessCWD": true,
+      "directory": "./packages/dantalion-core"
+    }
+  ],
   "typescript.tsdk": "node_modules/typescript/lib"
 }
