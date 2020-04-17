@@ -1,5 +1,4 @@
-import details from './records/details';
-import { Genius } from './types/genius';
+import details, { Detail } from './records/details';
 
 export { default as types, AllTypes } from './types';
 export { Affinity, Detail } from './records/details';
@@ -16,4 +15,4 @@ export { Response } from './types/response';
 export { Vector } from './types/vector';
 export { default as getPersonality, Personality } from './utils/getPersonality';
 
-export const getDetail = (genius: Genius) => details[genius];
+export const getDetail = (genius: Genius): Detail => details[genius];
