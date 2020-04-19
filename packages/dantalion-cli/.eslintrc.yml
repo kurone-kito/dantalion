@@ -6,8 +6,7 @@ extends:
   # I don't know it, but this so many extends are enough to make it feel non-exemplary.
   - eslint:recommended
   - airbnb-base
-  - 'plugin:@typescript-eslint/recommended'
-  - 'plugin:@typescript-eslint/eslint-recommended'
+  - plugin:@typescript-eslint/recommended
   - prettier
   - plugin:prettier/recommended
   - prettier/@typescript-eslint
