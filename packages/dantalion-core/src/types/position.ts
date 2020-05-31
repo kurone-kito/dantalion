@@ -15,5 +15,5 @@ export default Object.freeze<Position[]>([
   'adjust',
   'brain',
   'direct',
-  'quick'
+  'quick',
 ]);

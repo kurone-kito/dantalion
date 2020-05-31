@@ -21,24 +21,24 @@ export default (source: webpack.Configuration): webpack.Configuration => ({
         test: /\.tsx?$/,
         enforce: 'pre',
         loader: 'eslint-loader',
-        options: { cache: true, configFile: '.eslintrc.yml' }
-      }
-    ]
+        options: { cache: true, configFile: '.eslintrc.yml' },
+      },
+    ],
   },
   output: {
     filename: 'index.js',
     path: path.join(__dirname, 'dist'),
     library: packageJson.name,
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
   plugins: [
     new DtsBundleWebpack({
       indent: '  ',
       main: 'src/index.d.ts',
       name: packageJson.name,
-      out: '../dist/index.d.ts'
-    })
+      out: '../dist/index.d.ts',
+    }),
   ],
   resolve: { extensions: ['.js', '.json', '.ts', '.tsx'] },
-  target: 'node'
+  target: 'node',
 });

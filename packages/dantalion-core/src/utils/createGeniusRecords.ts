@@ -6,4 +6,4 @@ import createGeniusRecord from './createGeniusRecord';
  * @template T Type of the source.
  */
 export default <T>(table: T[][]) =>
-  createGeniusRecord(table.map(row => createGeniusRecord(row)));
+  createGeniusRecord(table.map((row) => createGeniusRecord(row)));

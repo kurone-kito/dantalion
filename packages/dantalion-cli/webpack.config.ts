@@ -18,15 +18,15 @@ export default (): webpack.Configuration => ({
         test: /\.tsx?$/,
         enforce: 'pre',
         loader: 'eslint-loader',
-        options: { configFile: '.eslintrc.yml' }
-      }
-    ]
+        options: { configFile: '.eslintrc.yml' },
+      },
+    ],
   },
   output: {
     filename: 'index.js',
     library: name,
     libraryTarget: 'commonjs2',
-    path: distDir
+    path: distDir,
   },
   plugins: [
     new webpack.BannerPlugin({ banner: '#!/usr/bin/env node', raw: true }),
@@ -34,12 +34,12 @@ export default (): webpack.Configuration => ({
       onBuildExit: {
         scripts: [() => fs.chmodSync(path.resolve(distDir, 'index.js'), 0o755)],
         blocking: true,
-        parallel: false
-      }
-    })
+        parallel: false,
+      },
+    }),
   ],
   resolve: {
-    extensions: ['.js', '.json', '.ts', '.tsx']
+    extensions: ['.js', '.json', '.ts', '.tsx'],
   },
-  target: 'node'
+  target: 'node',
 });

@@ -25,5 +25,5 @@ export default Object.freeze<Motivation[]>([
   'power',
   'safety',
   'skillUp',
-  'status'
+  'status',
 ]);

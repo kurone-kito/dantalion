@@ -1,4 +1,4 @@
-import { AffinityLevel } from '../types/AffinityLevel';
+import type { AffinityLevel } from '../types/AffinityLevel';
 import createGeniusRecords from '../utils/createGeniusRecords';
 import { biz } from '../masterData.json';
 

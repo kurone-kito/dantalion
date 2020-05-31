@@ -7,5 +7,6 @@ import { lifeBaseCoefficients } from '../masterData.json';
  * @returns The factors of Life base.
  */
 export default (month: number, dcoef: number) =>
-  lifeBaseCoefficients[month - 1]?.find(v => dcoef < (v.t ?? Number.MAX_VALUE))
-    ?.v ?? Number.NaN;
+  lifeBaseCoefficients[month - 1]?.find(
+    (v) => dcoef < (v.t ?? Number.MAX_VALUE)
+  )?.v ?? Number.NaN;

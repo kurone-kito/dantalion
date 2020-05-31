@@ -48,6 +48,6 @@ export default (date: Date): BirthdayDetails => {
   return {
     date: date.getDate(),
     month: { early, month, shifted: month + early() * 12 },
-    year: { full: year, hi: Math.floor(year * 0.01), lo: year % 100 }
+    year: { full: year, hi: Math.floor(year * 0.01), lo: year % 100 },
   };
 };
