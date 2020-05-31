@@ -13,5 +13,5 @@ export type Vector = 'authority' | 'economically' | 'humanely';
 export default Object.freeze<Vector[]>([
   'authority',
   'economically',
-  'humanely'
+  'humanely',
 ]);

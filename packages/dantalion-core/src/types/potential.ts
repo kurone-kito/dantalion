@@ -26,5 +26,5 @@ export default Object.freeze<Potential[]>([
   'Ii',
   'Io',
   'Ni',
-  'No'
+  'No',
 ]);

@@ -37,5 +37,5 @@ export default Object.freeze<LifeBase[]>([
   'organization',
   'quest',
   'selfMind',
-  'selfReliance'
+  'selfReliance',
 ]);

@@ -1,4 +1,4 @@
-import { AffinityLevel } from '../types/AffinityLevel';
+import type { AffinityLevel } from '../types/AffinityLevel';
 import brain, { Brain } from '../types/brain';
 import communication, { Communication } from '../types/communication';
 import geniusTable, { Genius } from '../types/genius';
@@ -56,7 +56,7 @@ export default createGeniusRecord(
   (detailsMap as DetailsSourceMap[]).map<Detail>((row, index) => ({
     affinity: {
       biz: bizRecords[geniusTable[index]],
-      love: loveRecords[geniusTable[index]]
+      love: loveRecords[geniusTable[index]],
     },
     brain: brain[row[5]],
     communication: communication[row[0]],
@@ -64,6 +64,6 @@ export default createGeniusRecord(
     motivation: motivation[row[4]],
     position: position[row[3]],
     response: response[row[2]],
-    vector: vector[row[6]]
+    vector: vector[row[6]],
   }))
 );

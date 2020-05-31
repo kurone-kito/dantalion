@@ -1,5 +1,5 @@
-import { Source2D } from './create2DAccessor';
-import { BirthdayDetails } from './getBirthdayDetails';
+import type { Source2D } from './create2DAccessor';
+import type { BirthdayDetails } from './getBirthdayDetails';
 import shiftAndModulo from './shiftAndModulo';
 
 /** Intermediate values that determine the factors of personality. */
@@ -35,7 +35,7 @@ export default (source: FactorSource): Factors => {
     date,
     month: { early, month, shifted },
     monthlyCoefficient: monthlyCoefficients,
-    year: { full, hi, lo }
+    year: { full, hi, lo },
   } = source;
   const lessThan = date < monthlyCoefficients;
   const outer = shiftAndModulo(month - (lessThan ? 1 : 0), 12) + 1;
@@ -44,7 +44,7 @@ export default (source: FactorSource): Factors => {
     (acc, cur) => acc + cur,
     Math.floor((lo - early()) * 5.25) + date + 7
   );
-  const potentials = [workStyle - 2, full * 2 + outer + 2].map(v =>
+  const potentials = [workStyle - 2, full * 2 + outer + 2].map((v) =>
     shiftAndModulo(v, 10)
   );
   return {
@@ -54,6 +54,6 @@ export default (source: FactorSource): Factors => {
     lifeBase: date - monthlyCoefficients,
     outer: shiftAndModulo(outer, 12),
     potentials: [potentials[0], potentials[1]],
-    workStyle: shiftAndModulo(workStyle, 12)
+    workStyle: shiftAndModulo(workStyle, 12),
   };
 };

@@ -43,5 +43,5 @@ export default Object.freeze<Genius[]>([
   '555',
   '789',
   '888',
-  '919'
+  '919',
 ]);

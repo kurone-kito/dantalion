@@ -3,9 +3,9 @@ import getMonthlyCoefficients from '../records/getMonthlyCoefficients';
 import lifeBaseCoefficients from '../records/lifeBaseCoefficients';
 import lifeBaseTable from '../records/lifeBaseTable';
 import potentialTable from '../records/potentialTable';
-import { Genius } from '../types/genius';
-import { LifeBase } from '../types/lifeBase';
-import { Potential } from '../types/potential';
+import type { Genius } from '../types/genius';
+import type { LifeBase } from '../types/lifeBase';
+import type { Potential } from '../types/potential';
 import getBirthdayDetails from './getBirthdayDetails';
 import getFactors from './getFactors';
 
@@ -51,20 +51,20 @@ export default (
     lifeBase,
     outer,
     potentials,
-    workStyle
+    workStyle,
   } = getFactors({
     ...details,
     month,
-    monthlyCoefficient: monthlyCoefficients
+    monthlyCoefficient: monthlyCoefficients,
   });
   const lifeBaseCoef = lifeBaseCoefficients(month.month, lifeBase);
-  const p = potentials.map(v => potentialTable(getXY(v)));
+  const p = potentials.map((v) => potentialTable(getXY(v)));
   return {
     cycle,
     inner: geniusTable(getXY(inner)),
     lifeBase: lifeBaseTable(getXY(lifeBaseCoef)),
     outer: geniusTable(getXY(outer)),
     potentials: [p[0], p[1]],
-    workStyle: geniusTable(getXY(workStyle))
+    workStyle: geniusTable(getXY(workStyle)),
   };
 };
