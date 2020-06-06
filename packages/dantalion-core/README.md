@@ -97,6 +97,47 @@ In strictly, The function gets the raw object, not the JSON.
 }
 ```
 
+### Get all types
+
+All types list.
+
+```js
+const { types } = require('@kurone-kito/dantalion-core');
+
+console.log(types); // AllTypes Object
+```
+
+#### `AllTypes`
+
+```ts
+/** All types list. */
+export interface AllTypes {
+  readonly brain: readonly Brain[];
+  readonly communication: readonly Communication[];
+  readonly genius: readonly Genius[];
+  readonly lifeBase: readonly LifeBase[];
+  readonly management: readonly Management[];
+  readonly motivation: readonly Motivation[];
+  readonly position: readonly Position[];
+  readonly potential: readonly Potential[];
+  readonly response: readonly Response[];
+  readonly vector: readonly Vector[];
+}
+```
+
+| Property        | Type                       | Description                                                   |
+| :-------------- | :------------------------- | :------------------------------------------------------------ |
+| `brain`         | `readonly Brain[]`         | The list that the types of thought methods.                   |
+| `communication` | `readonly Communication[]` | The list that the types of dialogue policy.                   |
+| `genius`        | `readonly Genius[]`        | The list of personality types.                                |
+| `lifeBase`      | `readonly LifeBase[]`      | The list that the base of ego type.                           |
+| `management`    | `readonly Management[]`    | The list of the types that the risk management method.        |
+| `motivation`    | `readonly Motivation[]`    | The list of the types that easy to the motivated environment. |
+| `position`      | `readonly Position[]`      | The list of role types                                        |
+| `potential`     | `readonly Potential[]`     | The list of the types that the potential.                     |
+| `response`      | `readonly Response[]`      | The list of the types that the role.                          |
+| `vector`        | `readonly Vector[]`        | The list of personality types.                                |
+
 ## API
 
 ### `getDetail`
