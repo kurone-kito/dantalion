@@ -1,28 +1,18 @@
 import path from 'path';
-import 'ts-polyfill/lib/es2019-object';
 import webpack from 'webpack';
-import { dependencies, name } from './package.json';
-import { compilerOptions } from './tsconfig.json';
+import packageJson from './package.json';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const DtsBundleWebpack = require('dts-bundle-webpack');
-
-const createAliases = () => {
-  const baseUrl = path.join(__dirname, compilerOptions.baseUrl || '.');
-
-  return Object.fromEntries(
-    Object.entries(compilerOptions.paths || {}).map(([key, [value]]) => [
-      key.replace('*', ''),
-      path.join(baseUrl, value.replace('*', ''))
-    ])
-  );
-};
 
 export default (source: webpack.Configuration): webpack.Configuration => ({
   ...source,
   cache: true,
   devtool: false,
-  externals: Object.keys(dependencies || {}),
+  entry: ['ts-polyfill/lib/es2019-object.js', './src/index.ts'],
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
+  externals: Object.keys(packageJson.dependencies ?? {}),
   mode: 'production',
   module: {
     rules: [
@@ -31,27 +21,24 @@ export default (source: webpack.Configuration): webpack.Configuration => ({
         test: /\.tsx?$/,
         enforce: 'pre',
         loader: 'eslint-loader',
-        options: { configFile: '.eslintrc.yml' }
-      }
-    ]
+        options: { cache: true, configFile: '.eslintrc.yml' },
+      },
+    ],
   },
   output: {
     filename: 'index.js',
     path: path.join(__dirname, 'dist'),
-    library: name,
-    libraryTarget: 'umd'
+    library: packageJson.name,
+    libraryTarget: 'umd',
   },
   plugins: [
     new DtsBundleWebpack({
       indent: '  ',
       main: 'src/index.d.ts',
-      name,
-      out: '../dist/index.d.ts'
-    })
+      name: packageJson.name,
+      out: '../dist/index.d.ts',
+    }),
   ],
-  resolve: {
-    alias: createAliases(),
-    extensions: ['.js', '.json', '.ts', '.tsx']
-  },
-  target: 'node'
+  resolve: { extensions: ['.js', '.json', '.ts', '.tsx'] },
+  target: 'node',
 });
