@@ -24,16 +24,17 @@
     "access": "public"
   },
   "scripts": {
-    "dantalion": "lerna run dantalion --stream --scope=@kurone-kito/dantalion-cli",
-    "lint": "lerna run lint --stream",
-    "prepack": "lerna run prepack --stream",
+    "dantalion": "lerna run --no-prefix --scope=@kurone-kito/dantalion-cli --stream dantalion --",
+    "lint": "lerna exec --concurrency 1 -- npm run lint",
+    "prepack": "lerna exec --concurrency 1 -- npm run prepack",
     "start": "lerna run start --parallel --stream",
-    "postinstall": "lerna clean --yes && lerna bootstrap --hoist"
+    "postinstall": "lerna clean --yes && lerna bootstrap",
+    "test": "lerna exec --concurrency 1 -- npm test"
   },
   "engines": {
-    "node": ">=10.17"
+    "node": ">=10.20"
   },
   "devDependencies": {
-    "lerna": "^3.20.2"
+    "lerna": "^3.22.0"
   }
 }
