@@ -1,7 +1,7 @@
 {
   "name": "@kurone-kito/dantalion-core",
   "version": "0.1.0",
-  "description": "Practice for npm package with monorepo",
+  "description": "NPM library that calculates the personality from the birthday.",
   "license": "MIT",
   "author": "kurone-kito <krone@kit.black>",
   "keywords": [
@@ -30,7 +30,7 @@
   },
   "main": "dist/index.js",
   "engines": {
-    "node": ">=10.17"
+    "node": ">=10.20"
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",

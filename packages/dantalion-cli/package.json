@@ -1,7 +1,7 @@
 {
   "name": "@kurone-kito/dantalion-cli",
   "version": "0.1.0",
-  "description": "Practice for npm package with monorepo",
+  "description": "CLI frontend that calculates the personality from the birthday.",
   "license": "MIT",
   "author": "kurone-kito <krone@kit.black>",
   "keywords": [
@@ -33,7 +33,7 @@
     "dantalion": "dist/index.js"
   },
   "engines": {
-    "node": ">=10.17"
+    "node": ">=10.20"
   },
   "dependencies": {
     "@kurone-kito/dantalion-core": "^0.1.0",
