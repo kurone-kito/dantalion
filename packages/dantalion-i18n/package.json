@@ -24,12 +24,14 @@
     "access": "public"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "prepack": "echo \"Warn: not implemented\"",
+    "test": "echo \"Warn: not implemented\""
   },
   "engines": {
     "node": ">=10.20"
   },
   "dependencies": {
     "@kurone-kito/dantalion-core": "^0.1.1"
-  }
+  },
+  "gitHead": "b7bb1aab432b1087d4689907ee28ab9f9eb70e02"
 }
