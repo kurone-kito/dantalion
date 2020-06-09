@@ -1,0 +1,35 @@
+{
+  "name": "@kurone-kito/dantalion-i18n",
+  "version": "0.1.1",
+  "description": "Converts results of dantalion into detailed documentation.",
+  "license": "MIT",
+  "author": "kurone-kito <krone@kit.black>",
+  "keywords": [
+    "Ba Zi",
+    "Chinese Astrology",
+    "divination",
+    "four pillars",
+    "psychology",
+    "i18n"
+  ],
+  "bugs": {
+    "url": "https://github.com/kurone-kito/dantalion/issues"
+  },
+  "homepage": "https://github.com/kurone-kito/dantalion/tree/master/packages/dantalion-i18n#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurone-kito/dantalion.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "engines": {
+    "node": ">=10.20"
+  },
+  "dependencies": {
+    "@kurone-kito/dantalion-core": "^0.1.1"
+  }
+}
