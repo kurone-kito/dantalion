@@ -10,7 +10,7 @@ jobs:
         node-version:
           - 10.x
           - 12.x
-          - 13.x
+          - 14.x
     steps:
       - uses: actions/checkout@master
       - name: Use Node.js ${{ matrix.node-version }}
@@ -19,3 +19,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run prepack
+      - run: npm test
+        env:
+          CI: true
