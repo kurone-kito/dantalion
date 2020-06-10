@@ -8,6 +8,10 @@
     {
       "changeProcessCWD": true,
       "directory": "./packages/dantalion-core"
+    },
+    {
+      "changeProcessCWD": true,
+      "directory": "./packages/dantalion-i18n"
     }
   ],
   "typescript.tsdk": "node_modules/typescript/lib"
