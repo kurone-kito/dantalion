@@ -31,7 +31,8 @@
     "node": ">=10.20"
   },
   "dependencies": {
-    "@kurone-kito/dantalion-core": "^0.1.1"
+    "@kurone-kito/dantalion-core": "^0.1.1",
+    "i18next": "^19.4.5"
   },
   "gitHead": "b7bb1aab432b1087d4689907ee28ab9f9eb70e02",
   "devDependencies": {
