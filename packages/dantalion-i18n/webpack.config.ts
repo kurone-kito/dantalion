@@ -10,7 +10,7 @@ export default (source: webpack.Configuration): webpack.Configuration => ({
   cache: true,
   devtool: false,
   entry: ['./src/index.ts'],
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   externals: Object.keys(packageJson.dependencies ?? {}),
   mode: 'production',
