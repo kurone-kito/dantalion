@@ -20,8 +20,8 @@ plugins:
   - prettier
 root: true
 rules:
-  '@typescript-eslint/explicit-function-return-type':
-    - 'off'
+  '@typescript-eslint/explicit-function-return-type': 'off'
+  '@typescript-eslint/no-use-before-define': 'error'
   import/extensions:
     - error
     - ignorePackages
@@ -30,6 +30,7 @@ rules:
     - error
     - devDependencies:
         - '**/*.config.?s'
+  no-use-before-define: 'off'
 settings:
   import/resolver:
     node:
