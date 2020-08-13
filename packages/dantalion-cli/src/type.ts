@@ -5,4 +5,4 @@ export interface Command {
   description: string;
 }
 
-export type Result = object | undefined;
+export type Result = Record<string, unknown> | undefined;
