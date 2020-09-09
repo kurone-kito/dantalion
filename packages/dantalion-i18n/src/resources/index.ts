@@ -3,16 +3,11 @@ import getLocale from '../getLocale';
 import en from './en.json';
 import ja from './ja.json';
 
-/** Type definition for resources. */
-interface ResourceType {
-  hello: string;
-}
-
 /**
  * Build JSON for resources.
  * @param translation resources data.
  */
-const wrap = (translation: ResourceType) => ({ translation });
+const wrap = (translation: Record<string, unknown>) => ({ translation });
 
 /**
  * Create the i18n function.
