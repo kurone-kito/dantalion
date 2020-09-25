@@ -14,7 +14,7 @@ is using the method of _Four Pillars of Destiny (Ba-Zi)_.
 
 ## Usage
 
-Require: Node.js >= v10.20
+Require: Node.js >= v10.22.1
 
 ### Install
 
