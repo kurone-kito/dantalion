@@ -1,6 +1,6 @@
 {
   "name": "@kurone-kito/dantalion-i18n",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Converts results of dantalion into detailed documentation.",
   "license": "MIT",
   "author": "kurone-kito <krone@kit.black>",
