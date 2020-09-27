@@ -1,7 +1,6 @@
 import i18next, { TFunction } from 'i18next';
 import getLocale from '../getLocale';
-import en from './en.json';
-import ja from './ja.json';
+import ja from './ja.yml';
 
 /**
  * Build JSON for resources.
@@ -20,7 +19,7 @@ const createInstance = (language?: string) =>
     fallbackLng: 'ja',
     lng: language ?? getLocale(),
     debug: false,
-    resources: { en: wrap(en), ja: wrap(ja) },
+    resources: { ja: wrap(ja) },
   });
 
 /** Cached i18n function. */
