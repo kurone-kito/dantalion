@@ -2,9 +2,8 @@ import commander from 'commander';
 import { version } from '../package.json';
 import detail from './detail';
 import personality from './personality';
-import type { Result } from './type';
 
-const showJson = (result: Result) =>
+const showJson = (result: unknown) =>
   // eslint-disable-next-line no-console
   console.info(JSON.stringify(result, null, 2));
 
@@ -13,7 +12,7 @@ const showJson = (result: Result) =>
     .command(command)
     .alias(alias)
     .description(description)
-    .action((...args) => showJson(action(...args)));
+    .action(async (...args) => showJson(await action(...args)));
 });
 
 commander.version(version);

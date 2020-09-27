@@ -1,10 +1,10 @@
 /**
  * The types for role.
  *
- * |   Key    | Value                                                |
- * | :------: | :--------------------------------------------------- |
- * | `action` | This type of person would like to blue-collar role.  |
- * |  `mind`  | This type of person would like to white-collar role. |
+ * |   Key    | Value                                                                 |
+ * | :------: | :-------------------------------------------------------------------- |
+ * | `action` | This type of person would like to always act with customers.          |
+ * |  `mind`  | This type of person would like to always act with only known peoples. |
  */
 export type Response = 'action' | 'mind';
 

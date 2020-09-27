@@ -23,6 +23,12 @@ export default (source: webpack.Configuration): webpack.Configuration => ({
         loader: 'eslint-loader',
         options: { cache: true, configFile: '.eslintrc.yml' },
       },
+      {
+        test: /\.ya?ml$/,
+        // Required by Webpack v4
+        type: 'json',
+        use: 'yaml-loader',
+      },
     ],
   },
   output: {

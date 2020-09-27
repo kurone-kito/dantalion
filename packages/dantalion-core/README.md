@@ -14,6 +14,8 @@ is using the method of _Four Pillars of Destiny (Ba-Zi)_.
 
 ## Usage
 
+Require: Node.js >= v10.22.1
+
 ### Add to dependency
 
 ```sh
@@ -411,10 +413,10 @@ The types for role.
 type Response = 'action' | 'mind';
 ```
 
-| Key      | Value                                                |
-| :------- | :--------------------------------------------------- |
-| `action` | This type of person would like to blue-collar role.  |
-| `mind`   | This type of person would like to white-collar role. |
+| Key      | Value                                                                 |
+| :------- | :-------------------------------------------------------------------- |
+| `action` | This type of person would like to always act with customers.          |
+| `mind`   | This type of person would like to always act with only known peoples. |
 
 ### `Potential`
 
