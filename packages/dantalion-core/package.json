@@ -30,7 +30,7 @@
   },
   "main": "dist/index.js",
   "engines": {
-    "node": ">=10.22.1"
+    "node": ">=10.23"
   },
   "devDependencies": {
     "@types/jest": "^26.0.14",
