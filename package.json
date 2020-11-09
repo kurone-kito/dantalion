@@ -27,8 +27,8 @@
     "dantalion": "lerna run --no-prefix --scope=@kurone-kito/dantalion-cli --stream dantalion --",
     "lint": "lerna exec --concurrency 1 --no-bail -- npm run lint",
     "prepack": "lerna exec --concurrency 1 -- npm run prepack",
+    "prepare": "lerna clean --yes && lerna bootstrap",
     "start": "lerna run start --parallel --stream",
-    "postinstall": "lerna clean --yes && lerna bootstrap",
     "test": "lerna exec --concurrency 1 --no-bail -- npm test"
   },
   "engines": {
