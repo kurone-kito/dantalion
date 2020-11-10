@@ -23,14 +23,14 @@
     "access": "public"
   },
   "scripts": {
-    "dantalion": "node dist/index.js",
+    "dantalion": "node dist/src/index.js",
     "lint": "eslint --fix './**/*'",
-    "prepack": "webpack",
-    "start": "webpack --watch",
+    "prepack": "tsc --project tsconfig.build.json",
+    "start": "tsc --project tsconfig.build.json --watch",
     "test": "echo \"Warn: run tests from root\""
   },
   "bin": {
-    "dantalion": "dist/index.js"
+    "dantalion": "dist/src/index.js"
   },
   "engines": {
     "node": ">=10.23"
@@ -41,22 +41,17 @@
     "ts-polyfill": "^3.8.2"
   },
   "devDependencies": {
-    "@types/webpack": "^4.41.22",
     "@typescript-eslint/eslint-plugin": "^4.2.0",
     "@typescript-eslint/parser": "^4.2.0",
+    "chmod": "^0.2.1",
     "eslint": "^7.10.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-config-prettier": "^6.12.0",
     "eslint-import-resolver-typescript": "^2.3.0",
-    "eslint-loader": "^4.0.2",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.1.2",
-    "ts-loader": "^8.0.4",
     "ts-node": "^9.0.0",
-    "typescript": "^4.0.3",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12",
-    "webpack-shell-plugin-next": "^1.2.0"
+    "typescript": "^4.0.3"
   }
 }

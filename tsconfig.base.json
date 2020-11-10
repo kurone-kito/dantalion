@@ -11,6 +11,5 @@
     "sourceMap": true,
     "strict": true,
     "target": "ES2017"
-  },
-  "exclude": ["dist", "node_modules"]
+  }
 }
