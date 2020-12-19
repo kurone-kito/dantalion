@@ -5,23 +5,21 @@ extends:
   # I want to know the best practices for the settings here.
   # I don't know it, but this so many extends are enough to make it feel non-exemplary.
   - eslint:recommended
-  - airbnb-base
+  - airbnb-typescript/base
+  - plugin:import/recommended
+  - plugin:import/typescript
   - plugin:@typescript-eslint/recommended
+  - plugin:prettier/recommended
   - prettier
   - plugin:prettier/recommended
   - prettier/@typescript-eslint
 parser: '@typescript-eslint/parser'
 parserOptions:
   ecmaVersion: 2020
-  sourceType: module
-plugins:
-  - '@typescript-eslint'
-  - import
-  - prettier
+  project: ./tsconfig.json
 root: true
 rules:
   '@typescript-eslint/explicit-function-return-type': 'off'
-  '@typescript-eslint/explicit-module-boundary-types': 'off'
   '@typescript-eslint/no-use-before-define': 'error'
   import/extensions:
     - error
