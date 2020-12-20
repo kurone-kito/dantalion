@@ -39,6 +39,7 @@ jobs:
             ${{ matrix.cache-key }}_${{ runner.os }}-node-
             ${{ matrix.cache-key }}_${{ runner.os }}-
       - run: npm ci
+      - run: npm run prepare
       - run: npm run prepack
       - run: npm test
         env:
