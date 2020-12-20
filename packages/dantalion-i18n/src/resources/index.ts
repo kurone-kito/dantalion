@@ -1,6 +1,6 @@
 import i18next, { TFunction } from 'i18next';
 import getLocale from '../getLocale';
-import ja from './ja.yml';
+import ja from './ja.json';
 
 /**
  * Build JSON for resources.
