@@ -1,5 +1,5 @@
 <!--
-🇬🇧 At first, read the following documents:
+🇺🇸🇬🇧 At first, read the following documents:
 https://github.com/kurone-kito/jsonresume-theme-japanese-cv-style-docx/blob/master/.github/CONTRIBUTING.md
 
 🇯🇵 投稿の前に下記のドキュメントを一読ください:

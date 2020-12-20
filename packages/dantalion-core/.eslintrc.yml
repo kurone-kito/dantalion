@@ -1,29 +1,29 @@
 env:
   es6: true
   es2020: true
-  jest/globals: true
 extends:
   # I want to know the best practices for the settings here.
   # I don't know it, but this so many extends are enough to make it feel non-exemplary.
   - eslint:recommended
-  - airbnb-base
+  - airbnb-typescript/base
+  - plugin:import/recommended
+  - plugin:import/typescript
   - plugin:@typescript-eslint/recommended
+  - plugin:prettier/recommended
   - prettier
   - plugin:prettier/recommended
   - prettier/@typescript-eslint
 parser: '@typescript-eslint/parser'
 parserOptions:
   ecmaVersion: 2020
-  sourceType: module
+  project: ./tsconfig.json
 plugins:
   - '@typescript-eslint'
   - import
-  - jest
   - prettier
 root: true
 rules:
   '@typescript-eslint/explicit-function-return-type': 'off'
-  '@typescript-eslint/explicit-module-boundary-types': 'off'
   '@typescript-eslint/no-use-before-define': 'error'
   import/extensions:
     - error
@@ -33,7 +33,6 @@ rules:
     - error
     - devDependencies:
         - '**/*.config.?s'
-        - '**/*.spec.?s'
   no-use-before-define: 'off'
 settings:
   import/resolver:

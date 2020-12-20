@@ -38,7 +38,7 @@ const isAvailableDefaultNodeICU = () => {
 
 /** Detect the current environment is on the browser. */
 const isBrowser = () =>
-  // eslint-disable-next-line no-new-func
+  // eslint-disable-next-line @typescript-eslint/no-implied-eval
   !!new Function(
     'try { return this === window; } catch (e) { return false; }'
   )();
