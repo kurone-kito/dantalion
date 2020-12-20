@@ -1,6 +1,8 @@
 {
   "hoist": true,
   "npmClient": "npm",
-  "packages": ["packages/*"],
-  "version": "0.1.5"
+  "packages": [
+    "packages/*"
+  ],
+  "version": "0.2.0"
 }

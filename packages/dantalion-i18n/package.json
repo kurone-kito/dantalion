@@ -1,6 +1,6 @@
 {
   "name": "@kurone-kito/dantalion-i18n",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "description": "Converts results of dantalion into detailed documentation.",
   "license": "MIT",
   "author": "kurone-kito <krone@kit.black>",
@@ -35,7 +35,7 @@
     "node": ">=10.23"
   },
   "dependencies": {
-    "@kurone-kito/dantalion-core": "^0.1.4",
+    "@kurone-kito/dantalion-core": "^0.2.0",
     "i18next": "^19.8.4",
     "ts-polyfill": "^3.8.2"
   },

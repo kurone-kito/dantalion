@@ -1,6 +1,6 @@
 {
   "name": "@kurone-kito/dantalion-cli",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "CLI frontend that calculates the personality from the birthday.",
   "license": "MIT",
   "author": "kurone-kito <krone@kit.black>",
@@ -36,7 +36,7 @@
     "node": ">=10.23"
   },
   "dependencies": {
-    "@kurone-kito/dantalion-core": "^0.1.4",
+    "@kurone-kito/dantalion-core": "^0.2.0",
     "commander": "^6.2.1",
     "ts-polyfill": "^3.8.2"
   },
