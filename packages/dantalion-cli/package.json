@@ -24,7 +24,7 @@
   },
   "scripts": {
     "dantalion": "node dist/src/index.js",
-    "lint": "eslint --fix './**/*'",
+    "lint": "eslint --fix \"./**/*\"",
     "prepack": "tsc --project tsconfig.build.json",
     "start": "tsc --project tsconfig.build.json --watch",
     "test": "echo \"Warn: run tests from root\""
