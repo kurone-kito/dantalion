@@ -10,8 +10,8 @@ export interface PersonalityTestData extends Personality {
   date: string;
 }
 
-export const getDetailTestData = () =>
-  details as Record<Genius, DetailTestData>;
+export const getDetailTestData = (): Record<Genius, DetailTestData> =>
+  <Record<Genius, DetailTestData>>details;
 
-export const getPersonalityTestData = () =>
-  personality as PersonalityTestData[];
+export const getPersonalityTestData = (): PersonalityTestData[] =>
+  <PersonalityTestData[]>personality;

@@ -5,7 +5,7 @@ import genius, { Genius } from '../types/genius';
  * @param source Source.
  * @template T Type of the source.
  */
-export default <T>(source: T[]) =>
-  Object.fromEntries(
-    source.map((value, index) => [genius[index], value])
-  ) as Record<Genius, T>;
+export default <T>(source: T[]): Record<Genius, T> =>
+  <Record<Genius, T>>(
+    Object.fromEntries(source.map((value, index) => [genius[index], value]))
+  );

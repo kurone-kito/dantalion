@@ -6,7 +6,7 @@ import { lifeBaseCoefficients } from '../masterData.json';
  * @param dcoef Coefficient of date.
  * @returns The factors of Life base.
  */
-export default (month: number, dcoef: number) =>
+export default (month: number, dcoef: number): number =>
   lifeBaseCoefficients[month - 1]?.find(
     (v) => dcoef < (v.t ?? Number.MAX_VALUE)
   )?.v ?? Number.NaN;
