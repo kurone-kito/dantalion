@@ -1,4 +1,4 @@
-import { Genius } from '@kurone-kito/dantalion-core';
+import type { Genius } from '@kurone-kito/dantalion-core';
 import getResources from './resources';
 
 export interface GeniusType {
