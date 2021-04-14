@@ -33,7 +33,7 @@
     "dantalion": "dist/src/index.js"
   },
   "engines": {
-    "node": ">=12.20"
+    "node": ">=12"
   },
   "dependencies": {
     "@kurone-kito/dantalion-core": "^0.2.0",
