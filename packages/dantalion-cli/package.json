@@ -1,6 +1,6 @@
 {
   "name": "@kurone-kito/dantalion-cli",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "CLI frontend that calculates the personality from the birthday.",
   "license": "MIT",
   "author": "kurone-kito <krone@kit.black>",
