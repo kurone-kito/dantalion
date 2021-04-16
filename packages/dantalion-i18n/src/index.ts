@@ -1,4 +1,4 @@
-import { Genius } from '@kurone-kito/dantalion-core';
+import type { Genius } from '@kurone-kito/dantalion-core';
 import getResources from './resources';
 
 export interface GeniusType {
@@ -10,7 +10,9 @@ export interface GeniusType {
   weak: string[];
 }
 
-export const getGeniusAsync = async (genius: Genius) => {
+export const getGeniusAsync = async (
+  genius: Genius
+): Promise<GeniusType | undefined> => {
   const result = (await getResources())<string | GeniusType>(
     `genius.${genius}`,
     { returnObjects: true }

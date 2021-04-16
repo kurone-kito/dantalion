@@ -25,7 +25,7 @@ const createInstance = (language?: string) =>
 /** Cached i18n function. */
 let t: TFunction;
 /** Get the cached i18n function. */
-export default async () => {
+export default async (): Promise<TFunction> => {
   if (!t) {
     t = await createInstance();
   }

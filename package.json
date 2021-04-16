@@ -32,10 +32,10 @@
     "test": "lerna exec --concurrency 1 --no-bail -- npm test"
   },
   "engines": {
-    "node": ">=10.23"
+    "node": ">=12"
   },
   "devDependencies": {
-    "@octokit/core": "^3.2.4",
-    "lerna": "^3.22.1"
+    "@octokit/core": "^3.4.0",
+    "lerna": "^4.0.0"
   }
 }

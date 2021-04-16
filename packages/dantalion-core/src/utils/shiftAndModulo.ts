@@ -3,4 +3,4 @@
  * @param a Dividend. This value minus 1 applies.
  * @param n Divisor.
  */
-export default (a: number, n: number) => ((((a - 1) % n) + n) % n) + 1;
+export default (a: number, n: number): number => ((((a - 1) % n) + n) % n) + 1;

@@ -1,3 +1,4 @@
+import type { Genius } from '..';
 import createGeniusRecord from './createGeniusRecord';
 
 /**
@@ -5,5 +6,5 @@ import createGeniusRecord from './createGeniusRecord';
  * @param table Source.
  * @template T Type of the source.
  */
-export default <T>(table: T[][]) =>
+export default <T>(table: T[][]): Record<Genius, Record<Genius, T>> =>
   createGeniusRecord(table.map((row) => createGeniusRecord(row)));

@@ -19,7 +19,8 @@ export interface Source2D {
  * @param label List of labels.
  * @param table Table.
  */
-export default <T extends string>({ label, table }: Source<T>) => ({
-  x = 0,
-  y = 0,
-}: Source2D) => label[table[y]?.[x]];
+export default <T extends string>({
+  label,
+  table,
+}: Source<T>): (({ x, y }: Source2D) => T) => ({ x = 0, y = 0 }) =>
+  label[table[y]?.[x]];
