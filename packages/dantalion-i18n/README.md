@@ -4,7 +4,7 @@
 
 ## Usage
 
-Require: Node.js >= v10.23
+Require: Node.js >= v12
 
 ```js
 const dantalionI18N = require('@kurone-kito/dantalion-i18n');

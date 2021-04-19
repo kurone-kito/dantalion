@@ -4,4 +4,4 @@ src/
 *.config.?s
 *.config.d.ts
 *.tgz
-tsconfig.json
+tsconfig.*
