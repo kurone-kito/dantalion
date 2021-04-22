@@ -1,5 +1,5 @@
 import type { Genius } from '@kurone-kito/dantalion-core';
-import getResources from './resources';
+import getResources from './resources/t';
 
 export interface GeniusType {
   detail: string[];
