@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD024 -->
+
 # 🦁 Dantalion: Core library
 
 This package provides a function that infers the personality details

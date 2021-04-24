@@ -253,6 +253,7 @@ $RECYCLE.BIN/
 
 # Lerna
 *.lerna_backup
+packages/**/LICENSE
 
 # Others
 packages/**/dist/
