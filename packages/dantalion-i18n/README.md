@@ -1,13 +1,221 @@
-# `@kurone-kito/dantalion-i18n`
+# 🦁 Dantalion: i18n resources library
 
-> TODO: description
+This package provides a function that infers the personality details
+from the specified birthday. By using this package, you can quickly
+implement birthday divination in your Node.js apps. Its calculation
+is using the method of _Four Pillars of Destiny (Ba-Zi)_.
+
+This package is a library that obtains human-readable (Markdown format)
+details for the output of the `@kurone-kito/dantalion-core` package.
+It's only in Japanese yet, but we'll gradually support multiple languages.
 
 ## Usage
 
 Require: Node.js >= v12
 
-```js
-const dantalionI18N = require('@kurone-kito/dantalion-i18n');
+### Add to dependency
 
-// TODO: DEMONSTRATE API
+```sh
+npm install -S @kurone-kito/dantalion-core @kurone-kito/dantalion-i18n
 ```
+
+### Get the details of the personality
+
+```js
+const { getPersonality } = require('@kurone-kito/dantalion-core');
+const { genius } = require('@kurone-kito/dantalion-i18n');
+
+const personality = getPersonality('1993-10-09');
+console.log(personality.inner); // === '555'
+
+const result = genius.getValue(personality.inner);
+
+console.log(JSON.stringify(result));
+```
+
+#### Result
+
+In strictly, The function gets the raw object, not the JSON.
+Since it's a long sentence, it omitted some parts.
+
+```json
+{
+  "name": "悠然タイプ",
+  "keyword": ["帝旺", "虎"],
+  "summary": "バランス型能力と面倒見が良い、勇者的ポジション",
+  "detail": [
+    "重役社員のような、万能感と親分肌のような空気感を持つ人が多いです。",
+    :
+    :
+  ],
+  "weak": [
+    "悠然タイプの人は、自分が悪くても謝罪するのを嫌がります。責任や謝罪心を持っていても、それを表明するのが極端に苦手です。"
+  ],
+  "strategy": [
+    "悠然タイプの人は自力でなんでもできてしまうがため、自分でなんでも抱えてしまいます。何かを任せる際は『やらせすぎない』よう注意すると良いでしょう。"
+  ]
+}
+```
+
+## API
+
+### `brain`
+
+The instance provides a set of functions that retrieve human-readable resources related to the thought method.
+
+- Type: `ResourcesAccessor<DetailsType, Brain>`
+- The [`Brain`](../dantalion-core#brain) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### `communication`
+
+The instance provides a set of functions that retrieve human-readable resources related to dialogue policy.
+
+- Type: `ResourcesAccessor<DetailsType, Communication>`
+- The [`Communication`](../dantalion-core#communication) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### `genius`
+
+The instance provides a set of functions that retrieve human-readable resources related to natural personality.
+
+- Type: `ResourcesAccessor<PersonalityType, Genius>`
+- The [`Genius`](../dantalion-core#genius) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### `management`
+
+The instance provides a set of functions that retrieve human-readable resources related to risk and return thinking in specific people.
+
+- Type: `ResourcesAccessor<DetailsType, Management>`
+- The [`Management`](../dantalion-core#management) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### `motivation`
+
+The instance provides a set of functions that retrieve human-readable resources related to an environment that is easy to get motivated.
+
+- Type: `ResourcesAccessor<string, Motivation>`
+- The [`Motivation`](../dantalion-core#motivation) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### `position`
+
+The instance provides a set of functions that retrieve human-readable resources related to a talented role.
+
+- Type: `ResourcesAccessor<DetailsType, Position>`
+- The [`Position`](../dantalion-core#position) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### `response`
+
+The instance provides a set of functions that retrieve human-readable resources related to on-site or behind.
+
+- Type: `ResourcesAccessor<DetailsType, Response>`
+- The [`Response`](../dantalion-core#response) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### `vector`
+
+The instance provides a set of functions that retrieve human-readable resources related to the major classification of personality.
+
+- Type: `ResourcesAccessor<VectorType, Vector>`
+- The [`Vector`](../dantalion-core#vector) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+## Types (for TypeScript)
+
+The strings contained in the object are in Markdown format. In the
+case of an array of strings, the elements separate for each paragraph.
+
+### `DetailsBaseType`
+
+The type definition that the pair of name and detail.
+
+```ts
+interface VectorType {
+  readonly detail: string;
+  readonly name: string;
+}
+```
+
+| Property | Type     | Description                     |
+| :------- | :------- | :------------------------------ |
+| `detail` | `string` | The detail.                     |
+| `name`   | `string` | The resource name as a heading. |
+
+### `DetailsType`
+
+The type definition that the name, detail and more descriptions.
+
+```ts
+interface VectorType {
+  readonly detail: string;
+  readonly name: string;
+  readonly more: readonly string[];
+}
+```
+
+| Property | Type                | Description                     |
+| :------- | :------------------ | :------------------------------ |
+| `detail` | `string`            | The detail.                     |
+| `more`   | `readonly string[]` | The more detailed descriptions. |
+| `name`   | `string`            | The resource name as a heading. |
+
+### `PersonalityType`
+
+A type definition of a structure that stores a
+description of a particular person's personality.
+
+```ts
+interface VectorType {
+  readonly detail: readonly string[];
+  readonly keyword: readonly string[];
+  readonly name: string;
+  readonly strategy: readonly string[];
+  readonly summary: string;
+  readonly weak: readonly string[];
+}
+```
+
+| Property   | Type                | Description                                                            |
+| :--------- | :------------------ | :--------------------------------------------------------------------- |
+| `detail`   | `readonly string[]` | The detail.                                                            |
+| `keyword`  | `readonly string[]` | The keywords.                                                          |
+| `name`     | `string`            | The resource name.                                                     |
+| `strategy` | `readonly string[]` | The strategies for communicating with people of this personality type. |
+| `summary`  | `string`            | The short summary as a heading.                                        |
+| `weak`     | `readonly string[]` | The weak points.                                                       |
+
+### `ResourcesAccessor<T, K>`
+
+The type definition with a function to
+access a resource of the specific category.
+
+```ts
+interface ResourcesAccessor<T extends object | string, K extends string> {
+  getAsync(key: K): Promise<T | undefined>;
+  getCategoryDetailAsync(): Promise<DetailsBaseType | undefined>;
+}
+```
+
+| Type | Constraint         | Description                             |
+| :--- | :----------------- | :-------------------------------------- |
+| `T`  | `object \| string` | The type of resource as a return value. |
+| `K`  | `string`           | The type for the key.                   |
+
+| Method                                                            | Description                                                                               |
+| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `getAsync(key: K): Promise<T \| undefined>`                       | The function acquires the resource corresponding to the key asynchronously.               |
+| `getCategoryDetailAsync(): Promise<DetailsBaseType \| undefined>` | The function acquires the resource corresponding to the specific category asynchronously. |
+
+### `VectorType`
+
+A type definition of a structure that
+stores a description of a personality type.
+
+```ts
+interface VectorType {
+  readonly detail: string;
+  readonly name: string;
+  readonly strategy: readonly string[];
+}
+```
+
+| Property   | Type                | Description                                                            |
+| :--------- | :------------------ | :--------------------------------------------------------------------- |
+| `detail`   | `string`            | The detail.                                                            |
+| `name`     | `string`            | The resource name as a heading.                                        |
+| `strategy` | `readonly string[]` | The strategies for communicating with people of this personality type. |
