@@ -23,10 +23,10 @@
     "access": "public"
   },
   "scripts": {
-    "lint": "eslint --fix \"./**/*\"",
+    "lint": "eslint --cache --fix .",
     "prepack": "tsc --project tsconfig.build.json",
     "start": "tsc --project tsconfig.build.json --watch",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
