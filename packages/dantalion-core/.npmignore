@@ -1,5 +1,5 @@
+coverage/
 dist/tests/
-node_modules/
 src/
 /.*
 *.config.?s
