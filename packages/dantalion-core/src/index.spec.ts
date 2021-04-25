@@ -1,4 +1,3 @@
-import 'ts-polyfill/lib/es2019-object.js';
 import { getDetail, Genius, getPersonality } from '.';
 import {
   DetailTestData,

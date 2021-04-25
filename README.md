@@ -8,7 +8,7 @@ The app can specify a birthday within the range from February 1, 1873, to Decemb
 
 ## Note
 
-- OS independent: This library only depends on `ts-polyfill` and `core-js` internally.
+- OS independent and the library part is dependent free.
 - This package does not consider time zones. If you are not satisfied with
   the calculated personality, moving the date back and forth may solve.
 
