@@ -33,9 +33,6 @@
   "engines": {
     "node": ">=12"
   },
-  "dependencies": {
-    "ts-polyfill": "^3.8.2"
-  },
   "devDependencies": {
     "@types/jest": "^26.0.22",
     "@typescript-eslint/eslint-plugin": "^4.22.0",

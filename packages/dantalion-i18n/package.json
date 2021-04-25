@@ -36,8 +36,7 @@
   },
   "dependencies": {
     "@kurone-kito/dantalion-core": "^0.4.0",
-    "i18next": "^20.2.1",
-    "ts-polyfill": "^3.8.2"
+    "i18next": "^20.2.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
