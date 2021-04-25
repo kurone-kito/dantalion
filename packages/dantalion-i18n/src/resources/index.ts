@@ -10,7 +10,8 @@ import type { DetailsBaseType } from './types';
 export interface ResourcesAccessor<
   // eslint-disable-next-line @typescript-eslint/ban-types
   T extends object | string,
-  K extends string
+  K extends string,
+  D extends DetailsBaseType | string = DetailsBaseType
 > {
   /**
    * The function acquires the resource corresponding to the key asynchronously.
@@ -23,7 +24,7 @@ export interface ResourcesAccessor<
    * The function acquires the resource corresponding
    * to the specific category asynchronously.
    */
-  readonly getCategoryDetailAsync: () => Promise<DetailsBaseType | undefined>;
+  readonly getCategoryDetailAsync: () => Promise<D | undefined>;
 }
 
 /**
