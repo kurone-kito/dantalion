@@ -125,7 +125,7 @@ case of an array of strings, the elements separate for each paragraph.
 The type definition that the pair of name and detail.
 
 ```ts
-interface VectorType {
+interface DetailsBaseType {
   readonly detail: string;
   readonly name: string;
 }
@@ -141,7 +141,7 @@ interface VectorType {
 The type definition that the name, detail and more descriptions.
 
 ```ts
-interface VectorType {
+interface DetailsType {
   readonly detail: string;
   readonly name: string;
   readonly more: readonly string[];
@@ -160,7 +160,7 @@ A type definition of a structure that stores a
 description of a particular person's personality.
 
 ```ts
-interface VectorType {
+interface PersonalityType {
   readonly detail: readonly string[];
   readonly keyword: readonly string[];
   readonly name: string;
