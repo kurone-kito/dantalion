@@ -91,7 +91,7 @@ The instance provides a set of functions that retrieve human-readable resources 
 
 The instance provides a set of functions that retrieve human-readable resources related to an environment that is easy to get motivated.
 
-- Type: `ResourcesAccessor<string, Motivation>`
+- Type: `ResourcesAccessor<string, Motivation, string>`
 - The [`Motivation`](../dantalion-core#motivation) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
 ### `position`
@@ -125,7 +125,7 @@ case of an array of strings, the elements separate for each paragraph.
 The type definition that the pair of name and detail.
 
 ```ts
-interface VectorType {
+interface DetailsBaseType {
   readonly detail: string;
   readonly name: string;
 }
@@ -141,7 +141,7 @@ interface VectorType {
 The type definition that the name, detail and more descriptions.
 
 ```ts
-interface VectorType {
+interface DetailsType {
   readonly detail: string;
   readonly name: string;
   readonly more: readonly string[];
@@ -160,7 +160,7 @@ A type definition of a structure that stores a
 description of a particular person's personality.
 
 ```ts
-interface VectorType {
+interface PersonalityType {
   readonly detail: readonly string[];
   readonly keyword: readonly string[];
   readonly name: string;
@@ -185,21 +185,26 @@ The type definition with a function to
 access a resource of the specific category.
 
 ```ts
-interface ResourcesAccessor<T extends object | string, K extends string> {
+interface ResourcesAccessor<
+  T extends object | string,
+  K extends string,
+  D extends DetailsBaseType | string = DetailsBaseType
+> {
   getAsync(key: K): Promise<T | undefined>;
-  getCategoryDetailAsync(): Promise<DetailsBaseType | undefined>;
+  getCategoryDetailAsync(): Promise<D | undefined>;
 }
 ```
 
-| Type | Constraint         | Description                             |
-| :--- | :----------------- | :-------------------------------------- |
-| `T`  | `object \| string` | The type of resource as a return value. |
-| `K`  | `string`           | The type for the key.                   |
+| Type | Constraint                  | Description                             |
+| :--- | :-------------------------- | :-------------------------------------- |
+| `T`  | `object \| string`          | The type of resource as a return value. |
+| `K`  | `string`                    | The type for the key.                   |
+| `D`  | `DetailsBaseType \| string` | The type of resource as a return value. |
 
-| Method                                                            | Description                                                                               |
-| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `getAsync(key: K): Promise<T \| undefined>`                       | The function acquires the resource corresponding to the key asynchronously.               |
-| `getCategoryDetailAsync(): Promise<DetailsBaseType \| undefined>` | The function acquires the resource corresponding to the specific category asynchronously. |
+| Method                                              | Description                                                                               |
+| :-------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `getAsync(key: K): Promise<T \| undefined>`         | The function acquires the resource corresponding to the key asynchronously.               |
+| `getCategoryDetailAsync(): Promise<D \| undefined>` | The function acquires the resource corresponding to the specific category asynchronously. |
 
 ### `VectorType`
 

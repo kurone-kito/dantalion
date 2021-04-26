@@ -56,7 +56,7 @@ export const management = getResourcesAccessor<DetailsType, Management>(
  * The instance provides a set of functions that retrieve human-readable
  * resources related to an environment that is easy to get motivated.
  */
-export const motivation: ResourcesAccessor<string, Motivation> = {
+export const motivation: ResourcesAccessor<string, Motivation, string> = {
   getAsync: async (key) => (await getResourcesAsync())(`motivation.${key}`),
   getCategoryDetailAsync: async () =>
     (await getResourcesAsync())('motivation.detail'),

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import commander from 'commander';
-import 'ts-polyfill';
 import { version } from '../package.json';
 import detail from './detail';
 import personality from './personality';

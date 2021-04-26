@@ -27,7 +27,7 @@
     "lint": "eslint --cache --fix .",
     "prepack": "tsc --project tsconfig.build.json",
     "start": "tsc --project tsconfig.build.json --watch",
-    "test": "echo \"Warn: run tests from root\""
+    "test": "jest --coverage"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -36,8 +36,7 @@
   },
   "dependencies": {
     "@kurone-kito/dantalion-core": "^0.4.0",
-    "i18next": "^20.2.1",
-    "ts-polyfill": "^3.8.2"
+    "i18next": "^20.2.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
