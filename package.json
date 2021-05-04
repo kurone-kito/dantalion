@@ -24,7 +24,7 @@
     "access": "public"
   },
   "scripts": {
-    "dantalion": "lerna run --loglevel=silent --no-prefix --scope=@kurone-kito/dantalion-cli --stream dantalion --",
+    "dantalion": "lerna exec --loglevel=silent --no-prefix --scope=@kurone-kito/dantalion-cli -- npm run dantalion --",
     "lint": "lerna exec --concurrency 1 --no-bail -- npm run lint",
     "prepack": "lerna exec --concurrency 1 -- npm run prepack",
     "prepare": "lerna clean --yes && lerna bootstrap",
