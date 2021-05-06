@@ -1,3 +1,5 @@
+import semverGte from 'semver/functions/gte';
+
 /**
  * Get the locale information from the Intl API.
  *
@@ -5,7 +7,7 @@
  * it may get the default results.
  */
 const getLocaleFromIntlApi = () =>
-  Intl.DateTimeFormat().resolvedOptions().locale;
+  Intl?.DateTimeFormat?.()?.resolvedOptions?.()?.locale;
 
 /**
  * Get the locale information from the environment variables.
@@ -29,12 +31,7 @@ const getLocaleFromEnv = () => {
  * In NodeJS v12 or later, it can get correct locale information from
  * Intl API. But also, v12._0_.x has a problem in Intl API.
  */
-const isAvailableDefaultNodeICU = () => {
-  const match = process.version.match(/^v(\d{1,2})\.(\d{1,2})\./);
-  const major = Number.parseInt(match?.[1] ?? '0', 10);
-  const minor = Number.parseInt(match?.[2] ?? '0', 10);
-  return major >= 13 || (major === 12 && minor >= 1);
-};
+const isAvailableDefaultNodeICU = () => semverGte(process.version, '12.1.0');
 
 /** Detect the current environment is on the browser. */
 const isBrowser = () =>
