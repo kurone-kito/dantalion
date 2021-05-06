@@ -4,10 +4,7 @@ import commander from 'commander';
 import { version } from '../package.json';
 import detail from './detail';
 import personality from './personality';
-
-const showJson = (result: unknown) =>
-  // eslint-disable-next-line no-console
-  console.info(JSON.stringify(result, null, 2));
+import showJson from './render/showJson';
 
 [detail, personality].forEach(({ action, alias, command, description }) => {
   commander
