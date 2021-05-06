@@ -7,7 +7,10 @@ is using the method of _Four Pillars of Destiny (Ba-Zi)_.
 
 This package is a library that obtains human-readable (Markdown format)
 details for the output of the `@kurone-kito/dantalion-core` package.
-It's only in Japanese yet, but we'll gradually support multiple languages.
+
+This library uses the Intl API to determine the language and outputs
+it in the appropriate language. It's only in Japanese and partly English
+yet, but we'll gradually support multiple languages.
 
 ## Usage
 

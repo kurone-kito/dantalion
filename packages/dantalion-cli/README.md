@@ -16,7 +16,8 @@ is using the method of _Four Pillars of Destiny (Ba-Zi)_.
 
 ## Usage
 
-Require: Node.js >= v12
+- Require: Node.js >= v12
+- OS independent (It's a terminal app)
 
 ### Install
 
@@ -92,6 +93,11 @@ dantalion details 555
   "vector": "economically"
 }
 ```
+
+## See also
+
+- [See the wiki for more details.](https://github.com/kurone-kito/dantalion/wiki)
+- Wikipedia: [Four Pillars of Destiny (Ba-Zi)](https://en.wikipedia.org/wiki/Four_Pillars_of_Destiny)
 
 ## License
 
