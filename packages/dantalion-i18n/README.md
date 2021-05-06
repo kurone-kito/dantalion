@@ -73,6 +73,15 @@ The instance provides a set of functions that retrieve human-readable resources 
 - Type: `ResourcesAccessor<DetailsType, Communication>`
 - The [`Communication`](../dantalion-core#communication) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
+### `getLocale(): string | undefined`
+
+It provides the appropriate locale information acquisition function according to the current environment.
+
+For Node.js version 12.1.0 and later or web browsers, it depends on the [Intl API](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl)'s decision. If not, it determines by the environment variables.
+
+- Arguments: _(None)_
+- Returns: The locale string e.g. `en-US.utf8` or undefined value.
+
 ### `genius`
 
 The instance provides a set of functions that retrieve human-readable resources related to natural personality.

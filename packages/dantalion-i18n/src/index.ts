@@ -16,6 +16,7 @@ import type {
 import getResourcesAccessor, { ResourcesAccessor } from './resources';
 import getResourcesAsync from './resources/t';
 
+export { default as getLocale } from './getLocale';
 export type {
   DetailsBaseType,
   DetailsType,
