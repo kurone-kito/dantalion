@@ -2,7 +2,7 @@ import { getDetail, Genius, types } from '@kurone-kito/dantalion-core';
 import type { Command } from './type';
 
 const command: Command = {
-  action: (detail) => getDetail(detail as Genius) || types.genius,
+  getObject: (detail) => getDetail(detail as Genius) || types.genius,
   alias: 'dt',
   command: 'detail [genius]',
   description:

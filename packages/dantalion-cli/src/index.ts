@@ -6,13 +6,13 @@ import detail from './detail';
 import personality from './personality';
 import showJson from './render/showJson';
 
-[detail, personality].forEach(({ action, alias, command, description }) => {
+[detail, personality].forEach(({ getObject, alias, command, description }) =>
   commander
     .command(command)
     .alias(alias)
     .description(description)
-    .action(async (...args) => showJson(await action(...args)));
-});
+    .action(async (...args) => showJson(await getObject(...args)))
+);
 
 commander.version(version);
 commander.parse(process.argv);
