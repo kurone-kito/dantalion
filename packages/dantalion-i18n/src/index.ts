@@ -13,8 +13,8 @@ import type {
   PersonalityType,
   VectorType,
 } from './resources/types';
-import getResourcesAccessor, { ResourcesAccessor } from './resources';
-import getResourcesAsync from './resources/t';
+import createAccessor, { ResourcesAccessor } from './resources/createAccessor';
+import getResourcesAsync from './resources/getAsync';
 
 export { default as getLocale } from './getLocale';
 export type {
@@ -23,19 +23,19 @@ export type {
   PersonalityType,
   VectorType,
 } from './resources/types';
-export type { ResourcesAccessor } from './resources';
+export type { ResourcesAccessor } from './resources/createAccessor';
 
 /**
  * The instance provides a set of functions that retrieve
  * human-readable resources related to the thought method.
  */
-export const brain = getResourcesAccessor<DetailsType, Brain>('brain');
+export const brain = createAccessor<DetailsType, Brain>('brain');
 
 /**
  * The instance provides a set of functions that retrieve
  * human-readable resources related to dialogue policy.
  */
-export const communication = getResourcesAccessor<DetailsType, Communication>(
+export const communication = createAccessor<DetailsType, Communication>(
   'communication'
 );
 
@@ -43,15 +43,13 @@ export const communication = getResourcesAccessor<DetailsType, Communication>(
  * The instance provides a set of functions that retrieve
  * human-readable resources related to natural personality.
  */
-export const genius = getResourcesAccessor<PersonalityType, Genius>('genius');
+export const genius = createAccessor<PersonalityType, Genius>('genius');
 
 /**
  * The instance provides a set of functions that retrieve human-readable
  * resources related to risk and return thinking in specific people.
  */
-export const management = getResourcesAccessor<DetailsType, Management>(
-  'management'
-);
+export const management = createAccessor<DetailsType, Management>('management');
 
 /**
  * The instance provides a set of functions that retrieve human-readable
@@ -67,16 +65,16 @@ export const motivation: ResourcesAccessor<string, Motivation, string> = {
  * The instance provides a set of functions that retrieve
  * human-readable resources related to a talented role.
  */
-export const position = getResourcesAccessor<DetailsType, Position>('position');
+export const position = createAccessor<DetailsType, Position>('position');
 
 /**
  * The instance provides a set of functions that retrieve
  * human-readable resources related to on-site or behind.
  */
-export const response = getResourcesAccessor<DetailsType, Response>('response');
+export const response = createAccessor<DetailsType, Response>('response');
 
 /**
  * The instance provides a set of functions that retrieve human-readable
  * resources related to the major classification of personality.
  */
-export const vector = getResourcesAccessor<VectorType, Vector>('vector');
+export const vector = createAccessor<VectorType, Vector>('vector');

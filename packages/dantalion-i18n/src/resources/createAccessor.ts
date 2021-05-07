@@ -1,4 +1,4 @@
-import getResourcesAsync from './t';
+import getResourcesAsync from './getAsync';
 import type { DetailsBaseType } from './types';
 
 /**
