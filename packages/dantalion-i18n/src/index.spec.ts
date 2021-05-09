@@ -13,6 +13,8 @@ import {
   brain,
   communication,
   genius,
+  getDescriptionAsync,
+  getLocale,
   lifeBase,
   management,
   motivation,
@@ -22,6 +24,39 @@ import {
 } from '.';
 
 describe('integration testing', () => {
+  describe('`getDescriptionAsync()` function', () => {
+    it('Get the specified object', async () =>
+      expect(await getDescriptionAsync()).toEqual({
+        detail: expect.any(String),
+        details: expect.any(String),
+        genius1: expect.any(String),
+        genius2: expect.any(String),
+        invalid: expect.any(String),
+        keyword: expect.any(String),
+        personality: expect.any(String),
+        strategy: expect.any(String),
+        weak: expect.any(String),
+      }));
+    it.each(['foo', 'bar'])(
+      '("%s") => includes the same string',
+      async (placeholder) =>
+        expect(await getDescriptionAsync(placeholder)).toEqual({
+          detail: expect.stringContaining(placeholder),
+          details: expect.any(String),
+          genius1: expect.any(String),
+          genius2: expect.any(String),
+          invalid: expect.stringContaining(placeholder),
+          keyword: expect.any(String),
+          personality: expect.stringContaining(placeholder),
+          strategy: expect.any(String),
+          weak: expect.any(String),
+        })
+    );
+  });
+  describe('`getLocale()` function', () => {
+    it('Get the string', () => expect(getLocale()).toEqual(expect.any(String)));
+    it('Get the same value', () => expect(getLocale()).toBe(getLocale()));
+  });
   describe('The `brain` instance', () => {
     it('getCategoryDetailAsync() method', async () =>
       expect(await brain.getCategoryDetailAsync()).toEqual({

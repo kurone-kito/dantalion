@@ -3,6 +3,7 @@ export {
   brain,
   communication,
   genius,
+  getDescriptionAsync,
   lifeBase,
   management,
   motivation,

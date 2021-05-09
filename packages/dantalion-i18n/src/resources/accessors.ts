@@ -10,12 +10,13 @@ import type {
   Vector,
 } from '@kurone-kito/dantalion-core';
 import type {
+  DesctiptionsType,
   DetailsType,
   PersonalityDetailType,
   PersonalityType,
   VectorType,
 } from './types';
-import createAccessor, { ResourcesAccessor } from './createAccessor';
+import createAccessor, { getAsync, ResourcesAccessor } from './createAccessor';
 import getResourcesAsync from './getAsync';
 
 /**
@@ -41,6 +42,15 @@ export const genius = createAccessor<
   Genius,
   PersonalityDetailType
 >('genius');
+
+/**
+ * Get the resources of the descriptions heading.
+ * @param type The genius type or birthday.
+ */
+export const getDescriptionAsync = (
+  type?: string
+): Promise<DesctiptionsType | undefined> =>
+  getAsync<DesctiptionsType>('descriptions', { type });
 
 /**
  * The instance provides a set of functions that retrieve

@@ -76,6 +76,14 @@ The instance provides a set of functions that retrieve human-readable resources 
 - Type: `ResourcesAccessor<DetailsType, Communication>`
 - The [`Communication`](../dantalion-core#communication) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
+### `getDescriptionAsync(type?: string): Promise<DesctiptionsType | undefined>`
+
+Get the resources of the descriptions heading.
+
+- Arguments:
+  - `type?: string | undefined`: The genius type or birthday.
+- Returns: The resources of the descriptions heading. ([`DesctiptionsType`](#desctiptionstype))
+
 ### `getLocale(): string | undefined`
 
 It provides the appropriate locale information acquisition function according to the current environment.

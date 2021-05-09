@@ -38,7 +38,9 @@ export interface ResourcesAccessor<
  * the function returns an undefined value.
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
-const getAsync = async <T extends object>(key: string) => {
+export const getAsync = async <T extends object>(
+  key: string
+): Promise<T | undefined> => {
   const t = await getResourcesAsync();
   const result = t<string | T>(key, { returnObjects: true });
   return typeof result === 'string' ? undefined : result;
