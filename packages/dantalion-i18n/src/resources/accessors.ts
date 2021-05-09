@@ -9,7 +9,12 @@ import type {
   Response,
   Vector,
 } from '@kurone-kito/dantalion-core';
-import type { DetailsType, PersonalityType, VectorType } from './types';
+import type {
+  DetailsType,
+  PersonalityDetailType,
+  PersonalityType,
+  VectorType,
+} from './types';
 import createAccessor, { ResourcesAccessor } from './createAccessor';
 import getResourcesAsync from './getAsync';
 
@@ -31,7 +36,11 @@ export const communication = createAccessor<DetailsType, Communication>(
  * The instance provides a set of functions that retrieve
  * human-readable resources related to natural personality.
  */
-export const genius = createAccessor<PersonalityType, Genius>('genius');
+export const genius = createAccessor<
+  PersonalityType,
+  Genius,
+  PersonalityDetailType
+>('genius');
 
 /**
  * The instance provides a set of functions that retrieve

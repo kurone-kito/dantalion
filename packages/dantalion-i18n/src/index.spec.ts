@@ -56,7 +56,10 @@ describe('integration testing', () => {
     it('getCategoryDetailAsync() method', async () =>
       expect(await genius.getCategoryDetailAsync()).toEqual({
         detail: expect.any(String),
+        inner: expect.any(String),
         name: expect.any(String),
+        outer: expect.any(String),
+        workStyle: expect.any(String),
       }));
     it.each<Genius>([
       '000',

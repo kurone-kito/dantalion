@@ -89,7 +89,7 @@ For Node.js version 12.1.0 and later or web browsers, it depends on the [Intl AP
 
 The instance provides a set of functions that retrieve human-readable resources related to natural personality.
 
-- Type: `ResourcesAccessor<PersonalityType, Genius>`
+- Type: `ResourcesAccessor<PersonalityType, Genius, PersonalityDetailType>`
 - The [`Genius`](../dantalion-core#genius) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
 ### `lifeBase`
