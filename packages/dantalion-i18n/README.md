@@ -139,6 +139,36 @@ The instance provides a set of functions that retrieve human-readable resources 
 The strings contained in the object are in Markdown format. In the
 case of an array of strings, the elements separate for each paragraph.
 
+### `DesctiptionsType`
+
+The type definition that the resources of description.
+
+```ts
+interface DesctiptionsType {
+  readonly detail: string;
+  readonly details: string;
+  readonly genius1: string;
+  readonly genius2: string;
+  readonly invalid: string;
+  readonly keyword: string;
+  readonly personality: string;
+  readonly strategy: string;
+  readonly weak: string;
+}
+```
+
+| Property      | Type     | Description                                        |
+| :------------ | :------- | :------------------------------------------------- |
+| `detail`      | `string` | The title of the detail.                           |
+| `details`     | `string` | The title of the details list.                     |
+| `genius1`     | `string` | The detail of the genius.                          |
+| `genius2`     | `string` | The detail of the genius.                          |
+| `invalid`     | `string` | The error message when specified invalid birthday. |
+| `keyword`     | `string` | The keywords.                                      |
+| `personality` | `string` | The title of personality.                          |
+| `strategy`    | `string` | The strategy.                                      |
+| `weak`        | `string` | The weak points.                                   |
+
 ### `DetailsBaseType`
 
 The type definition that the pair of name and detail.
@@ -172,6 +202,28 @@ interface DetailsType {
 | `detail` | `string`            | The detail.                     |
 | `more`   | `readonly string[]` | The more detailed descriptions. |
 | `name`   | `string`            | The resource name as a heading. |
+
+### `PersonalityDetailType`
+
+The type definition that the details of personality.
+
+```ts
+export interface PersonalityDetailType {
+  readonly detail: string;
+  readonly inner: string;
+  readonly name: string;
+  readonly outer: string;
+  readonly workStyle: string;
+}
+```
+
+| Property    | Type     | Description                             |
+| :---------- | :------- | :-------------------------------------- |
+| `detail`    | `string` | The detail.                             |
+| `inner`     | `string` | The resource of inner personality.      |
+| `name`      | `string` | The resource name as a heading.         |
+| `outer`     | `string` | The resource of outer personality.      |
+| `workStyle` | `string` | The resource of personality at working. |
 
 ### `PersonalityType`
 

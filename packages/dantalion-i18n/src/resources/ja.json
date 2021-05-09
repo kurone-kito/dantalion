@@ -43,6 +43,15 @@
       ]
     }
   },
+  "descriptions": {
+    "detail": "性格タイプ {{type}} の詳細、および取扱方法",
+    "details": "有効な性格タイプ一覧",
+    "invalid": "無効な誕生日 {{type}} を検出しました。1873-02-01 から 2050-12-31 までのみ対応しています。",
+    "keyword": "キーワード",
+    "personality": "誕生日が {{type}} の人の性格と、取扱方法",
+    "strategy": "攻略法",
+    "weak": "弱点"
+  },
   "genius": {
     "detail": {
       "name": "素質",

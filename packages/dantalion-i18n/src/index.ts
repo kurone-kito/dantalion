@@ -12,8 +12,10 @@ export {
 } from './resources/accessors';
 export type { ResourcesAccessor } from './resources/createAccessor';
 export type {
+  DesctiptionsType,
   DetailsBaseType,
   DetailsType,
+  PersonalityDetailType,
   PersonalityType,
   VectorType,
 } from './resources/types';

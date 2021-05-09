@@ -1,3 +1,25 @@
+/** The type definition that the resources of description. */
+export interface DesctiptionsType {
+  /** The title of the detail. */
+  readonly detail: string;
+  /** The title of the details list. */
+  readonly details: string;
+  /** The detail of the genius. */
+  readonly genius1: string;
+  /** The detail of the genius. */
+  readonly genius2: string;
+  /** The error message when specified invalid birthday. */
+  readonly invalid: string;
+  /** The keywords. */
+  readonly keyword: string;
+  /** The title of personality. */
+  readonly personality: string;
+  /** The strategy. */
+  readonly strategy: string;
+  /** The weak points. */
+  readonly weak: string;
+}
+
 /**
  * The base type definition in the structure of a resource.
  * @template D The type of details.
@@ -20,6 +42,16 @@ export interface DetailsType extends DetailsBaseType {
    * It stores in an array format with elements divided for each paragraph.
    */
   readonly more: readonly string[];
+}
+
+/** The type definition that the details of personality. */
+export interface PersonalityDetailType extends DetailsBaseType {
+  /** The resource of inner personality. */
+  readonly inner: string;
+  /** The resource of outer personality. */
+  readonly outer: string;
+  /** The resource of personality at working. */
+  readonly workStyle: string;
 }
 
 /**
