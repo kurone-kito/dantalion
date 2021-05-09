@@ -92,6 +92,13 @@ The instance provides a set of functions that retrieve human-readable resources 
 - Type: `ResourcesAccessor<PersonalityType, Genius>`
 - The [`Genius`](../dantalion-core#genius) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
+### `lifeBase`
+
+The instance provides a set of functions that retrieve human-readable resources related to the base of ego type.
+
+- Type: `ResourcesAccessor<string, LifeBase, string>`
+- The [`LifeBase`](../dantalion-core#lifebase) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
 ### `management`
 
 The instance provides a set of functions that retrieve human-readable resources related to risk and return thinking in specific people.

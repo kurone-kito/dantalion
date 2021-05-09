@@ -3,6 +3,7 @@ export {
   brain,
   communication,
   genius,
+  lifeBase,
   management,
   motivation,
   position,

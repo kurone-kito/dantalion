@@ -2,6 +2,7 @@ import type {
   Brain,
   Communication,
   Genius,
+  LifeBase,
   Management,
   Motivation,
   Position,
@@ -12,6 +13,7 @@ import {
   brain,
   communication,
   genius,
+  lifeBase,
   management,
   motivation,
   position,
@@ -78,6 +80,26 @@ describe('integration testing', () => {
         summary: expect.any(String),
         weak: expect.any(Array),
       })
+    );
+  });
+  describe('The `lifeBase` instance', () => {
+    it('getCategoryDetailAsync() method', async () =>
+      expect(await lifeBase.getCategoryDetailAsync()).toEqual(
+        expect.any(String)
+      ));
+    it.each<LifeBase>([
+      'application',
+      'association',
+      'development',
+      'expression',
+      'finance',
+      'investment',
+      'organization',
+      'quest',
+      'selfMind',
+      'selfReliance',
+    ])('getAsync("%s") method', async (key) =>
+      expect(await lifeBase.getAsync(key)).toEqual(expect.any(String))
     );
   });
   describe('The `management` instance', () => {

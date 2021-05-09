@@ -252,6 +252,19 @@
       ]
     }
   },
+  "lifeBase": {
+    "detail": "人生観",
+    "application": "何でも自主体験する自分でありたい",
+    "association": "とにかく行動第一な自分でありたい",
+    "development": "より完璧な自分を築き続ける自分でありたい",
+    "expression": "ありのままの素直な自分でありたい",
+    "finance": "コレクターな自分でありたい",
+    "investment": "堅実な収集家としての自分でありたい",
+    "organization": "集団の一員としての自分でありたい",
+    "quest": "先人の知恵から学ぶ自分でありたい",
+    "selfMind": "集団のリーダーな自分でありたい",
+    "selfReliance": "一匹オオカミな自分でありたい"
+  },
   "management": {
     "detail": {
       "name": "マネジメント",

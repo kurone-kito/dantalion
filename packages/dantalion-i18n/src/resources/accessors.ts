@@ -2,6 +2,7 @@ import type {
   Brain,
   Communication,
   Genius,
+  LifeBase,
   Management,
   Motivation,
   Position,
@@ -31,6 +32,16 @@ export const communication = createAccessor<DetailsType, Communication>(
  * human-readable resources related to natural personality.
  */
 export const genius = createAccessor<PersonalityType, Genius>('genius');
+
+/**
+ * The instance provides a set of functions that retrieve
+ * human-readable resources related to the base of ego type.
+ */
+export const lifeBase: ResourcesAccessor<string, LifeBase, string> = {
+  getAsync: async (key) => (await getResourcesAsync())(`lifeBase.${key}`),
+  getCategoryDetailAsync: async () =>
+    (await getResourcesAsync())('lifeBase.detail'),
+};
 
 /**
  * The instance provides a set of functions that retrieve human-readable
