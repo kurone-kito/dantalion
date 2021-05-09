@@ -214,11 +214,11 @@ interface ResourcesAccessor<
 }
 ```
 
-| Type | Constraint                  | Description                             |
-| :--- | :-------------------------- | :-------------------------------------- |
-| `T`  | `object \| string`          | The type of resource as a return value. |
-| `K`  | `string`                    | The type for the key.                   |
-| `D`  | `DetailsBaseType \| string` | The type of resource as a return value. |
+| Type | Constraint                  | Description                                                |
+| :--- | :-------------------------- | :--------------------------------------------------------- |
+| `T`  | `object \| string`          | The type of resource as a return value.                    |
+| `K`  | `string`                    | The type for the key.                                      |
+| `D`  | `DetailsBaseType \| string` | The type of resource as a return value of category detail. |
 
 | Method                                              | Description                                                                               |
 | :-------------------------------------------------- | :---------------------------------------------------------------------------------------- |
