@@ -82,7 +82,7 @@ export interface PersonalityType
  * A type definition of a structure that
  * stores a description of a personality type.
  */
-export interface VectorType extends DetailsBaseType {
+export interface VectorType extends DetailsBaseTypeGeneric<readonly string[]> {
   /**
    * The strategies for communicating with people of this personality type.
    *
