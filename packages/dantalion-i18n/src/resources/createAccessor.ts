@@ -1,3 +1,4 @@
+import type { StringMap } from 'i18next';
 import getResourcesAsync from './getAsync';
 import type { DetailsBaseType } from './types';
 
@@ -32,6 +33,7 @@ export interface ResourcesAccessor<
  * The function acquires the resource corresponding to the key asynchronously.
  * @template T The type of resource as a return value.
  * @param key The key.
+ * @param placeholder The placeholder for i18next.
  * @returns The resources object.
  *
  * If the resource associated with the specified key does not exist,
@@ -39,10 +41,11 @@ export interface ResourcesAccessor<
  */
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const getAsync = async <T extends object>(
-  key: string
+  key: string,
+  placeholder?: StringMap
 ): Promise<T | undefined> => {
   const t = await getResourcesAsync();
-  const result = t<string | T>(key, { returnObjects: true });
+  const result = t<string | T>(key, { returnObjects: true, ...placeholder });
   return typeof result === 'string' ? undefined : result;
 };
 
