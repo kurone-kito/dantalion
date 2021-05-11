@@ -31,7 +31,8 @@ npm install -g @kurone-kito/dantalion-cli
 dantalion personality 1993-10-09
 ```
 
-#### Result
+<!-- markdownlint-disable MD033 -->
+<details><summary>Result</summary>
 
 ```json
 {
@@ -44,13 +45,17 @@ dantalion personality 1993-10-09
 }
 ```
 
+</details>
+<!-- markdownlint-enable MD033 -->
+
 ### Get detailed information on personality
 
 ```sh
 dantalion details 555
 ```
 
-#### Result
+<!-- markdownlint-disable MD033 -->
+<details><summary>Result</summary>
 
 ```json
 {
@@ -93,6 +98,9 @@ dantalion details 555
   "vector": "economically"
 }
 ```
+
+</details>
+<!-- markdownlint-enable MD033 -->
 
 ## See also
 
