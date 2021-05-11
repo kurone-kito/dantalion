@@ -6,7 +6,7 @@ const command: Command = {
   alias: 'dt',
   command: 'detail [genius]',
   description:
-    'Show detail of genius. If the argument is not specified, show a list of genius types.',
+    'Show detail of genius. If omitted the argument, show a list of genius types.',
 };
 
 export default command;
