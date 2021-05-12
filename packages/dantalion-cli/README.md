@@ -27,8 +27,41 @@ npm install -g @kurone-kito/dantalion-cli
 
 ### Get the personality
 
+#### If you want the **human-readable** result (Markdown)
+
+NOTE: It omits some minor information.
+
 ```sh
 dantalion personality 1993-10-09
+```
+
+<!-- markdownlint-disable MD033 -->
+<details><summary>Result</summary>
+
+```md
+# Dantalion: 誕生日が Sat Oct 09 1993 の人の性格と、取扱方法
+
+## 性格の大分類
+
+人の性格は大きく 3 つ、アート脳タイプ・理系脳タイプ・文系脳タイプに分類できます。
+
+### 理系脳タイプ
+
+    * 己の富のためを根底のエゴとし、効率性を追求するタイプです。
+    * スペック至上主義の傾向があり、ブランドものを軽視する傾向が強いです。ただし、ブランドも一種のスペックと考え、重視する人も稀にいます。
+    * 理系脳タイプは、長話をあまり聞けません。「つまりこういうことだよね？」と、脳内で要点だけかいつまんで理解しようとします。
+
+:
+:
+```
+
+</details>
+<!-- markdownlint-enable MD033 -->
+
+#### If you want the **JSON formatted** result
+
+```sh
+dantalion personality --raw 1993-10-09
 ```
 
 <!-- markdownlint-disable MD033 -->
@@ -50,8 +83,41 @@ dantalion personality 1993-10-09
 
 ### Get detailed information on personality
 
+#### If you want the **human-readable** result (Markdown)
+
+NOTE: It omits some minor information.
+
 ```sh
 dantalion details 555
+```
+
+<!-- markdownlint-disable MD033 -->
+<details><summary>Result</summary>
+
+```md
+# Dantalion: 性格タイプ 555 の詳細、および取扱方法
+
+## 性格の大分類
+
+人の性格は大きく 3 つ、アート脳タイプ・理系脳タイプ・文系脳タイプに分類できます。
+
+### 理系脳タイプ
+
+    * 己の富のためを根底のエゴとし、効率性を追求するタイプです。
+    * スペック至上主義の傾向があり、ブランドものを軽視する傾向が強いです。ただし、ブランドも一種のスペックと考え、重視する人も稀にいます。
+    * 理系脳タイプは、長話をあまり聞けません。「つまりこういうことだよね？」と、脳内で要点だけかいつまんで理解しようとします。
+
+    :
+    :
+```
+
+</details>
+<!-- markdownlint-enable MD033 -->
+
+#### If you want the **JSON formatted** result
+
+```sh
+dantalion details --raw 555
 ```
 
 <!-- markdownlint-disable MD033 -->
@@ -97,6 +163,35 @@ dantalion details 555
   "response": "action",
   "vector": "economically"
 }
+```
+
+</details>
+<!-- markdownlint-enable MD033 -->
+
+### Get the types list of personality
+
+```sh
+dantalion details
+```
+
+<!-- markdownlint-disable MD033 -->
+<details><summary>Result</summary>
+
+```md
+# Dantalion: 有効な性格タイプ一覧
+
+    * 000
+    * 001
+    * 012
+    * 024
+    * 025
+    * 100
+    * 108
+    * 125
+    * 555
+    * 789
+    * 888
+    * 919
 ```
 
 </details>

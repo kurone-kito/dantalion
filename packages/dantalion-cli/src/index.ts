@@ -5,13 +5,20 @@ import { version } from '../package.json';
 import detail from './detail';
 import personality from './personality';
 import showJson from './render/showJson';
+import showMd from './render/showMd';
 
-[detail, personality].forEach(({ getObject, alias, command, description }) =>
-  commander
-    .command(command)
-    .alias(alias)
-    .description(description)
-    .action(async (...args) => showJson(await getObject(...args)))
+[detail, personality].forEach(
+  ({ getDescriptionAsync, getObject, alias, command, description }) =>
+    commander
+      .command(command)
+      .alias(alias)
+      .option('-r, --raw', 'Returns the raw JSON')
+      .description(description)
+      .action(async (arg, { raw }) =>
+        !raw
+          ? showMd(await getDescriptionAsync(arg))
+          : showJson(await getObject(arg))
+      )
 );
 
 commander.version(version);
