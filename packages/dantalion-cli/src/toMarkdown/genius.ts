@@ -1,9 +1,9 @@
-import type { Personality } from '@kurone-kito/dantalion-core';
 import {
   PersonalityType,
   genius,
   getDescriptionAsync,
 } from '@kurone-kito/dantalion-i18n';
+import type { Personality } from '@kurone-kito/dantalion-core';
 import article, { Options } from './article';
 import { detailsBase } from './details';
 import { line, list, order } from './list';
@@ -58,11 +58,13 @@ export const fromGeniusForPersonalityAsync = async ({
     order(psDetails?.inner, psDetails?.outer, psDetails?.workStyle),
     descriptions?.genius2,
     ...(await Promise.all(
-      ([
-        [fromGeniusAsync, inner, psDetails?.inner],
-        [fromGeniusOnlySummary, outer, psDetails?.outer],
-        [fromGeniusOnlySummary, workStyle, psDetails?.workStyle],
-      ] as const).map(async ([fn, type, head]) =>
+      (
+        [
+          [fromGeniusAsync, inner, psDetails?.inner],
+          [fromGeniusOnlySummary, outer, psDetails?.outer],
+          [fromGeniusOnlySummary, workStyle, psDetails?.workStyle],
+        ] as const
+      ).map(async ([fn, type, head]) =>
         article({
           body: await fn(await genius.getAsync(type), 4),
           head,

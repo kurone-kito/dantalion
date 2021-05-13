@@ -29,19 +29,15 @@ export const brain = createAccessor<DetailsType, Brain>('brain');
  * The instance provides a set of functions that retrieve
  * human-readable resources related to dialogue policy.
  */
-export const communication = createAccessor<DetailsType, Communication>(
-  'communication'
-);
+export const communication =
+  createAccessor<DetailsType, Communication>('communication');
 
 /**
  * The instance provides a set of functions that retrieve
  * human-readable resources related to natural personality.
  */
-export const genius = createAccessor<
-  PersonalityType,
-  Genius,
-  PersonalityDetailType
->('genius');
+export const genius =
+  createAccessor<PersonalityType, Genius, PersonalityDetailType>('genius');
 
 /**
  * Get the resources of the descriptions heading.

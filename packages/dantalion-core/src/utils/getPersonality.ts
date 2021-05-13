@@ -44,19 +44,12 @@ export default (
     return undefined;
   }
   const { month, ...details } = getBirthdayDetails(new Date(birthObj));
-  const {
-    cycle,
-    getXY,
-    inner,
-    lifeBase,
-    outer,
-    potentials,
-    workStyle,
-  } = getFactors({
-    ...details,
-    month,
-    monthlyCoefficient: monthlyCoefficients,
-  });
+  const { cycle, getXY, inner, lifeBase, outer, potentials, workStyle } =
+    getFactors({
+      ...details,
+      month,
+      monthlyCoefficient: monthlyCoefficients,
+    });
   const lifeBaseCoef = lifeBaseCoefficients(month.month, lifeBase);
   const p = potentials.map((v) => potentialTable(getXY(v)));
   return {

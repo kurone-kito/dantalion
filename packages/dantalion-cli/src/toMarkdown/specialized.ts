@@ -1,10 +1,10 @@
-import type { LifeBase, Motivation } from '@kurone-kito/dantalion-core';
 import {
   VectorType,
   getDescriptionAsync,
   lifeBase,
   motivation,
 } from '@kurone-kito/dantalion-i18n';
+import type { LifeBase, Motivation } from '@kurone-kito/dantalion-core';
 import article from './article';
 import { line, list } from './list';
 

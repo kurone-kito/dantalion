@@ -4,17 +4,19 @@
  *
  * If omitted, its default value is empty string.
  */
-export const createListFunc = (prefix = '') => (
-  /** The strings. */
-  ...source: readonly (string | undefined)[]
-): string =>
-  `${source
-    .reduce<string>(
-      (acc, cur) => `${acc}
+export const createListFunc =
+  (prefix = '') =>
+  (
+    /** The strings. */
+    ...source: readonly (string | undefined)[]
+  ): string =>
+    `${source
+      .reduce<string>(
+        (acc, cur) => `${acc}
 ${prefix}${cur}`,
-      ''
-    )
-    .trim()}
+        ''
+      )
+      .trim()}
 `;
 
 /** Create the multiline from the array string. */
