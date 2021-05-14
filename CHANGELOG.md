@@ -2,6 +2,16 @@
 
 # Changelog
 
+## v0.5.1 (2021-05-15)
+
+### Refactored
+
+- improved the keywords for npmjs. (2f16235)
+
+### Chores
+
+- Added the tests on Node.js v16. (38cc077)
+
 ## v0.5.0 (2021-05-14)
 
 ### BREAKING CHANGES
