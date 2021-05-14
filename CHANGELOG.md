@@ -2,6 +2,45 @@
 
 # Changelog
 
+### BREAKING CHANGES
+
+- cli: In default, it outputs the human-readable (Markdown) format. (46ea07b)
+  - If you want the legacy outputs, you should specify a `--raw` option.
+
+### Features
+
+- cli: Added the outputs the human-readable (Markdown) format. (92b755a, 403d827, 8c7ab6f, c048f65)
+- cli: Improved the help messages. (4c8a233)
+- i18n: Added the `getDescriptionAsync()` API. (0a17e22, 66bb7cd)
+- i18n: Added the `getLocale()` API. (ff57cd1)
+- i18n: Added the new resources accessor, `lifeBase` API. (cb4d84a)
+- i18n: Added the some type definitions. (189edb6, 1cef8af)
+
+### Fixed
+
+- i18n: Fixed the some type has wrong. (afcc5ea, 47005ca)
+
+### Refactored
+
+- Added and updated the dependencies. (cc84027, 4603e4c)
+- i18n: Externalized the detection of the Node.js version for toggles in the detection method of locales. (b433f21)
+- i18n: Removed the unused d.ts. (b433f21)
+- i18n: Moved the internal functions. (f56e35f, ac34a8e, 5525dea)
+- Linted. (5a23f41)
+
+### Documents
+
+- i18n: Improved the resources. (54cb5b9, 817ba0e, 602f656)
+- i18n: Collapsed the results. (16c74b8)
+- Other improves. (b6b55bb, 39d522a)
+
+### Chores
+
+- Added the CommitLint with Husky. (5331375, d31686a)
+- Improved the ESLint rules. (f16d57e)
+- Improved the npm-scripts for debugging. (e2626b6)
+- Added the JSON Schema files. (0af2191)
+
 ## v0.4.1 (2021-04-26)
 
 ### Bugfix
