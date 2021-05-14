@@ -1,6 +1,6 @@
 {
   "name": "@kurone-kito/dantalion-core",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "NPM library that calculates the personality from the birthday.",
   "license": "MIT",
   "author": "kurone-kito <krone@kit.black>",
