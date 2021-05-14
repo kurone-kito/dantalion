@@ -6,11 +6,18 @@
   "license": "MIT",
   "author": "kurone-kito <krone@kit.black>",
   "keywords": [
+    "ba-zi",
     "bazi",
-    "Chinese Astrology",
-    "divination",
-    "four pillars",
-    "psychology"
+    "birthday",
+    "chinese-astrology",
+    "console",
+    "console-app",
+    "four-pillars",
+    "library",
+    "self-analysis",
+    "terminal-app",
+    "ziweidoushu",
+    "zodiac"
   ],
   "bugs": {
     "url": "https://github.com/kurone-kito/dantalion/issues"

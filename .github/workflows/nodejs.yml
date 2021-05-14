@@ -14,8 +14,9 @@ jobs:
           - '12.x'
           - '14.x'
           - '15.x'
+          - '16.x'
         cache-key:
-          - 'feb80977-6c61-b306-62a8-3312979c408b'
+          - '19a27acd-b393-4a8a-a09f-276a4663454d'
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
