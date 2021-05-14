@@ -4,18 +4,22 @@ import commander from 'commander';
 import { version } from '../package.json';
 import detail from './detail';
 import personality from './personality';
+import showJson from './render/showJson';
+import showMd from './render/showMd';
 
-const showJson = (result: unknown) =>
-  // eslint-disable-next-line no-console
-  console.info(JSON.stringify(result, null, 2));
-
-[detail, personality].forEach(({ action, alias, command, description }) => {
-  commander
-    .command(command)
-    .alias(alias)
-    .description(description)
-    .action(async (...args) => showJson(await action(...args)));
-});
+[detail, personality].forEach(
+  ({ getDescriptionAsync, getObject, alias, command, description }) =>
+    commander
+      .command(command)
+      .alias(alias)
+      .option('-r, --raw', 'Returns the raw JSON')
+      .description(description)
+      .action(async (arg, { raw }) =>
+        !raw
+          ? showMd(await getDescriptionAsync(arg))
+          : showJson(await getObject(arg))
+      )
+);
 
 commander.version(version);
 commander.parse(process.argv);

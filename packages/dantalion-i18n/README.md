@@ -7,7 +7,10 @@ is using the method of _Four Pillars of Destiny (Ba-Zi)_.
 
 This package is a library that obtains human-readable (Markdown format)
 details for the output of the `@kurone-kito/dantalion-core` package.
-It's only in Japanese yet, but we'll gradually support multiple languages.
+
+This library uses the Intl API to determine the language and outputs
+it in the appropriate language. It's only in Japanese and partly English
+yet, but we'll gradually support multiple languages.
 
 ## Usage
 
@@ -73,12 +76,36 @@ The instance provides a set of functions that retrieve human-readable resources 
 - Type: `ResourcesAccessor<DetailsType, Communication>`
 - The [`Communication`](../dantalion-core#communication) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
+### `getDescriptionAsync(type?: string): Promise<DesctiptionsType | undefined>`
+
+Get the resources of the descriptions heading.
+
+- Arguments:
+  - `type?: string | undefined`: The genius type or birthday.
+- Returns: The resources of the descriptions heading. ([`DesctiptionsType`](#desctiptionstype))
+
+### `getLocale(): string | undefined`
+
+It provides the appropriate locale information acquisition function according to the current environment.
+
+For Node.js version 12.1.0 and later or web browsers, it depends on the [Intl API](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl)'s decision. If not, it determines by the environment variables.
+
+- Arguments: _(None)_
+- Returns: The locale string e.g. `en-US.utf8` or undefined value.
+
 ### `genius`
 
 The instance provides a set of functions that retrieve human-readable resources related to natural personality.
 
-- Type: `ResourcesAccessor<PersonalityType, Genius>`
+- Type: `ResourcesAccessor<PersonalityType, Genius, PersonalityDetailType>`
 - The [`Genius`](../dantalion-core#genius) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### `lifeBase`
+
+The instance provides a set of functions that retrieve human-readable resources related to the base of ego type.
+
+- Type: `ResourcesAccessor<string, LifeBase, string>`
+- The [`LifeBase`](../dantalion-core#lifebase) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
 ### `management`
 
@@ -120,6 +147,36 @@ The instance provides a set of functions that retrieve human-readable resources 
 The strings contained in the object are in Markdown format. In the
 case of an array of strings, the elements separate for each paragraph.
 
+### `DesctiptionsType`
+
+The type definition that the resources of description.
+
+```ts
+interface DesctiptionsType {
+  readonly detail: string;
+  readonly details: string;
+  readonly genius1: string;
+  readonly genius2: string;
+  readonly invalid: string;
+  readonly keyword: string;
+  readonly personality: string;
+  readonly strategy: string;
+  readonly weak: string;
+}
+```
+
+| Property      | Type     | Description                                        |
+| :------------ | :------- | :------------------------------------------------- |
+| `detail`      | `string` | The title of the detail.                           |
+| `details`     | `string` | The title of the details list.                     |
+| `genius1`     | `string` | The detail of the genius.                          |
+| `genius2`     | `string` | The detail of the genius.                          |
+| `invalid`     | `string` | The error message when specified invalid birthday. |
+| `keyword`     | `string` | The keywords.                                      |
+| `personality` | `string` | The title of personality.                          |
+| `strategy`    | `string` | The strategy.                                      |
+| `weak`        | `string` | The weak points.                                   |
+
 ### `DetailsBaseType`
 
 The type definition that the pair of name and detail.
@@ -153,6 +210,28 @@ interface DetailsType {
 | `detail` | `string`            | The detail.                     |
 | `more`   | `readonly string[]` | The more detailed descriptions. |
 | `name`   | `string`            | The resource name as a heading. |
+
+### `PersonalityDetailType`
+
+The type definition that the details of personality.
+
+```ts
+export interface PersonalityDetailType {
+  readonly detail: string;
+  readonly inner: string;
+  readonly name: string;
+  readonly outer: string;
+  readonly workStyle: string;
+}
+```
+
+| Property    | Type     | Description                             |
+| :---------- | :------- | :-------------------------------------- |
+| `detail`    | `string` | The detail.                             |
+| `inner`     | `string` | The resource of inner personality.      |
+| `name`      | `string` | The resource name as a heading.         |
+| `outer`     | `string` | The resource of outer personality.      |
+| `workStyle` | `string` | The resource of personality at working. |
 
 ### `PersonalityType`
 
@@ -195,11 +274,11 @@ interface ResourcesAccessor<
 }
 ```
 
-| Type | Constraint                  | Description                             |
-| :--- | :-------------------------- | :-------------------------------------- |
-| `T`  | `object \| string`          | The type of resource as a return value. |
-| `K`  | `string`                    | The type for the key.                   |
-| `D`  | `DetailsBaseType \| string` | The type of resource as a return value. |
+| Type | Constraint                  | Description                                                |
+| :--- | :-------------------------- | :--------------------------------------------------------- |
+| `T`  | `object \| string`          | The type of resource as a return value.                    |
+| `K`  | `string`                    | The type for the key.                                      |
+| `D`  | `DetailsBaseType \| string` | The type of resource as a return value of category detail. |
 
 | Method                                              | Description                                                                               |
 | :-------------------------------------------------- | :---------------------------------------------------------------------------------------- |

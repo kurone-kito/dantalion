@@ -2,6 +2,7 @@ import type {
   Brain,
   Communication,
   Genius,
+  LifeBase,
   Management,
   Motivation,
   Position,
@@ -12,6 +13,9 @@ import {
   brain,
   communication,
   genius,
+  getDescriptionAsync,
+  getLocale,
+  lifeBase,
   management,
   motivation,
   position,
@@ -20,13 +24,46 @@ import {
 } from '.';
 
 describe('integration testing', () => {
+  describe('`getDescriptionAsync()` function', () => {
+    it('Get the specified object', async () =>
+      expect(await getDescriptionAsync()).toEqual({
+        detail: expect.any(String),
+        details: expect.any(String),
+        genius1: expect.any(String),
+        genius2: expect.any(String),
+        invalid: expect.any(String),
+        keyword: expect.any(String),
+        personality: expect.any(String),
+        strategy: expect.any(String),
+        weak: expect.any(String),
+      }));
+    it.each(['foo', 'bar'])(
+      '("%s") => includes the same string',
+      async (placeholder) =>
+        expect(await getDescriptionAsync(placeholder)).toEqual({
+          detail: expect.stringContaining(placeholder),
+          details: expect.any(String),
+          genius1: expect.any(String),
+          genius2: expect.any(String),
+          invalid: expect.stringContaining(placeholder),
+          keyword: expect.any(String),
+          personality: expect.stringContaining(placeholder),
+          strategy: expect.any(String),
+          weak: expect.any(String),
+        })
+    );
+  });
+  describe('`getLocale()` function', () => {
+    it('Get the string', () => expect(getLocale()).toEqual(expect.any(String)));
+    it('Get the same value', () => expect(getLocale()).toBe(getLocale()));
+  });
   describe('The `brain` instance', () => {
     it('getCategoryDetailAsync() method', async () =>
       expect(await brain.getCategoryDetailAsync()).toEqual({
         detail: expect.any(String),
         name: expect.any(String),
       }));
-    it.each<Brain>(['left', 'right'])('getAsync(%s) method', async (key) =>
+    it.each<Brain>(['left', 'right'])('getAsync("%s") method', async (key) =>
       expect(await brain.getAsync(key)).toEqual({
         detail: expect.any(String),
         more: expect.any(Array),
@@ -41,7 +78,7 @@ describe('integration testing', () => {
         name: expect.any(String),
       }));
     it.each<Communication>(['fix', 'flex'])(
-      'getAsync(%s) method',
+      'getAsync("%s") method',
       async (key) =>
         expect(await communication.getAsync(key)).toEqual({
           detail: expect.any(String),
@@ -54,7 +91,10 @@ describe('integration testing', () => {
     it('getCategoryDetailAsync() method', async () =>
       expect(await genius.getCategoryDetailAsync()).toEqual({
         detail: expect.any(String),
+        inner: expect.any(String),
         name: expect.any(String),
+        outer: expect.any(String),
+        workStyle: expect.any(String),
       }));
     it.each<Genius>([
       '000',
@@ -69,7 +109,7 @@ describe('integration testing', () => {
       '789',
       '888',
       '919',
-    ])('getAsync(%s) method', async (key) =>
+    ])('getAsync("%s") method', async (key) =>
       expect(await genius.getAsync(key)).toEqual({
         detail: expect.any(Array),
         keyword: expect.any(Array),
@@ -80,18 +120,40 @@ describe('integration testing', () => {
       })
     );
   });
+  describe('The `lifeBase` instance', () => {
+    it('getCategoryDetailAsync() method', async () =>
+      expect(await lifeBase.getCategoryDetailAsync()).toEqual(
+        expect.any(String)
+      ));
+    it.each<LifeBase>([
+      'application',
+      'association',
+      'development',
+      'expression',
+      'finance',
+      'investment',
+      'organization',
+      'quest',
+      'selfMind',
+      'selfReliance',
+    ])('getAsync("%s") method', async (key) =>
+      expect(await lifeBase.getAsync(key)).toEqual(expect.any(String))
+    );
+  });
   describe('The `management` instance', () => {
     it('getCategoryDetailAsync() method', async () =>
       expect(await management.getCategoryDetailAsync()).toEqual({
         detail: expect.any(String),
         name: expect.any(String),
       }));
-    it.each<Management>(['care', 'hope'])('getAsync(%s) method', async (key) =>
-      expect(await management.getAsync(key)).toEqual({
-        detail: expect.any(String),
-        more: expect.any(Array),
-        name: expect.any(String),
-      })
+    it.each<Management>(['care', 'hope'])(
+      'getAsync("%s") method',
+      async (key) =>
+        expect(await management.getAsync(key)).toEqual({
+          detail: expect.any(String),
+          more: expect.any(Array),
+          name: expect.any(String),
+        })
     );
   });
   describe('The `motivation` instance', () => {
@@ -106,7 +168,7 @@ describe('integration testing', () => {
       'safety',
       'skillUp',
       'status',
-    ])('getAsync(%s) method', async (key) =>
+    ])('getAsync("%s") method', async (key) =>
       expect(await motivation.getAsync(key)).toEqual(expect.any(String))
     );
   });
@@ -117,7 +179,7 @@ describe('integration testing', () => {
         name: expect.any(String),
       }));
     it.each<Position>(['adjust', 'brain', 'direct', 'quick'])(
-      'getAsync(%s) method',
+      'getAsync("%s") method',
       async (key) =>
         expect(await position.getAsync(key)).toEqual({
           detail: expect.any(String),
@@ -132,12 +194,14 @@ describe('integration testing', () => {
         detail: expect.any(String),
         name: expect.any(String),
       }));
-    it.each<Response>(['action', 'mind'])('getAsync(%s) method', async (key) =>
-      expect(await response.getAsync(key)).toEqual({
-        detail: expect.any(String),
-        more: expect.any(Array),
-        name: expect.any(String),
-      })
+    it.each<Response>(['action', 'mind'])(
+      'getAsync("%s") method',
+      async (key) =>
+        expect(await response.getAsync(key)).toEqual({
+          detail: expect.any(String),
+          more: expect.any(Array),
+          name: expect.any(String),
+        })
     );
   });
   describe('The `vector` instance', () => {
@@ -147,7 +211,7 @@ describe('integration testing', () => {
         name: expect.any(String),
       }));
     it.each<Vector>(['authority', 'economically', 'humanely'])(
-      'getAsync(%s) method',
+      'getAsync("%s") method',
       async (key) =>
         expect(await vector.getAsync(key)).toEqual({
           detail: expect.any(Array),

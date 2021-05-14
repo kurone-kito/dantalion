@@ -25,6 +25,9 @@ rules:
     - error
     - devDependencies:
         - '**/*.config.?s'
+  sort-imports:
+    - warn
+    - ignoreDeclarationSort: true
 settings:
   import/resolver:
     node:

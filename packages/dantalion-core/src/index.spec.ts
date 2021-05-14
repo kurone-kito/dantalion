@@ -17,12 +17,7 @@ describe('integration testing', () => {
     );
   });
   describe('get the personality', () => {
-    it.each([
-      '1873-01-31',
-      '2051-01-01',
-      'NaN',
-      '',
-    ])(
+    it.each(['1873-01-31', '2051-01-01', 'NaN', ''])(
       'Return an undefined value when specified an out ranged date: “%s”',
       (date) => expect(getPersonality(date)).toBeUndefined()
     );

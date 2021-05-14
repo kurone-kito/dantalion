@@ -24,10 +24,12 @@
     "access": "public"
   },
   "scripts": {
-    "dantalion": "lerna run --loglevel=silent --no-prefix --scope=@kurone-kito/dantalion-cli --stream dantalion --",
+    "dantalion": "lerna exec --loglevel=silent --no-prefix --scope=@kurone-kito/dantalion-cli -- npm run dantalion --",
     "lint": "lerna exec --concurrency 1 --no-bail -- npm run lint",
     "prepack": "lerna exec --concurrency 1 -- npm run prepack",
-    "prepare": "lerna clean --yes && lerna bootstrap",
+    "prepare": "run-s prepare:*",
+    "prepare:husky": "husky install",
+    "prepare:lerna": "lerna clean --yes && lerna bootstrap",
     "start": "lerna run start --parallel --stream",
     "test": "lerna exec --concurrency 1 --no-bail -- npm test"
   },
@@ -35,7 +37,11 @@
     "node": ">=12"
   },
   "devDependencies": {
+    "@commitlint/cli": "^12.1.4",
+    "@commitlint/config-conventional": "^12.1.4",
     "@octokit/core": "^3.4.0",
-    "lerna": "^4.0.0"
+    "husky": "^6.0.0",
+    "lerna": "^4.0.0",
+    "npm-run-all": "^4.1.5"
   }
 }
