@@ -2,6 +2,8 @@
 
 # Changelog
 
+## v0.5.0 (2021-05-14)
+
 ### BREAKING CHANGES
 
 - cli: In default, it outputs the human-readable (Markdown) format. (46ea07b)
