@@ -33,7 +33,7 @@ export const detailsBase = ({
 }: Options<DetailsBaseType>): string =>
   source
     ? article({
-        body: `${source.detail}${additional}`,
+        body: `${source.detail} ${additional}`,
         head: source.name,
         level,
       })

@@ -1,0 +1,268 @@
+{
+  "brain": {
+    "detail": {
+      "detail": "Depending on the person, they can divide into the “$t(brain.left.name)” type or the “$t(brain.right.name)” type.",
+      "name": "Thinking methods"
+    },
+    "left": {
+      "detail": "They are excellent at logical thinking.",
+      "more": [
+        "While they are good at thinking based on numbers and data, they tend to confuse in rambling situations.",
+        "They tend to stick to numerical evidence and are not good at working intuitively."
+      ],
+      "name": "Left-brained thinking"
+    },
+    "right": {
+      "name": "Right-brained thinking",
+      "detail": "They are excellent at **intuitive thinking**.",
+      "more": [
+        "While they're **good at using imagination**, such as brainstorming, They tend to disregard the evidence and move with intuition first.",
+        "In **complicated situations**, they are **easy to stop thinking**."
+      ]
+    }
+  },
+  "communication": {
+    "detail": {
+      "detail": "Depending on the person, they can divide into the “$t(communication.fix.name)” type or the “$t(communication.flex.name) type.",
+      "name": "Ways of thinking in dialogue"
+    },
+    "fix": {
+      "detail": "They do dialogue that proceeds with a conclusion.",
+      "more": [
+        "They tend to rationalize and get their point across.",
+        "They are relieved when things are clearly defined, such as time and place, but tend to feel uneasy when things are unclear."
+      ],
+      "name": "**Fix**: Clarification-oriented"
+    },
+    "flex": {
+      "name": "**Flex**: Liquidity-oriented",
+      "detail": "They are good at concluding **fluidly**.",
+      "more": [
+        "They also tend to use emotionalism to get their point across.",
+        "They can manage with ambiguity in terms of time, place, etc., but they **feel constrained when it comes to clarity**."
+      ]
+    }
+  },
+  "descriptions": {
+    "detail": "Details of people whose personality type is classified as {{type}}, and how to handle them.",
+    "details": "List of available personality type codes",
+    "genius1": "A person has three of these personalities, and the personality that emerges varies depending on the situation.",
+    "genius2": "Of these, “$t(genius.detail.inner)” accounts for most of a person's personality.",
+    "invalid": "An invalid birthday {{type}} has been detected. This app is only available from Feb 01, 1873, to Dec 32, 2050.",
+    "keyword": "Keywords",
+    "personality": "The personality of the person whose birthday is {{type}} and how to handle them.",
+    "strategy": "Strategies for this personality type",
+    "weak": "Weaknesses of this personality type"
+  },
+  "genius": {
+    "detail": {
+      "detail": "A more detailed, innate personality. This is classified into 12 types. ",
+      "inner": "**Inner**: the underlying personality",
+      "name": "Type of genius",
+      "outer": "**Outer**: the personality that comes out when you don't trust the other person",
+      "workStyle": "**Workstyle**: the personality when you are focused or in an emergency"
+    },
+    "100": { "name": "Perfectionism type" },
+    "108": { "name": "Naturalism type" },
+    "125": {
+      "detail": [
+        "They have big, romantic dreams.",
+        "Also, like older adults, they have a long view of life and have the aptitude to be stoic in the short term.",
+        "They hate the intrusive attitude of looking from above."
+      ],
+      "name": "Dreaming Type",
+      "summary": "No rival in dreams and self-discipline! Straight to the goal in the long run."
+    },
+    "555": {
+      "detail": [
+        "Many people have an air of all-around competence and boss authority, like an executive employee.",
+        "They can get used to something faster than others, even if they have no experience.",
+        "But it takes several times more effort than other types to become an expert in their field. In other words, they are suitable for generalists rather than experts."
+      ],
+      "name": "Easygoing type",
+      "strategy": [
+        "They can do everything on their own, so they tend to take care of everything on their own. When you entrust them with something, be careful not to let them do too much."
+      ],
+      "summary": "Balanced, capable and caring, a heroic position.",
+      "weak": [
+        "They don't like to apologize even when it is their fault. Even if they have apologetic, they are not very good at expressing it.",
+        "Perhaps because they can do everything on their own, they tend to feel uncomfortable when others can't, wondering why they can't do such things.",
+        "They tend to take on everything in an attempt to do it on their own, and as a result, their efficiency becomes less. The same is true for the “$t(genius.100.name)” but since the “$t(genius.555.name)” has the dexterity to do so much on their own, they often don't notice that their performance is declining."
+      ]
+    },
+    "789": {
+      "detail": [
+        "They have the unassuming yet imposing spirit of a company president.",
+        "They have the same qualities as Type “$t(vector.authority.name)”. They have the ability to weigh the authority of others and see the real thing.",
+        "They have a keen eye for weighing the authority of others and detecting the real thing, and they never fail to improve themselves to make their authority more solid."
+      ],
+      "name": "Achieve-oriented type",
+      "summary": "A talented person who is good at dividing roles by respecting achievements and experience"
+    },
+    "888": { "name": "Challengism type" },
+    "919": { "name": "Socialize type" },
+    "000": { "name": "Spiritual type" },
+    "001": { "name": "Maverism type" },
+    "012": { "name": "Early adapters type" },
+    "024": { "name": "Effortist type" },
+    "025": { "name": "Saintist type" }
+  },
+  "lifeBase": {
+    "application": "They would like to be the one who experiences everything myself.",
+    "association": "They would like to do it immediately when they think.",
+    "detail": "View of life",
+    "development": "They would like to be perfectionists.",
+    "expression": "They would like to be honest with themselves.",
+    "finance": "They would like to put everything within eye reach.",
+    "investment": "They would like to be a down-to-earth collector.",
+    "organization": "They would like to live as a member of a group.",
+    "quest": "They would like to learn from the wisdom of their pioneers.",
+    "selfMind": "They would like to be the leader of the group always.",
+    "selfReliance": "They would like to be a lone wolf."
+  },
+  "management": {
+    "detail": {
+      "detail": "Depending on the person, they can divide into the “$t(management.care.name)” type or the “$t(management.hope.name)” type.",
+      "name": "Pros/Cons mindset to opportunity"
+    },
+    "care": {
+      "detail": "They have a good eye, **seeing the costs and risks** in opportunities.",
+      "more": [
+        "They are pessimistic and tend to highly cautious people.",
+        "They seek out what they can do by eliminating what they can't do, so while they rarely make big mistakes, they tend to miss significant opportunities.",
+        "We tend to give a negative impression to them, but many can be positive because they can deal with risks once they know them."
+      ],
+      "name": "**Care**: The risk-oriented"
+    },
+    "hope": {
+      "name": "**Hope**: The venture-oriented",
+      "detail": "They have an excellent eye for seeing the significant chances hidden behind opportunities.",
+      "more": [
+        "They also tend to **be optimistic and reckless**.",
+        "While not afraid of failure, they make a big mistake never try it again.",
+        "We tend to have a positive impression on them, but they are **unfamiliar with risk and have vague fears** that lead them to **think negatively**."
+      ]
+    }
+  },
+  "motivation": {
+    "detail": "An environment where motivation is easy to find",
+    "competition": "They grow motivation where the environment that they can compare with other people's.",
+    "ownMind": "They grow motivation where the environment that they can do on their plan.",
+    "power": "They grow motivation where the environment that they can do as soon as they think about it.",
+    "safety": "They grow motivation where the environment that they can pursue security and peace.",
+    "skillUp": "They grow motivation where the environment that they can feel daily improvement.",
+    "status": "They grow motivation where the environment that they can be different from others."
+  },
+  "position": {
+    "detail": {
+      "detail": "Each personality type is suited to a different role. So, in general, it is better to overcome your weaknesses by delegating them to the right person in the right place, rather than on your own, so that you can achieve great results.",
+      "name": "Suitability for the role"
+    },
+    "adjust": {
+      "detail": "They are like commanders on the front line with **excellent coordination skills in the field**.",
+      "more": [
+        "They like to be in front of people, but they are more suited to interpersonal coordination than sales.",
+        "They are more suited to support roles such as handling complaints or serving as managers."
+      ],
+      "name": "**Adjust**: Suited as a coordinate in an organization"
+    },
+    "brain": {
+      "name": "**Brain**: Suited as a strategy planner",
+      "detail": "It has strong creativity and shows the best performance **as a brain behind the scenes**.",
+      "more": [
+        "When brainstorming, it is best to have them as key members for the best performance.",
+        "On the other hand, if you leave the salesperson to them, they may drop a bomb."
+      ]
+    },
+    "direct": {
+      "detail": "They have balanced learning skills and can do some extent of everything, from on-site to behind the scenes.",
+      "more": [
+        "They can do everything tends to be their downfall, and they tend to take on everything by themselves.",
+        "In many cases, they are already working as managers."
+      ],
+      "name": "**Direct**: Suited as a leader"
+    },
+    "quick": {
+      "detail": "They are **highly dynamic** and are most suited for negotiations and business meetings with customers.",
+      "more": [
+        "They have intense, vital energy to get out in front of people and be active.",
+        "They tend to be stifled by behind-the-scenes work and do not last long."
+      ],
+      "name": "**Quick**: Suited as a salesperson"
+    }
+  },
+  "response": {
+    "detail": {
+      "detail": "Depending on the person, they can divide into the “$t(response.action.name)” type or the “$t(response.mind.name)” type.",
+      "name": "Suitability for the work"
+    },
+    "action": {
+      "detail": "They focus on putting energy into action and feel that their place is at the forefront of on-site.",
+      "more": [
+        "They tend to may **act before thinking**.",
+        "A group of people with the same personality type as them in proportion will give the impression of being unstable yet active.",
+        "While they are good at public appearances, many of them get easily choked up by behind-the-scenes work such as office work, manufactures, or machine operation."
+      ],
+      "name": "Get out in public"
+    },
+    "mind": {
+      "detail": "They value putting energy into thinking and feel that performing a role behind the scenes is valuable.",
+      "more": [
+        "They are more of a thinker before acting type.",
+        "A group with a proportion of their type of people will look stagnant, but it will give the impression of being down-to-earth and solid.",
+        "While they are good at clerical work, manufacturing, and machine operation, they are not good at meeting in person, and many of them get tired of work in public easily."
+      ],
+      "name": "Behind the scenes work"
+    }
+  },
+  "vector": {
+    "detail": {
+      "detail": "There are three main types of humans personality: “$t(vector.authority.name)”, “$t(vector.economically.name)”, and “$t(vector.humanely.name)”.",
+      "name": "Major categories of personality"
+    },
+    "authority": {
+      "detail": [
+        "They have an underlying **ego for their authority** and a personality that **pursues their future potential**.",
+        "They cannot listen to long talks. As soon as they decide that something is not essential, they blatantly stop listening to the conversation, such as playing with their phones or dozing off.",
+        "People who collect brand-name goods to dress up for their authority tend to have this personality type.",
+        "They tend to have vague, hard-to-realize anxieties and tend to transfer them to their driving force."
+      ],
+      "name": "Focused on authority",
+      "strategy": [
+        "There is a relationship like the rock-paper-scissors between the “$t(vector.authority.name)” type, “$t(vector.economically.name)” type, and “$t(vector.humanely.name)” type. They are easier to talk to the “$t(vector.humanely.name)” type than the “$t(vector.economically.name)” type.",
+        "When approaching someone for a talk, it is easier to get through to them if you examine the essential points beforehand and explain them with **great emphasis on their impact**.",
+        "They have the power to act on their insecurities. So **the carrot and stick method**, where you give them anxiety and then propose benefits, is compelling.",
+        "Also, if you appeal to them **to increase their authority**, they are more likely to be influenced."
+      ]
+    },
+    "economically": {
+      "detail": [
+        "This personality type is the pursues efficiency, with the underlying ego being for the **sake of one's own wealth**.",
+        "They tend to be specs-oriented and tend to disrespect brands. However, some rare people consider brands to be a kind of specs and place importance on them.",
+        "**They cannot listen to long conversations** very well. So they try to understand **only the main points** and tend to think or say, **“in a nutshell...”**."
+      ],
+      "name": "Focused on economically",
+      "strategy": [
+        "There is a relationship like the rock-paper-scissors between the “$t(vector.authority.name)” type, “$t(vector.economically.name)” type, and “$t(vector.humanely.name)” type. They are easier to talk to the “$t(vector.authority.name)” type than the “$t(vector.humanely.name)” type.",
+        "When giving a talk to them, they are easier to get through if you **examine the essential points beforehand** and briefly present the main points, leaving the rest for questions and answers or handing out materials.",
+        "They look like to get **strong angry** when they **hear something that interests them**. However, they are **only listening seriously** and are **usually not angry**, so it is essential to endure the bitter atmosphere when talking with them.",
+        "They are less allergic to talk of profit, so it is okay to go straight to the point without blurting it out. However, since they tend to be shrewd about numbers, you will not convince them unless you provide a convincing business model and evidence."
+      ]
+    },
+    "humanely": {
+      "detail": [
+        "They pursue sociality with an ego to **improve their virtue**.",
+        "They tend to focus on personality in many things. For example, when choosing a product at a store or something, they tend to decide based on the salesperson's character than its quality.",
+        "They tend to **be able to listen to long conversations** from beginning to end with a smile. However, they **can't always understand to gist**.",
+        "If you only get to the point briefly, they will be curious about the introduction, development of the story and not understanding its rest."
+      ],
+      "name": "Focused on humanely",
+      "strategy": [
+        "There is a relationship like the rock-paper-scissors between the “$t(vector.authority.name)” type, “$t(vector.economically.name)” type, and “$t(vector.humanely.name)” type. They are easier to talk to the “$t(vector.economically.name)” type than the “$t(vector.authority.name)” type.",
+        "When talking to them, you can get through to them easier if you explain the story **in order**, with a few **redundant additions** each time.",
+        "They also tend to listen smilingly even if they don't understand, so it is more desirable to ask for confirmation at crucial points.",
+        "They have a tendency to be easily influenced when they are praised for their kindness and humanity. Also, it is easier to persuade them if you talk to them with a cause that is not for their own sake but for the sake of the people around them."
+      ]
+    }
+  }
+}
