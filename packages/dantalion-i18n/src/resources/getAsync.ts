@@ -2,6 +2,9 @@ import i18next, { TFunction } from 'i18next';
 import getLocale from '../getLocale';
 import ja from './ja.json';
 
+/** The language that uses as a fallback. */
+export const fallbackLng = 'ja';
+
 /**
  * Build JSON for resources.
  * @param translation resources data.
@@ -16,7 +19,7 @@ const wrap = (translation: Record<string, unknown>) => ({ translation });
  */
 const createInstance = (language?: string) =>
   i18next.init({
-    fallbackLng: 'ja',
+    fallbackLng,
     lng: language ?? getLocale(),
     debug: false,
     resources: { ja: wrap(ja) },
