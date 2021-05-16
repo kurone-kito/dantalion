@@ -1,13 +1,17 @@
+import type { LifeBase, Motivation } from '@kurone-kito/dantalion-core';
 import {
-  VectorType,
   getDescriptionAsync,
   lifeBase,
   motivation,
-} from '@kurone-kito/dantalion-i18n';
-import type { LifeBase, Motivation } from '@kurone-kito/dantalion-core';
+} from '../resources/accessors';
+import type { VectorType } from '../resources/types';
 import article from './article';
 import { line, list } from './list';
 
+/**
+ * Create the Markdown from the LifeBase resources.
+ * @param source The source.
+ */
 export const fromLifeBaseAsync = async (source?: LifeBase): Promise<string> =>
   source
     ? article({
@@ -17,6 +21,10 @@ export const fromLifeBaseAsync = async (source?: LifeBase): Promise<string> =>
       })
     : '';
 
+/**
+ * Create the Markdown from the Motivation resources.
+ * @param source The source.
+ */
 export const fromMotivationAsync = async (
   source?: Motivation
 ): Promise<string> =>
@@ -28,6 +36,10 @@ export const fromMotivationAsync = async (
       })
     : '';
 
+/**
+ * Create the Markdown from the vector resources.
+ * @param source The source.
+ */
 export const fromVectorAsync = async (source?: VectorType): Promise<string> =>
   source
     ? line(

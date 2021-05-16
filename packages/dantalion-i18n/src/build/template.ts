@@ -12,7 +12,7 @@ import {
   position,
   response,
   vector,
-} from '@kurone-kito/dantalion-i18n';
+} from '../resources/accessors';
 import { detailsBase, detailsMore } from './details';
 import { fromGeniusAsync, fromGeniusForPersonalityAsync } from './genius';
 import { line } from './list';
@@ -22,6 +22,10 @@ import {
   fromVectorAsync,
 } from './specialized';
 
+/**
+ * Create the Markdown only accompany resources.
+ * @param source The source.
+ */
 const onlyAccompanyingAsync = async (
   source: Pick<
     Detail,
@@ -47,6 +51,11 @@ const onlyAccompanyingAsync = async (
     await fromMotivationAsync(source.motivation)
   );
 
+/**
+ * Create the Markdown from detail.
+ * @param type The type of genius
+ * @param source The source.
+ */
 export const detailsAsync = async (
   type: Genius,
   source: Detail

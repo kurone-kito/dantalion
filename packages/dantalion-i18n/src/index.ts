@@ -1,4 +1,5 @@
 export { default as getLocale } from './getLocale';
+export { getPersonalityMarkdownAsync, getDetailMarkdownAsync } from './build';
 export {
   brain,
   communication,

@@ -1,4 +1,4 @@
-import type { DetailsBaseType, DetailsType } from '@kurone-kito/dantalion-i18n';
+import type { DetailsBaseType, DetailsType } from '../resources/types';
 import article from './article';
 import { line, list } from './list';
 
