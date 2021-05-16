@@ -2,6 +2,13 @@
 
 # Changelog
 
+## v0.7.0 (2021-05-17)
+
+### Feature
+
+- i18n: Improved the resource wording. (e146e86)
+- i18n: Added the building the Markdown functions. (8efc11a)
+
 ## v0.6.0 (2021-05-16)
 
 ### Feature
