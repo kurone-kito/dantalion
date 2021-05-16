@@ -2,6 +2,17 @@
 
 # Changelog
 
+## v0.6.0 (2021-05-16)
+
+### Feature
+
+- i18n: Available now the English resources partly. (1fff20b, 9bf1548)
+- i18n: Improved the resource wording. (955df3a)
+
+### Documents
+
+- core: improved the wording for API documentation (18cf83b)
+
 ## v0.5.1 (2021-05-15)
 
 ### Refactored
