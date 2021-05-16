@@ -39,17 +39,17 @@ dantalion personality 1993-10-09
 <details><summary>Result</summary>
 
 ```md
-# Dantalion: 誕生日が Sat Oct 09 1993 の人の性格と、取扱方法
+# Dantalion: The personality of the person whose birthday is Sat Oct 09 1993 and how to handle them.
 
-## 性格の大分類
+## Major categories of personality
 
-人の性格は大きく 3 つ、アート脳タイプ・理系脳タイプ・文系脳タイプに分類できます。
+There are three main types of humans personality: “Focused on authority”, “Focused on economically”, and “Focused on humanely”.
 
-### 理系脳タイプ
+### Focused on economically
 
-    * 己の富のためを根底のエゴとし、効率性を追求するタイプです。
-    * スペック至上主義の傾向があり、ブランドものを軽視する傾向が強いです。ただし、ブランドも一種のスペックと考え、重視する人も稀にいます。
-    * 理系脳タイプは、長話をあまり聞けません。「つまりこういうことだよね？」と、脳内で要点だけかいつまんで理解しようとします。
+    * This personality type is the pursues efficiency, with the underlying ego being for the sake of one's own wealth.
+    * They tend to be specs-oriented and tend to disrespect brands. However, some rare people consider brands to be a kind of specs and place importance on them.
+    * They cannot listen to long conversations very well. So they try to understand only the main points and tend to think or say, “in a nutshell...”.
 
 :
 :
@@ -95,17 +95,17 @@ dantalion details 555
 <details><summary>Result</summary>
 
 ```md
-# Dantalion: 性格タイプ 555 の詳細、および取扱方法
+# Dantalion: Details of people whose personality type is classified as 555, and how to handle them.
 
-## 性格の大分類
+## Major categories of personality
 
-人の性格は大きく 3 つ、アート脳タイプ・理系脳タイプ・文系脳タイプに分類できます。
+There are three main types of humans personality: “Focused on authority”, “Focused on economically”, and “Focused on humanely”.
 
-### 理系脳タイプ
+### Focused on economically
 
-    * 己の富のためを根底のエゴとし、効率性を追求するタイプです。
-    * スペック至上主義の傾向があり、ブランドものを軽視する傾向が強いです。ただし、ブランドも一種のスペックと考え、重視する人も稀にいます。
-    * 理系脳タイプは、長話をあまり聞けません。「つまりこういうことだよね？」と、脳内で要点だけかいつまんで理解しようとします。
+    * This personality type is the pursues efficiency, with the underlying ego being for the sake of one's own wealth.
+    * They tend to be specs-oriented and tend to disrespect brands. However, some rare people consider brands to be a kind of specs and place importance on them.
+    * They cannot listen to long conversations very well. So they try to understand only the main points and tend to think or say, “in a nutshell...”.
 
     :
     :
@@ -178,7 +178,7 @@ dantalion details
 <details><summary>Result</summary>
 
 ```md
-# Dantalion: 有効な性格タイプ一覧
+# Dantalion: List of available personality type codes
 
     * 000
     * 001

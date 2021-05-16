@@ -1,5 +1,5 @@
-import type { StringMap } from 'i18next';
-import getResourcesAsync from './getAsync';
+import type { StringMap, TOptions } from 'i18next';
+import getResourcesAsync, { fallbackLng } from './getAsync';
 import type { DetailsBaseType } from './types';
 
 /**
@@ -45,8 +45,12 @@ export const getAsync = async <T extends object>(
   placeholder?: StringMap
 ): Promise<T | undefined> => {
   const t = await getResourcesAsync();
-  const result = t<string | T>(key, { returnObjects: true, ...placeholder });
-  return typeof result === 'string' ? undefined : result;
+  const opts = Object.freeze<TOptions>({ returnObjects: true, ...placeholder });
+  const result = t<string | T>(key, opts);
+  const fallback = t<string | T>(key, { ...opts, lng: fallbackLng });
+  return typeof result === 'string' || typeof fallback === 'string'
+    ? undefined
+    : { ...fallback, ...result };
 };
 
 /**
