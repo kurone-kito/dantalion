@@ -105,7 +105,15 @@
     "001": { "name": "Maverism type" },
     "012": { "name": "Early adapters type" },
     "024": { "name": "Effortist type" },
-    "025": { "name": "Saintist type" }
+    "025": {
+      "detail": [
+        "They have a sense of brotherhood with all humankind and have the qualities to get along equally and equally.",
+        "But, on the other hand, because they are “equally friendly,” they will always make a hedge, even with family members.",
+        "They tend to become well informed because they have a lot of connections."
+      ],
+      "name": "Saintist type",
+      "summary": "They are people who love others and are well-informed personalities."
+    }
   },
   "lifeBase": {
     "application": "They would like to be the one who experiences everything myself.",
