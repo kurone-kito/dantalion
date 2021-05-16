@@ -1,13 +1,14 @@
-import {
-  PersonalityType,
-  genius,
-  getDescriptionAsync,
-} from '@kurone-kito/dantalion-i18n';
 import type { Personality } from '@kurone-kito/dantalion-core';
+import { genius, getDescriptionAsync } from '../resources/accessors';
+import type { PersonalityType } from '../resources/types';
 import article, { Options } from './article';
 import { detailsBase } from './details';
 import { line, list, order } from './list';
 
+/**
+ * Create the Markdown only summary from the Genius resources.
+ * @param source The source.
+ */
 export const fromGeniusOnlySummary = (
   source?: Pick<PersonalityType, 'detail' | 'name' | 'summary'>,
   level?: number
@@ -19,6 +20,10 @@ export const fromGeniusOnlySummary = (
       )
     : '';
 
+/**
+ * Create the Markdown only descriptions from the Genius resources.
+ * @param source The source.
+ */
 export const fromGeniusOnlyDesctiptionAsync = async (
   source?: Pick<PersonalityType, 'keyword' | 'strategy' | 'weak'>,
   level?: number
@@ -35,6 +40,10 @@ export const fromGeniusOnlyDesctiptionAsync = async (
     : '';
 };
 
+/**
+ * Create the Markdown from the Genius resources.
+ * @param source The source.
+ */
 export const fromGeniusAsync = async (
   source?: PersonalityType,
   level?: number
@@ -46,6 +55,10 @@ export const fromGeniusAsync = async (
       )
     : '';
 
+/**
+ * Create the Markdown from the Genius resources.
+ * @param source The source.
+ */
 export const fromGeniusForPersonalityAsync = async ({
   inner,
   outer,

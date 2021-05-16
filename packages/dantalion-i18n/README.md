@@ -84,6 +84,13 @@ Get the resources of the descriptions heading.
   - `type?: string | undefined`: The genius type or birthday.
 - Returns: The resources of the descriptions heading. ([`DesctiptionsType`](#desctiptionstype))
 
+### `getDetailMarkdownAsync(genius?: Genius): Promise<string>`
+
+Get the personality information.
+
+- `genius`: The types of personality.
+- Returns: The string that the personality information. If the omitted, it will be list of the available types.
+
 ### `getLocale(): string | undefined`
 
 It provides the appropriate locale information acquisition function according to the current environment.
@@ -92,6 +99,16 @@ For Node.js version 12.1.0 and later or web browsers, it depends on the [Intl AP
 
 - Arguments: _(None)_
 - Returns: The locale string e.g. `en-US.utf8` or undefined value.
+
+### `getPersonalityMarkdownAsync(birth: string | number | Date): Promise<string>`
+
+Get the personality information corresponding to the specified birthday.
+
+- `birth`: Specify a birthday within the range from February 1, 1873,
+  to December 31, 2050.
+  Ignore the _time_ information.
+- Returns: The string that the personality information. If the date is over the range,
+  it will be error message.
 
 ### `genius`
 
