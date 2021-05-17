@@ -62,8 +62,38 @@
       "outer": "**Outer**: the personality that comes out when you don't trust the other person",
       "workStyle": "**Workstyle**: the personality when you are focused or in an emergency"
     },
-    "100": { "name": "Perfectionism type" },
-    "108": { "name": "Naturalism type" },
+    "100": {
+      "detail": [
+        "They like to pretend that they are not good at something, but they want to surprise and stand out by being prepared.",
+        "They tend to take on everything, trying to do it on their own."
+      ],
+      "name": "Perfectionism type",
+      "summary": "They are severe and stubborn, like a top-notch businessperson who doesn't show weakness!",
+      "strategy": [
+        "They are influencing by flattery and VIP treatment.",
+        "They love to surprise you, but be aware that they will complain that they lost face if you deny them."
+      ],
+      "weak": [
+        "They tend to be hard on themselves and others and are too concerned about public opinion to take challenging actions.",
+        "They are influencing by flattery and VIP treatment."
+      ]
+    },
+    "108": {
+      "detail": [
+        "They are often as straightforward and honest as a baby.",
+        "They are very shy, and they become reticent when thrown into a place full of strangers."
+      ],
+      "name": "Naturalism type",
+      "summary": "They are shy, but once you get used to them, they are honest to a fault.",
+      "strategy": [
+        "They are straightforward to understand, as their personalities change considerably before and after they open up.",
+        "If you make them feel at ease, it is easy to get along with them."
+      ],
+      "weak": [
+        "They tend to restrict themselves to their sphere of activity and tend to stay in their shells.",
+        "They tend to be too honest in their home positions, such as social networking sites, and many of them become verbally abusive and overly familiar even among their friends."
+      ]
+    },
     "125": {
       "detail": [
         "They have big, romantic dreams.",
@@ -100,11 +130,92 @@
       "summary": "A talented person who is good at dividing roles by respecting achievements and experience"
     },
     "888": { "name": "Challengism type" },
-    "919": { "name": "Socialize type" },
-    "000": { "name": "Spiritual type" },
-    "001": { "name": "Maverism type" },
-    "012": { "name": "Early adapters type" },
-    "024": { "name": "Effortist type" },
+    "919": {
+      "detail": [
+        "While they have a tremendous amount of concentration, they are always lazy the rest of the time.",
+        "They are good at negotiating and have the makings of a salesperson."
+      ],
+      "name": "Socialize type",
+      "strategy": [
+        "It's easier to open up to them if you limit the formalities to the first meeting and create a funky atmosphere the next time you meet.",
+        "They are slackers, but when they are motivated, they do a tremendous amount of work. For this reason, it is essential to let them do their job without pointing out how to do it in detail."
+      ],
+      "summary": "They are good negotiators and prefer short-term strategy.",
+      "weak": [
+        "They tend to be uncomfortable with the formal atmosphere.",
+        "They are also not very good at producing stable results in the long term."
+      ]
+    },
+    "000": {
+      "detail": [
+        "They have a hyper-linguistic philosophy; and an outlandish worldview. Some people describe them as the sixth senses.",
+        "However, they are not very dynamic, and many of them keep it in their heads.",
+        "It is also common for sensitive types to go on a trip without a plan and lose touch."
+      ],
+      "name": "Spiritual type",
+      "strategy": [
+        "They do hate any restraint, bondage, or rules.",
+        "If you are going to do something with a group of people, it is best to put them in a position to be asked to be creative."
+      ],
+      "weak": [
+        "They tend to clutter up their notes, folders on their desktops, rooms, and everything else if they are not aware.",
+        "They tend to have a strong link between their emotions and their performance. In other words, if they are not in the right frame of mind, they will not make progress."
+      ],
+      "summary": "They prefer aimless wandering and utilize sharp intuition and flashes of inspiration."
+    },
+    "001": {
+      "detail": [
+        "They love to act like a weirdo, untainted by the ideas of others.",
+        "They like individualism and prefer to work at their own pace.",
+        "They are the best actors to play the role of “well thought out idiot”."
+      ],
+      "name": "Maverick type",
+      "weak": [
+        "They tend to do it in their way and not very resourceful.",
+        "They do not like to be pulled along by the pace of others and may impose their own pace on others."
+      ],
+      "strategy": [
+        "They don't like to be paced by others, so they may be challenging to get to know at first sight, but they will be kind to you once you know them.",
+        "In general, seeing the other person with strange eyes is considered a bad thing, but they are exceptions and can use as compliments.",
+        "On the other hand, words such as “unoriginal” or “common sense” can be bad words to them, so be careful.",
+        "When working in a group, they perform best when put in positions requiring them to be creative."
+      ],
+      "summary": "“Eccentric”, “Freak”, or “Weird” words are a compliment for them! They do in their way like a lone wolf."
+    },
+    "012": {
+      "detail": [
+        "They have a youthful temperament, always like middle-teens, even when they grow up.",
+        "They tend to like to discuss, but this tends to be a long story with little substance."
+      ],
+      "name": "Early Adopters type",
+      "summary": "They are early adopters who love new things and pursue freshness every day.",
+      "strategy": [
+        "“It's the latest news” and “No one knows about it yet” are powerful words to get their attention.",
+        "On the other hand, worn-out or stable somethings may discourage their interest."
+      ],
+      "weak": [
+        "They always like new things, but it's no longer new for them once they know anything. So, they tend to get bored quickly."
+      ]
+    },
+    "024": {
+      "detail": [
+        "Once they just thought about anything, they are hard-working and determined to finish it, but they are not good at planning detailed strategies.",
+        "They are usually mild-mannered but cannot wait for things to happen.",
+        "The “$t(vector.authority.name)” people, in general, have the gift of being able to turn anxiety into a driving force for action, but they are especially adept at it.",
+        "They can memorize and act as if they already knew something ten years ago, even if they have just learned it for the first time."
+      ],
+      "name": "Effortist type",
+      "summary": "They are impatient and have a strong drive.",
+      "strategy": [
+        "It's generally not a good idea to make others angry, but these ordinarily mild-mannered they have the most horrifying way of getting mad among their many personality types.",
+        "They suit as interpersonal coordinators or directors. But, on the other hand, if you give them the responsibility of the planning, they will produce a series of short-lived products because they change their creations frequently due to anxiety.",
+        "When working with them, it is advisable to be frequently and thorough in reporting, communication, and consultation."
+      ],
+      "weak": [
+        "They are impatient and tend to get anxious if they don't get detailed progress reports.",
+        "They tend not to be good at detailed calculations or standing around."
+      ]
+    },
     "025": {
       "detail": [
         "They have a sense of brotherhood with all humankind and have the qualities to get along equally and equally.",
@@ -112,7 +223,14 @@
         "They tend to become well informed because they have a lot of connections."
       ],
       "name": "Saintist type",
-      "summary": "They are people who love others and are well-informed personalities."
+      "summary": "They are people who love others and are well-informed personalities.",
+      "strategy": [
+        "It's taboo to try outfoxing with them, leave them out, skip their turn, or do anything that is not honorable.",
+        "They tend to think equally responsible for all involved and blur their responsibilities collectively, so it is best to follow through."
+      ],
+      "weak": [
+        "They have a strong sense of camaraderie, so when someone they know gets into trouble, they tend to nose into problems with them."
+      ]
     }
   },
   "lifeBase": {
