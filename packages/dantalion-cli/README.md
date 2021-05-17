@@ -2,6 +2,9 @@
 
 # 🦁 Dantalion: CLI version
 
+[![npm version](https://badge.fury.io/js/%40kurone-kito%2Fdantalion-cli.svg)](https://badge.fury.io/js/%40kurone-kito%2Fdantalion-cli)
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
+
 This package provides a function that infers the personality details
 from the specified birthday. By using this package, you can quickly
 implement birthday divination in your Node.js apps. Its calculation
