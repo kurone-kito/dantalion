@@ -2,6 +2,15 @@
 
 # Changelog
 
+## v0.8.0 (2021-05-18)
+
+### Docs
+
+- Added and improved the localized wording. (9cbd682, 5ea1c94)
+- Improved the keywords (1f81f6b)
+- Added the badges to README (e53ad2f)
+- Fixed the wronged URLs in issues templates (7ff1289)
+
 ## v0.7.0 (2021-05-17)
 
 ### Feature
