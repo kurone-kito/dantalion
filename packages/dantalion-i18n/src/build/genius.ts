@@ -34,7 +34,7 @@ export const fromGeniusOnlyDesctiptionAsync = async (
         ...(<Options[]>[
           { head: descriptions?.strategy, body: list(...source.strategy) },
           { head: descriptions?.weak, body: list(...source.weak) },
-          { head: descriptions?.keyword, body: list(...source.keyword) },
+          // { head: descriptions?.keyword, body: list(...source.keyword) },
         ]).map((options) => article({ ...options, level }))
       )
     : '';
