@@ -2,6 +2,27 @@
 
 # Changelog
 
+## v0.9.0 (2021-05-19)
+
+### BREAKING CHANGE
+
+- i18n: Changed the fallback language from Japanese to English (5329723)
+- i18n: Removed the `keyword` property (ece6516)
+
+### Docs
+
+- i18n: Improved the wording (caca48a)
+- cli, core, i18n: Added the preface into README (f580f33)
+
+### Refactors
+
+- i18n: Internal refactored (f40017e)
+
+### Chores
+
+- i18n: added the dependencies: `lodash.merge` and updated some devDependencies (b048b85)
+  - It will actually use it in the next update.
+
 ## v0.8.0 (2021-05-18)
 
 ### Docs
