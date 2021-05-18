@@ -1,5 +1,5 @@
 import type { StringMap, TOptions } from 'i18next';
-import getResourcesAsync, { fallbackLng } from './getAsync';
+import getResourcesAsync, { fallbackLng } from './getTAsync';
 import type { DetailsBaseType } from './types';
 
 /**

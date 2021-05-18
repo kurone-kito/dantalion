@@ -4,7 +4,7 @@ import en from './en.json';
 import ja from './ja.json';
 
 /** The language that uses as a fallback. */
-export const fallbackLng = 'ja';
+export const fallbackLng = 'en';
 
 /**
  * Build JSON for resources.

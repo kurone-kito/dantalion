@@ -32,7 +32,6 @@ describe('integration testing', () => {
         genius1: expect.any(String),
         genius2: expect.any(String),
         invalid: expect.any(String),
-        keyword: expect.any(String),
         personality: expect.any(String),
         strategy: expect.any(String),
         weak: expect.any(String),
@@ -46,7 +45,6 @@ describe('integration testing', () => {
           genius1: expect.any(String),
           genius2: expect.any(String),
           invalid: expect.stringContaining(placeholder),
-          keyword: expect.any(String),
           personality: expect.stringContaining(placeholder),
           strategy: expect.any(String),
           weak: expect.any(String),
@@ -112,7 +110,6 @@ describe('integration testing', () => {
     ])('getAsync("%s") method', async (key) =>
       expect(await genius.getAsync(key)).toEqual({
         detail: expect.any(Array),
-        keyword: expect.any(Array),
         name: expect.any(String),
         strategy: expect.any(Array),
         summary: expect.any(String),

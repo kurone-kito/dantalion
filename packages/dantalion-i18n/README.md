@@ -47,7 +47,6 @@ Since it's a long sentence, it omitted some parts.
 ```json
 {
   "name": "悠然タイプ",
-  "keyword": ["帝旺", "虎"],
   "summary": "バランス型能力と面倒見が良い、勇者的ポジション",
   "detail": [
     "重役社員のような、万能感と親分肌のような空気感を持つ人が多いです。",
@@ -178,7 +177,6 @@ interface DesctiptionsType {
   readonly genius1: string;
   readonly genius2: string;
   readonly invalid: string;
-  readonly keyword: string;
   readonly personality: string;
   readonly strategy: string;
   readonly weak: string;
@@ -192,7 +190,6 @@ interface DesctiptionsType {
 | `genius1`     | `string` | The detail of the genius.                          |
 | `genius2`     | `string` | The detail of the genius.                          |
 | `invalid`     | `string` | The error message when specified invalid birthday. |
-| `keyword`     | `string` | The keywords.                                      |
 | `personality` | `string` | The title of personality.                          |
 | `strategy`    | `string` | The strategy.                                      |
 | `weak`        | `string` | The weak points.                                   |
@@ -261,7 +258,6 @@ description of a particular person's personality.
 ```ts
 interface PersonalityType {
   readonly detail: readonly string[];
-  readonly keyword: readonly string[];
   readonly name: string;
   readonly strategy: readonly string[];
   readonly summary: string;
@@ -272,7 +268,6 @@ interface PersonalityType {
 | Property   | Type                | Description                                                            |
 | :--------- | :------------------ | :--------------------------------------------------------------------- |
 | `detail`   | `readonly string[]` | The detail.                                                            |
-| `keyword`  | `readonly string[]` | The keywords.                                                          |
 | `name`     | `string`            | The resource name.                                                     |
 | `strategy` | `readonly string[]` | The strategies for communicating with people of this personality type. |
 | `summary`  | `string`            | The short summary as a heading.                                        |

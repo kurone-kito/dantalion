@@ -17,7 +17,7 @@ import type {
   VectorType,
 } from './types';
 import createAccessor, { getAsync, ResourcesAccessor } from './createAccessor';
-import getResourcesAsync from './getAsync';
+import getResourcesAsync from './getTAsync';
 
 /**
  * The instance provides a set of functions that retrieve
