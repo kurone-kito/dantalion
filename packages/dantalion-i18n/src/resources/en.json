@@ -49,7 +49,6 @@
     "genius1": "A person has three of these personalities, and the personality that emerges varies depending on the situation.",
     "genius2": "Of these, “$t(genius.detail.inner)” accounts for most of a person's personality.",
     "invalid": "An invalid birthday {{type}} has been detected. This app is only available from Feb 01, 1873, to Dec 32, 2050.",
-    "keyword": "Keywords",
     "personality": "The personality of the person whose birthday is {{type}} and how to handle them.",
     "strategy": "Strategies for this personality type",
     "weak": "Weaknesses of this personality type"

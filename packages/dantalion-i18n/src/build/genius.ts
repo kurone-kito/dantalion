@@ -25,7 +25,7 @@ export const fromGeniusOnlySummary = (
  * @param source The source.
  */
 export const fromGeniusOnlyDesctiptionAsync = async (
-  source?: Pick<PersonalityType, 'keyword' | 'strategy' | 'weak'>,
+  source?: Pick<PersonalityType, 'strategy' | 'weak'>,
   level?: number
 ): Promise<string> => {
   const descriptions = await getDescriptionAsync();
@@ -34,7 +34,6 @@ export const fromGeniusOnlyDesctiptionAsync = async (
         ...(<Options[]>[
           { head: descriptions?.strategy, body: list(...source.strategy) },
           { head: descriptions?.weak, body: list(...source.weak) },
-          // { head: descriptions?.keyword, body: list(...source.keyword) },
         ]).map((options) => article({ ...options, level }))
       )
     : '';

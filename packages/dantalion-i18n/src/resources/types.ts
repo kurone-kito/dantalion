@@ -10,8 +10,6 @@ export interface DesctiptionsType {
   readonly genius2: string;
   /** The error message when specified invalid birthday. */
   readonly invalid: string;
-  /** The keywords. */
-  readonly keyword: string;
   /** The title of personality. */
   readonly personality: string;
   /** The strategy. */
@@ -60,8 +58,6 @@ export interface PersonalityDetailType extends DetailsBaseType {
  */
 export interface PersonalityType
   extends DetailsBaseTypeGeneric<readonly string[]> {
-  /** The keywords. */
-  readonly keyword: readonly string[];
   /**
    * The strategies for communicating with people of this personality type.
    *
