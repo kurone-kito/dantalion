@@ -318,3 +318,11 @@ interface VectorType {
 | `detail`   | `string`            | The detail.                                                            |
 | `name`     | `string`            | The resource name as a heading.                                        |
 | `strategy` | `readonly string[]` | The strategies for communicating with people of this personality type. |
+
+## See also
+
+- [i18next: internationalization-framework](https://www.i18next.com)
+
+## License
+
+MIT
