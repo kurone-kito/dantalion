@@ -15,7 +15,8 @@ import { detailsAsync, personalityAsync } from './template';
  * to December 31, 2050.
  *
  * Ignore the _time_ information.
- * @returns The string that the personality information.
+ * @returns The string that the personality information
+ * as the Markdown format.
  *
  * If the date is over the range, it will be error message.
  */
@@ -35,9 +36,11 @@ export const getPersonalityMarkdownAsync = async (
 /**
  * Get the personality information.
  * @param genius The types of personality.
- * @returns The string that the personality information.
+ * @returns The string that the personality information
+ * as the Markdown format.
  *
- * If the omitted, it will be list of the available types.
+ * If you specified the `undefined` value as an argument or omitted it,
+ * it would be a list of the available types.
  */
 export const getDetailMarkdownAsync = async (
   genius?: Genius

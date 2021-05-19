@@ -92,27 +92,53 @@ Get the resources of the descriptions heading.
 
 Get the personality information.
 
-- `genius`: The types of personality.
-- Returns: The string that the personality information. If the omitted, it will be list of the available types.
+#### Arguments
+
+| Name     | Type                  | Defaults    | Description               |
+| :------- | :-------------------- | :---------- | :------------------------ |
+| `genius` | `Genius \| undefined` | `undefined` | The types of personality. |
+
+#### Returns
+
+`Promise<string>`:
+The string that the personality information as the Markdown format.
+
+If you specified the `undefined` value as an argument or omitted it,
+it would be a list of the available types.
 
 ### `getLocale(): string | undefined`
 
-It provides the appropriate locale information acquisition function according to the current environment.
+It provides the appropriate locale information acquisition function
+according to the current environment.
 
-For Node.js version 12.1.0 and later or web browsers, it depends on the [Intl API](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl)'s decision. If not, it determines by the environment variables.
+For Node.js version `12.1.0` and later or web browsers, it depends on the
+[Intl API](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl)'s
+decision. If not, it determines by the environment variables.
 
-- Arguments: _(None)_
-- Returns: The locale string e.g. `en-US.utf8` or undefined value.
+#### Arguments
+
+(None)
+
+#### Returns
+
+`string | undefined`: The locale string e.g. `en-US`.
+If it is not recognized correctly, it may return an undefined value.
 
 ### `getPersonalityMarkdownAsync(birth: string | number | Date): Promise<string>`
 
 Get the personality information corresponding to the specified birthday.
 
-- `birth`: Specify a birthday within the range from February 1, 1873,
-  to December 31, 2050.
-  Ignore the _time_ information.
-- Returns: The string that the personality information. If the date is over the range,
-  it will be error message.
+#### Arguments
+
+| Name    | Type                       | Defaults     | Description                                                                                                     |
+| :------ | :------------------------- | :----------- | :-------------------------------------------------------------------------------------------------------------- |
+| `birth` | `string \| number \| Date` | _(Required)_ | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Ignore the _time_ information. |
+
+#### Returns
+
+`Promise<string>`:
+The string that the personality information as the Markdown format.
+If the date is over the range, it will be error message.
 
 ### `genius`
 
