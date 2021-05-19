@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD024 -->
+
 # 🦁 Dantalion: i18n resources library
 
 [![npm version](https://badge.fury.io/js/%40kurone-kito%2Fdantalion-i18n.svg)](https://badge.fury.io/js/%40kurone-kito%2Fdantalion-i18n)
