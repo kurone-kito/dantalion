@@ -9,4 +9,3 @@
  * | `3` | Fantastic!!! |
  */
 export type AffinityLevel = 0 | 1 | 2 | 3;
-export default undefined;

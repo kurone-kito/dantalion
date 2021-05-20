@@ -57,5 +57,3 @@ export const getDetailMarkdownAsync = async (
         body: list(...types.genius),
       });
 };
-
-export default undefined;

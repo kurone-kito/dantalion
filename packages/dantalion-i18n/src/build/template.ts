@@ -80,5 +80,3 @@ export const personalityAsync = async (
     await fromLifeBaseAsync(source.lifeBase)
   );
 };
-
-export default undefined;
