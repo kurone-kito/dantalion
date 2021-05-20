@@ -48,18 +48,20 @@ Since it's a long sentence, it omitted some parts.
 
 ```json
 {
-  "name": "悠然タイプ",
-  "summary": "バランス型能力と面倒見が良い、勇者的ポジション",
+  "name": "Easygoing type",
+  "summary": "Balanced, capable and caring, a heroic position.",
   "detail": [
-    "重役社員のような、万能感と親分肌のような空気感を持つ人が多いです。",
+    "Many people have an air of all-around competence and boss authority, like an executive employee.",
     :
     :
   ],
   "weak": [
-    "悠然タイプの人は、自分が悪くても謝罪するのを嫌がります。責任や謝罪心を持っていても、それを表明するのが極端に苦手です。"
+    "They don't like to apologize even when it is their fault. Even if they have apologetic, they are not very good at expressing it."
+    :
+    :
   ],
   "strategy": [
-    "悠然タイプの人は自力でなんでもできてしまうがため、自分でなんでも抱えてしまいます。何かを任せる際は『やらせすぎない』よう注意すると良いでしょう。"
+    "They can do everything on their own, so they tend to take care of everything on their own. When you entrust them with something, be careful not to let them do too much."
   ]
 }
 ```
