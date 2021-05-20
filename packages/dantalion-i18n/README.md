@@ -82,6 +82,43 @@ The instance provides a set of functions that retrieve human-readable resources 
 - Type: `ResourcesAccessor<DetailsType, Communication>`
 - The [`Communication`](../dantalion-core#communication) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
+### `createAccessors(t: i18next.TFunction): Accessors`
+
+Create the concreted accessors collection from the i18next instance
+
+#### Arguments
+
+| Name | Type                                                          | Defaults     | Description                  |
+| :--- | :------------------------------------------------------------ | :----------- | :--------------------------- |
+| `t`  | [`i18next.TFunction`](https://www.i18next.com/overview/api#t) | _(Required)_ | Specify the i18next instance |
+
+#### Returns
+
+[`Accessors`](#accessors): The instance of the concreted accessors collection
+
+### `createAccessorsAsync(lng?: string, addition?: ResourceLanguage): Promise<Accessors & i18next.WithT>`
+
+Create the concreted accessors collection asynchronously
+
+It is a synonym function that combines
+[`createAccessors()`](#createaccessorst-i18nexttfunction-accessors) and
+[`createTAsync()`](#createtasynclng-string-addition-i18nextresourcelanguage--undefined-promisei18nexttfunction).
+
+#### Arguments
+
+| Name       | Type                       | Defaults    | Description                                  |
+| :--------- | :------------------------- | :---------- | :------------------------------------------- |
+| `lng`      | `string?`                  | (\*)        | The language to use                          |
+| `addition` | `i18next.ResourceLanguage` | `undefined` | Specify the additional resources if you need |
+
+(\*: If omitted, the language used is detected from the current environment.
+See: [useLocale()](#getlocale-string--undefined))
+
+#### Returns
+
+[`Promise<Accessors & i18next.WithT>`](#accessors):
+The instance of the concreted accessors collection
+
 ### `createTAsync(lng?: string, addition?: i18next.ResourceLanguage | undefined): Promise<i18next.TFunction>`
 
 Create and initialize the i18next instance asynchronously
@@ -98,7 +135,7 @@ See: [useLocale()](#getlocale-string--undefined))
 
 #### Returns
 
-`Promise<i18next.TFunction>`:
+[`Promise<i18next.TFunction>`](https://www.i18next.com/overview/api#t):
 The i18next instance which already initialized the resources.
 
 ### `getDescriptionAsync(type?: string): Promise<DesctiptionsType | undefined>`
@@ -214,6 +251,45 @@ The instance provides a set of functions that retrieve human-readable resources 
 
 The strings contained in the object are in Markdown format. In the
 case of an array of strings, the elements separate for each paragraph.
+
+### `Accessors`
+
+The type definition of the concreted accessors collection
+
+```ts
+interface Accessors {
+  readonly brain: DetailAccessor<DetailsType, Brain>;
+  readonly communication: DetailAccessor<DetailsType, Communication>;
+  readonly genius: DetailAccessor<
+    PersonalityType,
+    Genius,
+    PersonalityDetailType
+  >;
+  readonly lifeBase: DetailAccessor<string, LifeBase, string>;
+  readonly management: DetailAccessor<DetailsType, Management>;
+  readonly motivation: DetailAccessor<string, Motivation, string>;
+  readonly position: DetailAccessor<DetailsType, Position>;
+  readonly response: DetailAccessor<DetailsType, Response>;
+  readonly vector: DetailAccessor<VectorType, Vector>;
+  getDescription(type?: string): DesctiptionsType;
+}
+```
+
+| Property        | Type                                                             | Description                                                                                                                                 |
+| :-------------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `brain`         | `DetailAccessor<DetailsType, Brain>`                             | The instance provides a set of functions that retrieve human-readable resources related to the thought method.                              |
+| `communication` | `DetailAccessor<DetailsType, Communication>`                     | The instance provides a set of functions that retrieve human-readable resources related to dialogue policy.                                 |
+| `genius`        | `DetailAccessor<PersonalityType, Genius, PersonalityDetailType>` | The instance provides a set of functions that retrieve human-readable resources related to natural personality.                             |
+| `lifeBase`      | `DetailAccessor<string, LifeBase, string>`                       | The instance provides a set of functions that retrieve human-readable resources related to the base of ego type.                            |
+| `management`    | `DetailAccessor<DetailsType, Management>`                        | The instance provides a set of functions that retrieve human-readable resources related to risk and return thinking in specific people.     |
+| `motivation`    | `DetailAccessor<string, Motivation, string>`                     | The instance provides a set of functions that retrieve human-readable resources related to to an environment that is easy to get motivated. |
+| `position`      | `DetailAccessor<DetailsType, Position>`                          | The instance provides a set of functions that retrieve human-readable resources related to a talented role.                                 |
+| `response`      | `DetailAccessor<DetailsType, Response>`                          | The instance provides a set of functions that retrieve human-readable resources related to on-site or behind.                               |
+| `vector`        | `DetailAccessor<VectorType, Vector>`                             | The instance provides a set of functions that retrieve human-readable resources related to the major classification of personality.         |
+
+| Method definition                                 | Description                                    |
+| :------------------------------------------------ | :--------------------------------------------- |
+| `getDescription(type?: string): DesctiptionsType` | Get the resources of the descriptions heading. |
 
 ### `DesctiptionsType`
 

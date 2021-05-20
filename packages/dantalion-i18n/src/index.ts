@@ -12,6 +12,11 @@ export {
   response,
   vector,
 } from './resources/accessors';
+export {
+  Accessors,
+  createAccessors,
+  default as createAccessorsAsync,
+} from './resources/createAccessorsAsync';
 export type { ResourcesAccessor } from './resources/createAccessor';
 export type { DetailAccessor } from './resources/createGenericAccessor';
 export { default as createTAsync } from './resources/createTAsync';
