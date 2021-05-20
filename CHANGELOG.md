@@ -2,6 +2,27 @@
 
 # Changelog
 
+## v0.10.0 (2021-05-21)
+
+### BREAKING CHANGE
+
+- i18n: `ResourcesAccessor<T, K, D>` type definition will be deprecated.
+  - This will may no longer the next update after.
+
+### Feature
+
+- i18n: Added and migrated the function that creates the generical assessor (a882ea3)
+- i18n: split and exposed the i18n initializer (2f43699)
+
+### Refactor
+
+- core, i18n: Removed the unnecessary exports (5679d7e)
+
+### Docs
+
+- i18n: Fixed some resource that notation was wrong (6629d23)
+- i18n: Improved the README (61715d2, 307b068, c9f8f4d)
+
 ## v0.9.0 (2021-05-19)
 
 ### BREAKING CHANGE
