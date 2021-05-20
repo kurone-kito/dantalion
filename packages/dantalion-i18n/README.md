@@ -80,6 +80,25 @@ The instance provides a set of functions that retrieve human-readable resources 
 - Type: `ResourcesAccessor<DetailsType, Communication>`
 - The [`Communication`](../dantalion-core#communication) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
+### `createTAsync(lng?: string, addition?: i18next.ResourceLanguage | undefined): Promise<i18next.TFunction>`
+
+Create and initialize the i18next instance asynchronously
+
+#### Arguments
+
+| Name       | Type                       | Defaults    | Description                                  |
+| :--------- | :------------------------- | :---------- | :------------------------------------------- |
+| `lng`      | `string?`                  | (\*)        | The language to use                          |
+| `addition` | `i18next.ResourceLanguage` | `undefined` | Specify the additional resources if you need |
+
+(\*: If omitted, the language used is detected from the current environment.
+See: [useLocale()](#getlocale-string--undefined))
+
+#### Returns
+
+`Promise<i18next.TFunction>`:
+The i18next instance which already initialized the resources.
+
 ### `getDescriptionAsync(type?: string): Promise<DesctiptionsType | undefined>`
 
 Get the resources of the descriptions heading.
