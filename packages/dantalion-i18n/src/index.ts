@@ -13,6 +13,7 @@ export {
   vector,
 } from './resources/accessors';
 export type { ResourcesAccessor } from './resources/createAccessor';
+export type { DetailAccessor } from './resources/createGenericAccessor';
 export { default as createTAsync } from './resources/createTAsync';
 export type {
   DesctiptionsType,

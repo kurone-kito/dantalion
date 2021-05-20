@@ -208,7 +208,7 @@ The instance provides a set of functions that retrieve human-readable resources 
 - Type: `ResourcesAccessor<VectorType, Vector>`
 - The [`Vector`](../dantalion-core#vector) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
-## Types (for TypeScript)
+## Type definitions (for TypeScript)
 
 The strings contained in the object are in Markdown format. In the
 case of an array of strings, the elements separate for each paragraph.
@@ -240,6 +240,33 @@ interface DesctiptionsType {
 | `personality` | `string` | The title of personality.                          |
 | `strategy`    | `string` | The strategy.                                      |
 | `weak`        | `string` | The weak points.                                   |
+
+### `DetailAccessor<T, K, D>`
+
+The type definition with a function to
+access a resource of the specific category.
+
+```ts
+interface DetailAccessor<
+  T extends i18next.TFunctionResult,
+  K extends string = string,
+  D extends DetailsBaseType | string = DetailsBaseType
+> {
+  getByKey(key: K): T;
+  getCategoryDetail(): D;
+}
+```
+
+| Type | Constraint                  | Description                                                |
+| :--- | :-------------------------- | :--------------------------------------------------------- |
+| `T`  | `i18next.TFunctionResult`   | The type of resource as a return value.                    |
+| `K`  | `string`                    | The type for the resource key.                             |
+| `D`  | `DetailsBaseType \| string` | The type of resource as a return value of category detail. |
+
+| Method definition        | Description                                                                |
+| :----------------------- | :------------------------------------------------------------------------- |
+| `getByKey(key: K): T`    | The function acquires the resource corresponding to the key.               |
+| `getCategoryDetail(): D` | The function acquires the resource corresponding to the specific category. |
 
 ### `DetailsBaseType`
 
@@ -320,7 +347,38 @@ interface PersonalityType {
 | `summary`  | `string`            | The short summary as a heading.                                        |
 | `weak`     | `readonly string[]` | The weak points.                                                       |
 
-### `ResourcesAccessor<T, K>`
+### `VectorType`
+
+A type definition of a structure that
+stores a description of a personality type.
+
+```ts
+interface VectorType {
+  readonly detail: string;
+  readonly name: string;
+  readonly strategy: readonly string[];
+}
+```
+
+| Property   | Type                | Description                                                            |
+| :--------- | :------------------ | :--------------------------------------------------------------------- |
+| `detail`   | `string`            | The detail.                                                            |
+| `name`     | `string`            | The resource name as a heading.                                        |
+| `strategy` | `readonly string[]` | The strategies for communicating with people of this personality type. |
+
+<!-- markdownlint-disable MD033 -->
+<details>
+<summary>Deprecated documents</summary>
+
+---
+
+## Deprecated type definitions (for TypeScript)
+
+### ~~`ResourcesAccessor<T, K, D>`~~
+
+> **DEPRECATED**: Use the [`DetailAccessor<T, K, D>`](#detailaccessort-k-d)
+> type definition instead of this type definition.
+> This will may no longer the next update.
 
 The type definition with a function to
 access a resource of the specific category.
@@ -342,29 +400,15 @@ interface ResourcesAccessor<
 | `K`  | `string`                    | The type for the key.                                      |
 | `D`  | `DetailsBaseType \| string` | The type of resource as a return value of category detail. |
 
-| Method                                              | Description                                                                               |
+| Method definition                                   | Description                                                                               |
 | :-------------------------------------------------- | :---------------------------------------------------------------------------------------- |
 | `getAsync(key: K): Promise<T \| undefined>`         | The function acquires the resource corresponding to the key asynchronously.               |
 | `getCategoryDetailAsync(): Promise<D \| undefined>` | The function acquires the resource corresponding to the specific category asynchronously. |
 
-### `VectorType`
+---
 
-A type definition of a structure that
-stores a description of a personality type.
-
-```ts
-interface VectorType {
-  readonly detail: string;
-  readonly name: string;
-  readonly strategy: readonly string[];
-}
-```
-
-| Property   | Type                | Description                                                            |
-| :--------- | :------------------ | :--------------------------------------------------------------------- |
-| `detail`   | `string`            | The detail.                                                            |
-| `name`     | `string`            | The resource name as a heading.                                        |
-| `strategy` | `readonly string[]` | The strategies for communicating with people of this personality type. |
+</details>
+<!-- markdownlint-enable MD033 -->
 
 ## See also
 

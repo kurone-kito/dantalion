@@ -1,11 +1,13 @@
-import type { StringMap, TOptions } from 'i18next';
-import { fallbackLng } from './createTAsync';
+import type { StringMap } from 'i18next';
+import createGenericAccessor from './createGenericAccessor';
 import getResourcesAsync from './getTAsync';
 import type { DetailsBaseType } from './types';
 
 /**
  * The type definition with a function to access
  * a resource of the specific category.
+ * @deprecated Use the `DetailAccessor<T, K, D>` type definition
+ * instead of this type definition. This will may no longer the next update.
  * @template T The type of resource as a return value.
  * @template K The type for the key.
  * @template D The type of resource as a return value of category detail.
@@ -32,6 +34,8 @@ export interface ResourcesAccessor<
 
 /**
  * The function acquires the resource corresponding to the key asynchronously.
+ * @deprecated Use the `Accessor.tObj()` method instead of this function.
+ * This will may no longer the next update.
  * @template T The type of resource as a return value.
  * @param key The key.
  * @param placeholder The placeholder for i18next.
@@ -44,19 +48,14 @@ export interface ResourcesAccessor<
 export const getAsync = async <T extends object>(
   key: string,
   placeholder?: StringMap
-): Promise<T | undefined> => {
-  const t = await getResourcesAsync();
-  const opts = Object.freeze<TOptions>({ returnObjects: true, ...placeholder });
-  const result = t<string | T>(key, opts);
-  const fallback = t<string | T>(key, { ...opts, lng: fallbackLng });
-  return typeof result === 'string' || typeof fallback === 'string'
-    ? undefined
-    : { ...fallback, ...result };
-};
+): Promise<T | undefined> =>
+  createGenericAccessor(await getResourcesAsync()).tObj<T>(key, placeholder);
 
 /**
  * Create the accessor functions that acquire the resource corresponding
  * to the specified category asynchronously.
+ * @deprecated Use the `Accessor.tDetail<T, K, D>()` method
+ * instead of this function. This will may no longer the next update.
  * @template T The type of resource as a return value.
  * @template K The type for the key.
  * @template D The type of resource as a return value of category detail.
