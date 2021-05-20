@@ -8,23 +8,15 @@ import semverGte from 'semver/functions/gte';
  * @returns The locale string e.g. `en-US`.
  */
 const getLocaleFromIntlApi = () =>
-  Intl?.DateTimeFormat?.()?.resolvedOptions?.()?.locale;
+  Intl.DateTimeFormat().resolvedOptions().locale;
 
 /**
  * Get the locale information from the environment variables.
- *
- * If the environment variables did not found, it gets via Intl API.
- * @returns The locale string e.g. `en-US`.
+ * @returns The locale string e.g. `en_US.UTF-8`.
  */
 const getLocaleFromEnv = () => {
   const { env } = process;
-  return (
-    env.LC_ALL ||
-    env.LC_MESSAGES ||
-    env.LANG ||
-    env.LANGUAGE ||
-    getLocaleFromIntlApi()
-  );
+  return env.LC_ALL || env.LC_MESSAGES || env.LANG || env.LANGUAGE;
 };
 
 /**
@@ -43,10 +35,13 @@ const isBrowser = () =>
   )();
 
 /**
- * It provides the appropriate locale information acquisition function
- * according to the current environment.
- * @returns The locale string e.g. `en-US`.
+ * It provides the appropriate locale information acquisition
+ * function according to the current environment.
+ * @param forceEnv If the value is truthy, the function selects
+ * the getting forcibly that from the environment variables.
+ * @returns The locale string e.g. `en-US` or `en_US.UTF-8`.
  */
-export default isBrowser() || isAvailableDefaultNodeICU()
-  ? getLocaleFromIntlApi
-  : getLocaleFromEnv;
+export default (forceEnv?: boolean): string =>
+  ((forceEnv || !(isBrowser() || isAvailableDefaultNodeICU())) &&
+    getLocaleFromEnv()) ||
+  getLocaleFromIntlApi();

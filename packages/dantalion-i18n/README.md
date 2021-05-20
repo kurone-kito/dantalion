@@ -164,7 +164,7 @@ The string that the personality information as the Markdown format.
 If you specified the `undefined` value as an argument or omitted it,
 it would be a list of the available types.
 
-### `getLocale(): string | undefined`
+### `getLocale(forceEnv?: boolean): string | undefined`
 
 It provides the appropriate locale information acquisition function
 according to the current environment.
@@ -175,11 +175,13 @@ decision. If not, it determines by the environment variables.
 
 #### Arguments
 
-(None)
+| Name       | Type                   | Defaults  | Description                                                                                            |
+| :--------- | :--------------------- | :-------- | :----------------------------------------------------------------------------------------------------- |
+| `forceEnv` | `boolean \| undefined` | undefined | If the value is truthy, the function selects the getting forcibly that from the environment variables. |
 
 #### Returns
 
-`string | undefined`: The locale string e.g. `en-US`.
+`string | undefined`: The locale string e.g. `en-US` or `en_US.UTF-8`.
 If it is not recognized correctly, it may return an undefined value.
 
 ### `getPersonalityMarkdownAsync(birth: string | number | Date): Promise<string>`

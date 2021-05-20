@@ -14,7 +14,6 @@ import {
   communication,
   genius,
   getDescriptionAsync,
-  getLocale,
   lifeBase,
   management,
   motivation,
@@ -50,10 +49,6 @@ describe('integration testing', () => {
           weak: expect.any(String),
         })
     );
-  });
-  describe('`getLocale()` function', () => {
-    it('Get the string', () => expect(getLocale()).toEqual(expect.any(String)));
-    it('Get the same value', () => expect(getLocale()).toBe(getLocale()));
   });
   describe('The `brain` instance', () => {
     it('getCategoryDetailAsync() method', async () =>
