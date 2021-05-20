@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD024 -->
+
 # 🦁 Dantalion: i18n resources library
 
 [![npm version](https://badge.fury.io/js/%40kurone-kito%2Fdantalion-i18n.svg)](https://badge.fury.io/js/%40kurone-kito%2Fdantalion-i18n)
@@ -78,6 +80,25 @@ The instance provides a set of functions that retrieve human-readable resources 
 - Type: `ResourcesAccessor<DetailsType, Communication>`
 - The [`Communication`](../dantalion-core#communication) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
+### `createTAsync(lng?: string, addition?: i18next.ResourceLanguage | undefined): Promise<i18next.TFunction>`
+
+Create and initialize the i18next instance asynchronously
+
+#### Arguments
+
+| Name       | Type                       | Defaults    | Description                                  |
+| :--------- | :------------------------- | :---------- | :------------------------------------------- |
+| `lng`      | `string?`                  | (\*)        | The language to use                          |
+| `addition` | `i18next.ResourceLanguage` | `undefined` | Specify the additional resources if you need |
+
+(\*: If omitted, the language used is detected from the current environment.
+See: [useLocale()](#getlocale-string--undefined))
+
+#### Returns
+
+`Promise<i18next.TFunction>`:
+The i18next instance which already initialized the resources.
+
 ### `getDescriptionAsync(type?: string): Promise<DesctiptionsType | undefined>`
 
 Get the resources of the descriptions heading.
@@ -90,27 +111,53 @@ Get the resources of the descriptions heading.
 
 Get the personality information.
 
-- `genius`: The types of personality.
-- Returns: The string that the personality information. If the omitted, it will be list of the available types.
+#### Arguments
+
+| Name     | Type                  | Defaults    | Description               |
+| :------- | :-------------------- | :---------- | :------------------------ |
+| `genius` | `Genius \| undefined` | `undefined` | The types of personality. |
+
+#### Returns
+
+`Promise<string>`:
+The string that the personality information as the Markdown format.
+
+If you specified the `undefined` value as an argument or omitted it,
+it would be a list of the available types.
 
 ### `getLocale(): string | undefined`
 
-It provides the appropriate locale information acquisition function according to the current environment.
+It provides the appropriate locale information acquisition function
+according to the current environment.
 
-For Node.js version 12.1.0 and later or web browsers, it depends on the [Intl API](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl)'s decision. If not, it determines by the environment variables.
+For Node.js version `12.1.0` and later or web browsers, it depends on the
+[Intl API](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl)'s
+decision. If not, it determines by the environment variables.
 
-- Arguments: _(None)_
-- Returns: The locale string e.g. `en-US.utf8` or undefined value.
+#### Arguments
+
+(None)
+
+#### Returns
+
+`string | undefined`: The locale string e.g. `en-US`.
+If it is not recognized correctly, it may return an undefined value.
 
 ### `getPersonalityMarkdownAsync(birth: string | number | Date): Promise<string>`
 
 Get the personality information corresponding to the specified birthday.
 
-- `birth`: Specify a birthday within the range from February 1, 1873,
-  to December 31, 2050.
-  Ignore the _time_ information.
-- Returns: The string that the personality information. If the date is over the range,
-  it will be error message.
+#### Arguments
+
+| Name    | Type                       | Defaults     | Description                                                                                                     |
+| :------ | :------------------------- | :----------- | :-------------------------------------------------------------------------------------------------------------- |
+| `birth` | `string \| number \| Date` | _(Required)_ | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Ignore the _time_ information. |
+
+#### Returns
+
+`Promise<string>`:
+The string that the personality information as the Markdown format.
+If the date is over the range, it will be error message.
 
 ### `genius`
 
@@ -161,7 +208,7 @@ The instance provides a set of functions that retrieve human-readable resources 
 - Type: `ResourcesAccessor<VectorType, Vector>`
 - The [`Vector`](../dantalion-core#vector) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
-## Types (for TypeScript)
+## Type definitions (for TypeScript)
 
 The strings contained in the object are in Markdown format. In the
 case of an array of strings, the elements separate for each paragraph.
@@ -193,6 +240,33 @@ interface DesctiptionsType {
 | `personality` | `string` | The title of personality.                          |
 | `strategy`    | `string` | The strategy.                                      |
 | `weak`        | `string` | The weak points.                                   |
+
+### `DetailAccessor<T, K, D>`
+
+The type definition with a function to
+access a resource of the specific category.
+
+```ts
+interface DetailAccessor<
+  T extends i18next.TFunctionResult,
+  K extends string = string,
+  D extends DetailsBaseType | string = DetailsBaseType
+> {
+  getByKey(key: K): T;
+  getCategoryDetail(): D;
+}
+```
+
+| Type | Constraint                  | Description                                                |
+| :--- | :-------------------------- | :--------------------------------------------------------- |
+| `T`  | `i18next.TFunctionResult`   | The type of resource as a return value.                    |
+| `K`  | `string`                    | The type for the resource key.                             |
+| `D`  | `DetailsBaseType \| string` | The type of resource as a return value of category detail. |
+
+| Method definition        | Description                                                                |
+| :----------------------- | :------------------------------------------------------------------------- |
+| `getByKey(key: K): T`    | The function acquires the resource corresponding to the key.               |
+| `getCategoryDetail(): D` | The function acquires the resource corresponding to the specific category. |
 
 ### `DetailsBaseType`
 
@@ -273,7 +347,38 @@ interface PersonalityType {
 | `summary`  | `string`            | The short summary as a heading.                                        |
 | `weak`     | `readonly string[]` | The weak points.                                                       |
 
-### `ResourcesAccessor<T, K>`
+### `VectorType`
+
+A type definition of a structure that
+stores a description of a personality type.
+
+```ts
+interface VectorType {
+  readonly detail: string;
+  readonly name: string;
+  readonly strategy: readonly string[];
+}
+```
+
+| Property   | Type                | Description                                                            |
+| :--------- | :------------------ | :--------------------------------------------------------------------- |
+| `detail`   | `string`            | The detail.                                                            |
+| `name`     | `string`            | The resource name as a heading.                                        |
+| `strategy` | `readonly string[]` | The strategies for communicating with people of this personality type. |
+
+<!-- markdownlint-disable MD033 -->
+<details>
+<summary>Deprecated documents</summary>
+
+---
+
+## Deprecated type definitions (for TypeScript)
+
+### ~~`ResourcesAccessor<T, K, D>`~~
+
+> **DEPRECATED**: Use the [`DetailAccessor<T, K, D>`](#detailaccessort-k-d)
+> type definition instead of this type definition.
+> This will may no longer the next update.
 
 The type definition with a function to
 access a resource of the specific category.
@@ -295,26 +400,20 @@ interface ResourcesAccessor<
 | `K`  | `string`                    | The type for the key.                                      |
 | `D`  | `DetailsBaseType \| string` | The type of resource as a return value of category detail. |
 
-| Method                                              | Description                                                                               |
+| Method definition                                   | Description                                                                               |
 | :-------------------------------------------------- | :---------------------------------------------------------------------------------------- |
 | `getAsync(key: K): Promise<T \| undefined>`         | The function acquires the resource corresponding to the key asynchronously.               |
 | `getCategoryDetailAsync(): Promise<D \| undefined>` | The function acquires the resource corresponding to the specific category asynchronously. |
 
-### `VectorType`
+---
 
-A type definition of a structure that
-stores a description of a personality type.
+</details>
+<!-- markdownlint-enable MD033 -->
 
-```ts
-interface VectorType {
-  readonly detail: string;
-  readonly name: string;
-  readonly strategy: readonly string[];
-}
-```
+## See also
 
-| Property   | Type                | Description                                                            |
-| :--------- | :------------------ | :--------------------------------------------------------------------- |
-| `detail`   | `string`            | The detail.                                                            |
-| `name`     | `string`            | The resource name as a heading.                                        |
-| `strategy` | `readonly string[]` | The strategies for communicating with people of this personality type. |
+- [i18next: internationalization-framework](https://www.i18next.com)
+
+## License
+
+MIT

@@ -5,6 +5,7 @@ import semverGte from 'semver/functions/gte';
  *
  * If the environment is on NodeJS and does not have Full-ICU,
  * it may get the default results.
+ * @returns The locale string e.g. `en-US`.
  */
 const getLocaleFromIntlApi = () =>
   Intl?.DateTimeFormat?.()?.resolvedOptions?.()?.locale;
@@ -13,6 +14,7 @@ const getLocaleFromIntlApi = () =>
  * Get the locale information from the environment variables.
  *
  * If the environment variables did not found, it gets via Intl API.
+ * @returns The locale string e.g. `en-US`.
  */
 const getLocaleFromEnv = () => {
   const { env } = process;
@@ -43,6 +45,7 @@ const isBrowser = () =>
 /**
  * It provides the appropriate locale information acquisition function
  * according to the current environment.
+ * @returns The locale string e.g. `en-US`.
  */
 export default isBrowser() || isAvailableDefaultNodeICU()
   ? getLocaleFromIntlApi
