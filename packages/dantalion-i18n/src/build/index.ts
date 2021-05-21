@@ -4,38 +4,19 @@ import {
   getPersonality,
   types,
 } from '@kurone-kito/dantalion-core';
-import { getDescriptionAsync } from '../resources/accessors';
+import createAccessorsAsync, {
+  Accessors,
+} from '../resources/createAccessorsAsync';
 import article from './article';
 import { list } from './list';
-import { detailsAsync, personalityAsync } from './template';
+import { createDetailsTemplate, createPersonalityTemplate } from './template';
+
+type ParsableDate = ConstructorParameters<typeof Date>[0];
 
 /**
- * Get the personality information corresponding to the specified birthday.
- * @param birth Specify a birthday within the range from February 1, 1873,
- * to December 31, 2050.
- *
- * Ignore the _time_ information.
- * @returns The string that the personality information
- * as the Markdown format.
- *
- * If the date is over the range, it will be error message.
- */
-export const getPersonalityMarkdownAsync = async (
-  birth: ConstructorParameters<typeof Date>[0]
-): Promise<string> => {
-  const result = getPersonality(birth);
-  const desc = await getDescriptionAsync(new Date(birth).toDateString());
-  return result
-    ? article({
-        body: await personalityAsync(result),
-        head: `Dantalion: ${desc?.personality}`,
-      })
-    : article({ head: `Dantalion: ${desc?.invalid}` });
-};
-
-/**
- * Get the personality information.
+ * Get the personality information asynchronously.
  * @param genius The types of personality.
+ * @param accessors The accessors instance for resources.
  * @returns The string that the personality information
  * as the Markdown format.
  *
@@ -43,17 +24,49 @@ export const getPersonalityMarkdownAsync = async (
  * it would be a list of the available types.
  */
 export const getDetailMarkdownAsync = async (
-  genius?: Genius
+  genius?: Genius,
+  accessors?: Accessors
 ): Promise<string> => {
+  // eslint-disable-next-line no-param-reassign
+  accessors ??= await createAccessorsAsync();
   const result = genius && getDetail(genius);
-  const desc = await getDescriptionAsync(genius);
+  const desc = accessors.getDescription(genius);
   return genius && result
     ? article({
-        body: await detailsAsync(genius, result),
-        head: `Dantalion: ${desc?.detail}`,
+        body: createDetailsTemplate(genius, result, accessors),
+        head: `Dantalion: ${desc.detail}`,
       })
     : article({
-        head: `Dantalion: ${desc?.details}`,
         body: list(...types.genius),
+        head: `Dantalion: ${desc.details}`,
       });
+};
+
+/**
+ * Get the personality information corresponding
+ * to the specified birthday asynchronously.
+ * @param birth Specify a birthday within the range from February 1, 1873,
+ * to December 31, 2050.
+ *
+ * Ignore the _time_ information.
+ * @param accessors The accessors instance for resources.
+ * @returns The string that the personality information
+ * as the Markdown format.
+ *
+ * If the date is over the range, it will be error message.
+ */
+export const getPersonalityMarkdownAsync = async (
+  birth: ParsableDate,
+  accessors?: Accessors
+): Promise<string> => {
+  // eslint-disable-next-line no-param-reassign
+  accessors ??= await createAccessorsAsync();
+  const result = getPersonality(birth);
+  const desc = accessors.getDescription(new Date(birth).toDateString());
+  return result
+    ? article({
+        body: createPersonalityTemplate(result, accessors),
+        head: `Dantalion: ${desc.personality}`,
+      })
+    : article({ head: `Dantalion: ${desc.invalid}` });
 };

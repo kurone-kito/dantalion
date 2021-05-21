@@ -4,31 +4,28 @@ import {
   Personality,
   getDetail,
 } from '@kurone-kito/dantalion-core';
-import {
-  brain,
-  communication,
-  genius,
-  management,
-  position,
-  response,
-  vector,
-} from '../resources/accessors';
+import type { Accessors } from '../resources/createAccessorsAsync';
 import { detailsBase, detailsMore } from './details';
-import { fromGeniusAsync, fromGeniusForPersonalityAsync } from './genius';
+import { createFromGenius, fromGeniusForPersonality } from './genius';
 import { line } from './list';
-import {
-  fromLifeBaseAsync,
-  fromMotivationAsync,
-  fromVectorAsync,
-} from './specialized';
+import { fromLifeBase, fromMotivation, fromVector } from './specialized';
 
 /**
  * Create the Markdown only accompany resources.
  * @param source The source.
  */
-const onlyAccompanyingAsync = async (
+const onlyAccompanying = (
   source: Pick<
     Detail,
+    | 'brain'
+    | 'communication'
+    | 'management'
+    | 'motivation'
+    | 'position'
+    | 'response'
+  >,
+  accessors: Pick<
+    Accessors,
     | 'brain'
     | 'communication'
     | 'management'
@@ -38,17 +35,19 @@ const onlyAccompanyingAsync = async (
   >
 ) =>
   line(
-    detailsBase({ source: await brain.getCategoryDetailAsync() }),
-    detailsMore({ source: await brain.getAsync(source.brain) }),
-    detailsBase({ source: await communication.getCategoryDetailAsync() }),
-    detailsMore({ source: await communication.getAsync(source.communication) }),
-    detailsBase({ source: await management.getCategoryDetailAsync() }),
-    detailsMore({ source: await management.getAsync(source.management) }),
-    detailsBase({ source: await position.getCategoryDetailAsync() }),
-    detailsMore({ source: await position.getAsync(source.position) }),
-    detailsBase({ source: await response.getCategoryDetailAsync() }),
-    detailsMore({ source: await response.getAsync(source.response) }),
-    await fromMotivationAsync(source.motivation)
+    detailsBase({ src: accessors.brain.getCategoryDetail() }),
+    detailsMore({ src: accessors.brain.getByKey(source.brain) }),
+    detailsBase({ src: accessors.communication.getCategoryDetail() }),
+    detailsMore({
+      src: accessors.communication.getByKey(source.communication),
+    }),
+    detailsBase({ src: accessors.management.getCategoryDetail() }),
+    detailsMore({ src: accessors.management.getByKey(source.management) }),
+    detailsBase({ src: accessors.position.getCategoryDetail() }),
+    detailsMore({ src: accessors.position.getByKey(source.position) }),
+    detailsBase({ src: accessors.response.getCategoryDetail() }),
+    detailsMore({ src: accessors.response.getByKey(source.response) }),
+    fromMotivation(accessors.motivation, source.motivation)
   );
 
 /**
@@ -56,27 +55,39 @@ const onlyAccompanyingAsync = async (
  * @param type The type of genius
  * @param source The source.
  */
-export const detailsAsync = async (
+export const createDetailsTemplate = (
   type: Genius,
-  source: Detail
-): Promise<string> =>
-  line(
-    detailsBase({ source: await vector.getCategoryDetailAsync() }),
-    await fromVectorAsync(await vector.getAsync(source.vector)),
-    detailsBase({ source: await genius.getCategoryDetailAsync() }),
-    await fromGeniusAsync(await genius.getAsync(type), 3),
-    await onlyAccompanyingAsync(source)
+  source: Detail,
+  accessors: Accessors
+): string => {
+  const desc = accessors.getDescription();
+  return line(
+    detailsBase({ src: accessors.vector.getCategoryDetail() }),
+    fromVector(desc.strategy, accessors.vector.getByKey(source.vector)),
+    detailsBase({ src: accessors.genius.getCategoryDetail() }),
+    createFromGenius(desc)(accessors.genius.getByKey(type), 3),
+    onlyAccompanying(source, accessors)
   );
+};
 
-export const personalityAsync = async (
-  source: Personality
-): Promise<string> => {
+/**
+ * Create the Markdown from the birthday.
+ * @param source The source.
+ * @param accessors
+ */
+export const createPersonalityTemplate = (
+  source: Personality,
+  accessors: Accessors
+): string => {
   const details = getDetail(source.inner);
   return line(
-    detailsBase({ source: await vector.getCategoryDetailAsync() }),
-    await fromVectorAsync(await vector.getAsync(details.vector)),
-    await fromGeniusForPersonalityAsync(source),
-    await onlyAccompanyingAsync(details),
-    await fromLifeBaseAsync(source.lifeBase)
+    detailsBase({ src: accessors.vector.getCategoryDetail() }),
+    fromVector(
+      accessors.getDescription().strategy,
+      accessors.vector.getByKey(details.vector)
+    ),
+    fromGeniusForPersonality(source, accessors),
+    onlyAccompanying(details, accessors),
+    fromLifeBase(accessors.lifeBase, source.lifeBase)
   );
 };
