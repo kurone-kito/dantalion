@@ -48,37 +48,62 @@ Since it's a long sentence, it omitted some parts.
 
 ```json
 {
-  "name": "悠然タイプ",
-  "summary": "バランス型能力と面倒見が良い、勇者的ポジション",
+  "name": "Easygoing type",
+  "summary": "Balanced, capable and caring, a heroic position.",
   "detail": [
-    "重役社員のような、万能感と親分肌のような空気感を持つ人が多いです。",
+    "Many people have an air of all-around competence and boss authority, like an executive employee.",
     :
     :
   ],
   "weak": [
-    "悠然タイプの人は、自分が悪くても謝罪するのを嫌がります。責任や謝罪心を持っていても、それを表明するのが極端に苦手です。"
+    "They don't like to apologize even when it is their fault. Even if they have apologetic, they are not very good at expressing it."
+    :
+    :
   ],
   "strategy": [
-    "悠然タイプの人は自力でなんでもできてしまうがため、自分でなんでも抱えてしまいます。何かを任せる際は『やらせすぎない』よう注意すると良いでしょう。"
+    "They can do everything on their own, so they tend to take care of everything on their own. When you entrust them with something, be careful not to let them do too much."
   ]
 }
 ```
 
 ## API
 
-### `brain`
+### `createAccessors(t: i18next.TFunction): Accessors`
 
-The instance provides a set of functions that retrieve human-readable resources related to the thought method.
+Create the concreted accessors collection from the i18next instance
 
-- Type: `ResourcesAccessor<DetailsType, Brain>`
-- The [`Brain`](../dantalion-core#brain) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+#### Arguments
 
-### `communication`
+| Name | Type                                                          | Defaults     | Description                  |
+| :--- | :------------------------------------------------------------ | :----------- | :--------------------------- |
+| `t`  | [`i18next.TFunction`](https://www.i18next.com/overview/api#t) | _(Required)_ | Specify the i18next instance |
 
-The instance provides a set of functions that retrieve human-readable resources related to dialogue policy.
+#### Returns
 
-- Type: `ResourcesAccessor<DetailsType, Communication>`
-- The [`Communication`](../dantalion-core#communication) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+[`Accessors`](#accessors): The instance of the concreted accessors collection
+
+### `createAccessorsAsync(lng?: string, addition?: ResourceLanguage): Promise<Accessors & i18next.WithT>`
+
+Create the concreted accessors collection asynchronously
+
+It is a synonym function that combines
+[`createAccessors()`](#createaccessorst-i18nexttfunction-accessors) and
+[`createTAsync()`](#createtasynclng-string-addition-i18nextresourcelanguage--undefined-promisei18nexttfunction).
+
+#### Arguments
+
+| Name       | Type                       | Defaults    | Description                                  |
+| :--------- | :------------------------- | :---------- | :------------------------------------------- |
+| `lng`      | `string?`                  | (\*)        | The language to use                          |
+| `addition` | `i18next.ResourceLanguage` | `undefined` | Specify the additional resources if you need |
+
+(\*: If omitted, the language used is detected from the current environment.
+See: [useLocale()](#getlocale-string--undefined))
+
+#### Returns
+
+[`Promise<Accessors & i18next.WithT>`](#accessors):
+The instance of the concreted accessors collection
 
 ### `createTAsync(lng?: string, addition?: i18next.ResourceLanguage | undefined): Promise<i18next.TFunction>`
 
@@ -96,36 +121,29 @@ See: [useLocale()](#getlocale-string--undefined))
 
 #### Returns
 
-`Promise<i18next.TFunction>`:
+[`Promise<i18next.TFunction>`](https://www.i18next.com/overview/api#t):
 The i18next instance which already initialized the resources.
 
-### `getDescriptionAsync(type?: string): Promise<DesctiptionsType | undefined>`
-
-Get the resources of the descriptions heading.
-
-- Arguments:
-  - `type?: string | undefined`: The genius type or birthday.
-- Returns: The resources of the descriptions heading. ([`DesctiptionsType`](#desctiptionstype))
-
-### `getDetailMarkdownAsync(genius?: Genius): Promise<string>`
+### `getDetailMarkdown(accessors: Accessors, genius?: Genius): string`
 
 Get the personality information.
 
 #### Arguments
 
-| Name     | Type                  | Defaults    | Description               |
-| :------- | :-------------------- | :---------- | :------------------------ |
-| `genius` | `Genius \| undefined` | `undefined` | The types of personality. |
+| Name        | Type                                              | Defaults     | Description                           |
+| :---------- | :------------------------------------------------ | :----------- | :------------------------------------ |
+| `accessors` | [`Accessors`](#accessors)                         | _(Required)_ | The accessors instance for resources. |
+| `genius`    | [`Genius \| undefined`](../dantalion-core#genius) | `undefined`  | The types of personality.             |
 
 #### Returns
 
-`Promise<string>`:
+`string`:
 The string that the personality information as the Markdown format.
 
 If you specified the `undefined` value as an argument or omitted it,
 it would be a list of the available types.
 
-### `getLocale(): string | undefined`
+### `getLocale(forceEnv?: boolean): string | undefined`
 
 It provides the appropriate locale information acquisition function
 according to the current environment.
@@ -136,82 +154,75 @@ decision. If not, it determines by the environment variables.
 
 #### Arguments
 
-(None)
+| Name       | Type                   | Defaults  | Description                                                                                            |
+| :--------- | :--------------------- | :-------- | :----------------------------------------------------------------------------------------------------- |
+| `forceEnv` | `boolean \| undefined` | undefined | If the value is truthy, the function selects the getting forcibly that from the environment variables. |
 
 #### Returns
 
-`string | undefined`: The locale string e.g. `en-US`.
+`string | undefined`: The locale string e.g. `en-US` or `en_US.UTF-8`.
 If it is not recognized correctly, it may return an undefined value.
 
-### `getPersonalityMarkdownAsync(birth: string | number | Date): Promise<string>`
+### `getPersonalityMarkdown(accessors: Accessors, birth: string | number | Date): string`
 
 Get the personality information corresponding to the specified birthday.
 
 #### Arguments
 
-| Name    | Type                       | Defaults     | Description                                                                                                     |
-| :------ | :------------------------- | :----------- | :-------------------------------------------------------------------------------------------------------------- |
-| `birth` | `string \| number \| Date` | _(Required)_ | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Ignore the _time_ information. |
+| Name     | Type                       | Defaults     | Description                                                                                                     |
+| :------- | :------------------------- | :----------- | :-------------------------------------------------------------------------------------------------------------- |
+| `genius` | [`Accessors`](#accessors)  | _(Required)_ | The accessors instance for resources.                                                                           |
+| `birth`  | `string \| number \| Date` | _(Required)_ | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Ignore the _time_ information. |
 
 #### Returns
 
-`Promise<string>`:
+`string`:
 The string that the personality information as the Markdown format.
 If the date is over the range, it will be error message.
-
-### `genius`
-
-The instance provides a set of functions that retrieve human-readable resources related to natural personality.
-
-- Type: `ResourcesAccessor<PersonalityType, Genius, PersonalityDetailType>`
-- The [`Genius`](../dantalion-core#genius) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### `lifeBase`
-
-The instance provides a set of functions that retrieve human-readable resources related to the base of ego type.
-
-- Type: `ResourcesAccessor<string, LifeBase, string>`
-- The [`LifeBase`](../dantalion-core#lifebase) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### `management`
-
-The instance provides a set of functions that retrieve human-readable resources related to risk and return thinking in specific people.
-
-- Type: `ResourcesAccessor<DetailsType, Management>`
-- The [`Management`](../dantalion-core#management) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### `motivation`
-
-The instance provides a set of functions that retrieve human-readable resources related to an environment that is easy to get motivated.
-
-- Type: `ResourcesAccessor<string, Motivation, string>`
-- The [`Motivation`](../dantalion-core#motivation) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### `position`
-
-The instance provides a set of functions that retrieve human-readable resources related to a talented role.
-
-- Type: `ResourcesAccessor<DetailsType, Position>`
-- The [`Position`](../dantalion-core#position) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### `response`
-
-The instance provides a set of functions that retrieve human-readable resources related to on-site or behind.
-
-- Type: `ResourcesAccessor<DetailsType, Response>`
-- The [`Response`](../dantalion-core#response) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### `vector`
-
-The instance provides a set of functions that retrieve human-readable resources related to the major classification of personality.
-
-- Type: `ResourcesAccessor<VectorType, Vector>`
-- The [`Vector`](../dantalion-core#vector) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
 ## Type definitions (for TypeScript)
 
 The strings contained in the object are in Markdown format. In the
 case of an array of strings, the elements separate for each paragraph.
+
+### `Accessors`
+
+The type definition of the concreted accessors collection
+
+```ts
+interface Accessors {
+  readonly brain: DetailAccessor<DetailsType, Brain>;
+  readonly communication: DetailAccessor<DetailsType, Communication>;
+  readonly genius: DetailAccessor<
+    PersonalityType,
+    Genius,
+    PersonalityDetailType
+  >;
+  readonly lifeBase: DetailAccessor<string, LifeBase, string>;
+  readonly management: DetailAccessor<DetailsType, Management>;
+  readonly motivation: DetailAccessor<string, Motivation, string>;
+  readonly position: DetailAccessor<DetailsType, Position>;
+  readonly response: DetailAccessor<DetailsType, Response>;
+  readonly vector: DetailAccessor<VectorType, Vector>;
+  getDescription(type?: string): DesctiptionsType;
+}
+```
+
+| Property        | Type                                                             | Description                                                                                                                                 |
+| :-------------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `brain`         | `DetailAccessor<DetailsType, Brain>`                             | The instance provides a set of functions that retrieve human-readable resources related to the thought method.                              |
+| `communication` | `DetailAccessor<DetailsType, Communication>`                     | The instance provides a set of functions that retrieve human-readable resources related to dialogue policy.                                 |
+| `genius`        | `DetailAccessor<PersonalityType, Genius, PersonalityDetailType>` | The instance provides a set of functions that retrieve human-readable resources related to natural personality.                             |
+| `lifeBase`      | `DetailAccessor<string, LifeBase, string>`                       | The instance provides a set of functions that retrieve human-readable resources related to the base of ego type.                            |
+| `management`    | `DetailAccessor<DetailsType, Management>`                        | The instance provides a set of functions that retrieve human-readable resources related to risk and return thinking in specific people.     |
+| `motivation`    | `DetailAccessor<string, Motivation, string>`                     | The instance provides a set of functions that retrieve human-readable resources related to to an environment that is easy to get motivated. |
+| `position`      | `DetailAccessor<DetailsType, Position>`                          | The instance provides a set of functions that retrieve human-readable resources related to a talented role.                                 |
+| `response`      | `DetailAccessor<DetailsType, Response>`                          | The instance provides a set of functions that retrieve human-readable resources related to on-site or behind.                               |
+| `vector`        | `DetailAccessor<VectorType, Vector>`                             | The instance provides a set of functions that retrieve human-readable resources related to the major classification of personality.         |
+
+| Method definition                                 | Description                                    |
+| :------------------------------------------------ | :--------------------------------------------- |
+| `getDescription(type?: string): DesctiptionsType` | Get the resources of the descriptions heading. |
 
 ### `DesctiptionsType`
 
@@ -371,6 +382,152 @@ interface VectorType {
 <summary>Deprecated documents</summary>
 
 ---
+
+### ~~`brain`~~
+
+> **DEPRECATED**: Use the [`Accessors.brain`](#accessors) instance property
+> instead of this constant. This will may no longer the next update.
+
+The instance provides a set of functions that retrieve human-readable resources related to the thought method.
+
+- Type: `ResourcesAccessor<DetailsType, Brain>`
+- The [`Brain`](../dantalion-core#brain) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### ~~`communication`~~
+
+> **DEPRECATED**: Use the [`Accessors.communication`](#accessors) instance
+> property instead of this constant. This will may no longer the next update.
+
+The instance provides a set of functions that retrieve human-readable resources related to dialogue policy.
+
+- Type: `ResourcesAccessor<DetailsType, Communication>`
+- The [`Communication`](../dantalion-core#communication) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### ~~`getDescriptionAsync(type?: string): Promise<DesctiptionsType | undefined>`~~
+
+> **DEPRECATED**: Use the [`Accessors.getDescription()`](#accessors)
+> instance method instead of this function.
+> This will may no longer the next update.
+
+Get the resources of the descriptions heading.
+
+- Arguments:
+  - `type?: string | undefined`: The genius type or birthday.
+- Returns: The resources of the descriptions heading. ([`DesctiptionsType`](#desctiptionstype))
+
+### ~~`getDetailMarkdownAsync(genius?: Genius, accessors?: Accessors): Promise<string>`~~
+
+> **DEPRECATED**: Use the
+> [`getDetailMarkdown()`](#getdetailmarkdownaccessors-accessors-genius-genius-string)
+> function instead of this function. This will may no longer the next update.
+
+Get the personality information asynchronously.
+
+#### Arguments
+
+| Name        | Type                                              | Defaults          | Description                           |
+| :---------- | :------------------------------------------------ | :---------------- | :------------------------------------ |
+| `genius`    | [`Genius \| undefined`](../dantalion-core#genius) | `undefined`       | The types of personality.             |
+| `accessors` | [`Accessors`](#accessors)                         | _(Auto generate)_ | The accessors instance for resources. |
+
+#### Returns
+
+`Promise<string>`:
+The string that the personality information as the Markdown format.
+
+If you specified the `undefined` value as an argument or omitted it,
+it would be a list of the available types.
+
+### ~~`getPersonalityMarkdownAsync(birth: string | number | Date, accessors?: Accessors): Promise<string>`~~
+
+> **DEPRECATED**: Use the
+> [`getPersonalityMarkdown()`](#getpersonalitymarkdownaccessors-accessors-birth-string--number--date-string)
+> function instead of this function. This will may no longer the next update.
+
+Get the personality information corresponding to the specified birthday asynchronously.
+
+#### Arguments
+
+| Name        | Type                       | Defaults          | Description                                                                                                     |
+| :---------- | :------------------------- | :---------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `birth`     | `string \| number \| Date` | _(Required)_      | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Ignore the _time_ information. |
+| `accessors` | [`Accessors`](#accessors)  | _(Auto generate)_ | The accessors instance for resources.                                                                           |
+
+#### Returns
+
+`Promise<string>`:
+The string that the personality information as the Markdown format.
+If the date is over the range, it will be error message.
+
+### ~~`genius`~~
+
+> **DEPRECATED**: Use the [`Accessors.genius`](#accessors) instance
+> property instead of this constant. This will may no longer the next update.
+
+The instance provides a set of functions that retrieve human-readable resources related to natural personality.
+
+- Type: `ResourcesAccessor<PersonalityType, Genius, PersonalityDetailType>`
+- The [`Genius`](../dantalion-core#genius) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### ~~`lifeBase`~~
+
+> **DEPRECATED**: Use the [`Accessors.lifeBase`](#accessors) instance
+> property instead of this constant. This will may no longer the next update.
+
+The instance provides a set of functions that retrieve human-readable resources related to the base of ego type.
+
+- Type: `ResourcesAccessor<string, LifeBase, string>`
+- The [`LifeBase`](../dantalion-core#lifebase) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### ~~`management`~~
+
+> **DEPRECATED**: Use the [`Accessors.management`](#accessors) instance
+> property instead of this constant. This will may no longer the next update.
+
+The instance provides a set of functions that retrieve human-readable resources related to risk and return thinking in specific people.
+
+- Type: `ResourcesAccessor<DetailsType, Management>`
+- The [`Management`](../dantalion-core#management) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### ~~`motivation`~~
+
+> **DEPRECATED**: Use the [`Accessors.motivation`](#accessors) instance
+> property instead of this constant. This will may no longer the next update.
+
+The instance provides a set of functions that retrieve human-readable resources related to an environment that is easy to get motivated.
+
+- Type: `ResourcesAccessor<string, Motivation, string>`
+- The [`Motivation`](../dantalion-core#motivation) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### ~~`position`~~
+
+> **DEPRECATED**: Use the [`Accessors.position`](#accessors) instance
+> property instead of this constant. This will may no longer the next update.
+
+The instance provides a set of functions that retrieve human-readable resources related to a talented role.
+
+- Type: `ResourcesAccessor<DetailsType, Position>`
+- The [`Position`](../dantalion-core#position) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### ~~`response`~~
+
+> **DEPRECATED**: Use the [`Accessors.response`](#accessors) instance
+> property instead of this constant. This will may no longer the next update.
+
+The instance provides a set of functions that retrieve human-readable resources related to on-site or behind.
+
+- Type: `ResourcesAccessor<DetailsType, Response>`
+- The [`Response`](../dantalion-core#response) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
+
+### ~~`vector`~~
+
+> **DEPRECATED**: Use the [`Accessors.vector`](#accessors) instance
+> property instead of this constant. This will may no longer the next update.
+
+The instance provides a set of functions that retrieve human-readable resources related to the major classification of personality.
+
+- Type: `ResourcesAccessor<VectorType, Vector>`
+- The [`Vector`](../dantalion-core#vector) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
 
 ## Deprecated type definitions (for TypeScript)
 

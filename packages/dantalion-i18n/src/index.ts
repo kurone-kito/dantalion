@@ -1,5 +1,10 @@
 export { default as getLocale } from './getLocale';
-export { getPersonalityMarkdownAsync, getDetailMarkdownAsync } from './build';
+export {
+  getDetailMarkdown,
+  getDetailMarkdownAsync,
+  getPersonalityMarkdown,
+  getPersonalityMarkdownAsync,
+} from './build';
 export {
   brain,
   communication,
@@ -12,6 +17,11 @@ export {
   response,
   vector,
 } from './resources/accessors';
+export {
+  Accessors,
+  createAccessors,
+  default as createAccessorsAsync,
+} from './resources/createAccessorsAsync';
 export type { ResourcesAccessor } from './resources/createAccessor';
 export type { DetailAccessor } from './resources/createGenericAccessor';
 export { default as createTAsync } from './resources/createTAsync';

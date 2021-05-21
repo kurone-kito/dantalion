@@ -1,6 +1,6 @@
 import type { Personality } from '@kurone-kito/dantalion-core';
-import { genius, getDescriptionAsync } from '../resources/accessors';
-import type { PersonalityType } from '../resources/types';
+import type { Accessors } from '../resources/createAccessorsAsync';
+import type { DesctiptionsType, PersonalityType } from '../resources/types';
 import article, { Options } from './article';
 import { detailsBase } from './details';
 import { line, list, order } from './list';
@@ -8,81 +8,75 @@ import { line, list, order } from './list';
 /**
  * Create the Markdown only summary from the Genius resources.
  * @param source The source.
+ * @param level The heading level.
  */
-export const fromGeniusOnlySummary = (
-  source?: Pick<PersonalityType, 'detail' | 'name' | 'summary'>,
+const fromGeniusOnlySummary = (
+  source: Pick<PersonalityType, 'detail' | 'name' | 'summary'>,
   level?: number
-): string =>
-  source
-    ? line(
-        article({ body: source.summary, head: source.name, level }),
-        list(...source.detail)
-      )
-    : '';
+) =>
+  line(
+    article({ body: source.summary, head: source.name, level }),
+    list(...source.detail)
+  );
 
 /**
  * Create the Markdown only descriptions from the Genius resources.
+ * @param descriptions The resource of tne description.
  * @param source The source.
+ * @param level The heading level.
  */
-export const fromGeniusOnlyDesctiptionAsync = async (
-  source?: Pick<PersonalityType, 'strategy' | 'weak'>,
+const fromGeniusOnlyDesctiption = (
+  { strategy, weak }: Pick<DesctiptionsType, 'strategy' | 'weak'>,
+  source: Pick<PersonalityType, 'strategy' | 'weak'>,
   level?: number
-): Promise<string> => {
-  const descriptions = await getDescriptionAsync();
-  return source
-    ? line(
-        ...(<Options[]>[
-          { head: descriptions?.strategy, body: list(...source.strategy) },
-          { head: descriptions?.weak, body: list(...source.weak) },
-        ]).map((options) => article({ ...options, level }))
-      )
-    : '';
-};
+) =>
+  line(
+    ...(<Options[]>[
+      { head: strategy, body: list(...source.strategy) },
+      { head: weak, body: list(...source.weak) },
+    ]).map((options) => article({ ...options, level }))
+  );
+
+/**
+ * Create the Markdown from the Genius resources.
+ * @param descriptions The resource of tne description.
+ */
+export const createFromGenius =
+  (descriptions: Pick<DesctiptionsType, 'strategy' | 'weak'>) =>
+  /**
+   * @param source The source.
+   * @param level The heading level.
+   */
+  (source: PersonalityType, level = 1): string =>
+    line(
+      fromGeniusOnlySummary(source, level),
+      fromGeniusOnlyDesctiption(descriptions, source, level + 1)
+    );
 
 /**
  * Create the Markdown from the Genius resources.
  * @param source The source.
+ * @param accessors The accessors instance for resources.
  */
-export const fromGeniusAsync = async (
-  source?: PersonalityType,
-  level?: number
-): Promise<string> =>
-  source
-    ? line(
-        fromGeniusOnlySummary(source, level),
-        await fromGeniusOnlyDesctiptionAsync(source, (level ?? 1) + 1)
-      )
-    : '';
-
-/**
- * Create the Markdown from the Genius resources.
- * @param source The source.
- */
-export const fromGeniusForPersonalityAsync = async ({
-  inner,
-  outer,
-  workStyle,
-}: Pick<Personality, 'inner' | 'outer' | 'workStyle'>): Promise<string> => {
-  const descriptions = await getDescriptionAsync();
-  const psDetails = await genius.getCategoryDetailAsync();
+export const fromGeniusForPersonality = (
+  source: Pick<Personality, 'inner' | 'outer' | 'workStyle'>,
+  accessors: Accessors
+): string => {
+  const descriptions = accessors.getDescription();
+  const { inner, outer, workStyle, ...details } =
+    accessors.genius.getCategoryDetail();
   return line(
-    detailsBase({ additional: descriptions?.genius1, source: psDetails }),
-    order(psDetails?.inner, psDetails?.outer, psDetails?.workStyle),
-    descriptions?.genius2,
-    ...(await Promise.all(
-      (
-        [
-          [fromGeniusAsync, inner, psDetails?.inner],
-          [fromGeniusOnlySummary, outer, psDetails?.outer],
-          [fromGeniusOnlySummary, workStyle, psDetails?.workStyle],
-        ] as const
-      ).map(async ([fn, type, head]) =>
-        article({
-          body: await fn(await genius.getAsync(type), 4),
-          head,
-          level: 3,
-        })
-      )
-    ))
+    detailsBase({ addition: descriptions.genius1, src: details }),
+    order(inner, outer, workStyle),
+    descriptions.genius2,
+    ...(
+      [
+        [createFromGenius(descriptions), source.inner, inner],
+        [fromGeniusOnlySummary, source.outer, outer],
+        [fromGeniusOnlySummary, source.workStyle, workStyle],
+      ] as const
+    ).map(([fn, type, head]) =>
+      article({ body: fn(accessors.genius.getByKey(type), 4), head, level: 3 })
+    )
   );
 };
