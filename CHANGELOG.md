@@ -2,6 +2,44 @@
 
 # Changelog
 
+## v0.11.0 (2021-05-22)
+
+### BREAKING CHANGE
+
+- i18n: Some API will be deprecated. They will no longer the next update.
+
+| Category | Deprecated                      | Migrate to                   |
+| :------- | :------------------------------ | :--------------------------- |
+| Function | `getDescriptionAsync()`         | `Accessors.getDescription()` |
+| Function | `getDetailMarkdownAsync()`      | `getDetailMarkdown()`        |
+| Function | `getPersonalityMarkdownAsync()` | `getPersonalityMarkdown()`   |
+| Property | `brain`                         | `Accessors.brain`            |
+| Property | `communication`                 | `Accessors.communication`    |
+| Property | `genius`                        | `Accessors.genius`           |
+| Property | `lifeBase`                      | `Accessors.lifeBase`         |
+| Property | `management`                    | `Accessors.management`       |
+| Property | `motivation`                    | `Accessors.motivation`       |
+| Property | `position`                      | `Accessors.position`         |
+| Property | `response`                      | `Accessors.response`         |
+| Property | `vector`                        | `Accessors.vector`           |
+| Type     | `ResourcesAccessor<T, K, D>`    | `DetailAccessor<T, K, D>`    |
+
+### Feature
+
+- i18n: Added the some functions, types.
+  - `Accessors` / `createAccessors()` / `createAccessorsAsync()` (97058ff)
+  - `getDetailMarkdown()` / `getPersonalityMarkdown` (e57462a)
+- i18n: Added the argument to `createTAsync()` function. (62e3558)
+- migrated to new accessors at the logic of build Markdown API. (6b1a0db)
+
+### Tests
+
+- i18n: Added the `createTAsync()` function (98084e2)
+
+### Docs
+
+- i18n: replaced the example result to the English version (603d834)
+
 ## v0.10.0 (2021-05-21)
 
 ### BREAKING CHANGE
