@@ -126,18 +126,18 @@ The i18next instance which already initialized the resources.
 
 ### `getDetailMarkdown(accessors: Accessors, genius?: Genius): string`
 
-Get the personality information asynchronously.
+Get the personality information.
 
 #### Arguments
 
-| Name        | Type                                              | Defaults          | Description                           |
-| :---------- | :------------------------------------------------ | :---------------- | :------------------------------------ |
-| `genius`    | [`Genius \| undefined`](../dantalion-core#genius) | `undefined`       | The types of personality.             |
-| `accessors` | [`Accessors`](#accessors)                         | _(Auto generate)_ | The accessors instance for resources. |
+| Name        | Type                                              | Defaults     | Description                           |
+| :---------- | :------------------------------------------------ | :----------- | :------------------------------------ |
+| `accessors` | [`Accessors`](#accessors)                         | _(Required)_ | The accessors instance for resources. |
+| `genius`    | [`Genius \| undefined`](../dantalion-core#genius) | `undefined`  | The types of personality.             |
 
 #### Returns
 
-`Promise<string>`:
+`string`:
 The string that the personality information as the Markdown format.
 
 If you specified the `undefined` value as an argument or omitted it,
@@ -163,20 +163,20 @@ decision. If not, it determines by the environment variables.
 `string | undefined`: The locale string e.g. `en-US` or `en_US.UTF-8`.
 If it is not recognized correctly, it may return an undefined value.
 
-### `getPersonalityMarkdownAsync(birth: string | number | Date, accessors?: Accessors): Promise<string>`
+### `getPersonalityMarkdown(accessors: Accessors, birth: string | number | Date): string`
 
-Get the personality information corresponding to the specified birthday asynchronously.
+Get the personality information corresponding to the specified birthday.
 
 #### Arguments
 
-| Name        | Type                       | Defaults          | Description                                                                                                     |
-| :---------- | :------------------------- | :---------------- | :-------------------------------------------------------------------------------------------------------------- |
-| `birth`     | `string \| number \| Date` | _(Required)_      | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Ignore the _time_ information. |
-| `accessors` | [`Accessors`](#accessors)  | _(Auto generate)_ | The accessors instance for resources.                                                                           |
+| Name     | Type                       | Defaults     | Description                                                                                                     |
+| :------- | :------------------------- | :----------- | :-------------------------------------------------------------------------------------------------------------- |
+| `genius` | [`Accessors`](#accessors)  | _(Required)_ | The accessors instance for resources.                                                                           |
+| `birth`  | `string \| number \| Date` | _(Required)_ | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Ignore the _time_ information. |
 
 #### Returns
 
-`Promise<string>`:
+`string`:
 The string that the personality information as the Markdown format.
 If the date is over the range, it will be error message.
 
