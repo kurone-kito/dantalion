@@ -19,7 +19,7 @@ yet, but we'll gradually support multiple languages.
 
 ## Usage
 
-Require: Node.js >= v12
+Require: Node.js >= v12.1
 
 ### Add to dependency
 
