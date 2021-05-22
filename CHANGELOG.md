@@ -2,6 +2,21 @@
 
 # Changelog
 
+## v0.11.1 (2021-05-23)
+
+### Refactor
+
+- cli, i18n: Updated the dependencies (803e378)
+- i18n: Refactor on build the Markdown (74d7f52)
+
+### Tests
+
+- i18n: Added the feature tests that build the Markdown (73731f2)
+
+### Documents
+
+- Minor updates (d8c73f5)
+
 ## v0.11.0 (2021-05-22)
 
 ### BREAKING CHANGE
