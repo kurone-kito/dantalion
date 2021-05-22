@@ -19,6 +19,7 @@ _Four Pillars of Destiny (Ba-Zi)_.
 
 ## Note
 
+- OS independent and dependent free.
 - This package can specify a birthday within the range from February 1,
   1873, to December 31, 2050.
 - This package does not consider time zones. If you are not satisfied with

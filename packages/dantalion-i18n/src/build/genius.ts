@@ -47,7 +47,7 @@ export const createFromGenius =
    * @param source The source.
    * @param level The heading level.
    */
-  (source: PersonalityType, level = 1): string =>
+  (source: PersonalityType, level: number): string =>
     line(
       fromGeniusOnlySummary(source, level),
       fromGeniusOnlyDesctiption(descriptions, source, level + 1)

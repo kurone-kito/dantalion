@@ -36,11 +36,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "engines": {
-    "node": ">=12"
+    "node": ">=12.1"
   },
   "dependencies": {
     "@kurone-kito/dantalion-core": "^0.11.0",
-    "i18next": "^20.2.2",
+    "i18next": "^20.2.4",
     "lodash.merge": "^4.6.2",
     "semver": "^7.3.5"
   },

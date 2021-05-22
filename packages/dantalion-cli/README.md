@@ -26,7 +26,7 @@ _Four Pillars of Destiny (Ba-Zi)_.
 
 ## Usage
 
-- Require: Node.js >= v12
+- Require: Node.js >= v12.1
 - OS independent (It's a terminal app)
 
 ### Install
