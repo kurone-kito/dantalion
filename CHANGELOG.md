@@ -2,6 +2,21 @@
 
 # Changelog
 
+## v0.11.2 (2021-05-24)
+
+### Refactor
+
+- cli, i18n: Updated the dependencies (118baa3)
+  - core: It includes that updated the devDependencies.
+- Linted (b496919)
+
+### Chores
+
+- Organized the package.json notation (38683b0)
+- improved some configurations
+  - ESLint (998ea0f)
+  - TypeScript (42b49ab)
+
 ## v0.11.1 (2021-05-23)
 
 ### Refactor
