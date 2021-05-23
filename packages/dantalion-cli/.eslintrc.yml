@@ -25,6 +25,7 @@ rules:
     - error
     - devDependencies:
         - '**/*.config.?s'
+  import/order: warn
   sort-imports:
     - warn
     - ignoreDeclarationSort: true
@@ -33,3 +34,4 @@ settings:
     node:
       path:
         - src
+    typescript:
