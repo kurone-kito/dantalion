@@ -82,7 +82,7 @@ Create the concreted accessors collection from the i18next instance
 
 [`Accessors`](#accessors): The instance of the concreted accessors collection
 
-### `createAccessorsAsync(lng?: string, addition?: ResourceLanguage): Promise<Accessors & i18next.WithT>`
+### `createAccessorsAsync(lng?: string, addition?: i18next.ResourceLanguage): Promise<Accessors & i18next.WithT>`
 
 Create the concreted accessors collection asynchronously
 
@@ -105,19 +105,15 @@ See: [useLocale()](#getlocale-string--undefined))
 [`Promise<Accessors & i18next.WithT>`](#accessors):
 The instance of the concreted accessors collection
 
-### `createTAsync(lng?: string, addition?: i18next.ResourceLanguage | undefined): Promise<i18next.TFunction>`
+### `createTAsync(options: CreateTAsyncOptions): Promise<i18next.TFunction>`
 
 Create and initialize the i18next instance asynchronously
 
 #### Arguments
 
-| Name       | Type                       | Defaults    | Description                                  |
-| :--------- | :------------------------- | :---------- | :------------------------------------------- |
-| `lng`      | `string?`                  | (\*)        | The language to use                          |
-| `addition` | `i18next.ResourceLanguage` | `undefined` | Specify the additional resources if you need |
-
-(\*: If omitted, the language used is detected from the current environment.
-See: [useLocale()](#getlocale-string--undefined))
+| Name      | Type                                          | Defaults   | Description |
+| :-------- | :-------------------------------------------- | :--------- | :---------- |
+| `options` | [`CreateTAsyncOptions`](#createtasyncoptions) | (Required) | The options |
 
 #### Returns
 
@@ -223,6 +219,30 @@ interface Accessors {
 | Method definition                                 | Description                                    |
 | :------------------------------------------------ | :--------------------------------------------- |
 | `getDescription(type?: string): DesctiptionsType` | Get the resources of the descriptions heading. |
+
+### `CreateTAsyncOptions`
+
+The type definition that the options of the createTAsync function.
+
+```ts
+interface CreateTAsyncOptions {
+  readonly additions?: i18next.ResourceLanguage;
+  readonly lng?: string;
+  readonly use?:
+    | i18next.Module
+    | i18next.Newable<i18next.Module>
+    | i18next.ThirdPartyModule[]
+    | i18next.Newable<i18next.ThirdPartyModule>[];
+}
+```
+
+| Property    | Type                                    | Description                                                                                  |
+| :---------- | :-------------------------------------- | :------------------------------------------------------------------------------------------- |
+| `additions` | `i18next.ResourceLanguage \| undefined` | Specify the additional resources if you need                                                 |
+| `lng`       | `string \| undefined`                   | The language to use. If omitted, the language used is detected from the current environment. |
+| `use`       | _(\*)_                                  | The use function is there to load additional plugins to i18next.                             |
+
+(\*: See the type definition as it is long :/)
 
 ### `DesctiptionsType`
 
@@ -376,6 +396,42 @@ interface VectorType {
 | `detail`   | `string`            | The detail.                                                            |
 | `name`     | `string`            | The resource name as a heading.                                        |
 | `strategy` | `readonly string[]` | The strategies for communicating with people of this personality type. |
+
+<!-- markdownlint-disable MD033 -->
+<details>
+<summary>Deprecated documents</summary>
+
+---
+
+## Deprecated APIs
+
+### `createTAsync(lng?: string, addition?: i18next.ResourceLanguage | undefined): Promise<i18next.TFunction>`
+
+> **DEPRECATED**: This method of argument is deprecated. Use a
+> [single option argument](#createtasyncoptions-createtasyncoptions-promisei18nexttfunction).
+> This will may no longer the next update.
+
+Create and initialize the i18next instance asynchronously
+
+#### Arguments
+
+| Name       | Type                       | Defaults    | Description                                  |
+| :--------- | :------------------------- | :---------- | :------------------------------------------- |
+| `lng`      | `string?`                  | (\*)        | The language to use                          |
+| `addition` | `i18next.ResourceLanguage` | `undefined` | Specify the additional resources if you need |
+
+(\*: If omitted, the language used is detected from the current environment.
+See: [useLocale()](#getlocale-string--undefined))
+
+#### Returns
+
+[`Promise<i18next.TFunction>`](https://www.i18next.com/overview/api#t):
+The i18next instance which already initialized the resources.
+
+---
+
+</details>
+<!-- markdownlint-enable MD033 -->
 
 ## See also
 

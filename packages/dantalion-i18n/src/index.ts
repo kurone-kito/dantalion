@@ -6,7 +6,11 @@ export {
   default as createAccessorsAsync,
 } from './resources/createAccessorsAsync';
 export type { DetailAccessor } from './resources/createGenericAccessor';
-export { default as createTAsync } from './resources/createTAsync';
+export {
+  default as createTAsync,
+  CreateTAsync,
+  CreateTAsyncOptions,
+} from './resources/createTAsync';
 export type {
   DesctiptionsType,
   DetailsBaseType,
