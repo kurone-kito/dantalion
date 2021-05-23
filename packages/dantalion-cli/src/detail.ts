@@ -1,9 +1,13 @@
 import { Genius, getDetail, types } from '@kurone-kito/dantalion-core';
-import { getDetailMarkdownAsync } from '@kurone-kito/dantalion-i18n';
+import {
+  createAccessorsAsync,
+  getDetailMarkdown,
+} from '@kurone-kito/dantalion-i18n';
 import type { Command } from './type';
 
 const command: Command = {
-  getDescriptionAsync: (detail) => getDetailMarkdownAsync(detail as Genius),
+  getDescriptionAsync: async (detail) =>
+    getDetailMarkdown(await createAccessorsAsync(), detail as Genius),
   getObject: (detail) => getDetail(detail as Genius) || types.genius,
   alias: 'dt',
   command: 'detail [genius]',
