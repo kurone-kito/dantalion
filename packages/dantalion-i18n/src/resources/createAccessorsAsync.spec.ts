@@ -14,7 +14,7 @@ import createTAsync from './createTAsync';
 
 describe('`createAccessors()` function', () => {
   it('(t) => Get the Accessors object', async () =>
-    expect(createAccessors(await createTAsync())).toEqual({
+    expect(createAccessors(await createTAsync({}))).toEqual({
       brain: expect.any(Object),
       communication: expect.any(Object),
       genius: expect.any(Object),
@@ -44,7 +44,7 @@ describe('`createAccessorsAsync()` function', () => {
     }));
 });
 describe.each([
-  ['createAccessors', async () => createAccessors(await createTAsync())],
+  ['createAccessors', async () => createAccessors(await createTAsync({}))],
   ['createAccessorsAsync', createAccessorsAsync],
 ])('`%s()` function', (__, func) => {
   describe('`Accessors.brain.getByKey()` method', () => {

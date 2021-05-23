@@ -82,7 +82,7 @@ Create the concreted accessors collection from the i18next instance
 
 [`Accessors`](#accessors): The instance of the concreted accessors collection
 
-### `createAccessorsAsync(lng?: string, addition?: ResourceLanguage): Promise<Accessors & i18next.WithT>`
+### `createAccessorsAsync(lng?: string, addition?: i18next.ResourceLanguage): Promise<Accessors & i18next.WithT>`
 
 Create the concreted accessors collection asynchronously
 
@@ -105,19 +105,15 @@ See: [useLocale()](#getlocale-string--undefined))
 [`Promise<Accessors & i18next.WithT>`](#accessors):
 The instance of the concreted accessors collection
 
-### `createTAsync(lng?: string, addition?: i18next.ResourceLanguage | undefined): Promise<i18next.TFunction>`
+### `createTAsync(options: CreateTAsyncOptions): Promise<i18next.TFunction>`
 
 Create and initialize the i18next instance asynchronously
 
 #### Arguments
 
-| Name       | Type                       | Defaults    | Description                                  |
-| :--------- | :------------------------- | :---------- | :------------------------------------------- |
-| `lng`      | `string?`                  | (\*)        | The language to use                          |
-| `addition` | `i18next.ResourceLanguage` | `undefined` | Specify the additional resources if you need |
-
-(\*: If omitted, the language used is detected from the current environment.
-See: [useLocale()](#getlocale-string--undefined))
+| Name      | Type                                          | Defaults   | Description |
+| :-------- | :-------------------------------------------- | :--------- | :---------- |
+| `options` | [`CreateTAsyncOptions`](#createtasyncoptions) | (Required) | The options |
 
 #### Returns
 
@@ -223,6 +219,30 @@ interface Accessors {
 | Method definition                                 | Description                                    |
 | :------------------------------------------------ | :--------------------------------------------- |
 | `getDescription(type?: string): DesctiptionsType` | Get the resources of the descriptions heading. |
+
+### `CreateTAsyncOptions`
+
+The type definition that the options of the createTAsync function.
+
+```ts
+interface CreateTAsyncOptions {
+  readonly additions?: i18next.ResourceLanguage;
+  readonly lng?: string;
+  readonly use?:
+    | i18next.Module
+    | i18next.Newable<i18next.Module>
+    | i18next.ThirdPartyModule[]
+    | i18next.Newable<i18next.ThirdPartyModule>[];
+}
+```
+
+| Property    | Type                                    | Description                                                                                  |
+| :---------- | :-------------------------------------- | :------------------------------------------------------------------------------------------- |
+| `additions` | `i18next.ResourceLanguage \| undefined` | Specify the additional resources if you need                                                 |
+| `lng`       | `string \| undefined`                   | The language to use. If omitted, the language used is detected from the current environment. |
+| `use`       | _(\*)_                                  | The use function is there to load additional plugins to i18next.                             |
+
+(\*: See the type definition as it is long :/)
 
 ### `DesctiptionsType`
 
@@ -383,184 +403,30 @@ interface VectorType {
 
 ---
 
-### ~~`brain`~~
+## Deprecated APIs
 
-> **DEPRECATED**: Use the [`Accessors.brain`](#accessors) instance property
-> instead of this constant. This will may no longer the next update.
+### `createTAsync(lng?: string, addition?: i18next.ResourceLanguage | undefined): Promise<i18next.TFunction>`
 
-The instance provides a set of functions that retrieve human-readable resources related to the thought method.
-
-- Type: `ResourcesAccessor<DetailsType, Brain>`
-- The [`Brain`](../dantalion-core#brain) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### ~~`communication`~~
-
-> **DEPRECATED**: Use the [`Accessors.communication`](#accessors) instance
-> property instead of this constant. This will may no longer the next update.
-
-The instance provides a set of functions that retrieve human-readable resources related to dialogue policy.
-
-- Type: `ResourcesAccessor<DetailsType, Communication>`
-- The [`Communication`](../dantalion-core#communication) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### ~~`getDescriptionAsync(type?: string): Promise<DesctiptionsType | undefined>`~~
-
-> **DEPRECATED**: Use the [`Accessors.getDescription()`](#accessors)
-> instance method instead of this function.
+> **DEPRECATED**: This method of argument is deprecated. Use a
+> [single option argument](#createtasyncoptions-createtasyncoptions-promisei18nexttfunction).
 > This will may no longer the next update.
 
-Get the resources of the descriptions heading.
-
-- Arguments:
-  - `type?: string | undefined`: The genius type or birthday.
-- Returns: The resources of the descriptions heading. ([`DesctiptionsType`](#desctiptionstype))
-
-### ~~`getDetailMarkdownAsync(genius?: Genius, accessors?: Accessors): Promise<string>`~~
-
-> **DEPRECATED**: Use the
-> [`getDetailMarkdown()`](#getdetailmarkdownaccessors-accessors-genius-genius-string)
-> function instead of this function. This will may no longer the next update.
-
-Get the personality information asynchronously.
+Create and initialize the i18next instance asynchronously
 
 #### Arguments
 
-| Name        | Type                                              | Defaults          | Description                           |
-| :---------- | :------------------------------------------------ | :---------------- | :------------------------------------ |
-| `genius`    | [`Genius \| undefined`](../dantalion-core#genius) | `undefined`       | The types of personality.             |
-| `accessors` | [`Accessors`](#accessors)                         | _(Auto generate)_ | The accessors instance for resources. |
+| Name       | Type                       | Defaults    | Description                                  |
+| :--------- | :------------------------- | :---------- | :------------------------------------------- |
+| `lng`      | `string?`                  | (\*)        | The language to use                          |
+| `addition` | `i18next.ResourceLanguage` | `undefined` | Specify the additional resources if you need |
+
+(\*: If omitted, the language used is detected from the current environment.
+See: [useLocale()](#getlocale-string--undefined))
 
 #### Returns
 
-`Promise<string>`:
-The string that the personality information as the Markdown format.
-
-If you specified the `undefined` value as an argument or omitted it,
-it would be a list of the available types.
-
-### ~~`getPersonalityMarkdownAsync(birth: string | number | Date, accessors?: Accessors): Promise<string>`~~
-
-> **DEPRECATED**: Use the
-> [`getPersonalityMarkdown()`](#getpersonalitymarkdownaccessors-accessors-birth-string--number--date-string)
-> function instead of this function. This will may no longer the next update.
-
-Get the personality information corresponding to the specified birthday asynchronously.
-
-#### Arguments
-
-| Name        | Type                       | Defaults          | Description                                                                                                     |
-| :---------- | :------------------------- | :---------------- | :-------------------------------------------------------------------------------------------------------------- |
-| `birth`     | `string \| number \| Date` | _(Required)_      | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Ignore the _time_ information. |
-| `accessors` | [`Accessors`](#accessors)  | _(Auto generate)_ | The accessors instance for resources.                                                                           |
-
-#### Returns
-
-`Promise<string>`:
-The string that the personality information as the Markdown format.
-If the date is over the range, it will be error message.
-
-### ~~`genius`~~
-
-> **DEPRECATED**: Use the [`Accessors.genius`](#accessors) instance
-> property instead of this constant. This will may no longer the next update.
-
-The instance provides a set of functions that retrieve human-readable resources related to natural personality.
-
-- Type: `ResourcesAccessor<PersonalityType, Genius, PersonalityDetailType>`
-- The [`Genius`](../dantalion-core#genius) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### ~~`lifeBase`~~
-
-> **DEPRECATED**: Use the [`Accessors.lifeBase`](#accessors) instance
-> property instead of this constant. This will may no longer the next update.
-
-The instance provides a set of functions that retrieve human-readable resources related to the base of ego type.
-
-- Type: `ResourcesAccessor<string, LifeBase, string>`
-- The [`LifeBase`](../dantalion-core#lifebase) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### ~~`management`~~
-
-> **DEPRECATED**: Use the [`Accessors.management`](#accessors) instance
-> property instead of this constant. This will may no longer the next update.
-
-The instance provides a set of functions that retrieve human-readable resources related to risk and return thinking in specific people.
-
-- Type: `ResourcesAccessor<DetailsType, Management>`
-- The [`Management`](../dantalion-core#management) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### ~~`motivation`~~
-
-> **DEPRECATED**: Use the [`Accessors.motivation`](#accessors) instance
-> property instead of this constant. This will may no longer the next update.
-
-The instance provides a set of functions that retrieve human-readable resources related to an environment that is easy to get motivated.
-
-- Type: `ResourcesAccessor<string, Motivation, string>`
-- The [`Motivation`](../dantalion-core#motivation) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### ~~`position`~~
-
-> **DEPRECATED**: Use the [`Accessors.position`](#accessors) instance
-> property instead of this constant. This will may no longer the next update.
-
-The instance provides a set of functions that retrieve human-readable resources related to a talented role.
-
-- Type: `ResourcesAccessor<DetailsType, Position>`
-- The [`Position`](../dantalion-core#position) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### ~~`response`~~
-
-> **DEPRECATED**: Use the [`Accessors.response`](#accessors) instance
-> property instead of this constant. This will may no longer the next update.
-
-The instance provides a set of functions that retrieve human-readable resources related to on-site or behind.
-
-- Type: `ResourcesAccessor<DetailsType, Response>`
-- The [`Response`](../dantalion-core#response) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-### ~~`vector`~~
-
-> **DEPRECATED**: Use the [`Accessors.vector`](#accessors) instance
-> property instead of this constant. This will may no longer the next update.
-
-The instance provides a set of functions that retrieve human-readable resources related to the major classification of personality.
-
-- Type: `ResourcesAccessor<VectorType, Vector>`
-- The [`Vector`](../dantalion-core#vector) type is a string literal union type provided by the `@kurone-kito/dantalion-core` library.
-
-## Deprecated type definitions (for TypeScript)
-
-### ~~`ResourcesAccessor<T, K, D>`~~
-
-> **DEPRECATED**: Use the [`DetailAccessor<T, K, D>`](#detailaccessort-k-d)
-> type definition instead of this type definition.
-> This will may no longer the next update.
-
-The type definition with a function to
-access a resource of the specific category.
-
-```ts
-interface ResourcesAccessor<
-  T extends object | string,
-  K extends string,
-  D extends DetailsBaseType | string = DetailsBaseType
-> {
-  getAsync(key: K): Promise<T | undefined>;
-  getCategoryDetailAsync(): Promise<D | undefined>;
-}
-```
-
-| Type | Constraint                  | Description                                                |
-| :--- | :-------------------------- | :--------------------------------------------------------- |
-| `T`  | `object \| string`          | The type of resource as a return value.                    |
-| `K`  | `string`                    | The type for the key.                                      |
-| `D`  | `DetailsBaseType \| string` | The type of resource as a return value of category detail. |
-
-| Method definition                                   | Description                                                                               |
-| :-------------------------------------------------- | :---------------------------------------------------------------------------------------- |
-| `getAsync(key: K): Promise<T \| undefined>`         | The function acquires the resource corresponding to the key asynchronously.               |
-| `getCategoryDetailAsync(): Promise<D \| undefined>` | The function acquires the resource corresponding to the specific category asynchronously. |
+[`Promise<i18next.TFunction>`](https://www.i18next.com/overview/api#t):
+The i18next instance which already initialized the resources.
 
 ---
 

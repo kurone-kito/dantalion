@@ -1,5 +1,6 @@
-# Created by https://www.toptal.com/developers/gitignore/api/linux,macos,node,sublimetext,vim,visualstudiocode,windows
-# Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,node,sublimetext,vim,visualstudiocode,windows
+
+# Created by https://www.toptal.com/developers/gitignore/api/linux,macos,node,react,sublimetext,vim,visualstudiocode,windows
+# Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,node,react,sublimetext,vim,visualstudiocode,windows
 
 ### Linux ###
 *~
@@ -100,6 +101,9 @@ typings/
 # Optional eslint cache
 .eslintcache
 
+# Optional stylelint cache
+.stylelintcache
+
 # Microbundle cache
 .rpt2_cache/
 .rts2_cache_cjs/
@@ -117,7 +121,7 @@ typings/
 
 # dotenv environment variables file
 .env
-.env.*
+.env.test
 .env*.local
 
 # parcel-bundler cache (https://parceljs.org/)
@@ -130,6 +134,14 @@ typings/
 # Nuxt.js build / generate output
 .nuxt
 dist
+
+# Storybook build outputs
+.out
+.storybook-out
+storybook-static
+
+# rollup.js default build output
+dist/
 
 # Gatsby files
 .cache/
@@ -154,6 +166,23 @@ public
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+
+# Temporary folders
+tmp/
+temp/
+
+### react ###
+.DS_*
+**/*.backup.*
+**/*.back.*
+
+node_modules
+
+*.sublime*
+
+psd
+thumb
+sketch
 
 ### SublimeText ###
 # Cache files for Sublime Text
@@ -246,7 +275,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/linux,macos,node,sublimetext,vim,visualstudiocode,windows
+# End of https://www.toptal.com/developers/gitignore/api/linux,macos,node,react,sublimetext,vim,visualstudiocode,windows
 
 ###########################################################
 ### Project specific ######################################

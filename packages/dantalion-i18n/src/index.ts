@@ -1,30 +1,16 @@
 export { default as getLocale } from './getLocale';
-export {
-  getDetailMarkdown,
-  getDetailMarkdownAsync,
-  getPersonalityMarkdown,
-  getPersonalityMarkdownAsync,
-} from './build';
-export {
-  brain,
-  communication,
-  genius,
-  getDescriptionAsync,
-  lifeBase,
-  management,
-  motivation,
-  position,
-  response,
-  vector,
-} from './resources/accessors';
+export { getDetailMarkdown, getPersonalityMarkdown } from './build';
 export {
   Accessors,
   createAccessors,
   default as createAccessorsAsync,
 } from './resources/createAccessorsAsync';
-export type { ResourcesAccessor } from './resources/createAccessor';
 export type { DetailAccessor } from './resources/createGenericAccessor';
-export { default as createTAsync } from './resources/createTAsync';
+export {
+  default as createTAsync,
+  CreateTAsync,
+  CreateTAsyncOptions,
+} from './resources/createTAsync';
 export type {
   DesctiptionsType,
   DetailsBaseType,
