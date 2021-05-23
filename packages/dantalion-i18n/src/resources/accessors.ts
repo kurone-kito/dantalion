@@ -16,7 +16,7 @@ import type {
   PersonalityType,
   VectorType,
 } from './types';
-import createAccessor, { getAsync, ResourcesAccessor } from './createAccessor';
+import createAccessor, { ResourcesAccessor, getAsync } from './createAccessor';
 import getResourcesAsync from './getTAsync';
 
 /**
