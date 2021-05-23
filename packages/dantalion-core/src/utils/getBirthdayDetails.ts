@@ -20,9 +20,9 @@ export interface MonthDetails {
 export interface YearDetails {
   /** A year with four digits. */
   full: number;
-  /** Upper two digits of the year.. */
+  /** Upper two digits of the year */
   hi: number;
-  /** Lower two digits of the year.. */
+  /** Lower two digits of the year */
   lo: number;
 }
 

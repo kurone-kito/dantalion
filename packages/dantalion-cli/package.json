@@ -2,8 +2,6 @@
   "name": "@kurone-kito/dantalion-cli",
   "version": "0.11.1",
   "description": "CLI frontend that calculates the personality from the birthday.",
-  "license": "MIT",
-  "author": "kurone-kito <krone@kit.black>",
   "keywords": [
     "ba-zi",
     "bazi",
@@ -17,16 +15,19 @@
     "ziweidoushu",
     "zodiac"
   ],
+  "homepage": "https://github.com/kurone-kito/dantalion/tree/master/packages/dantalion-cli#readme",
   "bugs": {
     "url": "https://github.com/kurone-kito/dantalion/issues"
   },
-  "homepage": "https://github.com/kurone-kito/dantalion/tree/master/packages/dantalion-cli#readme",
+  "license": "MIT",
+  "author": "kurone-kito <krone@kit.black> (https://kit.black/)",
+  "bin": {
+    "dantalion": "dist/src/index.js"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kurone-kito/dantalion.git"
-  },
-  "publishConfig": {
-    "access": "public"
+    "url": "git+https://github.com/kurone-kito/dantalion.git",
+    "directory": "packages/dantalion-cli"
   },
   "scripts": {
     "dantalion": "node dist/src/index.js",
@@ -35,26 +36,20 @@
     "start": "tsc --project tsconfig.build.json --watch",
     "test": "jest --coverage"
   },
-  "bin": {
-    "dantalion": "dist/src/index.js"
-  },
-  "engines": {
-    "node": ">=12.1"
-  },
   "dependencies": {
     "@kurone-kito/dantalion-core": "^0.11.1",
     "@kurone-kito/dantalion-i18n": "^0.11.1",
     "commander": "^7.2.0",
-    "marked": "^2.0.4",
+    "marked": "^2.0.5",
     "marked-terminal": "^4.1.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",
-    "@types/marked": "^2.0.2",
+    "@types/marked": "^2.0.3",
     "@types/marked-terminal": "^3.1.1",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
-    "eslint": "^7.26.0",
+    "eslint": "^7.27.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-airbnb-typescript": "^12.3.1",
     "eslint-config-prettier": "^8.3.0",
@@ -67,5 +62,11 @@
     "prettier": "^2.3.0",
     "ts-jest": "^26.5.6",
     "typescript": "^4.2.4"
+  },
+  "engines": {
+    "node": ">=12.1 <13 || >=14"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

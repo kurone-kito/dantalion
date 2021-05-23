@@ -2,8 +2,6 @@
   "name": "@kurone-kito/dantalion-i18n",
   "version": "0.11.1",
   "description": "Converts results of dantalion into detailed documentation.",
-  "license": "MIT",
-  "author": "kurone-kito <krone@kit.black>",
   "keywords": [
     "ba-zi",
     "bazi",
@@ -16,16 +14,18 @@
     "ziweidoushu",
     "zodiac"
   ],
+  "homepage": "https://github.com/kurone-kito/dantalion/tree/master/packages/dantalion-i18n#readme",
   "bugs": {
     "url": "https://github.com/kurone-kito/dantalion/issues"
   },
-  "homepage": "https://github.com/kurone-kito/dantalion/tree/master/packages/dantalion-i18n#readme",
+  "license": "MIT",
+  "author": "kurone-kito <krone@kit.black> (https://kit.black/)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kurone-kito/dantalion.git"
-  },
-  "publishConfig": {
-    "access": "public"
+    "url": "git+https://github.com/kurone-kito/dantalion.git",
+    "directory": "packages/dantalion-i18n"
   },
   "scripts": {
     "lint": "eslint --cache --fix .",
@@ -33,14 +33,9 @@
     "start": "tsc --project tsconfig.build.json --watch",
     "test": "jest --coverage"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "engines": {
-    "node": ">=12.1"
-  },
   "dependencies": {
     "@kurone-kito/dantalion-core": "^0.11.1",
-    "i18next": "^20.2.4",
+    "i18next": "^20.3.0",
     "lodash.merge": "^4.6.2",
     "semver": "^7.3.5"
   },
@@ -50,7 +45,7 @@
     "@types/semver": "^7.3.6",
     "@typescript-eslint/eslint-plugin": "^4.24.0",
     "@typescript-eslint/parser": "^4.24.0",
-    "eslint": "^7.26.0",
+    "eslint": "^7.27.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-airbnb-typescript": "^12.3.1",
     "eslint-config-prettier": "^8.3.0",
@@ -63,5 +58,11 @@
     "prettier": "^2.3.0",
     "ts-jest": "^26.5.6",
     "typescript": "^4.2.4"
+  },
+  "engines": {
+    "node": ">=12.1 <13 || >=14"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

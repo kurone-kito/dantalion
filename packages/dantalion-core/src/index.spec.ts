@@ -1,4 +1,4 @@
-import { getDetail, Genius, getPersonality } from '.';
+import { Genius, getDetail, getPersonality } from '.';
 import {
   DetailTestData,
   getDetailTestData,
