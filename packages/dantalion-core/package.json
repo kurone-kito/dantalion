@@ -2,8 +2,6 @@
   "name": "@kurone-kito/dantalion-core",
   "version": "0.11.1",
   "description": "NPM library that calculates the personality from the birthday.",
-  "license": "MIT",
-  "author": "kurone-kito <krone@kit.black>",
   "keywords": [
     "ba-zi",
     "bazi",
@@ -15,27 +13,24 @@
     "ziweidoushu",
     "zodiac"
   ],
+  "homepage": "https://github.com/kurone-kito/dantalion/tree/master/packages/dantalion-core#readme",
   "bugs": {
     "url": "https://github.com/kurone-kito/dantalion/issues"
   },
-  "homepage": "https://github.com/kurone-kito/dantalion/tree/master/packages/dantalion-core#readme",
+  "license": "MIT",
+  "author": "kurone-kito <krone@kit.black> (https://kit.black/)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kurone-kito/dantalion.git"
-  },
-  "publishConfig": {
-    "access": "public"
+    "url": "git+https://github.com/kurone-kito/dantalion.git",
+    "directory": "packages/dantalion-core"
   },
   "scripts": {
     "lint": "eslint --cache --fix .",
     "prepack": "tsc --project tsconfig.build.json",
     "start": "tsc --project tsconfig.build.json --watch",
     "test": "jest --coverage"
-  },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "engines": {
-    "node": ">=12"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",
@@ -54,5 +49,11 @@
     "prettier": "^2.3.0",
     "ts-jest": "^26.5.6",
     "typescript": "^4.2.4"
+  },
+  "engines": {
+    "node": ">=12 <13 || >=14"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
