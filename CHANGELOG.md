@@ -2,6 +2,23 @@
 
 # Changelog
 
+## v0.12.0 (2021-05-25)
+
+### BREAKING CHANGE
+
+- i18n: Removed some APIs and types definitions
+  specified as deprecated on v0.11.0 (8da8f29)
+- Changed the createTAsync function arguments definitions. (3623904)
+  - The function could now pass a value to this i18next.use function.
+
+### Refactored
+
+- cli: Migrated from deprecated API (a8fe816)
+
+### Chores
+
+- improved the gitignore for the new sub-project (44fe892)
+
 ## v0.11.2 (2021-05-24)
 
 ### Refactor
