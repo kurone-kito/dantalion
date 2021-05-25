@@ -2,6 +2,12 @@
 
 # Changelog
 
+## v0.12.1 (2021-05-25)
+
+### Refactor
+
+- i18n: improved the resources wording (beb2c8f)
+
 ## v0.12.0 (2021-05-25)
 
 ### BREAKING CHANGE
