@@ -28,6 +28,9 @@
   },
   "scripts": {
     "lint": "eslint --cache --fix .",
+    "prepack": "next build && next export -o dist",
+    "serve": "serve dist",
+    "start": "next dev",
     "test": "echo 'Warn: no test specified'"
   },
   "dependencies": {
