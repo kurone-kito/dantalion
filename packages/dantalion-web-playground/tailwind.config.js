@@ -9,6 +9,7 @@ module.exports = {
       './src/pages/**/*.{js,ts,jsx,tsx}',
       './src/components/**/*.{js,ts,jsx,tsx}',
     ],
+    options: { whitelist: ['bg-gray-800', 'mx-0', 'my-5', 'overflow-scroll'] },
   },
   theme: {
     extend: {

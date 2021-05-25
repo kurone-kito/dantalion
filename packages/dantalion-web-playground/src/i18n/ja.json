@@ -1,3 +1,23 @@
 {
-  "web": {}
+  "web": {
+    "author": "黒音キト",
+    "comingSoon": "Web 版も、このページで近日リリース！",
+    "description": "生年月日で性格診断",
+    "install": [
+      "```sh",
+      "# ターミナル (コマンドライン) 版",
+      "# Node.js v12.1 以降が使えれば、Linux / macOS / Windows 他様々な環境で利用可能",
+      "> npm install --global @kurone-kito/dantalion-cli",
+      "> dantalion personality 2000-01-01",
+      "> dantalion --help # 詳細な機能をチェック！",
+      "",
+      "# ライブラリとして使用する場合",
+      "> npm install --save @kurone-kito/dantalion-core",
+      "```"
+    ],
+    "preface": [
+      "“ダンタリオン(Dantalion)”は、_[ソロモンの鍵](https://ja.wikipedia.org/wiki/ソロモンの鍵)_ に登場する、悪魔学における序列 71 番目の悪魔です。彼はあらゆる学術知識を教えてくれる反面、人の心を読み取り、意のままに操る能力を持っています。",
+      "相手の性格を予測できれば、彼のように相手の意思を操ることも可能かもしれません。これは**指定した生年月日から性格診断を取得**する機能を提供する、Node.js ライブラリと、そのサンプル Web アプリ _(ここで近日公開予定)_ です。このライブラリを使用して、あなたの Node.js アプリに生年月日で性格診断をする機能をすばやく実装できます。"
+    ]
+  }
 }
