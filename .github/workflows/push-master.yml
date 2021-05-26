@@ -1,19 +1,15 @@
-name: CI on push
+name: CI/CD on master branch
 on:
   push:
     branches:
-      - '*'
-      - '!master'
+      - 'master'
 jobs:
-  build:
-    name: Build and testing code
+  deploy:
+    name: Build and deploy
     runs-on: ubuntu-20.04
     strategy:
       matrix:
         node-version:
-          - '12.x'
-          - '14.x'
-          - '15.x'
           - '16.x'
         cache-key:
           - '19a27acd-b393-4a8a-a09f-276a4663454d'
@@ -41,6 +37,8 @@ jobs:
       - run: npm ci
       - run: npm run prepare
       - run: npm run prepack
-      - run: npm test
-        env:
-          CI: true
+      - name: Deploy the build result.
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./packages/dantalion-web-playground/dist

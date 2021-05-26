@@ -30,6 +30,7 @@
     "prepare": "run-s prepare:*",
     "prepare:husky": "husky install",
     "prepare:lerna": "lerna clean --yes && lerna bootstrap",
+    "serve": "lerna exec --loglevel=silent --no-prefix --scope=@kurone-kito/dantalion-web-playground -- npm run serve",
     "start": "lerna run start --parallel --stream",
     "test": "lerna exec --concurrency 1 --no-bail -- npm test"
   },
