@@ -3,10 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { VFC } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
+import Article from '../components/molecules/Article';
 
 const Component: VFC = () => {
   const { t } = useTranslation();
-  const preface = t<string, string[]>('web.preface', { returnObjects: true });
   return (
     <>
       <header className="text-gray-700">
@@ -23,29 +23,12 @@ const Component: VFC = () => {
         </h1>
       </header>
       <main className="max-w-screen-lg mx-auto text-gray-600">
-        <p className="font-extralight text-3xl text-center">
-          {t('web.comingSoon')}
-        </p>
-        {preface.map((text) => (
-          <ReactMarkdown
-            components={{
-              a: ({ node, ...props }) => (
-                // eslint-disable-next-line jsx-a11y/anchor-has-content
-                <a
-                  className="text-blue-900 hover:text-blue-600"
-                  rel="noopener noreferrer"
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...props}
-                />
-              ),
-            }}
-            className="font-light py-3 px-3 sm:px-2 text-lg"
-            key={text}
-            linkTarget="_blank"
-          >
-            {text}
-          </ReactMarkdown>
-        ))}
+        <Article
+          featureBody={t('web.feature.body', { returnObjects: true })}
+          featureHeading={t('web.feature.title')}
+        >
+          {t('web.preface', { joinArrays: '\n\n' })}
+        </Article>
         <ReactMarkdown className="nm-inset-gray-500-sm mx-0 my-5 overflow-auto p-6 md:rounded-3xl text-white">
           {t('web.install', { joinArrays: '\n' })}
         </ReactMarkdown>
