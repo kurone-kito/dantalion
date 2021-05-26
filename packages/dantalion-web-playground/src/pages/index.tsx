@@ -46,7 +46,7 @@ const Component: VFC = () => {
             {text}
           </ReactMarkdown>
         ))}
-        <ReactMarkdown className="nm-inset-gray-500-sm mx-0 my-5 overflow-scroll p-6 md:rounded-3xl text-white">
+        <ReactMarkdown className="nm-inset-gray-500-sm mx-0 my-5 overflow-auto p-6 md:rounded-3xl text-white">
           {t('web.install', { joinArrays: '\n' })}
         </ReactMarkdown>
       </main>
