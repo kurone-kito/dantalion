@@ -2,6 +2,19 @@
 
 # Changelog
 
+## v0.12.2 (2021-05-27)
+
+Improved the teaser site
+
+### Refactor
+
+- Replaced the homepage metadata of package.json (f6f7fb2)
+
+### Chores
+
+- web: Added the teaser site (32a8e5c, c9ee22a, 4841b76, d563ad4, 333fe0d, 032527f, 5f119e5, 3bf5398, 797313c)
+- Updated the CI script for deploying the web (724030e)
+
 ## v0.12.1 (2021-05-25)
 
 ### Refactor
