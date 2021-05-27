@@ -3,6 +3,17 @@
     "author": "Kurone Kito",
     "comingSoon": "Coming soon, the playground web app here!",
     "description": "Calculates the personality from the birthday.",
+    "feature": {
+      "body": [
+        "The library is based on the Four Pillars of Destiny and can be used for personality assessment from Feb 1, 1873, to Dec 31, 2050.",
+        "The personality calculation part and the wording part are in a separate library. So, you can use your wording.",
+        "The core part has no dependencies and can be used in any environment running Node.js >= v12.1.",
+        "It has been transpired to JS (ES2019) and can be quickly run in current modern browsers.",
+        "The TypeScript’s d.ts files also include in the package.",
+        "The library will support compatibility diagnosis by personality type in the future."
+      ],
+      "title": "Features"
+    },
     "install": [
       "```sh",
       "# Using for CLI (Linux / macOS / Windows / or others Node.js >= v12.1 environment)",
