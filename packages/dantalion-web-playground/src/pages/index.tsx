@@ -5,6 +5,7 @@ import Footer from '../components/atoms/Footer';
 import Header from '../components/atoms/Header';
 import Article from '../components/molecules/Article';
 
+/** The index page component */
 const Component: VFC = () => {
   const { t } = useTranslation();
   return (

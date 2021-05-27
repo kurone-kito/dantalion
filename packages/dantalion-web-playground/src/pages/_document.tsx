@@ -1,12 +1,23 @@
 import Document, { Head, Html, Main, NextScript } from 'next/document';
 
+/** Theme color */
 const color = '#E5E7EB';
+
+/** Desctiption */
 const desc = 'Calculates the personality from the birthday.';
+
+/** Whether the current build is production mode */
 const isProd = process.env.NODE_ENV === 'production';
+
+/** Title */
 const title = '🦁 Dantalion';
+
+/** Absolute URL of production build */
 const productUrl = `${process.env.productDomain}${process.env.productPath}`;
 
+/** The document root component */
 export default class MyDocument extends Document {
+  /** Render the virtual DOM structure */
   render(): JSX.Element {
     return (
       <Html>

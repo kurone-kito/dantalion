@@ -4,6 +4,7 @@ import type { VFC } from 'react';
 import 'tailwindcss/tailwind.css';
 import '../i18n';
 
+/** The app root component */
 const App: VFC<AppProps> = ({ Component, pageProps }) => (
   <>
     <Head>
