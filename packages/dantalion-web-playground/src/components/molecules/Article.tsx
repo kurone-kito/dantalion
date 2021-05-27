@@ -11,6 +11,8 @@ import List from '../atoms/List';
 export interface Props {
   /** Specifies the main article text as a Markdown format */
   readonly children: string;
+  /** Specifies the coming soon text */
+  readonly comingSoon?: ReactNode;
   /** Specifies the body of feature text */
   readonly featureBody?: ReactNodeArray;
   /** Specifies the heading of feature text */
@@ -29,8 +31,14 @@ const Anchor: VFC<AnchorHTMLAttributes<HTMLAnchorElement>> = (props) => (
 );
 
 /** The main article component */
-const Component: VFC<Props> = ({ children, featureBody, featureHeading }) => (
+const Component: VFC<Props> = ({
+  children,
+  comingSoon,
+  featureBody,
+  featureHeading,
+}) => (
   <article>
+    <p className="font-extralight text-3xl text-center">{comingSoon}</p>
     <ReactMarkdown
       components={{
         // eslint-disable-next-line react/jsx-props-no-spreading

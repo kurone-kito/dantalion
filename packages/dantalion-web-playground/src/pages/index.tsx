@@ -13,6 +13,7 @@ const Component: VFC = () => {
       <Header>{t('web.description')}</Header>
       <main className="max-w-screen-lg mx-auto text-gray-600">
         <Article
+          comingSoon={t('web.comingSoon')}
           featureBody={t('web.feature.body', { returnObjects: true })}
           featureHeading={t('web.feature.title')}
         >
