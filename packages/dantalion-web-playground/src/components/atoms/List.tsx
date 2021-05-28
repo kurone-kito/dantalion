@@ -18,20 +18,10 @@ export interface Props {
   readonly order?: boolean;
 }
 
-/** The default list item component */
-const defaultLi: VFC<LiHTMLAttributes<HTMLLIElement>> = (props) => (
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  <li {...props} />
-);
-
 /** The generical list component */
-const Component: VFC<Props> = ({
-  children,
-  className,
-  itemType: Item = defaultLi,
-  order,
-}) => {
+const Component: VFC<Props> = ({ children, className, itemType, order }) => {
   const List = order ? 'ol' : 'ul';
+  const Item = itemType ?? 'li';
   return (
     <List className={className}>
       {Children.toArray(children).map((child, index) => (
