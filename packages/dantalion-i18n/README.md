@@ -333,6 +333,24 @@ interface DetailsType {
 | `more`   | `readonly string[]` | The more detailed descriptions. |
 | `name`   | `string`            | The resource name as a heading. |
 
+### `PersonalityDetailBaseType`
+
+The type definition that the details of personality.
+
+```ts
+export interface PersonalityDetailBaseType {
+  readonly inner: string;
+  readonly outer: string;
+  readonly workStyle: string;
+}
+```
+
+| Property    | Type     | Description                             |
+| :---------- | :------- | :-------------------------------------- |
+| `inner`     | `string` | The resource of inner personality.      |
+| `outer`     | `string` | The resource of outer personality.      |
+| `workStyle` | `string` | The resource of personality at working. |
+
 ### `PersonalityDetailType`
 
 The type definition that the details of personality.

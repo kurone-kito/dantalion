@@ -43,6 +43,16 @@ export interface DetailsType extends DetailsBaseType {
 }
 
 /** The type definition that the details of personality. */
+export interface PersonalityDetailBaseType {
+  /** The resource of inner personality. */
+  readonly inner: string;
+  /** The resource of outer personality. */
+  readonly outer: string;
+  /** The resource of personality at working. */
+  readonly workStyle: string;
+}
+
+/** The type definition that the details of personality. */
 export interface PersonalityDetailType extends DetailsBaseType {
   /** The resource of inner personality. */
   readonly inner: string;

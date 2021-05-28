@@ -15,6 +15,7 @@ export type {
   DesctiptionsType,
   DetailsBaseType,
   DetailsType,
+  PersonalityDetailBaseType,
   PersonalityDetailType,
   PersonalityType,
   VectorType,
