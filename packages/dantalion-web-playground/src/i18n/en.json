@@ -12,7 +12,7 @@
         "The TypeScript’s d.ts files also include in the package.",
         "The library will support compatibility diagnosis by personality type in the future."
       ],
-      "title": "Features"
+      "title": "Features of the library"
     },
     "install": [
       "```sh",

@@ -357,6 +357,7 @@ The type definition that the details of personality.
 
 ```ts
 export interface PersonalityDetailType {
+  readonly descriptions: PersonalityDetailBaseType;
   readonly detail: string;
   readonly inner: string;
   readonly name: string;
@@ -365,13 +366,14 @@ export interface PersonalityDetailType {
 }
 ```
 
-| Property    | Type     | Description                             |
-| :---------- | :------- | :-------------------------------------- |
-| `detail`    | `string` | The detail.                             |
-| `inner`     | `string` | The resource of inner personality.      |
-| `name`      | `string` | The resource name as a heading.         |
-| `outer`     | `string` | The resource of outer personality.      |
-| `workStyle` | `string` | The resource of personality at working. |
+| Property       | Type                                                      | Description                             |
+| :------------- | :-------------------------------------------------------- | :-------------------------------------- |
+| `descriptions` | [`PersonalityDetailBaseType`](#personalitydetailbasetype) | Long descriptions.                      |
+| `detail`       | `string`                                                  | The detail.                             |
+| `inner`        | `string`                                                  | The resource of inner personality.      |
+| `name`         | `string`                                                  | The resource name as a heading.         |
+| `outer`        | `string`                                                  | The resource of outer personality.      |
+| `workStyle`    | `string`                                                  | The resource of personality at working. |
 
 ### `PersonalityType`
 

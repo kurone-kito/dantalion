@@ -47,7 +47,7 @@
     "detail": "Details of people whose personality type is classified as {{type}}, and how to handle them.",
     "details": "List of available personality type codes",
     "genius1": "A person has three of these personalities, and the personality that emerges varies depending on the situation.",
-    "genius2": "Of these, “$t(genius.detail.inner)” accounts for most of a person's personality.",
+    "genius2": "Of these, “$t(genius.detail.descriptions.inner)” accounts for most of a person's personality.",
     "invalid": "An invalid birthday {{type}} has been detected. This app is only available from Feb 01, 1873, to Dec 32, 2050.",
     "personality": "The personality of the person whose birthday is {{type}} and how to handle them.",
     "strategy": "Strategies for this personality type",
@@ -55,11 +55,16 @@
   },
   "genius": {
     "detail": {
+      "descriptions": {
+        "inner": "**${genius.detail.inner}**: the underlying personality",
+        "outer": "**${genius.detail.outer}**: the personality that comes out when you don't trust the other person",
+        "workStyle": "**${genius.detail.workStyle}**: the personality when you are focused or in an emergency"
+      },
       "detail": "A more detailed, innate personality. This is classified into 12 types. ",
-      "inner": "**Inner**: the underlying personality",
+      "inner": "Inner",
       "name": "Type of genius",
-      "outer": "**Outer**: the personality that comes out when you don't trust the other person",
-      "workStyle": "**Workstyle**: the personality when you are focused or in an emergency"
+      "outer": "Outer",
+      "workStyle": "Workstyle"
     },
     "100": {
       "detail": [

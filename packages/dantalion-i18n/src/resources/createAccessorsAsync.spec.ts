@@ -110,6 +110,11 @@ describe.each([
   describe('`Accessors.genius.getCategoryDetail()` method', () => {
     it('Get the specified object', async () =>
       expect((await func()).genius.getCategoryDetail()).toEqual({
+        descriptions: {
+          inner: expect.any(String),
+          outer: expect.any(String),
+          workStyle: expect.any(String),
+        },
         detail: expect.any(String),
         inner: expect.any(String),
         name: expect.any(String),
