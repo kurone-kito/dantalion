@@ -2,9 +2,19 @@
 
 # Changelog
 
-## v0.12.2 (2021-05-27)
+## v0.12.3 (2021-05-29)
 
-Improved the teaser site
+### Refactor
+
+- Updated the dependencies (7c7431d)
+- i18n: improved the resources wording (10fce2a)
+
+### Chores
+
+- web: fixed a problem that accidentally removed “coming soon” wording (f35df1f)
+- web: small improved some appearances (6f14e31)
+
+## v0.12.2 (2021-05-27)
 
 ### Refactor
 
