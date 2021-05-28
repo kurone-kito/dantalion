@@ -18,6 +18,7 @@ const Component: VFC<Props> = ({ children }) => (
       </i>
       Dantalion:
       <wbr />
+      &nbsp;
       {children}
     </h1>
   </header>
