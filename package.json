@@ -1,6 +1,6 @@
 {
   "name": "@kurone-kito/dantalion",
-  "version": "0.11.1",
+  "version": "0.13.0",
   "description": "Calculates the personality from the birthday.",
   "keywords": [
     "ba-zi",

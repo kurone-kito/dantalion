@@ -2,6 +2,32 @@
 
 # Changelog
 
+## v0.13.0 (2021-05-30)
+
+### BREAKING CHANGES
+
+- i18n: The update has improved the structure of resources and transferred
+  some of the traditional keys at this time. (2bf1c28)
+
+| From                              | To                                             |
+| :-------------------------------- | :--------------------------------------------- |
+| `PersonalityDetailType.inner`     | `PersonalityDetailType.descriptions.inner`     |
+| `PersonalityDetailType.outer`     | `PersonalityDetailType.descriptions.outer`     |
+| `PersonalityDetailType.workStyle` | `PersonalityDetailType.descriptions.workStyle` |
+
+### Feature
+
+- i18n: Added a type definition. (75c850a)
+  - `PersonalityDetailBaseType`
+
+### Refactors
+
+- Added, removed, and updated the dependencies (a26d29e)
+
+### Chores
+
+- web: Improved the appearance and internal logics substantially. (af23807)
+
 ## v0.12.3 (2021-05-29)
 
 ### Refactor
