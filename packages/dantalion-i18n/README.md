@@ -333,12 +333,31 @@ interface DetailsType {
 | `more`   | `readonly string[]` | The more detailed descriptions. |
 | `name`   | `string`            | The resource name as a heading. |
 
+### `PersonalityDetailBaseType`
+
+The type definition that the details of personality.
+
+```ts
+export interface PersonalityDetailBaseType {
+  readonly inner: string;
+  readonly outer: string;
+  readonly workStyle: string;
+}
+```
+
+| Property    | Type     | Description                             |
+| :---------- | :------- | :-------------------------------------- |
+| `inner`     | `string` | The resource of inner personality.      |
+| `outer`     | `string` | The resource of outer personality.      |
+| `workStyle` | `string` | The resource of personality at working. |
+
 ### `PersonalityDetailType`
 
 The type definition that the details of personality.
 
 ```ts
 export interface PersonalityDetailType {
+  readonly descriptions: PersonalityDetailBaseType;
   readonly detail: string;
   readonly inner: string;
   readonly name: string;
@@ -347,13 +366,14 @@ export interface PersonalityDetailType {
 }
 ```
 
-| Property    | Type     | Description                             |
-| :---------- | :------- | :-------------------------------------- |
-| `detail`    | `string` | The detail.                             |
-| `inner`     | `string` | The resource of inner personality.      |
-| `name`      | `string` | The resource name as a heading.         |
-| `outer`     | `string` | The resource of outer personality.      |
-| `workStyle` | `string` | The resource of personality at working. |
+| Property       | Type                                                      | Description                             |
+| :------------- | :-------------------------------------------------------- | :-------------------------------------- |
+| `descriptions` | [`PersonalityDetailBaseType`](#personalitydetailbasetype) | Long descriptions.                      |
+| `detail`       | `string`                                                  | The detail.                             |
+| `inner`        | `string`                                                  | The resource of inner personality.      |
+| `name`         | `string`                                                  | The resource name as a heading.         |
+| `outer`        | `string`                                                  | The resource of outer personality.      |
+| `workStyle`    | `string`                                                  | The resource of personality at working. |
 
 ### `PersonalityType`
 

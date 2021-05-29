@@ -1,11 +1,7 @@
-import type {
-  AnchorHTMLAttributes,
-  ReactNode,
-  ReactNodeArray,
-  VFC,
-} from 'react';
+import type { ReactNode, VFC } from 'react';
 import ReactMarkdown from 'react-markdown';
-import List from '../atoms/List';
+import Anchor from '../atoms/Anchor';
+import Details from './Details';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -14,21 +10,12 @@ export interface Props {
   /** Specifies the coming soon text */
   readonly comingSoon?: ReactNode;
   /** Specifies the body of feature text */
-  readonly featureBody?: ReactNodeArray;
+  readonly featureBody?: string[];
   /** Specifies the heading of feature text */
   readonly featureHeading?: ReactNode;
+  /** The tooltip on hover the feature. */
+  readonly tooltipFeatureDetails?: string;
 }
-
-/** The anchor component for main articles */
-const Anchor: VFC<AnchorHTMLAttributes<HTMLAnchorElement>> = (props) => (
-  // eslint-disable-next-line jsx-a11y/anchor-has-content
-  <a
-    className="text-blue-900 hover:text-blue-600"
-    rel="nofollow noopener noreferrer"
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
-  />
-);
 
 /** The main article component */
 const Component: VFC<Props> = ({
@@ -36,25 +23,33 @@ const Component: VFC<Props> = ({
   comingSoon,
   featureBody,
   featureHeading,
+  tooltipFeatureDetails,
 }) => (
   <article>
     <p className="font-extralight text-3xl text-center">{comingSoon}</p>
     <ReactMarkdown
       components={{
         // eslint-disable-next-line react/jsx-props-no-spreading
-        a: ({ node, ...props }) => <Anchor {...props} />,
+        a: ({ children: c, href }) => (
+          <Anchor href={href as string} nofollow>
+            {c}
+          </Anchor>
+        ),
         // eslint-disable-next-line react/jsx-props-no-spreading
         p: ({ node, ...props }) => <p className="py-3" {...props} />,
       }}
-      className="font-light leading-loose py-3 px-3 sm:px-2 text-lg"
+      className="font-light leading-loose p-3 text-lg sm:px-2"
       linkTarget="_blank"
     >
       {children}
     </ReactMarkdown>
-    <h2 className="font-bold text-2xl">{featureHeading}</h2>
-    <List className="leading-relaxed list-inside list-disc p-4">
+    <Details
+      caption={featureHeading}
+      headingLevel="h2"
+      tooltip={tooltipFeatureDetails}
+    >
       {featureBody}
-    </List>
+    </Details>
   </article>
 );
 Component.displayName = 'Article';

@@ -63,8 +63,10 @@ export const fromGeniusForPersonality = (
   accessors: Accessors
 ): string => {
   const descriptions = accessors.getDescription();
-  const { inner, outer, workStyle, ...details } =
-    accessors.genius.getCategoryDetail();
+  const {
+    descriptions: { inner, outer, workStyle },
+    ...details
+  } = accessors.genius.getCategoryDetail();
   return line(
     detailsBase({ addition: descriptions.genius1, src: details }),
     order(inner, outer, workStyle),
