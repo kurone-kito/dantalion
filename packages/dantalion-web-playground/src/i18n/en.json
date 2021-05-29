@@ -28,6 +28,10 @@
     "preface": [
       "“Dantalion” is the seventy-first demon in the demonological grimoire, _[the Lesser Key of Solomon](https://en.wikipedia.org/wiki/The_Lesser_Key_of_Solomon)_. He teaches all kinds of academic knowledge, but he can also read and manipulate others’ hearts.",
       "If you can predict the other person’s character, you can increase the possibility of controlling the other person’s will. This library and web app (Coming soon) provides a feature that **infers the personality details from the specified birthday**. By using this package, you can quickly implement birthday divination in your Node.js apps. Its calculation is using the method of _Four Pillars of Destiny (Ba-Zi)_."
-    ]
+    ],
+    "seeRepo": "For more details about the library, check the GitHub repository.",
+    "tooltip": {
+      "summary": "Tap here, I’ll expand or collapse."
+    }
   }
 }
