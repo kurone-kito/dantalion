@@ -1,6 +1,7 @@
-import { ChangeEventHandler, FormEventHandler, useCallback, VFC } from 'react';
+import { ChangeEventHandler, useCallback, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
 import BirthForm from '../molecules/BirthForm';
+import { usePSRedirection } from '../../hooks/usePersonality';
 import FormReducer, {
   setBirthday,
   setNickname,
@@ -27,11 +28,7 @@ const Component: VFC = () => {
         (e) => action([setNickname, e.currentTarget.value]),
         [action]
       )}
-      onSubmit={useCallback<FormEventHandler<HTMLFormElement>>((e) => {
-        // eslint-disable-next-line no-console
-        console.debug('submit');
-        e.preventDefault();
-      }, [])}
+      onSubmit={usePSRedirection(state)}
     />
   );
 };
