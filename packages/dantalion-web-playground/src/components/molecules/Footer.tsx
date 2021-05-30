@@ -24,24 +24,14 @@ const Component: VFC<Props> = ({ author }) => (
         className="divide-x-2 divide-gray-400 flex flex-row justify-center p-4"
         itemType={({ className, ...props }) => (
           // eslint-disable-next-line react/jsx-props-no-spreading
-          <li className={classNames('px-1', className)} {...props} />
+          <li className={classNames('px-3', className)} {...props} />
         )}
       >
-        <>
-          &copy; {author} &lt;
-          <IconAnchor
-            href="https://twitter.com/kurone_kito"
-            icon={faTwitter}
-            tooltip="Twitter"
-          >
-            @kurone_kito
-          </IconAnchor>
-          &gt;
-        </>
+        <>&copy; {author}</>
         <IconAnchor
-          href="https://kit.black/"
-          icon={faHome}
-          tooltip="Homepage"
+          href="https://twitter.com/kurone_kito"
+          icon={faTwitter}
+          tooltip="Twitter"
         />
         <IconAnchor
           href="https://github.com/kurone-kito"
@@ -52,6 +42,11 @@ const Component: VFC<Props> = ({ author }) => (
           href="https://www.youtube.com/channel/UCJs_ejHQM0rcemJaeO2s5vA"
           icon={faYoutube}
           tooltip="YouTube"
+        />
+        <IconAnchor
+          href="https://kit.black/"
+          icon={faHome}
+          tooltip="Homepage"
         />
       </List>
     </small>
