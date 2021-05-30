@@ -1,9 +1,10 @@
-import type { VFC } from 'react';
+import { FormEventHandler, useCallback, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import Anchor from '../components/atoms/Anchor';
 import Header from '../components/atoms/Header';
 import Article from '../components/molecules/Article';
+import BirthForm from '../components/molecules/BirthForm';
 import Footer from '../components/molecules/Footer';
 
 /** The index page component */
@@ -13,8 +14,20 @@ const Component: VFC = () => {
     <>
       <Header>{t('web.description')}</Header>
       <main className="md:container mx-auto text-gray-600">
+        <BirthForm
+          birthday="2000-01-01"
+          birthdayLabel={t('web.form.birthday')}
+          buttonLabel={t('web.form.submit')}
+          legendLabel={t('web.form.legend')}
+          nicknameLabel={t('web.form.nickname')}
+          notes={t('web.form.notes', { returnObjects: true })}
+          onSubmit={useCallback<FormEventHandler<HTMLFormElement>>((e) => {
+            // eslint-disable-next-line no-console
+            console.debug('submit');
+            e.preventDefault();
+          }, [])}
+        />
         <Article
-          comingSoon={t('web.comingSoon')}
           featureBody={t('web.feature.body', { returnObjects: true })}
           featureHeading={t('web.feature.title')}
           tooltipFeatureDetails={t('web.tooltip.summary')}

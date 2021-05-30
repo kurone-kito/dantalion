@@ -1,7 +1,6 @@
 {
   "web": {
     "author": "Kurone Kito",
-    "comingSoon": "Coming soon, the playground web app here!",
     "description": "Calculates the personality from the birthday.",
     "feature": {
       "body": [
@@ -13,6 +12,17 @@
         "The library will support compatibility diagnosis by personality type in the future."
       ],
       "title": "Features of the library"
+    },
+    "form": {
+      "birthday": "Input the birthday (require)",
+      "legend": "Demo: Try it!",
+      "nickname": "Input the nickname (optional)",
+      "notes": [
+        "The app can be used for personality assessment from Feb 1, 1873, to Dec 31, 2050.",
+        "It does not consider time zones. Therefore, moving the date back and forth may solve if you are not satisfied with the inferred personality.",
+        "Although the date of birth treats as personal information in general, this web page doesn’t store personal information non-volatilely or send. By the way, it irreversibly converts into personality assessment data."
+      ],
+      "submit": "Check the personality!"
     },
     "install": [
       "```sh",
@@ -27,7 +37,7 @@
     ],
     "preface": [
       "“Dantalion” is the seventy-first demon in the demonological grimoire, _[the Lesser Key of Solomon](https://en.wikipedia.org/wiki/The_Lesser_Key_of_Solomon)_. He teaches all kinds of academic knowledge, but he can also read and manipulate others’ hearts.",
-      "If you can predict the other person’s character, you can increase the possibility of controlling the other person’s will. This library and web app (Coming soon) provides a feature that **infers the personality details from the specified birthday**. By using this package, you can quickly implement birthday divination in your Node.js apps. Its calculation is using the method of _Four Pillars of Destiny (Ba-Zi)_."
+      "If you can predict the other person’s character, you can increase the possibility of controlling the other person’s will. This library and web app provides a feature that **infers the personality details from the specified birthday**. By using this package, you can quickly implement birthday divination in your Node.js apps. Its calculation is using the method of _Four Pillars of Destiny (Ba-Zi)_."
     ],
     "seeRepo": "For more details about the library, check the GitHub repository.",
     "tooltip": {

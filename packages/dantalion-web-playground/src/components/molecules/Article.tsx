@@ -7,8 +7,6 @@ import Details from './Details';
 export interface Props {
   /** Specifies the main article text as a Markdown format */
   readonly children: string;
-  /** Specifies the coming soon text */
-  readonly comingSoon?: ReactNode;
   /** Specifies the body of feature text */
   readonly featureBody?: string[];
   /** Specifies the heading of feature text */
@@ -20,13 +18,11 @@ export interface Props {
 /** The main article component */
 const Component: VFC<Props> = ({
   children,
-  comingSoon,
   featureBody,
   featureHeading,
   tooltipFeatureDetails,
 }) => (
   <article>
-    <p className="font-extralight text-3xl text-center">{comingSoon}</p>
     <ReactMarkdown
       components={{
         // eslint-disable-next-line react/jsx-props-no-spreading
