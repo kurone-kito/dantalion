@@ -29,7 +29,7 @@ const Component: VFC<Props> = ({
 }) => (
   // eslint-disable-next-line react/jsx-no-target-blank
   <a
-    className={classNames('text-blue-900 hover:text-blue-600', className)}
+    className={classNames('text-blue-800 hover:text-blue-500', className)}
     href={href}
     rel={classNames('noopener noreferrer', { nofollow })}
     title={tooltip}
