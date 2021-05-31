@@ -6,14 +6,20 @@ import Header from '../components/atoms/Header';
 import Article from '../components/molecules/Article';
 import Footer from '../components/molecules/Footer';
 import BirthForm from '../components/organisms/BirthForm';
+import Result from '../components/organisms/Result';
+import { usePSDecoder } from '../hooks/usePersonality';
 
 /** The index page component */
 const Component: VFC = () => {
   const { t } = useTranslation();
+  const [ps, nickname] = usePSDecoder();
   return (
     <>
-      <Header>{t('web.description')}</Header>
+      <Header>
+        {ps ? t('web.result.heading', { nickname }) : t('web.description')}
+      </Header>
       <main className="md:container mx-auto text-gray-600">
+        <Result />
         <BirthForm />
         <Article
           featureBody={t('web.feature.body', { returnObjects: true })}

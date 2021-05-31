@@ -1,0 +1,47 @@
+import { getDetail } from '@kurone-kito/dantalion-core';
+import { createAccessors } from '@kurone-kito/dantalion-i18n';
+import type { VFC } from 'react';
+import { useTranslation } from 'react-i18next';
+import { usePSDecoder } from '../../hooks/usePersonality';
+import AccompanyingResult from './AccompanyingResult';
+import GeniusResultDetail from './GeniusResultDetail';
+import LifeBaseResultDetail from './LifeBaseResultDetail';
+import VectorResultDetail from './VectorResultDetail';
+
+const Component: VFC = () => {
+  const { t } = useTranslation();
+  const accessors = createAccessors(t);
+  const [ps, nickname] = usePSDecoder();
+  const dt = ps && getDetail(ps.inner);
+  return ps && dt ? (
+    <article>
+      <VectorResultDetail
+        accessor={accessors.vector}
+        nickname={nickname}
+        strategy={accessors.getDescription().strategy}
+        vector={dt.vector}
+      />
+      <GeniusResultDetail
+        descriptions={accessors.getDescription()}
+        details={accessors.genius.getCategoryDetail()}
+        inner={accessors.genius.getByKey(ps.inner)}
+        nickname={nickname}
+        outer={accessors.genius.getByKey(ps.outer)}
+        workStyle={accessors.genius.getByKey(ps.workStyle)}
+      />
+      <AccompanyingResult
+        accessors={accessors}
+        details={dt}
+        nickname={nickname}
+      />
+      <LifeBaseResultDetail
+        accessors={accessors}
+        lifeBase={ps.lifeBase}
+        motivation={dt.motivation}
+      />
+    </article>
+  ) : null;
+};
+Component.displayName = 'Result';
+
+export default Component;
