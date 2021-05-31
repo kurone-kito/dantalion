@@ -15,6 +15,9 @@ const title = '🦁 Dantalion';
 /** Absolute URL of production build */
 const productUrl = `${process.env.productDomain}${process.env.productPath}`;
 
+/** The OGP banner */
+const ogpBannerPath = `${productUrl}/favicons/ogp.png`;
+
 /** The document root component */
 export default class MyDocument extends Document {
   /** Render the virtual DOM structure */
@@ -39,9 +42,12 @@ export default class MyDocument extends Document {
           <meta name="theme-color" content={color} />
           <meta name="twitter:card" content="summary_large_image" />
           <meta name="twitter:creator" content="@kurone_kito" />
+          <meta name="twitter:description" content={desc} />
+          <meta name="twitter:image" content={ogpBannerPath} />
+          <meta name="twitter:title" content={title} />
           <meta itemProp="name" content={title} />
           <meta property="og:description" content={desc} />
-          <meta property="og:image" content="/dantalion/favicons/ogp.png" />
+          <meta property="og:image" content={ogpBannerPath} />
           <meta property="og:site_name" content={title} />
           <meta property="og:title" content={title} />
           <meta property="og:type" content="website" />
