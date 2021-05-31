@@ -51,6 +51,10 @@
       "probed": "{{nickname}}さんは、{{type}}です！"
     },
     "seeRepo": "ライブラリに関するより詳細な情報は、GitHub リポジトリを参照してください。",
+    "share": {
+      "hashtag": "Dantalion性格診断",
+      "tweet": "診断結果をツイートしよう！"
+    },
     "tooltip": {
       "summary": "押下すると展開・または折り畳みます。"
     }

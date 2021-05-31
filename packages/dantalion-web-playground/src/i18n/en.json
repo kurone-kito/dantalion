@@ -50,6 +50,10 @@
       "probed": "Mx. {{nickname}} has “{{type}}”!"
     },
     "seeRepo": "For more details about the library, check the GitHub repository.",
+    "share": {
+      "hashtag": "DantalionPD",
+      "tweet": "Tweet the result!"
+    },
     "tooltip": {
       "summary": "Tap here, I’ll expand or collapse."
     }
