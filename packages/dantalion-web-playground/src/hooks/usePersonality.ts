@@ -29,7 +29,9 @@ export const usePSRedirection = ({
       e.preventDefault();
       const ps = getPersonality(birthday) ?? false;
       const n = Base64.encode(nickname, true);
-      return ps && Router.push({ query: `${encode(ps)}${spliter}${n}` });
+      return (
+        ps && Router.push({ query: `${encode(ps)}${n && `${spliter}${n}`}` })
+      );
     },
     [birthday, nickname]
   );

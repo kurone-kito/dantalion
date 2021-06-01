@@ -19,7 +19,7 @@ export interface Props {
 const createUrl = ({ hashtag, text, url }: Omit<Props, 'children'>) =>
   [
     'https://twitter.com/intent/tweet',
-    stringify({ hashtag, url, text }, { addQueryPrefix: true }),
+    stringify({ button_hashtag: hashtag, url, text }, { addQueryPrefix: true }),
   ].join('');
 
 /** Tweet button component. */
