@@ -30,7 +30,8 @@ const Component: VFC<Props> = ({
     open={open}
   >
     <summary
-      className="bg-gray-200 cursor-pointer duration-200 ease-in-out outline-none px-8 py-4 rounded-2xl select-none text-xl transform transition hover:bg-gray-100 md:rounded-3xl sm:text-2xl"
+      className="bg-gray-200 cursor-pointer duration-200 ease-in-out outline-none px-8 py-4 rounded-2xl select-none text-xl transform transition focus:bg-gray-100 hover:bg-gray-100 md:rounded-3xl sm:text-2xl"
+      tabIndex={0}
       title={tooltip}
     >
       <Heading className="font-bold inline">{caption}</Heading>

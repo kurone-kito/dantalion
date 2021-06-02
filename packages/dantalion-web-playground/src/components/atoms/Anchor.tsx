@@ -32,6 +32,7 @@ const Component: VFC<Props> = ({
     className={classNames('text-blue-800 hover:text-blue-500', className)}
     href={href}
     rel={classNames('noopener noreferrer', { nofollow })}
+    tabIndex={0}
     title={tooltip}
     // eslint-disable-next-line react/jsx-props-no-spreading
     {...(noblank ? {} : { target: '_blank' })}

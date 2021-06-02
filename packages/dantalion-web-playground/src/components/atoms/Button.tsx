@@ -30,6 +30,7 @@ const Component: VFC<Props> = ({
         buttonClassName
       )}
       onClick={onClick}
+      tabIndex={0}
       type={submit ? 'submit' : 'button'}
     >
       {children}

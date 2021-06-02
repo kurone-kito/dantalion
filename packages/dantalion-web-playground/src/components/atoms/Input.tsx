@@ -23,6 +23,7 @@ const Component: VFC<Props> = ({ className, id, label, ...props }) => (
       )}
       style={{ WebkitAppearance: 'none' }}
       id={id}
+      tabIndex={0}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     />
