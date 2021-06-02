@@ -1,3 +1,5 @@
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type {
   ChangeEventHandler,
   FormEventHandler,
@@ -75,7 +77,10 @@ const Component: VFC<Props> = ({
         type="text"
       />
       <List className="text-red-900 text-sm">{notes}</List>
-      <Button submit>{buttonLabel}</Button>
+      <Button submit>
+        <FontAwesomeIcon className="animate-pulse mx-2" icon={faSearch} />
+        {buttonLabel}
+      </Button>
     </fieldset>
   </form>
 );
