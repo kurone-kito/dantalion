@@ -40,6 +40,7 @@
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@kurone-kito/dantalion-core": "^0.13.0",
     "@kurone-kito/dantalion-i18n": "^0.13.0",
+    "@sentry/nextjs": "^6.5.0",
     "classnames": "^2.3.1",
     "js-base64": "^3.6.1",
     "lodash.chunk": "^4.2.0",

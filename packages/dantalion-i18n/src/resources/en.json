@@ -56,9 +56,9 @@
   "genius": {
     "detail": {
       "descriptions": {
-        "inner": "**${genius.detail.inner}**: the underlying personality",
-        "outer": "**${genius.detail.outer}**: the personality that comes out when you don't trust the other person",
-        "workStyle": "**${genius.detail.workStyle}**: the personality when you are focused or in an emergency"
+        "inner": "**$t(genius.detail.inner)**: the underlying personality",
+        "outer": "**$t(genius.detail.outer)**: the personality that comes out when you don't trust the other person",
+        "workStyle": "**$t(genius.detail.workStyle)**: the personality when you are focused or in an emergency"
       },
       "detail": "A more detailed, innate personality. This is classified into 12 types. ",
       "inner": "Inner",
