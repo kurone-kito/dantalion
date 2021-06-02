@@ -52,6 +52,7 @@ const Component: VFC<Props> = ({
       <Input
         autoComplete="bday"
         defaultValue={birthday}
+        enterKeyHint="go"
         id="birthday"
         label={birthdayLabel}
         max="2050-12-31"
@@ -64,8 +65,10 @@ const Component: VFC<Props> = ({
       <Input
         autoComplete="nickname"
         defaultValue={nickname}
+        enterKeyHint="go"
         id="nickname"
         label={nicknameLabel}
+        maxLength={240}
         name="nickname"
         onChange={onChangeNickname}
         placeholder={nicknameLabel}
