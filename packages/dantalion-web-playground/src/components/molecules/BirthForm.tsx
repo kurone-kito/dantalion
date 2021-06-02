@@ -58,7 +58,6 @@ const Component: VFC<Props> = ({
         min="1873-02-01"
         name="birthday"
         onChange={onChangeBirthday}
-        placeholder={birthdayLabel}
         required
         type="date"
       />
