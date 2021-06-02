@@ -31,15 +31,15 @@ const Component: VFC = () => {
           outer={accessors.genius.getByKey(ps.outer)}
           workStyle={accessors.genius.getByKey(ps.workStyle)}
         />
-        <AccompanyingResult
-          accessors={accessors}
-          details={dt}
-          nickname={nickname}
-        />
         <LifeBaseResultDetail
           accessors={accessors}
           lifeBase={ps.lifeBase}
           motivation={dt.motivation}
+        />
+        <AccompanyingResult
+          accessors={accessors}
+          details={dt}
+          nickname={nickname}
         />
       </article>
       <aside>
