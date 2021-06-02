@@ -2,6 +2,20 @@
 
 # Changelog
 
+## v0.13.1 (2021-06-02)
+
+### Bug fixes
+
+- i18n: Improved resource wording, including correction of some wording replacement fail. (70cc8ad)
+
+### Tests
+
+- i18n: Added the snapshot test. (0f19e30)
+
+### Chores
+
+- web: Added the sentry.io tracking (0e36c28)
+
 ## v0.13.0 (2021-05-30)
 
 ### BREAKING CHANGES
