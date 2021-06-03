@@ -418,19 +418,6 @@ type Position = 'adjust' | 'brain' | 'direct' | 'quick';
 | `direct` | This type of person has all abilities little by little.      |
 | `quick`  | This type of person has a lot of energy, like a salesperson. |
 
-### `Response`
-
-The types for role.
-
-```ts
-type Response = 'action' | 'mind';
-```
-
-| Key      | Value                                                                 |
-| :------- | :-------------------------------------------------------------------- |
-| `action` | This type of person would like to always act with customers.          |
-| `mind`   | This type of person would like to always act with only known peoples. |
-
 ### `Potential`
 
 The types for potential.
@@ -450,6 +437,19 @@ type Potential =
 ```
 
 _I'm not familiar with it yet._
+
+### `Response`
+
+The types for role.
+
+```ts
+type Response = 'action' | 'mind';
+```
+
+| Key      | Value                                                                 |
+| :------- | :-------------------------------------------------------------------- |
+| `action` | This type of person would like to always act with customers.          |
+| `mind`   | This type of person would like to always act with only known peoples. |
 
 ### `Vector`
 
