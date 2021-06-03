@@ -1,3 +1,5 @@
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type {
   ChangeEventHandler,
   FormEventHandler,
@@ -52,28 +54,33 @@ const Component: VFC<Props> = ({
       <Input
         autoComplete="bday"
         defaultValue={birthday}
+        enterKeyHint="go"
         id="birthday"
         label={birthdayLabel}
         max="2050-12-31"
         min="1873-02-01"
         name="birthday"
         onChange={onChangeBirthday}
-        placeholder={birthdayLabel}
         required
         type="date"
       />
       <Input
         autoComplete="nickname"
         defaultValue={nickname}
+        enterKeyHint="go"
         id="nickname"
         label={nicknameLabel}
+        maxLength={240}
         name="nickname"
         onChange={onChangeNickname}
         placeholder={nicknameLabel}
         type="text"
       />
       <List className="text-red-900 text-sm">{notes}</List>
-      <Button submit>{buttonLabel}</Button>
+      <Button submit>
+        <FontAwesomeIcon className="animate-pulse mx-2" icon={faSearch} />
+        {buttonLabel}
+      </Button>
     </fieldset>
   </form>
 );
