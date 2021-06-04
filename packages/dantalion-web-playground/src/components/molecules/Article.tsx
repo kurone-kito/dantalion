@@ -1,7 +1,7 @@
 import type { ReactNode, VFC } from 'react';
 import ReactMarkdown from 'react-markdown';
-import Anchor from '../atoms/Anchor';
 import Details from './Details';
+import ExternalAnchor from './ExternalAnchor';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -27,9 +27,9 @@ const Component: VFC<Props> = ({
       components={{
         // eslint-disable-next-line react/jsx-props-no-spreading
         a: ({ children: c, href }) => (
-          <Anchor href={href as string} nofollow>
+          <ExternalAnchor href={href as string} nofollow>
             {c}
-          </Anchor>
+          </ExternalAnchor>
         ),
         // eslint-disable-next-line react/jsx-props-no-spreading
         p: ({ node, ...props }) => <p className="py-3" {...props} />,
