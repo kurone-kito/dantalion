@@ -30,7 +30,10 @@ module.exports = {
     'import/no-extraneous-dependencies': [
       'error',
       {
-        devDependencies: ['**/*.config.{j,t}s', '**/*.{spec,test}.{j,t}{s,sx}'],
+        devDependencies: [
+          '**/*.config.{j,t}s',
+          '**/*.{spec,stories,test}.{j,t}{s,sx}',
+        ],
       },
     ],
     'import/order': 'warn',
