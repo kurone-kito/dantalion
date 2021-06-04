@@ -8,13 +8,17 @@ import ResultDetail from '../molecules/ResultDetail';
 
 /** Type definition of the required attributes. */
 export interface Props {
+  /** The accessor for vector. */
   readonly accessor: Accessors['vector'];
   /** Specifies the nickname. */
   readonly nickname?: string;
+  /** The strategy details. */
   readonly strategy?: ReactNode;
+  /** The vector type. */
   readonly vector: Vector;
 }
 
+/** The detail component. */
 const Component: VFC<Props> = ({ accessor, nickname, strategy, vector }) => {
   const { t } = useTranslation();
   const heading = accessor.getCategoryDetail();

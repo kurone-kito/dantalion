@@ -9,6 +9,7 @@ import LifeBaseResultDetail from './LifeBaseResultDetail';
 import TweetButton from './TweetButton';
 import VectorResultDetail from './VectorResultDetail';
 
+/** The result component. */
 const Component: VFC = () => {
   const { t } = useTranslation();
   const accessors = createAccessors(t);
