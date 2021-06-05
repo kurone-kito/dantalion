@@ -13,7 +13,6 @@ jobs:
         node-version:
           - '12.x'
           - '14.x'
-          - '15.x'
           - '16.x'
         cache-key:
           - '19a27acd-b393-4a8a-a09f-276a4663454d'
