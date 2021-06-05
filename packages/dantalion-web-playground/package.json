@@ -27,7 +27,9 @@
     "directory": "packages/dantalion-web-playground"
   },
   "scripts": {
-    "lint": "eslint --cache --fix .",
+    "lint": "run-s lint:*",
+    "lint:eslint": "stylelint \"**/*.css\"",
+    "lint:stylelint": "eslint --cache --fix .",
     "prepack": "next build && next export -o dist",
     "serve": "serve dist",
     "start": "next dev",
