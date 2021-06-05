@@ -33,6 +33,8 @@
     "prepack": "next build && next export -o dist",
     "serve": "serve dist",
     "start": "next dev",
+    "storybook": "start-storybook -p 6006 -s public",
+    "storybook:build": "build-storybook -s public",
     "test": "echo 'Warn: no test specified'"
   },
   "dependencies": {
