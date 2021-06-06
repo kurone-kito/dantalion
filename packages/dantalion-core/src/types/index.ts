@@ -5,7 +5,7 @@ import lifeBase, { LifeBase, cc as lifeBaseCC } from './lifeBase';
 import management, { Management } from './management';
 import motivation, { Motivation } from './motivation';
 import position, { Position } from './position';
-import potential, { Potential } from './potential';
+import potential, { Potential, cc as potentialCC } from './potential';
 import response, { Response } from './response';
 import vector, { Vector } from './vector';
 
@@ -29,6 +29,8 @@ export interface AllTypes {
   readonly position: readonly Position[];
   /** The list of the types that the potential. */
   readonly potential: readonly Potential[];
+  /** The list of the types that the potential. */
+  readonly potentialCC: Record<Potential, string>;
   /** The list of the types that the role. */
   readonly response: readonly Response[];
   /** The list of personality types. */
@@ -46,6 +48,7 @@ export default Object.freeze<AllTypes>({
   motivation,
   position,
   potential,
+  potentialCC,
   response,
   vector,
 });

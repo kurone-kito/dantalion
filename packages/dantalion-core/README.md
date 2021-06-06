@@ -136,6 +136,7 @@ export interface AllTypes {
   readonly motivation: readonly Motivation[];
   readonly position: readonly Position[];
   readonly potential: readonly Potential[];
+  readonly potentialCC: Record<Potential, string>;
   readonly response: readonly Response[];
   readonly vector: readonly Vector[];
 }

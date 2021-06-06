@@ -39,3 +39,17 @@ export default Object.freeze<Potential[]>([
   'Ni',
   'No',
 ]);
+
+/** A table of Potential to CC. */
+export const cc = Object.freeze<Record<Potential, string>>({
+  Ci: 'j',
+  Co: 'i',
+  Ei: 'd',
+  Eo: 'c',
+  Fi: 'f',
+  Fo: 'e',
+  Ii: 'b',
+  Io: 'a',
+  Ni: 'h',
+  No: 'g',
+});
