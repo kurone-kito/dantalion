@@ -6,12 +6,15 @@ import ResultDetail from '../molecules/ResultDetail';
 
 /** Type definition of the required attributes. */
 export interface Props {
+  /** The resources of the content. */
   readonly content: DetailsType;
+  /** The resources of the heading. */
   readonly heading: DetailsBaseType;
   /** Specifies the nickname. */
   readonly nickname?: string;
 }
 
+/** The result details component. */
 const Component: VFC<Props> = ({ content, heading, nickname }) => {
   const { t } = useTranslation();
   return (

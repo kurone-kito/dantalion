@@ -330,18 +330,18 @@ type LifeBase =
   | 'selfReliance';
 ```
 
-| Key            | Value                                                                    |
-| :------------- | :----------------------------------------------------------------------- |
-| `application`  | This type of person would like to self-experience seriously.             |
-| `association`  | This type of person would like to do it immediately when they think.     |
-| `development`  | This type of person would like to be perfectionists.                     |
-| `expression`   | This type of person would like to be honest with themselves.             |
-| `finance`      | This type of person would like to put everything within eye reach.       |
-| `investment`   | This type of person would like to be a down-to-earth collector.          |
-| `organization` | This type of person would like to live as a member of a group.           |
-| `quest`        | This type of person would like to learn from the wisdom of our pioneers. |
-| `selfMind`     | This type of person would like to be a leader of the team.               |
-| `selfReliance` | This type of person would like to be a lone wolf.                        |
+| Key            | CC  | Value                                                                    |
+| :------------- | :-- | :----------------------------------------------------------------------- |
+| `application`  | _G_ | This type of person would like to self-experience seriously.             |
+| `association`  | _I_ | This type of person would like to do it immediately when they think.     |
+| `development`  | _D_ | This type of person would like to be perfectionists.                     |
+| `expression`   | _C_ | This type of person would like to be honest with themselves.             |
+| `finance`      | _E_ | This type of person would like to put everything within eye reach.       |
+| `investment`   | _F_ | This type of person would like to be a down-to-earth collector.          |
+| `organization` | _H_ | This type of person would like to live as a member of a group.           |
+| `quest`        | _J_ | This type of person would like to learn from the wisdom of our pioneers. |
+| `selfMind`     | _B_ | This type of person would like to be a leader of the team.               |
+| `selfReliance` | _A_ | This type of person would like to be a lone wolf.                        |
 
 ### `Management`
 
@@ -418,22 +418,9 @@ type Position = 'adjust' | 'brain' | 'direct' | 'quick';
 | `direct` | This type of person has all abilities little by little.      |
 | `quick`  | This type of person has a lot of energy, like a salesperson. |
 
-### `Response`
-
-The types for role.
-
-```ts
-type Response = 'action' | 'mind';
-```
-
-| Key      | Value                                                                 |
-| :------- | :-------------------------------------------------------------------- |
-| `action` | This type of person would like to always act with customers.          |
-| `mind`   | This type of person would like to always act with only known peoples. |
-
 ### `Potential`
 
-The types for potential.
+The potential type definition that can exert when taking action.
 
 ```ts
 type Potential =
@@ -449,7 +436,31 @@ type Potential =
   | 'No';
 ```
 
-_I'm not familiar with it yet._
+| key  | CC  | Value                                                                                        |
+| :--- | :-- | :------------------------------------------------------------------------------------------- |
+| `Ci` | _j_ | This type of person is good at sublimating existing works with respect.                      |
+| `Co` | _i_ | This type of person is skilled at exploring one thing. They also tend to an originator.      |
+| `Ei` | _d_ | This type of person is good at non-verbal and passive expression.                            |
+| `Eo` | _c_ | This type of person is skilled at active expression through words.                           |
+| `Fi` | _f_ | This type of person is relatively cautious and can see the meaning behind the numbers.       |
+| `Fo` | _e_ | This type of person is good at using numbers and other evidence-based expressions.           |
+| `Ii` | _b_ | This type of person is a good listener and can draw out the other person's point.            |
+| `Io` | _a_ | This type of person is good at active and aggressive communication.                          |
+| `Ni` | _h_ | This type of person has fine self-management skills and is good at maintaining organization. |
+| `No` | _g_ | This type of person is very caring and good at developing organizations.                     |
+
+### `Response`
+
+The types for role.
+
+```ts
+type Response = 'action' | 'mind';
+```
+
+| Key      | Value                                                                 |
+| :------- | :-------------------------------------------------------------------- |
+| `action` | This type of person would like to always act with customers.          |
+| `mind`   | This type of person would like to always act with only known peoples. |
 
 ### `Vector`
 

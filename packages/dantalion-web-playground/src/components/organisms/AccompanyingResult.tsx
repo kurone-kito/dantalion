@@ -12,7 +12,6 @@ export interface Props {
   readonly accessors: Pick<Accessors, Keys>;
   /** Specifies the details for personality. */
   readonly details: Pick<Detail, Keys>;
-
   /** Specifies the nickname. */
   readonly nickname?: string;
 }

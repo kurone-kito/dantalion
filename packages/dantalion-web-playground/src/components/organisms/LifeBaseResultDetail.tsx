@@ -14,6 +14,7 @@ export interface Props {
   readonly motivation: Motivation;
 }
 
+/** The result component. */
 const Component: VFC<Props> = ({ accessors, lifeBase, motivation }) => (
   <ResultFrame>
     <TupleList className="list-disc pl-8">

@@ -77,7 +77,7 @@ const Component: VFC<Props> = ({
         type="text"
       />
       <List className="text-red-900 text-sm">{notes}</List>
-      <Button submit>
+      <Button>
         <FontAwesomeIcon className="animate-pulse mx-2" icon={faSearch} />
         {buttonLabel}
       </Button>

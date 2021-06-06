@@ -12,18 +12,24 @@ import ResultDetail from '../molecules/ResultDetail';
 
 /** Type definition of the required attributes. */
 export interface Props {
+  /** The resources of the descriptions. */
   readonly descriptions: Pick<
     DesctiptionsType,
     'genius1' | 'genius2' | 'strategy' | 'weak'
   >;
+  /** The resources of the personality details. */
   readonly details: PersonalityDetailType;
+  /** The resources of the inner personality details. */
   readonly inner: PersonalityType;
   /** Specifies the nickname. */
   readonly nickname?: string;
+  /** The resources of the outer personality details. */
   readonly outer: Pick<PersonalityType, 'name' | 'summary'>;
+  /** The resources of the workStyle personality details. */
   readonly workStyle: Pick<PersonalityType, 'name' | 'summary'>;
 }
 
+/** Create the source from props. */
 const createSource = ({
   inner,
   outer,
@@ -40,6 +46,7 @@ const createSource = ({
     `${summary} ... **${name}**`,
   ]);
 
+/** The result component. */
 const Component: VFC<Props> = ({
   descriptions,
   details,

@@ -13,7 +13,6 @@ jobs:
         node-version:
           - '12.x'
           - '14.x'
-          - '15.x'
           - '16.x'
         cache-key:
           - '19a27acd-b393-4a8a-a09f-276a4663454d'
@@ -38,8 +37,7 @@ jobs:
             ${{ matrix.cache-key }}_${{ runner.os }}-node_v
             ${{ matrix.cache-key }}_${{ runner.os }}-node-
             ${{ matrix.cache-key }}_${{ runner.os }}-
-      - run: npm ci
-      - run: npm run prepare
+      - run: npm ci --legacy-peer-deps
       - run: npm run prepack
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}

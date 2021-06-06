@@ -4,6 +4,7 @@ import TweetButton from '../molecules/TweetButton';
 
 /** Type definition of the required attributes. */
 export interface Props {
+  /** The hook text. */
   readonly hooks?: string;
   /** Specifies the nickname. */
   readonly nickname?: string;
