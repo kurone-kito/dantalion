@@ -8,7 +8,6 @@ export {
 export type { DetailAccessor } from './resources/createGenericAccessor';
 export {
   default as createTAsync,
-  CreateTAsync,
   CreateTAsyncOptions,
 } from './resources/createTAsync';
 export type {

@@ -28,30 +28,6 @@ export interface CreateTAsyncOptions extends Pick<InitOptions, 'lng'> {
 }
 
 /**
- * The function type definition that creates and initializes the
- * i18next instance asynchronously.
- */
-export interface CreateTAsync {
-  /**
-   * Create and initialize the i18next instance asynchronously.
-   * @param options The options
-   * @returns The function of the i18next
-   */
-  (options: CreateTAsyncOptions): Promise<TFunction>;
-  /**
-   * Create and initialize the i18next instance asynchronously.
-   * @deprecated This method of argument is deprecated. Use a single option.
-   * @param lng The language to use
-   *
-   * If omitted, the language used is detected from the current environment.
-   * @param addition Specify the additional resources if you need
-   * @returns The function of the i18next
-   * @see useLocale()
-   */
-  (lng?: string, addition?: ResourceLanguage): Promise<TFunction>;
-}
-
-/**
  * Create the resources object.
  * @param addition The additional resources.
  */
@@ -62,20 +38,8 @@ const initResources = (addition?: ResourceLanguage): Resource =>
   );
 
 /** Create and initialize the i18next instance asynchronously. */
-const createTAsync: CreateTAsync = (
-  options?: string | CreateTAsyncOptions,
-  addition?: ResourceLanguage
-) => {
-  if (typeof options === 'object') {
-    const { additions, lng = getLocale(), use } = options;
-    const init: InitOptions = { lng, resources: initResources(additions) };
-    return use ? i18next.use(use).init(init) : i18next.init(init);
-  }
-  return i18next.init({
-    fallbackLng,
-    lng: options ?? getLocale(),
-    resources: initResources(addition),
-  });
+export default (options: CreateTAsyncOptions): Promise<TFunction> => {
+  const { additions, lng = getLocale(), use } = options;
+  const init: InitOptions = { lng, resources: initResources(additions) };
+  return use ? i18next.use(use).init(init) : i18next.init(init);
 };
-
-export default createTAsync;

@@ -116,14 +116,14 @@ export const createAccessors = (t: TFunction): Accessors => {
  * @param lng The language.
  *
  * If omitted, the language used is detected from the current environment.
- * @param addition The additional resources.
+ * @param additions The additional resources.
  * @returns The instance of the concreted accessors collection asynchronously
  * @see useLocale()
  */
 export default async (
   lng?: string,
-  addition?: ResourceLanguage
+  additions?: ResourceLanguage
 ): Promise<Accessors & WithT> => {
-  const t = await createTAsync(lng, addition);
+  const t = await createTAsync({ lng, additions });
   return { ...createAccessors(t), t };
 };
