@@ -2,6 +2,26 @@
 
 # Changelog
 
+## v0.13.2 (2021-06-07)
+
+### Refactored
+
+- cli, web: Added and updated the dependencies (38fdb41)
+
+### Documents
+
+- core: Added the documentation (88e544b, 16a6b97, 4d2a1d2)
+
+### Chores
+
+- ci: Removed the Node.js v15 tests (47a0e09)
+- ci: Configured to use legacy methods for peer dependency installation in CI (806ec3e)
+- web: Added the Storybook (502f35d, 73b62dd, 53d9015, bac41f4)
+- web: added an anchor with external icon component (2be8842)
+- web: Improved internal components (3b4b322, 2bce28a, 8cedaff, 923dc55, a128b21, 2f1eb16)
+- web: Fixed the prohibited structure of HTML (1020530)
+- Improved the TypeScript / ESLint configurations (99e98f1, 7217038)
+
 ## v0.13.1 (2021-06-02)
 
 ### Bug fixes
