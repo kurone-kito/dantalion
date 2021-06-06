@@ -1,7 +1,7 @@
 import brain, { Brain } from './brain';
 import communication, { Communication } from './communication';
 import genius, { Genius } from './genius';
-import lifeBase, { LifeBase } from './lifeBase';
+import lifeBase, { LifeBase, cc as lifeBaseCC } from './lifeBase';
 import management, { Management } from './management';
 import motivation, { Motivation } from './motivation';
 import position, { Position } from './position';
@@ -19,6 +19,8 @@ export interface AllTypes {
   readonly genius: readonly Genius[];
   /** The list that the base of ego type. */
   readonly lifeBase: readonly LifeBase[];
+  /** The list that the base of ego type. */
+  readonly lifeBaseCC: Record<LifeBase, string>;
   /** The list of the types that the risk management method. */
   readonly management: readonly Management[];
   /** The list of the types that easy to the motivated environment. */
@@ -39,6 +41,7 @@ export default Object.freeze<AllTypes>({
   communication,
   genius,
   lifeBase,
+  lifeBaseCC,
   management,
   motivation,
   position,

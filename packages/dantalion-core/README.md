@@ -131,6 +131,7 @@ export interface AllTypes {
   readonly communication: readonly Communication[];
   readonly genius: readonly Genius[];
   readonly lifeBase: readonly LifeBase[];
+  readonly lifeBaseCC: Record<LifeBase, string>;
   readonly management: readonly Management[];
   readonly motivation: readonly Motivation[];
   readonly position: readonly Position[];
@@ -146,6 +147,7 @@ export interface AllTypes {
 | `communication` | `readonly Communication[]` | The list that the types of dialogue policy.                   |
 | `genius`        | `readonly Genius[]`        | The list of personality types.                                |
 | `lifeBase`      | `readonly LifeBase[]`      | The list that the base of ego type.                           |
+| `lifeBaseCC`    | `Record<LifeBase, string>` | The list that the base of ego type.                           |
 | `management`    | `readonly Management[]`    | The list of the types that the risk management method.        |
 | `motivation`    | `readonly Motivation[]`    | The list of the types that easy to the motivated environment. |
 | `position`      | `readonly Position[]`      | The list of role types                                        |
