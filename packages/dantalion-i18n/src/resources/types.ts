@@ -1,5 +1,7 @@
 /** The type definition that the resources of description. */
 export interface DesctiptionsType {
+  /** The title of personality code. */
+  readonly cc: string;
   /** The title of the detail. */
   readonly detail: string;
   /** The title of the details list. */

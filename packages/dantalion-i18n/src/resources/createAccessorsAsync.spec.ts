@@ -147,6 +147,7 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       it('Get the specified object', async () => {
         const expected = (await func()).getDescription();
         expect(expected).toEqual({
+          cc: expect.any(String),
           detail: expect.any(String),
           details: expect.any(String),
           genius1: expect.any(String),
@@ -163,6 +164,7 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         async (placeholder) => {
           const expected = (await func()).getDescription(placeholder);
           expect(expected).toEqual({
+            cc: expect.any(String),
             detail: expect.stringContaining(placeholder),
             details: expect.any(String),
             genius1: expect.any(String),

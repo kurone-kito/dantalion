@@ -250,6 +250,7 @@ The type definition that the resources of description.
 
 ```ts
 interface DesctiptionsType {
+  readonly cc: string;
   readonly detail: string;
   readonly details: string;
   readonly genius1: string;
@@ -263,6 +264,7 @@ interface DesctiptionsType {
 
 | Property      | Type     | Description                                        |
 | :------------ | :------- | :------------------------------------------------- |
+| `cc`          | `string` | The title of personality code.                     |
 | `detail`      | `string` | The title of the detail.                           |
 | `details`     | `string` | The title of the details list.                     |
 | `genius1`     | `string` | The detail of the genius.                          |
