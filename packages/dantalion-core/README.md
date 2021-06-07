@@ -193,6 +193,20 @@ type getPersonality = (
 The object that the personality information. If the date is over the range,
 it will be `undefined`.
 
+### `toCC`
+
+```ts
+type toCC = (personality: Personality) => string;
+```
+
+#### Parameters
+
+- `personality`: Specify the personality object.
+
+#### Returns
+
+The CC string.
+
 ## Types (for TypeScript)
 
 ### `Affinity`

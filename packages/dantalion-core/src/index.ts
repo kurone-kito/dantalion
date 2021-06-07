@@ -15,5 +15,6 @@ export type { Potential } from './types/potential';
 export type { Response } from './types/response';
 export type { Vector } from './types/vector';
 export { default as getPersonality, Personality } from './utils/getPersonality';
+export { default as toCC } from './utils/toCC';
 
 export const getDetail = (genius: Genius): Detail => details[genius];
