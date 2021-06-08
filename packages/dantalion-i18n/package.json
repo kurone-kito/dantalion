@@ -1,6 +1,6 @@
 {
   "name": "@kurone-kito/dantalion-i18n",
-  "version": "0.13.2",
+  "version": "0.14.0",
   "description": "Converts results of dantalion into detailed documentation.",
   "keywords": [
     "ba-zi",
@@ -34,7 +34,7 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "@kurone-kito/dantalion-core": "^0.13.2",
+    "@kurone-kito/dantalion-core": "^0.14.0",
     "i18next": "^20.3.1",
     "lodash.merge": "^4.6.2",
     "semver": "^7.3.5"
