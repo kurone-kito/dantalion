@@ -323,6 +323,7 @@ Object {
 
 exports[`LANG=en \`createAccessors()\` function \`Accessors.getDescription()\` method ("bar") => includes the same string 1`] = `
 Object {
+  "cc": "Personality number",
   "detail": "Details of people whose personality type is classified as bar, and how to handle them.",
   "details": "List of available personality type codes",
   "genius1": "A person has three of these personalities, and the personality that emerges varies depending on the situation.",
@@ -336,6 +337,7 @@ Object {
 
 exports[`LANG=en \`createAccessors()\` function \`Accessors.getDescription()\` method ("foo") => includes the same string 1`] = `
 Object {
+  "cc": "Personality number",
   "detail": "Details of people whose personality type is classified as foo, and how to handle them.",
   "details": "List of available personality type codes",
   "genius1": "A person has three of these personalities, and the personality that emerges varies depending on the situation.",
@@ -349,6 +351,7 @@ Object {
 
 exports[`LANG=en \`createAccessors()\` function \`Accessors.getDescription()\` method Get the specified object 1`] = `
 Object {
+  "cc": "Personality number",
   "detail": "Details of people whose personality type is classified as , and how to handle them.",
   "details": "List of available personality type codes",
   "genius1": "A person has three of these personalities, and the personality that emerges varies depending on the situation.",
@@ -892,6 +895,7 @@ Object {
 
 exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.getDescription()\` method ("bar") => includes the same string 1`] = `
 Object {
+  "cc": "Personality number",
   "detail": "Details of people whose personality type is classified as bar, and how to handle them.",
   "details": "List of available personality type codes",
   "genius1": "A person has three of these personalities, and the personality that emerges varies depending on the situation.",
@@ -905,6 +909,7 @@ Object {
 
 exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.getDescription()\` method ("foo") => includes the same string 1`] = `
 Object {
+  "cc": "Personality number",
   "detail": "Details of people whose personality type is classified as foo, and how to handle them.",
   "details": "List of available personality type codes",
   "genius1": "A person has three of these personalities, and the personality that emerges varies depending on the situation.",
@@ -918,6 +923,7 @@ Object {
 
 exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.getDescription()\` method Get the specified object 1`] = `
 Object {
+  "cc": "Personality number",
   "detail": "Details of people whose personality type is classified as , and how to handle them.",
   "details": "List of available personality type codes",
   "genius1": "A person has three of these personalities, and the personality that emerges varies depending on the situation.",
@@ -1461,6 +1467,7 @@ Object {
 
 exports[`LANG=ja \`createAccessors()\` function \`Accessors.getDescription()\` method ("bar") => includes the same string 1`] = `
 Object {
+  "cc": "性格番号",
   "detail": "性格タイプ bar の詳細、および取扱方法",
   "details": "有効な性格タイプ一覧",
   "genius1": "人はその中から 3 種類の素質をもち、状況によって現れる素質が異なります。",
@@ -1474,6 +1481,7 @@ Object {
 
 exports[`LANG=ja \`createAccessors()\` function \`Accessors.getDescription()\` method ("foo") => includes the same string 1`] = `
 Object {
+  "cc": "性格番号",
   "detail": "性格タイプ foo の詳細、および取扱方法",
   "details": "有効な性格タイプ一覧",
   "genius1": "人はその中から 3 種類の素質をもち、状況によって現れる素質が異なります。",
@@ -1487,6 +1495,7 @@ Object {
 
 exports[`LANG=ja \`createAccessors()\` function \`Accessors.getDescription()\` method Get the specified object 1`] = `
 Object {
+  "cc": "性格番号",
   "detail": "性格タイプ  の詳細、および取扱方法",
   "details": "有効な性格タイプ一覧",
   "genius1": "人はその中から 3 種類の素質をもち、状況によって現れる素質が異なります。",
@@ -2030,6 +2039,7 @@ Object {
 
 exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.getDescription()\` method ("bar") => includes the same string 1`] = `
 Object {
+  "cc": "性格番号",
   "detail": "性格タイプ bar の詳細、および取扱方法",
   "details": "有効な性格タイプ一覧",
   "genius1": "人はその中から 3 種類の素質をもち、状況によって現れる素質が異なります。",
@@ -2043,6 +2053,7 @@ Object {
 
 exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.getDescription()\` method ("foo") => includes the same string 1`] = `
 Object {
+  "cc": "性格番号",
   "detail": "性格タイプ foo の詳細、および取扱方法",
   "details": "有効な性格タイプ一覧",
   "genius1": "人はその中から 3 種類の素質をもち、状況によって現れる素質が異なります。",
@@ -2056,6 +2067,7 @@ Object {
 
 exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.getDescription()\` method Get the specified object 1`] = `
 Object {
+  "cc": "性格番号",
   "detail": "性格タイプ  の詳細、および取扱方法",
   "details": "有効な性格タイプ一覧",
   "genius1": "人はその中から 3 種類の素質をもち、状況によって現れる素質が異なります。",

@@ -1,4 +1,4 @@
-import { Genius, getDetail, getPersonality } from '.';
+import { Genius, getDetail, getPersonality, toCC } from '.';
 import {
   DetailTestData,
   getDetailTestData,
@@ -17,12 +17,13 @@ describe('integration testing', () => {
     );
   });
   describe('get the personality', () => {
+    const testData = getPersonalityTestData();
     it.each(['1873-01-31', '2051-01-01', 'NaN', ''])(
       'Return an undefined value when specified an out ranged date: “%s”',
       (date) => expect(getPersonality(date)).toBeUndefined()
     );
     it('Outputs the same value as the data source from all dates in the range', () => {
-      getPersonalityTestData().forEach((source) => {
+      testData.forEach((source) => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const result = getPersonality(source.date)!;
         expect({ ...result, date: source.date }).toStrictEqual({
@@ -31,5 +32,7 @@ describe('integration testing', () => {
         });
       });
     });
+    it('Outputs the string from the toCC function', () =>
+      expect(toCC(testData[0])).toEqual(expect.any(String)));
   });
 });

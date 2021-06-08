@@ -1,13 +1,19 @@
 import type { LifeBase, Motivation } from '@kurone-kito/dantalion-core';
 import type { Accessors } from '@kurone-kito/dantalion-i18n';
 import type { VFC } from 'react';
+import InlineMarkdown from '../atoms/InlineMarkdown';
 import ResultFrame from '../atoms/ResultFrame';
 import TupleList from '../molecules/TupleList';
 
 /** Type definition of the required attributes. */
 export interface Props {
   /** Specifies the accessor object */
-  readonly accessors: Pick<Accessors, 'lifeBase' | 'motivation'>;
+  readonly accessors: Pick<
+    Accessors,
+    'getDescription' | 'lifeBase' | 'motivation'
+  >;
+  /** Specifies the CC number */
+  readonly cc: string;
   /** Specifies the lifebase value */
   readonly lifeBase: LifeBase;
   /** Specifies the motivation value */
@@ -15,7 +21,7 @@ export interface Props {
 }
 
 /** The result component. */
-const Component: VFC<Props> = ({ accessors, lifeBase, motivation }) => (
+const Component: VFC<Props> = ({ accessors, cc, lifeBase, motivation }) => (
   <ResultFrame>
     <TupleList className="list-disc pl-8">
       {[
@@ -26,6 +32,10 @@ const Component: VFC<Props> = ({ accessors, lifeBase, motivation }) => (
         [
           accessors.motivation.getCategoryDetail(),
           accessors.motivation.getByKey(motivation),
+        ],
+        [
+          accessors.getDescription().cc,
+          <InlineMarkdown>{`\`${cc}\``}</InlineMarkdown>,
         ],
       ]}
     </TupleList>

@@ -1,4 +1,4 @@
-import { getDetail } from '@kurone-kito/dantalion-core';
+import { getDetail, toCC } from '@kurone-kito/dantalion-core';
 import { createAccessors } from '@kurone-kito/dantalion-i18n';
 import type { VFC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,6 +34,7 @@ const Component: VFC = () => {
         />
         <LifeBaseResultDetail
           accessors={accessors}
+          cc={toCC(ps)}
           lifeBase={ps.lifeBase}
           motivation={dt.motivation}
         />

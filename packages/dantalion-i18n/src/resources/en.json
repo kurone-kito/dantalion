@@ -44,6 +44,7 @@
     }
   },
   "descriptions": {
+    "cc": "Personality number",
     "detail": "Details of people whose personality type is classified as {{type}}, and how to handle them.",
     "details": "List of available personality type codes",
     "genius1": "A person has three of these personalities, and the personality that emerges varies depending on the situation.",

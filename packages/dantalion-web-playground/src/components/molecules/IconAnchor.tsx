@@ -11,6 +11,8 @@ export interface Props {
   readonly href: string;
   /** The icon. */
   readonly icon: IconProp;
+  /** If you need the CSS classes for icon, specify them. */
+  readonly iconClassName?: string;
   /** Whether the component specifies a “nofflow” flag. */
   readonly nofollow?: boolean;
   /** Whether the icon specifies as a superscript. */
@@ -24,6 +26,7 @@ const Component: VFC<Props> = ({
   children,
   href,
   icon,
+  iconClassName,
   nofollow,
   sup,
   tooltip,
@@ -33,7 +36,7 @@ const Component: VFC<Props> = ({
     <Anchor href={href} nofollow={nofollow} tooltip={tooltip}>
       {children && <span className="mr-1">{children}</span>}
       <Sup>
-        <FontAwesomeIcon icon={icon} />
+        <FontAwesomeIcon icon={icon} className={iconClassName} />
       </Sup>
     </Anchor>
   );

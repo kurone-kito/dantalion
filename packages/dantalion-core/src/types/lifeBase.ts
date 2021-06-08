@@ -39,3 +39,17 @@ export default Object.freeze<LifeBase[]>([
   'selfMind',
   'selfReliance',
 ]);
+
+/** A table of LifeBase to CC. */
+export const cc = Object.freeze<Record<LifeBase, string>>({
+  application: 'G',
+  association: 'I',
+  development: 'D',
+  expression: 'C',
+  finance: 'E',
+  investment: 'F',
+  organization: 'H',
+  quest: 'J',
+  selfMind: 'B',
+  selfReliance: 'A',
+});

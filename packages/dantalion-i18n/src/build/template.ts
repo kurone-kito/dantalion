@@ -3,8 +3,10 @@ import {
   Genius,
   Personality,
   getDetail,
+  toCC,
 } from '@kurone-kito/dantalion-core';
 import type { Accessors } from '../resources/createAccessorsAsync';
+import article from './article';
 import { detailsBase, detailsMore } from './details';
 import { createFromGenius, fromGeniusForPersonality } from './genius';
 import { line } from './list';
@@ -80,14 +82,13 @@ export const createPersonalityTemplate = (
   accessors: Accessors
 ): string => {
   const details = getDetail(source.inner);
+  const { cc, strategy } = accessors.getDescription();
   return line(
     detailsBase({ src: accessors.vector.getCategoryDetail() }),
-    fromVector(
-      accessors.getDescription().strategy,
-      accessors.vector.getByKey(details.vector)
-    ),
+    fromVector(strategy, accessors.vector.getByKey(details.vector)),
     fromGeniusForPersonality(source, accessors),
     onlyAccompanying(details, accessors),
-    fromLifeBase(accessors.lifeBase, source.lifeBase)
+    fromLifeBase(accessors.lifeBase, source.lifeBase),
+    article({ head: cc, body: toCC(source), level: 2 })
   );
 };

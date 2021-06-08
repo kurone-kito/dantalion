@@ -19,6 +19,7 @@ const Component: VFC<Props> = ({ children, href, nofollow, tooltip }) => (
   <IconAnchor
     href={href}
     icon={faExternalLinkAlt}
+    iconClassName="opacity-70 text-xs"
     nofollow={nofollow}
     sup
     tooltip={tooltip}
