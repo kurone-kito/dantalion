@@ -139,25 +139,17 @@ The string that the personality information as the Markdown format.
 If you specified the `undefined` value as an argument or omitted it,
 it would be a list of the available types.
 
-### `getLocale(forceEnv?: boolean): string | undefined`
+### `getLocale(): string | undefined`
 
-It provides the appropriate locale information acquisition function
-according to the current environment.
-
-For Node.js version `12.1.0` and later or web browsers, it depends on the
-[Intl API](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl)'s
-decision. If not, it determines by the environment variables.
+Get the locale information from the Intl API.
 
 #### Arguments
 
-| Name       | Type                   | Defaults  | Description                                                                                            |
-| :--------- | :--------------------- | :-------- | :----------------------------------------------------------------------------------------------------- |
-| `forceEnv` | `boolean \| undefined` | undefined | If the value is truthy, the function selects the getting forcibly that from the environment variables. |
+(None)
 
 #### Returns
 
-`string | undefined`: The locale string e.g. `en-US` or `en_US.UTF-8`.
-If it is not recognized correctly, it may return an undefined value.
+`string`: The locale string e.g. `en-US`.
 
 ### `getPersonalityMarkdown(accessors: Accessors, birth: string | number | Date): string`
 
