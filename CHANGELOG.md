@@ -2,6 +2,22 @@
 
 # Changelog
 
+## v0.15.0 (2021-06-09)
+
+### **BREAKING CHANGES**
+
+- cli, i18n: No longer supported in Node.js < 12.1 ([a1311ad](https://github.com/kurone-kito/dantalion/commit/a1311add4052ef1b08ab72ab739c8fab35396c89))
+  - Node.js < v11 and v12.**0**.x could not work the [Intl API](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) correctly, so this library has an option that depends directly on environment variables.
+    However, that support only increases the complexity of the library and has minimal benefit, so it removes in this update.
+- i18n: Removed an argument of `getLocale()` function. ([3ab0248](https://github.com/kurone-kito/dantalion/commit/3ab0248529f2fc2131c4bae957fdf5e4d552cc2c))
+  - The arguments for this function no longer have any meaning.
+    In particular, if you rely on this function in your TypeScript environment, you may need to fix it as soon as possible.
+  - It always uses the [Intl API](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) and no longer depends directly on environment variables.
+
+### Refactors
+
+- i18n: Updated and removed the dependencies. ([877cad0](https://github.com/kurone-kito/dantalion/commit/877cad00696a1e9292154d0aa1e916458f2f9261))
+
 ## v0.14.0 (2021-06-08)
 
 ### BREAKING CHANGES
