@@ -22,17 +22,14 @@ export interface DesctiptionsType {
 
 /**
  * The base type definition in the structure of a resource.
- * @template D The type of details.
+ * @template T The type of details.
  */
-interface DetailsBaseTypeGeneric<D> {
+export interface DetailsBaseType<T = string> {
   /** The detail. */
-  readonly detail: D;
+  readonly detail: T;
   /** The resource name as a heading. */
   readonly name: string;
 }
-
-/** The type definition that the pair of name and detail. */
-export type DetailsBaseType = DetailsBaseTypeGeneric<string>;
 
 /** The type definition that the name, detail and more descriptions. */
 export interface DetailsType extends DetailsBaseType {
@@ -65,8 +62,7 @@ export interface PersonalityDetailType
  * A type definition of a structure that stores a
  * description of a particular person's personality.
  */
-export interface PersonalityType
-  extends DetailsBaseTypeGeneric<readonly string[]> {
+export interface PersonalityType extends DetailsBaseType<readonly string[]> {
   /**
    * The strategies for communicating with people of this personality type.
    *
@@ -87,7 +83,7 @@ export interface PersonalityType
  * A type definition of a structure that
  * stores a description of a personality type.
  */
-export interface VectorType extends DetailsBaseTypeGeneric<readonly string[]> {
+export interface VectorType extends DetailsBaseType<readonly string[]> {
   /**
    * The strategies for communicating with people of this personality type.
    *

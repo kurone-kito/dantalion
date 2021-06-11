@@ -293,16 +293,20 @@ interface DetailAccessor<
 | `getByKey(key: K): T`    | The function acquires the resource corresponding to the key.               |
 | `getCategoryDetail(): D` | The function acquires the resource corresponding to the specific category. |
 
-### `DetailsBaseType`
+### `DetailsBaseType<T>`
 
 The type definition that the pair of name and detail.
 
 ```ts
-interface DetailsBaseType {
-  readonly detail: string;
+interface DetailsBaseType<T = string> {
+  readonly detail: T;
   readonly name: string;
 }
 ```
+
+| Type | Constraint | Description          |
+| :--- | :--------- | :------------------- |
+| `T`  | `string`   | The type of details. |
 
 | Property | Type     | Description                     |
 | :------- | :------- | :------------------------------ |
