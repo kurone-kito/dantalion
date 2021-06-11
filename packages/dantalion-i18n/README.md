@@ -105,15 +105,15 @@ See: [useLocale()](#getlocale-string--undefined))
 [`Promise<Accessors & i18next.WithT>`](#accessors):
 The instance of the concreted accessors collection
 
-### `createTAsync(options: CreateTAsyncOptions): Promise<i18next.TFunction>`
+### `createTAsync(options?: CreateTAsyncOptions): Promise<i18next.TFunction>`
 
 Create and initialize the i18next instance asynchronously
 
 #### Arguments
 
-| Name      | Type                                          | Defaults     | Description |
-| :-------- | :-------------------------------------------- | :----------- | :---------- |
-| `options` | [`CreateTAsyncOptions`](#createtasyncoptions) | _(Required)_ | The options |
+| Name      | Type                                           | Defaults | Description |
+| :-------- | :--------------------------------------------- | :------- | :---------- |
+| `options` | [`CreateTAsyncOptions?`](#createtasyncoptions) | `{}`     | The options |
 
 #### Returns
 

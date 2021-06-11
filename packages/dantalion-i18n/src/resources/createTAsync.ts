@@ -38,7 +38,7 @@ const initResources = (addition?: ResourceLanguage): Resource =>
   );
 
 /** Create and initialize the i18next instance asynchronously. */
-export default (options: CreateTAsyncOptions): Promise<TFunction> => {
+export default (options: CreateTAsyncOptions = {}): Promise<TFunction> => {
   const { additions, lng = getLocale(), use } = options;
   const init: InitOptions = { lng, resources: initResources(additions) };
   return use ? i18next.use(use).init(init) : i18next.init(init);
