@@ -95,16 +95,16 @@ export interface Accessors {
 export const createAccessors = (t: TFunction): Accessors => {
   const { tDetail, tObj, tStringedDetail } = createGenericAccessor(t);
   return {
-    brain: tDetail<DetailsType, Brain>('brain'),
-    communication: tDetail<DetailsType, Communication>('communication'),
-    genius: tDetail<PersonalityType, Genius, PersonalityDetailType>('genius'),
-    getDescription: (type?: string) => tObj('descriptions', { type }),
+    brain: tDetail('brain'),
+    communication: tDetail('communication'),
+    genius: tDetail('genius'),
+    getDescription: (type) => tObj('descriptions', { type }),
     lifeBase: tStringedDetail('lifeBase'),
-    management: tDetail<DetailsType, Management>('management'),
+    management: tDetail('management'),
     motivation: tStringedDetail('motivation'),
-    position: tDetail<DetailsType, Position>('position'),
-    response: tDetail<DetailsType, Response>('response'),
-    vector: tDetail<VectorType, Vector>('vector'),
+    position: tDetail('position'),
+    response: tDetail('response'),
+    vector: tDetail('vector'),
   };
 };
 
