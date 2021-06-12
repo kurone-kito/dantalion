@@ -2,6 +2,27 @@
 
 # Changelog
 
+## v0.16.0 (2021-06-12)
+
+### Features
+
+- i18n, web: Reordered the chapters in the explanation of the results ([49dd2d7](https://github.com/kurone-kito/dantalion/commit/49dd2d7))
+- i18n: Added a type argument to `DetailsBaseType` type definition ([41cdba3](https://github.com/kurone-kito/dantalion/commit/41cdba3))
+- i18n: The `createTAsync()` function can now omit the argument specification ([28ca65a](https://github.com/kurone-kito/dantalion/commit/28ca65a))
+
+### Refactors
+
+- i18n: Refactored the internal code of the `createAccessors()` ([adee433](https://github.com/kurone-kito/dantalion/commit/adee433))
+
+### Tests
+
+- i18n: Added the snapshot tests of the personalities report ([cf683ab](https://github.com/kurone-kito/dantalion/commit/cf683ab))
+
+### Documents
+
+- Fixed that inconsistent notation in the argument list of the API document ([d8f4f7c](https://github.com/kurone-kito/dantalion/commit/d8f4f7c))
+- Moved the homepage metadata. ([c142507](https://github.com/kurone-kito/dantalion/commit/c142507))
+
 ## v0.15.0 (2021-06-09)
 
 ### **BREAKING CHANGES**
