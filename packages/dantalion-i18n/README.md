@@ -92,10 +92,10 @@ It is a synonym function that combines
 
 #### Arguments
 
-| Name        | Type                       | Defaults    | Description                                  |
-| :---------- | :------------------------- | :---------- | :------------------------------------------- |
-| `lng`       | `string?`                  | (\*)        | The language to use                          |
-| `additions` | `i18next.ResourceLanguage` | `undefined` | Specify the additional resources if you need |
+| Name        | Type                        | Defaults    | Description                                  |
+| :---------- | :-------------------------- | :---------- | :------------------------------------------- |
+| `lng`       | `string?`                   | (\*)        | The language to use                          |
+| `additions` | `i18next.ResourceLanguage?` | `undefined` | Specify the additional resources if you need |
 
 (\*: If omitted, the language used is detected from the current environment.
 See: [useLocale()](#getlocale-string--undefined))
@@ -105,15 +105,15 @@ See: [useLocale()](#getlocale-string--undefined))
 [`Promise<Accessors & i18next.WithT>`](#accessors):
 The instance of the concreted accessors collection
 
-### `createTAsync(options: CreateTAsyncOptions): Promise<i18next.TFunction>`
+### `createTAsync(options?: CreateTAsyncOptions): Promise<i18next.TFunction>`
 
 Create and initialize the i18next instance asynchronously
 
 #### Arguments
 
-| Name      | Type                                          | Defaults   | Description |
-| :-------- | :-------------------------------------------- | :--------- | :---------- |
-| `options` | [`CreateTAsyncOptions`](#createtasyncoptions) | (Required) | The options |
+| Name      | Type                                           | Defaults | Description |
+| :-------- | :--------------------------------------------- | :------- | :---------- |
+| `options` | [`CreateTAsyncOptions?`](#createtasyncoptions) | `{}`     | The options |
 
 #### Returns
 
@@ -126,10 +126,10 @@ Get the personality information.
 
 #### Arguments
 
-| Name        | Type                                              | Defaults     | Description                           |
-| :---------- | :------------------------------------------------ | :----------- | :------------------------------------ |
-| `accessors` | [`Accessors`](#accessors)                         | _(Required)_ | The accessors instance for resources. |
-| `genius`    | [`Genius \| undefined`](../dantalion-core#genius) | `undefined`  | The types of personality.             |
+| Name        | Type                                  | Defaults     | Description                           |
+| :---------- | :------------------------------------ | :----------- | :------------------------------------ |
+| `accessors` | [`Accessors`](#accessors)             | _(Required)_ | The accessors instance for resources. |
+| `genius`    | [`Genius?`](../dantalion-core#genius) | `undefined`  | The types of personality.             |
 
 #### Returns
 
@@ -293,16 +293,20 @@ interface DetailAccessor<
 | `getByKey(key: K): T`    | The function acquires the resource corresponding to the key.               |
 | `getCategoryDetail(): D` | The function acquires the resource corresponding to the specific category. |
 
-### `DetailsBaseType`
+### `DetailsBaseType<T>`
 
 The type definition that the pair of name and detail.
 
 ```ts
-interface DetailsBaseType {
-  readonly detail: string;
+interface DetailsBaseType<T = string> {
+  readonly detail: T;
   readonly name: string;
 }
 ```
+
+| Type | Constraint | Description          |
+| :--- | :--------- | :------------------- |
+| `T`  | `string`   | The type of details. |
 
 | Property | Type     | Description                     |
 | :------- | :------- | :------------------------------ |

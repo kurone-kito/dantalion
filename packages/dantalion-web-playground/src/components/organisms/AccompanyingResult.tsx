@@ -35,13 +35,13 @@ const Component: VFC<Props> = ({ accessors, nickname, details }) => (
       nickname={nickname}
     />
     <ResultDetail
-      content={accessors.position.getByKey(details.position)}
-      heading={accessors.position.getCategoryDetail()}
+      content={accessors.response.getByKey(details.response)}
+      heading={accessors.response.getCategoryDetail()}
       nickname={nickname}
     />
     <ResultDetail
-      content={accessors.response.getByKey(details.response)}
-      heading={accessors.response.getCategoryDetail()}
+      content={accessors.position.getByKey(details.position)}
+      heading={accessors.position.getCategoryDetail()}
       nickname={nickname}
     />
   </>

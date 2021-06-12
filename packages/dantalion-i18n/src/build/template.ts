@@ -45,10 +45,10 @@ const onlyAccompanying = (
     }),
     detailsBase({ src: accessors.management.getCategoryDetail() }),
     detailsMore({ src: accessors.management.getByKey(source.management) }),
-    detailsBase({ src: accessors.position.getCategoryDetail() }),
-    detailsMore({ src: accessors.position.getByKey(source.position) }),
     detailsBase({ src: accessors.response.getCategoryDetail() }),
     detailsMore({ src: accessors.response.getByKey(source.response) }),
+    detailsBase({ src: accessors.position.getCategoryDetail() }),
+    detailsMore({ src: accessors.position.getByKey(source.position) }),
     fromMotivation(accessors.motivation, source.motivation)
   );
 
