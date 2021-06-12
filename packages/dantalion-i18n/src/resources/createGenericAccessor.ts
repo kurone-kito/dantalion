@@ -27,10 +27,19 @@ export interface DetailAccessor<
 /** The type definition of the resources accessors */
 export interface Accessor {
   /** Get the resource as a detailed object */
+  readonly tCategoryStringedDetail: <
+    T extends TFunctionResult,
+    K extends string = string
+  >(
+    /** The key of category. */
+    category: string
+  ) => DetailAccessor<T, K, string>;
+
+  /** Get the resource as a detailed object */
   readonly tDetail: <
     T extends TFunctionResult,
     K extends string = string,
-    D extends DetailsBaseType | string = DetailsBaseType
+    D extends DetailsBaseType = DetailsBaseType
   >(
     /** The key of category. */
     category: string
@@ -69,10 +78,19 @@ const createTObj =
  */
 export default (t: TFunction): Accessor => {
   const tObj = createTObj(t);
-  const getDetail = (f: Accessor['tObj']) => (category: string) => {
-    const get = <T extends TFunctionResult>(key?: string) =>
-      f<T>([category, key ?? 'detail'].join('.'));
-    return { getCategoryDetail: get, getByKey: get };
+  const getDetail =
+    (f: Accessor['tObj'], fc: Accessor['tObj'] = f) =>
+    (category: string) => {
+      const get =
+        (func: Accessor['tObj']) =>
+        <T extends TFunctionResult>(key?: string) =>
+          func<T>([category, key ?? 'detail'].join('.'));
+      return { getCategoryDetail: get(fc), getByKey: get(f) };
+    };
+  return {
+    tCategoryStringedDetail: getDetail(tObj, t),
+    tDetail: getDetail(tObj),
+    tObj,
+    tStringedDetail: getDetail(t),
   };
-  return { tDetail: getDetail(tObj), tObj, tStringedDetail: getDetail(t) };
 };
