@@ -10,7 +10,12 @@ import article from './article';
 import { detailsBase, detailsMore } from './details';
 import { createFromGenius, fromGeniusForPersonality } from './genius';
 import { line } from './list';
-import { fromLifeBase, fromMotivation, fromVector } from './specialized';
+import {
+  fromLifeBase,
+  fromMotivation,
+  fromPotential,
+  fromVector,
+} from './specialized';
 
 /**
  * Create the Markdown only accompany resources.
@@ -87,8 +92,9 @@ export const createPersonalityTemplate = (
     detailsBase({ src: accessors.vector.getCategoryDetail() }),
     fromVector(strategy, accessors.vector.getByKey(details.vector)),
     fromGeniusForPersonality(source, accessors),
-    onlyAccompanying(details, accessors),
     fromLifeBase(accessors.lifeBase, source.lifeBase),
+    fromPotential(accessors.potential, source.potentials),
+    onlyAccompanying(details, accessors),
     article({ head: cc, body: toCC(source), level: 2 })
   );
 };
