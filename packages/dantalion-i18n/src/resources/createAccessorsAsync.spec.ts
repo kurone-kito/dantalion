@@ -24,6 +24,7 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         management: expect.any(Object),
         motivation: expect.any(Object),
         position: expect.any(Object),
+        potential: expect.any(Object),
         response: expect.any(Object),
         vector: expect.any(Object),
       }));
@@ -39,6 +40,7 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         management: expect.any(Object),
         motivation: expect.any(Object),
         position: expect.any(Object),
+        potential: expect.any(Object),
         response: expect.any(Object),
         t: expect.any(Function),
         vector: expect.any(Object),

@@ -424,6 +424,293 @@
       ]
     }
   },
+  "potentials": {
+    "detail": {
+      "name": "潜在能力",
+      "detail": "行動する際に発揮できる、固有の潜在能力を持っています。"
+    },
+    "Ci": {
+      "detail": [
+        "分析・応用力にすぐれ、一つのものを追求する素質を持っています。",
+        "オリジナル力よりもアレンジ力を持っています。"
+      ],
+      "Ci": "$t(potentials.Ci.detail)",
+      "Co": [
+        "分析・応用力にすぐれ、一つのものを追求する素質を持っています。",
+        "また、0から1を作り出す能力や、他人の作品をさらに昇華したりする潜在力を持っています。"
+      ],
+      "Ei": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Ei.detail)"
+      ],
+      "Eo": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Eo.detail)"
+      ],
+      "Fi": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Fi.detail.0)"
+      ],
+      "Fo": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Fo.detail)"
+      ],
+      "Ii": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Ii.detail.0)"
+      ],
+      "Io": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Io.detail.0)"
+      ],
+      "Ni": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Ni.detail.0)"
+      ],
+      "No": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.No.detail.0)"
+      ]
+    },
+    "Co": {
+      "detail": [
+        "一つのものをひたむきに追求できる潜在力を持っています。",
+        "0 から 1 を生み出す能力、新しいものに敏感に反応できる能力もあります。"
+      ],
+      "Co": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "逆にすでにあるものをアレンジしたり、発展させるのは不得意な傾向にあります。"
+      ],
+      "Ei": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Ei.detail)"
+      ],
+      "Eo": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Eo.detail)"
+      ],
+      "Fi": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Fi.detail.0)"
+      ],
+      "Fo": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Fo.detail)"
+      ],
+      "Ii": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Ii.detail.0)"
+      ],
+      "Io": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Io.detail.0)"
+      ],
+      "Ni": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Ni.detail.0)"
+      ],
+      "No": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.No.detail.0)"
+      ]
+    },
+    "Ei": {
+      "detail": "アーティストのような、非言語的な表現力があります。",
+      "Ei": ["$t(potentials.Ei.detail)"],
+      "Eo": ["$t(potentials.Ei.detail)", "$t(potentials.Eo.detail)"],
+      "Fi": [
+        "$t(potentials.Ei.detail)",
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)"
+      ],
+      "Fo": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)"
+      ],
+      "Ii": [
+        "$t(potentials.Ei.detail)",
+        "$t(potentials.Ii.detail.0)",
+        "$t(potentials.Ii.detail.1)"
+      ],
+      "Io": ["$t(potentials.Ei.detail)", "$t(potentials.Io.detail.0)"],
+      "Ni": [
+        "$t(potentials.Ei.detail)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Ei.detail)",
+        "$t(potentials.Io.detail.0)",
+        "$t(potentials.Io.detail.1)"
+      ]
+    },
+    "Eo": {
+      "detail": "能動的な、言葉による表現力があります。",
+      "Eo": ["$t(potentials.Eo.detail)"],
+      "Fi": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)"
+      ],
+      "Fo": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)"
+      ],
+      "Ii": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Ii.detail.0)",
+        "$t(potentials.Ii.detail.1)"
+      ],
+      "Io": ["$t(potentials.Eo.detail)", "$t(potentials.Io.detail.0)"],
+      "Ni": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Io.detail.0)",
+        "$t(potentials.Io.detail.1)"
+      ]
+    },
+    "Fi": {
+      "detail": [
+        "数字の裏に隠れた意味を見抜く潜在力があります。",
+        "またこのタイプの人は慎重さがあります。"
+      ],
+      "Fi": "$t(potentials.Fi.detail)",
+      "Fo": [
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)",
+        "$t(potentials.Fo.detail)"
+      ],
+      "Ii": [
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)",
+        "$t(potentials.Io.detail.0)"
+      ],
+      "Io": [
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)",
+        "$t(potentials.Fo.detail)"
+      ],
+      "Ni": [
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
+      ]
+    },
+    "Fo": {
+      "detail": "数字・データでものを表現できる潜在力があります。",
+      "Fo": ["$t(potentials.Fo.detail)"],
+      "Ii": [
+        "$t(potentials.Fo.detail)",
+        "$t(potentials.Ii.detail.0)",
+        "$t(potentials.Ii.detail.1)"
+      ],
+      "Io": ["$t(potentials.Fo.detail)", "$t(potentials.Io.detail.0)"],
+      "Ni": [
+        "$t(potentials.Fo.detail)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Fo.detail)",
+        "$t(potentials.Io.detail.0)",
+        "$t(potentials.Io.detail.1)"
+      ]
+    },
+    "Ii": {
+      "detail": [
+        "聞き上手で、相手の本意を聞き出せる潜在力があります。",
+        "またその上で相手に自分の意思を伝える、トーク力を持っています。"
+      ],
+      "Ii": "$t(potentials.Ii.detail)",
+      "Io": [
+        "話し上手に聞き上手、非常にバランスのすぐれたトーク力を持っています。",
+        "$t(potentials.Io.detail.0)",
+        "その一方で、聞き上手でもあり、相手の本意を聞き出せる潜在力があります。"
+      ],
+      "Ni": [
+        "$t(potentials.Ii.detail.0)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Ii.detail.0)",
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
+      ]
+    },
+    "Io": {
+      "detail": [
+        "話を聞くより伝えたい、押しの強いトーク力があります。",
+        "“$t(genius.detail.descriptions.inner)”が$t(genius.001.name)の人は、独裁的になる傾向もあります。"
+      ],
+      "Io": "$t(potentials.Io.detail)",
+      "Ni": [
+        "$t(potentials.Io.detail.0)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Io.detail.0)",
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
+      ]
+    },
+    "Ni": {
+      "detail": [
+        "集団・組織を維持したり、内向きに強固にさせることができる潜在能力があります。",
+        "几帳面で計画性があり、自己管理力もすぐれています。"
+      ],
+      "Ni": [
+        "$t(potentials.Ni.detail.0)",
+        "ただし集団を作ったり、集団を発展的に拡張させるのは不得意な傾向があります。",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.No.detail.0)",
+        "几帳面で計画性があり、面倒見もよく、自己管理力もすぐれています。"
+      ]
+    },
+    "No": {
+      "detail": [
+        "集団・組織を作ったり、外向きに発展させる潜在力を持っています。",
+        "面倒見が良い人が多いです。"
+      ],
+      "No": [
+        "$t(potentials.No.detail.0)",
+        "集団の維持は苦手な傾向があり、作ったは良いが散逸させてしまう傾向があります。",
+        "$t(potentials.No.detail.1)"
+      ]
+    }
+  },
   "response": {
     "detail": {
       "name": "仕事の素質",
