@@ -47,7 +47,8 @@
       },
       "heading": "Mx. {{nickname}}’s personality and handling method",
       "nickname": "Anonymous",
-      "probed": "Mx. {{nickname}} has “{{type}}”!"
+      "probed": "Mx. {{nickname}} has “{{type}}”!",
+      "profile": "Personal file ID"
     },
     "seeRepo": "For more details about the library, check the GitHub repository.",
     "share": {

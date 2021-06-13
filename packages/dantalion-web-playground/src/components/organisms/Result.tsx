@@ -1,4 +1,4 @@
-import { getDetail, toCC } from '@kurone-kito/dantalion-core';
+import { getDetail } from '@kurone-kito/dantalion-core';
 import { createAccessors } from '@kurone-kito/dantalion-i18n';
 import type { VFC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,7 @@ import { usePSDecoder } from '../../hooks/usePersonality';
 import AccompanyingResult from './AccompanyingResult';
 import GeniusResultDetail from './GeniusResultDetail';
 import LifeBaseResultDetail from './LifeBaseResultDetail';
+import PersonalityFileId from './PersonalityFileId';
 import TweetButton from './TweetButton';
 import VectorResultDetail from './VectorResultDetail';
 
@@ -34,7 +35,6 @@ const Component: VFC = () => {
         />
         <LifeBaseResultDetail
           accessors={accessors}
-          cc={toCC(ps)}
           lifeBase={ps.lifeBase}
           motivation={dt.motivation}
         />
@@ -43,6 +43,7 @@ const Component: VFC = () => {
           details={dt}
           nickname={nickname}
         />
+        <PersonalityFileId personality={ps} />
       </article>
       <aside>
         <TweetButton

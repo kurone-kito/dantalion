@@ -48,7 +48,8 @@
       },
       "heading": "{{nickname}}さんの性格診断",
       "nickname": "名無しの権兵衛",
-      "probed": "{{nickname}}さんは、{{type}}です！"
+      "probed": "{{nickname}}さんは、{{type}}です！",
+      "profile": "性格ファイル番号"
     },
     "seeRepo": "ライブラリに関するより詳細な情報は、GitHub リポジトリを参照してください。",
     "share": {
