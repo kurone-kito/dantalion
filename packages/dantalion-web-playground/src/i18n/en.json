@@ -46,6 +46,10 @@
         "workStyle": "Workstyle: {{type}}"
       },
       "heading": "Mx. {{nickname}}’s personality and handling method",
+      "lifeBase": {
+        "detail": "Peoples also have a latent ego that they are born with, in addition to the three personalities.",
+        "name": "Mx. {{nickname}}’s view of life"
+      },
       "nickname": "Anonymous",
       "probed": "Mx. {{nickname}} has “{{type}}”!",
       "profile": "Personal file ID"

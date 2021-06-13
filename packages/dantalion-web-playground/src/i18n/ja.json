@@ -47,6 +47,10 @@
         "workStyle": "集中: {{type}}"
       },
       "heading": "{{nickname}}さんの性格診断",
+      "lifeBase": {
+        "detail": "人は3つの素質の他に、潜在的に持って生まれたエゴを秘めています。",
+        "name": "{{nickname}}さんの人生観"
+      },
       "nickname": "名無しの権兵衛",
       "probed": "{{nickname}}さんは、{{type}}です！",
       "profile": "性格ファイル番号"

@@ -6,6 +6,7 @@ import { usePSDecoder } from '../../hooks/usePersonality';
 import AccompanyingResult from './AccompanyingResult';
 import GeniusResultDetail from './GeniusResultDetail';
 import LifeBaseResultDetail from './LifeBaseResultDetail';
+import MotivationResultDetail from './MotivationResultDetail';
 import PersonalityFileId from './PersonalityFileId';
 import TweetButton from './TweetButton';
 import VectorResultDetail from './VectorResultDetail';
@@ -34,8 +35,12 @@ const Component: VFC = () => {
           workStyle={accessors.genius.getByKey(ps.workStyle)}
         />
         <LifeBaseResultDetail
-          accessors={accessors}
+          accessors={accessors.lifeBase}
           lifeBase={ps.lifeBase}
+          nickname={nickname}
+        />
+        <MotivationResultDetail
+          accessors={accessors.motivation}
           motivation={dt.motivation}
         />
         <AccompanyingResult
