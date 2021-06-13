@@ -1,6 +1,5 @@
 import classNames, { Argument } from 'classnames';
-import type { VFC } from 'react';
-import { ReactNode } from 'react-markdown';
+import type { ReactNode, VFC } from 'react';
 
 /** Type definition of the required attributes. */
 export interface Props {

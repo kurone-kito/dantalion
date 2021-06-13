@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/react';
+import type { Meta, Story } from '@storybook/react';
 import TweetButton, { Props } from './TweetButton';
 
 export default Object.freeze<Meta>({

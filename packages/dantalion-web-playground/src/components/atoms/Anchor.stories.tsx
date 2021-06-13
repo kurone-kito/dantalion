@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/react';
+import type { Meta, Story } from '@storybook/react';
 import Anchor, { Props } from './Anchor';
 
 export default Object.freeze<Meta>({

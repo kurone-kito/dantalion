@@ -1,8 +1,7 @@
 import type { Vector } from '@kurone-kito/dantalion-core';
 import type { Accessors } from '@kurone-kito/dantalion-i18n';
-import type { VFC } from 'react';
+import type { ReactNode, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ReactNode } from 'react-markdown';
 import Details from '../molecules/Details';
 import ResultDetail from '../molecules/ResultDetail';
 

@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/react';
+import type { Meta, Story } from '@storybook/react';
 import Details, { Props } from './Details';
 
 export default Object.freeze<Meta>({
