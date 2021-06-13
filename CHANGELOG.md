@@ -2,6 +2,22 @@
 
 # Changelog
 
+## v0.17.0 (2021-06-14)
+
+### BREAKING CHANGES
+
+- i18n, web: Modified the data structure to enhance the LifeBase
+  explanation greatly. ([e5f1b2c](https://github.com/kurone-kito/dantalion/commit/e5f1b2c), [99dafa3](https://github.com/kurone-kito/dantalion/commit/99dafa3), [943444b](https://github.com/kurone-kito/dantalion/commit/943444b))
+  - Changed the return value of the `Accessors.lifeBase.getByKey()`
+    function as follows:
+    - OLD: `string`
+    - NEW: `{ detail: string[], name: string }`
+      - Store the traditional values in the `name` property.
+
+### Chores
+
+- web: Moved the Personality code. ([51416b0](https://github.com/kurone-kito/dantalion/commit/51416b0))
+
 ## v0.16.0 (2021-06-12)
 
 ### Features
