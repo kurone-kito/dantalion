@@ -363,25 +363,104 @@ Object {
 }
 `;
 
-exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("application") => Get the specified object 1`] = `"They would like to be the one who experiences everything myself."`;
+exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("application") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be good at building organizations.",
+    "They are also more likely to be custodial and caring.",
+  ],
+  "name": "They would like to be the one who experiences everything myself.",
+}
+`;
 
-exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("association") => Get the specified object 1`] = `"They would like to do it immediately when they think."`;
+exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("association") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be more intellectually curious than others.",
+    "They have a remarkable ability to come up with their ideas to get them through the moment.",
+  ],
+  "name": "They would like to do it immediately when they think.",
+}
+`;
 
-exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("development") => Get the specified object 1`] = `"They would like to be perfectionists."`;
+exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("development") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person has a keen sense of sensitivity, reasoning ability, and imagination.",
+    "They also have a strong sense of justice and are often sensitive minds.",
+  ],
+  "name": "They would like to be perfectionists.",
+}
+`;
 
-exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("expression") => Get the specified object 1`] = `"They would like to be honest with themselves."`;
+exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("expression") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be a good talker.",
+    "In addition, they tend to have a playful spirit that makes the other person more entertained than themselves.",
+  ],
+  "name": "They would like to be honest with themselves.",
+}
+`;
 
-exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("finance") => Get the specified object 1`] = `"They would like to put everything within eye reach."`;
+exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("finance") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to have a desire to be attractive.",
+    "In addition, they are also caring people, and many have a desire to be noticed by those around them.",
+  ],
+  "name": "They would like to put everything within eye reach.",
+}
+`;
 
-exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("investment") => Get the specified object 1`] = `"They would like to be a down-to-earth collector."`;
+exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("investment") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person is strong with numbers and has a remarkable ability to see the meaning of the values they represent.",
+  ],
+  "name": "They would like to be a down-to-earth collector.",
+}
+`;
 
-exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("organization") => Get the specified object 1`] = `"They would like to live as a member of a group."`;
+exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("organization") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person has excellent self-discipline.",
+    "Many of them also have a strong mind of giving back.",
+  ],
+  "name": "They would like to live as a member of a group.",
+}
+`;
 
-exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("quest") => Get the specified object 1`] = `"They would like to learn from the wisdom of their pioneers."`;
+exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("quest") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be logical, intelligent, and quick-witted.",
+    "They respect the classics and excel at making decisions through the studies pioneered by earlier philosophers.",
+  ],
+  "name": "They would like to learn from the wisdom of their pioneers.",
+}
+`;
 
-exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("selfMind") => Get the specified object 1`] = `"They would like to be the leader of the group always."`;
+exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("selfMind") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be skilled at asserting their will while listening to others.",
+    "They also work in teams of friends and have an uncompromising mentality until things are accomplished.",
+  ],
+  "name": "They would like to be the leader of the group always.",
+}
+`;
 
-exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("selfReliance") => Get the specified object 1`] = `"They would like to be a lone wolf."`;
+exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("selfReliance") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be competitive.",
+    "They have a strong sense of self and are good at living without being influenced by others.",
+  ],
+  "name": "They would like to be a lone wolf.",
+}
+`;
 
 exports[`LANG=en \`createAccessors()\` function \`Accessors.lifeBase.getCategoryDetail()\` method Get the specified object 1`] = `"View of life"`;
 
@@ -935,25 +1014,104 @@ Object {
 }
 `;
 
-exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("application") => Get the specified object 1`] = `"They would like to be the one who experiences everything myself."`;
+exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("application") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be good at building organizations.",
+    "They are also more likely to be custodial and caring.",
+  ],
+  "name": "They would like to be the one who experiences everything myself.",
+}
+`;
 
-exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("association") => Get the specified object 1`] = `"They would like to do it immediately when they think."`;
+exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("association") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be more intellectually curious than others.",
+    "They have a remarkable ability to come up with their ideas to get them through the moment.",
+  ],
+  "name": "They would like to do it immediately when they think.",
+}
+`;
 
-exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("development") => Get the specified object 1`] = `"They would like to be perfectionists."`;
+exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("development") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person has a keen sense of sensitivity, reasoning ability, and imagination.",
+    "They also have a strong sense of justice and are often sensitive minds.",
+  ],
+  "name": "They would like to be perfectionists.",
+}
+`;
 
-exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("expression") => Get the specified object 1`] = `"They would like to be honest with themselves."`;
+exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("expression") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be a good talker.",
+    "In addition, they tend to have a playful spirit that makes the other person more entertained than themselves.",
+  ],
+  "name": "They would like to be honest with themselves.",
+}
+`;
 
-exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("finance") => Get the specified object 1`] = `"They would like to put everything within eye reach."`;
+exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("finance") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to have a desire to be attractive.",
+    "In addition, they are also caring people, and many have a desire to be noticed by those around them.",
+  ],
+  "name": "They would like to put everything within eye reach.",
+}
+`;
 
-exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("investment") => Get the specified object 1`] = `"They would like to be a down-to-earth collector."`;
+exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("investment") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person is strong with numbers and has a remarkable ability to see the meaning of the values they represent.",
+  ],
+  "name": "They would like to be a down-to-earth collector.",
+}
+`;
 
-exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("organization") => Get the specified object 1`] = `"They would like to live as a member of a group."`;
+exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("organization") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person has excellent self-discipline.",
+    "Many of them also have a strong mind of giving back.",
+  ],
+  "name": "They would like to live as a member of a group.",
+}
+`;
 
-exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("quest") => Get the specified object 1`] = `"They would like to learn from the wisdom of their pioneers."`;
+exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("quest") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be logical, intelligent, and quick-witted.",
+    "They respect the classics and excel at making decisions through the studies pioneered by earlier philosophers.",
+  ],
+  "name": "They would like to learn from the wisdom of their pioneers.",
+}
+`;
 
-exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("selfMind") => Get the specified object 1`] = `"They would like to be the leader of the group always."`;
+exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("selfMind") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be skilled at asserting their will while listening to others.",
+    "They also work in teams of friends and have an uncompromising mentality until things are accomplished.",
+  ],
+  "name": "They would like to be the leader of the group always.",
+}
+`;
 
-exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("selfReliance") => Get the specified object 1`] = `"They would like to be a lone wolf."`;
+exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("selfReliance") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "This type of person tends to be competitive.",
+    "They have a strong sense of self and are good at living without being influenced by others.",
+  ],
+  "name": "They would like to be a lone wolf.",
+}
+`;
 
 exports[`LANG=en \`createAccessorsAsync()\` function \`Accessors.lifeBase.getCategoryDetail()\` method Get the specified object 1`] = `"View of life"`;
 
@@ -1507,25 +1665,105 @@ Object {
 }
 `;
 
-exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("application") => Get the specified object 1`] = `"何でも自主体験する自分でありたい"`;
+exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("application") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、組織づくりに長けている傾向があります。",
+    "親分肌で面倒見の良い人が多いです。",
+  ],
+  "name": "何でも自主体験する自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("association") => Get the specified object 1`] = `"とにかく行動第一な自分でありたい"`;
+exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("association") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、知的好奇心が人一倍強い傾向にあります。",
+    "自分なりのアイデアで、その場その場を乗り切る能力に長けています。",
+  ],
+  "name": "とにかく行動第一な自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("development") => Get the specified object 1`] = `"より完璧な自分を築き続ける自分でありたい"`;
+exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("development") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、鋭い感性、推理力、想像力に長けています。",
+    "また正義感が強く、繊細な心の持ち主である場合が多いです。",
+  ],
+  "name": "より完璧な自分を築き続ける自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("expression") => Get the specified object 1`] = `"ありのままの素直な自分でありたい"`;
+exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("expression") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、話術に長ける傾向があります。",
+    "自分より相手を楽しませる、そんな遊び心を潜在的に持っている人が多いです。",
+  ],
+  "name": "ありのままの素直な自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("finance") => Get the specified object 1`] = `"コレクターな自分でありたい"`;
+exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("finance") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、魅力的な自分でありたい欲求を持つ傾向があります。",
+    "世話好きで、周囲から注目されたい欲求を持つ人が多いです。",
+  ],
+  "name": "コレクターな自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("investment") => Get the specified object 1`] = `"堅実な収集家としての自分でありたい"`;
+exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("investment") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、数字に強く、その値の示す意味を見抜ける能力に長けています。",
+    "慎重で、冷静な分析眼を持っている人が多いです。",
+  ],
+  "name": "堅実な収集家としての自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("organization") => Get the specified object 1`] = `"集団の一員としての自分でありたい"`;
+exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("organization") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、自己管理能力に長けています。",
+    "また、恩返しの気持ちが強い人も多いです。",
+  ],
+  "name": "集団の一員としての自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("quest") => Get the specified object 1`] = `"先人の知恵から学ぶ自分でありたい"`;
+exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("quest") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、論理的、理知的で聡明な傾向があります。",
+    "古典を尊重し、先哲の開拓した学問を通した判断力に秀でています。",
+  ],
+  "name": "先人の知恵から学ぶ自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("selfMind") => Get the specified object 1`] = `"集団のリーダーな自分でありたい"`;
+exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("selfMind") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、他人の話を聞きつつも、我を通すことに長ける傾向があります。",
+    "仲間を組んで行動することで、物事を達成するまで妥協しない精神性を持ちます。",
+  ],
+  "name": "集団のリーダーな自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("selfReliance") => Get the specified object 1`] = `"一匹オオカミな自分でありたい"`;
+exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getByKey()\` method ("selfReliance") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、負けず嫌いな傾向があります。",
+    "自分という強い芯を持ち、誰にも流されず生きることに長けています。",
+  ],
+  "name": "一匹オオカミな自分でありたい",
+}
+`;
 
 exports[`LANG=ja \`createAccessors()\` function \`Accessors.lifeBase.getCategoryDetail()\` method Get the specified object 1`] = `"人生観"`;
 
@@ -2079,25 +2317,105 @@ Object {
 }
 `;
 
-exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("application") => Get the specified object 1`] = `"何でも自主体験する自分でありたい"`;
+exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("application") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、組織づくりに長けている傾向があります。",
+    "親分肌で面倒見の良い人が多いです。",
+  ],
+  "name": "何でも自主体験する自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("association") => Get the specified object 1`] = `"とにかく行動第一な自分でありたい"`;
+exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("association") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、知的好奇心が人一倍強い傾向にあります。",
+    "自分なりのアイデアで、その場その場を乗り切る能力に長けています。",
+  ],
+  "name": "とにかく行動第一な自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("development") => Get the specified object 1`] = `"より完璧な自分を築き続ける自分でありたい"`;
+exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("development") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、鋭い感性、推理力、想像力に長けています。",
+    "また正義感が強く、繊細な心の持ち主である場合が多いです。",
+  ],
+  "name": "より完璧な自分を築き続ける自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("expression") => Get the specified object 1`] = `"ありのままの素直な自分でありたい"`;
+exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("expression") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、話術に長ける傾向があります。",
+    "自分より相手を楽しませる、そんな遊び心を潜在的に持っている人が多いです。",
+  ],
+  "name": "ありのままの素直な自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("finance") => Get the specified object 1`] = `"コレクターな自分でありたい"`;
+exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("finance") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、魅力的な自分でありたい欲求を持つ傾向があります。",
+    "世話好きで、周囲から注目されたい欲求を持つ人が多いです。",
+  ],
+  "name": "コレクターな自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("investment") => Get the specified object 1`] = `"堅実な収集家としての自分でありたい"`;
+exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("investment") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、数字に強く、その値の示す意味を見抜ける能力に長けています。",
+    "慎重で、冷静な分析眼を持っている人が多いです。",
+  ],
+  "name": "堅実な収集家としての自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("organization") => Get the specified object 1`] = `"集団の一員としての自分でありたい"`;
+exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("organization") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、自己管理能力に長けています。",
+    "また、恩返しの気持ちが強い人も多いです。",
+  ],
+  "name": "集団の一員としての自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("quest") => Get the specified object 1`] = `"先人の知恵から学ぶ自分でありたい"`;
+exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("quest") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、論理的、理知的で聡明な傾向があります。",
+    "古典を尊重し、先哲の開拓した学問を通した判断力に秀でています。",
+  ],
+  "name": "先人の知恵から学ぶ自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("selfMind") => Get the specified object 1`] = `"集団のリーダーな自分でありたい"`;
+exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("selfMind") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、他人の話を聞きつつも、我を通すことに長ける傾向があります。",
+    "仲間を組んで行動することで、物事を達成するまで妥協しない精神性を持ちます。",
+  ],
+  "name": "集団のリーダーな自分でありたい",
+}
+`;
 
-exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("selfReliance") => Get the specified object 1`] = `"一匹オオカミな自分でありたい"`;
+exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getByKey()\` method ("selfReliance") => Get the specified object 1`] = `
+Object {
+  "detail": Array [
+    "このタイプの人は、負けず嫌いな傾向があります。",
+    "自分という強い芯を持ち、誰にも流されず生きることに長けています。",
+  ],
+  "name": "一匹オオカミな自分でありたい",
+}
+`;
 
 exports[`LANG=ja \`createAccessorsAsync()\` function \`Accessors.lifeBase.getCategoryDetail()\` method Get the specified object 1`] = `"人生観"`;
 

@@ -281,17 +281,76 @@
     }
   },
   "lifeBase": {
-    "application": "They would like to be the one who experiences everything myself.",
-    "association": "They would like to do it immediately when they think.",
+    "application": {
+      "detail": [
+        "This type of person tends to be good at building organizations.",
+        "They are also more likely to be custodial and caring."
+      ],
+      "name": "They would like to be the one who experiences everything myself."
+    },
+    "association": {
+      "detail": [
+        "This type of person tends to be more intellectually curious than others.",
+        "They have a remarkable ability to come up with their ideas to get them through the moment."
+      ],
+      "name": "They would like to do it immediately when they think."
+    },
     "detail": "View of life",
-    "development": "They would like to be perfectionists.",
-    "expression": "They would like to be honest with themselves.",
-    "finance": "They would like to put everything within eye reach.",
-    "investment": "They would like to be a down-to-earth collector.",
-    "organization": "They would like to live as a member of a group.",
-    "quest": "They would like to learn from the wisdom of their pioneers.",
-    "selfMind": "They would like to be the leader of the group always.",
-    "selfReliance": "They would like to be a lone wolf."
+    "development": {
+      "detail": [
+        "This type of person has a keen sense of sensitivity, reasoning ability, and imagination.",
+        "They also have a strong sense of justice and are often sensitive minds."
+      ],
+      "name": "They would like to be perfectionists."
+    },
+    "expression": {
+      "detail": [
+        "This type of person tends to be a good talker.",
+        "In addition, they tend to have a playful spirit that makes the other person more entertained than themselves."
+      ],
+      "name": "They would like to be honest with themselves."
+    },
+    "finance": {
+      "detail": [
+        "This type of person tends to have a desire to be attractive.",
+        "In addition, they are also caring people, and many have a desire to be noticed by those around them."
+      ],
+      "name": "They would like to put everything within eye reach."
+    },
+    "investment": {
+      "detail": [
+        "This type of person is strong with numbers and has a remarkable ability to see the meaning of the values they represent."
+      ],
+      "name": "They would like to be a down-to-earth collector."
+    },
+    "organization": {
+      "detail": [
+        "This type of person has excellent self-discipline.",
+        "Many of them also have a strong mind of giving back."
+      ],
+      "name": "They would like to live as a member of a group."
+    },
+    "quest": {
+      "detail": [
+        "This type of person tends to be logical, intelligent, and quick-witted.",
+        "They respect the classics and excel at making decisions through the studies pioneered by earlier philosophers."
+      ],
+      "name": "They would like to learn from the wisdom of their pioneers."
+    },
+    "selfMind": {
+      "detail": [
+        "This type of person tends to be skilled at asserting their will while listening to others.",
+        "They also work in teams of friends and have an uncompromising mentality until things are accomplished."
+      ],
+      "name": "They would like to be the leader of the group always."
+    },
+    "selfReliance": {
+      "detail": [
+        "This type of person tends to be competitive.",
+        "They have a strong sense of self and are good at living without being influenced by others."
+      ],
+      "name": "They would like to be a lone wolf."
+    }
   },
   "management": {
     "detail": {

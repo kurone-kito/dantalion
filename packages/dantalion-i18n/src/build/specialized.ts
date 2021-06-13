@@ -1,6 +1,6 @@
 import type { LifeBase, Motivation } from '@kurone-kito/dantalion-core';
 import type { DetailAccessor } from '../resources/createGenericAccessor';
-import type { VectorType } from '../resources/types';
+import type { DetailsBaseType, VectorType } from '../resources/types';
 import article from './article';
 import { line, list } from './list';
 
@@ -10,11 +10,19 @@ import { line, list } from './list';
  * @param source The source.
  */
 export const fromLifeBase = (
-  { getByKey, getCategoryDetail }: DetailAccessor<string, LifeBase, string>,
+  {
+    getByKey,
+    getCategoryDetail,
+  }: DetailAccessor<DetailsBaseType<string[]>, LifeBase, string>,
   source: LifeBase
-): string =>
-  article({ body: getByKey(source), head: getCategoryDetail(), level: 2 });
-
+): string => {
+  const { detail, name } = getByKey(source);
+  return line(
+    article({ body: name, head: getCategoryDetail(), level: 2 }),
+    '',
+    list(...detail)
+  );
+};
 /**
  * Create the Markdown from the Motivation resources.
  * @param resource The resource of tne motivation.

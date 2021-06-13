@@ -192,7 +192,10 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         'selfReliance',
       ])('("%s") => Get the specified object', async (key) => {
         const expected = (await func()).lifeBase.getByKey(key);
-        expect(expected).toEqual(expect.any(String));
+        expect(expected).toEqual({
+          detail: expect.any(Array),
+          name: expect.any(String),
+        });
         expect(expected).toMatchSnapshot();
       });
     });
