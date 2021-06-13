@@ -30,7 +30,7 @@
     "lint": "run-s lint:*",
     "lint:eslint": "stylelint \"**/*.css\"",
     "lint:stylelint": "eslint --cache --fix .",
-    "prepack": "next build && next export -o dist",
+    "prepack": "next build && next export -o dist && npm run storybook:build",
     "serve": "serve dist",
     "start": "next dev",
     "storybook": "start-storybook -p 6006 -s public",
