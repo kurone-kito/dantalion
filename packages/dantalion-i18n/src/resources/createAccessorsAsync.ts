@@ -14,6 +14,7 @@ import createGenericAccessor, { DetailAccessor } from './createGenericAccessor';
 import createTAsync from './createTAsync';
 import type {
   DesctiptionsType,
+  DetailsBaseType,
   DetailsType,
   PersonalityDetailType,
   PersonalityType,
@@ -54,7 +55,11 @@ export interface Accessors {
    * The instance provides a set of functions that retrieve
    * human-readable resources related to the base of ego type.
    */
-  readonly lifeBase: DetailAccessor<string, LifeBase, string>;
+  readonly lifeBase: DetailAccessor<
+    DetailsBaseType<string[]>,
+    LifeBase,
+    string
+  >;
 
   /**
    * The instance provides a set of functions that retrieve human-readable
@@ -93,13 +98,14 @@ export interface Accessors {
  * @returns The instance of the concreted accessors collection
  */
 export const createAccessors = (t: TFunction): Accessors => {
-  const { tDetail, tObj, tStringedDetail } = createGenericAccessor(t);
+  const { tCategoryStringedDetail, tDetail, tObj, tStringedDetail } =
+    createGenericAccessor(t);
   return {
     brain: tDetail('brain'),
     communication: tDetail('communication'),
     genius: tDetail('genius'),
     getDescription: (type) => tObj('descriptions', { type }),
-    lifeBase: tStringedDetail('lifeBase'),
+    lifeBase: tCategoryStringedDetail('lifeBase'),
     management: tDetail('management'),
     motivation: tStringedDetail('motivation'),
     position: tDetail('position'),

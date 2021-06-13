@@ -186,7 +186,11 @@ interface Accessors {
     Genius,
     PersonalityDetailType
   >;
-  readonly lifeBase: DetailAccessor<string, LifeBase, string>;
+  readonly lifeBase: DetailAccessor<
+    DetailsBaseType<string[]>,
+    LifeBase,
+    string
+  >;
   readonly management: DetailAccessor<DetailsType, Management>;
   readonly motivation: DetailAccessor<string, Motivation, string>;
   readonly position: DetailAccessor<DetailsType, Position>;
@@ -201,7 +205,7 @@ interface Accessors {
 | `brain`         | `DetailAccessor<DetailsType, Brain>`                             | The instance provides a set of functions that retrieve human-readable resources related to the thought method.                              |
 | `communication` | `DetailAccessor<DetailsType, Communication>`                     | The instance provides a set of functions that retrieve human-readable resources related to dialogue policy.                                 |
 | `genius`        | `DetailAccessor<PersonalityType, Genius, PersonalityDetailType>` | The instance provides a set of functions that retrieve human-readable resources related to natural personality.                             |
-| `lifeBase`      | `DetailAccessor<string, LifeBase, string>`                       | The instance provides a set of functions that retrieve human-readable resources related to the base of ego type.                            |
+| `lifeBase`      | `DetailAccessor<DetailsBaseType<string[]>, LifeBase, string>`    | The instance provides a set of functions that retrieve human-readable resources related to the base of ego type.                            |
 | `management`    | `DetailAccessor<DetailsType, Management>`                        | The instance provides a set of functions that retrieve human-readable resources related to risk and return thinking in specific people.     |
 | `motivation`    | `DetailAccessor<string, Motivation, string>`                     | The instance provides a set of functions that retrieve human-readable resources related to to an environment that is easy to get motivated. |
 | `position`      | `DetailAccessor<DetailsType, Position>`                          | The instance provides a set of functions that retrieve human-readable resources related to a talented role.                                 |

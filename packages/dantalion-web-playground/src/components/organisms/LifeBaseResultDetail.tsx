@@ -27,7 +27,7 @@ const Component: VFC<Props> = ({ accessors, cc, lifeBase, motivation }) => (
       {[
         [
           accessors.lifeBase.getCategoryDetail(),
-          accessors.lifeBase.getByKey(lifeBase),
+          accessors.lifeBase.getByKey(lifeBase).name,
         ],
         [
           accessors.motivation.getCategoryDetail(),
