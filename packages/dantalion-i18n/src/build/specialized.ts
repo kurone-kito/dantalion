@@ -1,4 +1,8 @@
-import type { LifeBase, Motivation } from '@kurone-kito/dantalion-core';
+import type {
+  LifeBase,
+  Motivation,
+  Personality,
+} from '@kurone-kito/dantalion-core';
 import type { DetailAccessor } from '../resources/createGenericAccessor';
 import type { DetailsBaseType, VectorType } from '../resources/types';
 import article from './article';
@@ -19,10 +23,10 @@ export const fromLifeBase = (
   const { detail, name } = getByKey(source);
   return line(
     article({ body: name, head: getCategoryDetail(), level: 2 }),
-    '',
     list(...detail)
   );
 };
+
 /**
  * Create the Markdown from the Motivation resources.
  * @param resource The resource of tne motivation.
@@ -33,6 +37,22 @@ export const fromMotivation = (
   source: Motivation
 ): string =>
   article({ body: getByKey(source), head: getCategoryDetail(), level: 2 });
+
+/**
+ * Create the Markdown from the Potential resources.
+ * @param accessor The accessor of the Potential.
+ * @param source The source.
+ */
+export const fromPotential = (
+  accessor: DetailAccessor<readonly string[], Personality['potentials']>,
+  source: Personality['potentials']
+): string => {
+  const desc = accessor.getCategoryDetail();
+  return line(
+    article({ body: desc.detail, head: desc.name, level: 2 }),
+    list(...accessor.getByKey(source))
+  );
+};
 
 /**
  * Create the Markdown from the vector resources.

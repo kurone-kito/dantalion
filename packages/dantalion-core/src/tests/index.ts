@@ -1,6 +1,6 @@
-import { Detail } from '../records/details';
-import { Genius } from '../types/genius';
-import { Personality } from '../utils/getPersonality';
+import type { Detail } from '../records/details';
+import type { Genius } from '../types/genius';
+import type { Personality } from '../utils/getPersonality';
 import details from './details.json';
 import personality from './personality.json';
 

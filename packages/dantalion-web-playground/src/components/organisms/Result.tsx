@@ -7,6 +7,7 @@ import AccompanyingResult from './AccompanyingResult';
 import GeniusResultDetail from './GeniusResultDetail';
 import LifeBaseResultDetail from './LifeBaseResultDetail';
 import MotivationResultDetail from './MotivationResultDetail';
+import PotentialResultDetail from './PotentialResultDetail';
 import PersonalityFileId from './PersonalityFileId';
 import TweetButton from './TweetButton';
 import VectorResultDetail from './VectorResultDetail';
@@ -37,6 +38,11 @@ const Component: VFC = () => {
         <LifeBaseResultDetail
           accessors={accessors.lifeBase}
           lifeBase={ps.lifeBase}
+          nickname={nickname}
+        />
+        <PotentialResultDetail
+          accessors={accessors.potential}
+          potentials={ps.potentials}
           nickname={nickname}
         />
         <MotivationResultDetail

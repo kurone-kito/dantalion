@@ -51,6 +51,7 @@
         "name": "Mx. {{nickname}}’s view of life"
       },
       "nickname": "Anonymous",
+      "potential": "Mx. {{nickname}}’s potential",
       "probed": "Mx. {{nickname}} has “{{type}}”!",
       "profile": "Personal file ID"
     },

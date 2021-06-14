@@ -194,23 +194,28 @@ interface Accessors {
   readonly management: DetailAccessor<DetailsType, Management>;
   readonly motivation: DetailAccessor<string, Motivation, string>;
   readonly position: DetailAccessor<DetailsType, Position>;
+  readonly potential?: DetailAccessor<
+    readonly string[],
+    readonly [Potential, Potential]
+  >;
   readonly response: DetailAccessor<DetailsType, Response>;
   readonly vector: DetailAccessor<VectorType, Vector>;
   getDescription(type?: string): DesctiptionsType;
 }
 ```
 
-| Property        | Type                                                             | Description                                                                                                                                 |
-| :-------------- | :--------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| `brain`         | `DetailAccessor<DetailsType, Brain>`                             | The instance provides a set of functions that retrieve human-readable resources related to the thought method.                              |
-| `communication` | `DetailAccessor<DetailsType, Communication>`                     | The instance provides a set of functions that retrieve human-readable resources related to dialogue policy.                                 |
-| `genius`        | `DetailAccessor<PersonalityType, Genius, PersonalityDetailType>` | The instance provides a set of functions that retrieve human-readable resources related to natural personality.                             |
-| `lifeBase`      | `DetailAccessor<DetailsBaseType<string[]>, LifeBase, string>`    | The instance provides a set of functions that retrieve human-readable resources related to the base of ego type.                            |
-| `management`    | `DetailAccessor<DetailsType, Management>`                        | The instance provides a set of functions that retrieve human-readable resources related to risk and return thinking in specific people.     |
-| `motivation`    | `DetailAccessor<string, Motivation, string>`                     | The instance provides a set of functions that retrieve human-readable resources related to to an environment that is easy to get motivated. |
-| `position`      | `DetailAccessor<DetailsType, Position>`                          | The instance provides a set of functions that retrieve human-readable resources related to a talented role.                                 |
-| `response`      | `DetailAccessor<DetailsType, Response>`                          | The instance provides a set of functions that retrieve human-readable resources related to on-site or behind.                               |
-| `vector`        | `DetailAccessor<VectorType, Vector>`                             | The instance provides a set of functions that retrieve human-readable resources related to the major classification of personality.         |
+| Property        | Type                                                                 | Description                                                                                                                                 |
+| :-------------- | :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `brain`         | `DetailAccessor<DetailsType, Brain>`                                 | The instance provides a set of functions that retrieve human-readable resources related to the thought method.                              |
+| `communication` | `DetailAccessor<DetailsType, Communication>`                         | The instance provides a set of functions that retrieve human-readable resources related to dialogue policy.                                 |
+| `genius`        | `DetailAccessor<PersonalityType, Genius, PersonalityDetailType>`     | The instance provides a set of functions that retrieve human-readable resources related to natural personality.                             |
+| `lifeBase`      | `DetailAccessor<DetailsBaseType<string[]>, LifeBase, string>`        | The instance provides a set of functions that retrieve human-readable resources related to the base of ego type.                            |
+| `management`    | `DetailAccessor<DetailsType, Management>`                            | The instance provides a set of functions that retrieve human-readable resources related to risk and return thinking in specific people.     |
+| `motivation`    | `DetailAccessor<string, Motivation, string>`                         | The instance provides a set of functions that retrieve human-readable resources related to to an environment that is easy to get motivated. |
+| `position`      | `DetailAccessor<DetailsType, Position>`                              | The instance provides a set of functions that retrieve human-readable resources related to a talented role.                                 |
+| `potential`     | `DetailAccessor<readonly string[], readonly [Potential, Potential]>` | The instance provides functions that retrieve human-readable resources related to that can exert when taking action.                        |
+| `response`      | `DetailAccessor<DetailsType, Response>`                              | The instance provides a set of functions that retrieve human-readable resources related to on-site or behind.                               |
+| `vector`        | `DetailAccessor<VectorType, Vector>`                                 | The instance provides a set of functions that retrieve human-readable resources related to the major classification of personality.         |
 
 | Method definition                                 | Description                                    |
 | :------------------------------------------------ | :--------------------------------------------- |
@@ -278,7 +283,7 @@ access a resource of the specific category.
 ```ts
 interface DetailAccessor<
   T extends i18next.TFunctionResult,
-  K extends string = string,
+  K,
   D extends DetailsBaseType | string = DetailsBaseType
 > {
   getByKey(key: K): T;
@@ -289,7 +294,7 @@ interface DetailAccessor<
 | Type | Constraint                  | Description                                                |
 | :--- | :-------------------------- | :--------------------------------------------------------- |
 | `T`  | `i18next.TFunctionResult`   | The type of resource as a return value.                    |
-| `K`  | `string`                    | The type for the resource key.                             |
+| `K`  | _(none)_                    | The type for the resource key.                             |
 | `D`  | `DetailsBaseType \| string` | The type of resource as a return value of category detail. |
 
 | Method definition        | Description                                                                |

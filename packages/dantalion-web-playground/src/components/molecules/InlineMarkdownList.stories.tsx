@@ -1,4 +1,4 @@
-import { Meta, Story } from '@storybook/react';
+import type { Meta, Story } from '@storybook/react';
 import InlineMarkdown, { Props } from './InlineMarkdownList';
 
 export default Object.freeze<Meta>({

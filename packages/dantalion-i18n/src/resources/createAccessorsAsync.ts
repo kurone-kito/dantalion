@@ -7,6 +7,7 @@ import type {
   Management,
   Motivation,
   Position,
+  Potential,
   Response,
   Vector,
 } from '@kurone-kito/dantalion-core';
@@ -80,6 +81,15 @@ export interface Accessors {
   readonly position: DetailAccessor<DetailsType, Position>;
 
   /**
+   * The instance provides functions that retrieve human-readable
+   * resources related to that can exert when taking action.
+   */
+  readonly potential: DetailAccessor<
+    readonly string[],
+    readonly [Potential, Potential]
+  >;
+
+  /**
    * The instance provides a set of functions that retrieve
    * human-readable resources related to on-site or behind.
    */
@@ -100,6 +110,7 @@ export interface Accessors {
 export const createAccessors = (t: TFunction): Accessors => {
   const { tCategoryStringedDetail, tDetail, tObj, tStringedDetail } =
     createGenericAccessor(t);
+  const potentialsDetail = tDetail<readonly string[]>('potentials');
   return {
     brain: tDetail('brain'),
     communication: tDetail('communication'),
@@ -109,6 +120,10 @@ export const createAccessors = (t: TFunction): Accessors => {
     management: tDetail('management'),
     motivation: tStringedDetail('motivation'),
     position: tDetail('position'),
+    potential: {
+      getByKey: (p) => potentialsDetail.getByKey([...p].sort().join('.')),
+      getCategoryDetail: potentialsDetail.getCategoryDetail,
+    },
     response: tDetail('response'),
     vector: tDetail('vector'),
   };

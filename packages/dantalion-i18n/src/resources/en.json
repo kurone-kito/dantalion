@@ -423,6 +423,293 @@
       "name": "**Quick**: Suited as a salesperson"
     }
   },
+  "potentials": {
+    "detail": {
+      "name": "Potentials",
+      "detail": "People have inherent potentials that they can exercise when they act."
+    },
+    "Ci": {
+      "detail": [
+        "This type of person has excellent analytical and application skills and has a predisposition to pursue one thing at a time.",
+        "They have the power of arrangement rather than the power of originality."
+      ],
+      "Ci": "$t(potentials.Ci.detail)",
+      "Co": [
+        "$t(potentials.Ci.detail.0)",
+        "They also can create from nothing and the potential to sublimate the work of others."
+      ],
+      "Ei": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Ei.detail)"
+      ],
+      "Eo": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Eo.detail)"
+      ],
+      "Fi": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Fi.detail.0)"
+      ],
+      "Fo": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Fo.detail)"
+      ],
+      "Ii": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Ii.detail.0)"
+      ],
+      "Io": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Io.detail.0)"
+      ],
+      "Ni": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.Ni.detail.0)"
+      ],
+      "No": [
+        "$t(potentials.Ci.detail.0)",
+        "$t(potentials.Ci.detail.1)",
+        "$t(potentials.No.detail.0)"
+      ]
+    },
+    "Co": {
+      "detail": [
+        "This type of person has the potential to pursue one thing relentlessly.",
+        "They also can create something out of nothing and be sensitive to new things."
+      ],
+      "Co": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "On the other hand, they tend not to be good at arranging or developing what is already there."
+      ],
+      "Ei": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Ei.detail)"
+      ],
+      "Eo": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Eo.detail)"
+      ],
+      "Fi": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Fi.detail.0)"
+      ],
+      "Fo": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Fo.detail)"
+      ],
+      "Ii": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Ii.detail.0)"
+      ],
+      "Io": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Io.detail.0)"
+      ],
+      "Ni": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.Ni.detail.0)"
+      ],
+      "No": [
+        "$t(potentials.Co.detail.0)",
+        "$t(potentials.Co.detail.1)",
+        "$t(potentials.No.detail.0)"
+      ]
+    },
+    "Ei": {
+      "detail": "This type of person can express themselves thinks, in a nonverbal way, like an artist.",
+      "Ei": ["$t(potentials.Ei.detail)"],
+      "Eo": ["$t(potentials.Ei.detail)", "$t(potentials.Eo.detail)"],
+      "Fi": [
+        "$t(potentials.Ei.detail)",
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)"
+      ],
+      "Fo": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)"
+      ],
+      "Ii": [
+        "$t(potentials.Ei.detail)",
+        "$t(potentials.Ii.detail.0)",
+        "$t(potentials.Ii.detail.1)"
+      ],
+      "Io": ["$t(potentials.Ei.detail)", "$t(potentials.Io.detail.0)"],
+      "Ni": [
+        "$t(potentials.Ei.detail)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Ei.detail)",
+        "$t(potentials.Io.detail.0)",
+        "$t(potentials.Io.detail.1)"
+      ]
+    },
+    "Eo": {
+      "detail": "This type of person can express themselves think actively through words.",
+      "Eo": ["$t(potentials.Eo.detail)"],
+      "Fi": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)"
+      ],
+      "Fo": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)"
+      ],
+      "Ii": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Ii.detail.0)",
+        "$t(potentials.Ii.detail.1)"
+      ],
+      "Io": ["$t(potentials.Eo.detail)", "$t(potentials.Io.detail.0)"],
+      "Ni": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Eo.detail)",
+        "$t(potentials.Io.detail.0)",
+        "$t(potentials.Io.detail.1)"
+      ]
+    },
+    "Fi": {
+      "detail": [
+        "This type of person has the potential to see the hidden meaning behind the numbers.",
+        "They also try to do things carefully."
+      ],
+      "Fi": "$t(potentials.Fi.detail)",
+      "Fo": [
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)",
+        "$t(potentials.Fo.detail)"
+      ],
+      "Ii": [
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)",
+        "$t(potentials.Io.detail.0)"
+      ],
+      "Io": [
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Fi.detail.1)",
+        "$t(potentials.Fo.detail)"
+      ],
+      "Ni": [
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Fi.detail.0)",
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
+      ]
+    },
+    "Fo": {
+      "detail": "This type of person has the potential to express things with numbers and data.",
+      "Fo": ["$t(potentials.Fo.detail)"],
+      "Ii": [
+        "$t(potentials.Fo.detail)",
+        "$t(potentials.Ii.detail.0)",
+        "$t(potentials.Ii.detail.1)"
+      ],
+      "Io": ["$t(potentials.Fo.detail)", "$t(potentials.Io.detail.0)"],
+      "Ni": [
+        "$t(potentials.Fo.detail)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Fo.detail)",
+        "$t(potentials.Io.detail.0)",
+        "$t(potentials.Io.detail.1)"
+      ]
+    },
+    "Ii": {
+      "detail": [
+        "This type of person is a good listener and can find out what the other person is thinking.",
+        "They then can talk and convey their intentions to the other person."
+      ],
+      "Ii": "$t(potentials.Ii.detail)",
+      "Io": [
+        "This type of person is both a good talker and a good listener and has a well-balanced ability to talk.",
+        "$t(potentials.Io.detail.0)",
+        "On the other hand, they are also good listeners and can find out what the other person is thinking."
+      ],
+      "Ni": [
+        "$t(potentials.Ii.detail.0)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Ii.detail.0)",
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
+      ]
+    },
+    "Io": {
+      "detail": [
+        "This type of person is a pushy talker who would instead tell a story than listen to it.",
+        "Furthermore, those of them whose inner personality is “$t(genius.001.name)” tend to be dictatorial."
+      ],
+      "Io": "$t(potentials.Io.detail)",
+      "Ni": [
+        "$t(potentials.Io.detail.0)",
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Io.detail.0)",
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
+      ]
+    },
+    "Ni": {
+      "detail": [
+        "This type of person has the potential to maintain or inwardly solidify a group or organization.",
+        "They are organized, well-planned, and have excellent self-management skills."
+      ],
+      "Ni": [
+        "$t(potentials.Ni.detail.0)",
+        "However, they tend not to be good at creating new teams or developing and expanding their groups.",
+        "$t(potentials.Ni.detail.1)"
+      ],
+      "No": [
+        "$t(potentials.Ni.detail.0)",
+        "$t(potentials.No.detail.0)",
+        "They are meticulous, organized, caring, and have excellent self-management skills."
+      ]
+    },
+    "No": {
+      "detail": [
+        "This type of person has the potential to create groups and organizations and develop them outwardly.",
+        "They are also often very caring people."
+      ],
+      "No": [
+        "$t(potentials.No.detail.0)",
+        "They tend not to be good at maintaining groups, and even when they create them, they tend to disappear spontaneously.",
+        "$t(potentials.No.detail.1)"
+      ]
+    }
+  },
   "response": {
     "detail": {
       "detail": "Depending on the person, they can divide into the “$t(response.action.name)” type or the “$t(response.mind.name)” type.",

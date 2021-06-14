@@ -10,7 +10,7 @@ import type { DetailsBaseType } from './types';
  */
 export interface DetailAccessor<
   T extends TFunctionResult,
-  K extends string = string,
+  K,
   D extends DetailsBaseType | string = DetailsBaseType
 > {
   /** The function acquires the resource corresponding to the key. */
