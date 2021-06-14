@@ -52,6 +52,7 @@
         "name": "{{nickname}}さんの人生観"
       },
       "nickname": "名無しの権兵衛",
+      "potential": "{{nickname}}さんの潜在能力",
       "probed": "{{nickname}}さんは、{{type}}です！",
       "profile": "性格ファイル番号"
     },
