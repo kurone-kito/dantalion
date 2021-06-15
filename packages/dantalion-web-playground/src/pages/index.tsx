@@ -1,4 +1,4 @@
-import type { VFC } from 'react';
+import type { NextPage } from 'next';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import Anchor from '../components/atoms/Anchor';
@@ -10,7 +10,7 @@ import Result from '../components/organisms/Result';
 import { usePSDecoder } from '../hooks/usePersonality';
 
 /** The index page component */
-const Component: VFC = () => {
+const Component: NextPage = () => {
   const { t } = useTranslation();
   const [ps, nickname] = usePSDecoder();
   return (
