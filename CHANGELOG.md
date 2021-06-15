@@ -2,6 +2,20 @@
 
 # Changelog
 
+## v0.18.0 (2021-06-15)
+
+### Features
+
+- cli, i18n, web: Added the detailed description for the potentials ([b8e6183](https://github.com/kurone-kito/dantalion/commit/b8e6183), [923e1ec](https://github.com/kurone-kito/dantalion/commit/923e1ec), [fab1565](https://github.com/kurone-kito/dantalion/commit/fab1565))
+
+### Refactors
+
+- core, web: Organized some imports ([b664bed](https://github.com/kurone-kito/dantalion/commit/b664bed))
+
+### Chores
+
+- Refactored some npm-scripts ([869308b](https://github.com/kurone-kito/dantalion/commit/869308b))
+
 ## v0.17.0 (2021-06-14)
 
 ### BREAKING CHANGES
