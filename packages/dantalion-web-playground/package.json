@@ -28,8 +28,8 @@
   },
   "scripts": {
     "lint": "run-s lint:*",
-    "lint:eslint": "stylelint \"**/*.css\"",
-    "lint:stylelint": "eslint --cache --fix .",
+    "lint:eslint": "eslint --cache --fix .",
+    "lint:stylelint": "stylelint \"**/*.css\"",
     "prepack": "next build && next export -o dist && npm run storybook:build",
     "serve": "serve dist",
     "start": "next dev",
