@@ -3,7 +3,7 @@ import type {
   PersonalityDetailType,
   PersonalityType,
 } from '@kurone-kito/dantalion-i18n';
-import type { VFC } from 'react';
+import { useMemo, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import Details from '../molecules/Details';
@@ -52,9 +52,17 @@ const Component: VFC<Props> = ({
   details,
   inner,
   nickname,
-  ...props
+  outer,
+  workStyle,
 }) => {
   const { t } = useTranslation();
+  const source = useMemo(
+    () =>
+      createSource({ inner, outer, workStyle }).map(([key, type]) =>
+        t(key, { type })
+      ),
+    [inner, outer, t, workStyle]
+  );
   return (
     <ResultDetail
       heading={details.name}
@@ -84,9 +92,7 @@ const Component: VFC<Props> = ({
       </InlineMarkdownList>
       <ReactMarkdown>{descriptions.genius2}</ReactMarkdown>
       <InlineMarkdownList className="list-decimal p-4 md:px-8" order>
-        {createSource({ inner, ...props }).map(([key, type]) =>
-          t(key, { type })
-        )}
+        {source}
       </InlineMarkdownList>
     </ResultDetail>
   );
