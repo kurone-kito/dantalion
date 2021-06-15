@@ -1,6 +1,6 @@
 import { getPersonality, Personality } from '@kurone-kito/dantalion-core';
 import { Base64 } from 'js-base64';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { FormEventHandler, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { FormState } from '../stores/FormReducer';
@@ -9,10 +9,13 @@ import useIsSsr from './useIsSsr';
 
 export const spliter = '~';
 
+const excludes = Object.freeze(['genius', 'lang']);
+
 export const usePSDecoder = (): readonly [Personality | undefined, string] => {
   const isSsr = useIsSsr();
+  const { query } = useRouter();
   const [pb = '', nb] = (
-    (isSsr(true) && Object.keys(Router.query).shift()) ||
+    (isSsr(true) && Object.keys(query).find((q) => !excludes.includes(q))) ||
     ''
   ).split(spliter);
   const { t } = useTranslation();
