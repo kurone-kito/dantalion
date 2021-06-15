@@ -5,12 +5,14 @@ import { FormEventHandler, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { FormState } from '../stores/FormReducer';
 import { decode, encode } from '../utils/psCompress';
+import useIsSsr from './useIsSsr';
 
 export const spliter = '~';
 
 export const usePSDecoder = (): readonly [Personality | undefined, string] => {
+  const isSsr = useIsSsr();
   const [pb = '', nb] = (
-    (process.browser && Object.keys(Router.query).shift()) ||
+    (isSsr(true) && Object.keys(Router.query).shift()) ||
     ''
   ).split(spliter);
   const { t } = useTranslation();
