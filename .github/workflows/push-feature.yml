@@ -40,6 +40,7 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npm run prepack
         env:
+          CI: true
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}

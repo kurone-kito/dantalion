@@ -8,7 +8,9 @@ export {
 export type { DetailAccessor } from './resources/createGenericAccessor';
 export {
   default as createTAsync,
+  fallbackLng as fallbackLanguage,
   CreateTAsyncOptions,
+  locales,
 } from './resources/createTAsync';
 export type {
   DesctiptionsType,

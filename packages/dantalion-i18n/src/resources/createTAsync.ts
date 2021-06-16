@@ -15,6 +15,13 @@ import ja from './ja.json';
 /** The language that uses as a fallback. */
 export const fallbackLng = 'en';
 
+/**
+ * The locales table.
+ *
+ * The property keys have ISO 639-1 string and values exact name.
+ */
+export const locales = Object.freeze({ en: en.name, ja: ja.name });
+
 /** The type definition that the options of the createTAsync function. */
 export interface CreateTAsyncOptions extends Pick<InitOptions, 'lng'> {
   /** Specify the additional resources if you need */

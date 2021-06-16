@@ -120,6 +120,10 @@ Create and initialize the i18next instance asynchronously
 [`Promise<i18next.TFunction>`](https://www.i18next.com/overview/api#t):
 The i18next instance which already initialized the resources.
 
+### `fallbackLanguage: 'en'`
+
+The language that uses as a fallback.
+
 ### `getDetailMarkdown(accessors: Accessors, genius?: Genius): string`
 
 Get the personality information.
@@ -167,6 +171,12 @@ Get the personality information corresponding to the specified birthday.
 `string`:
 The string that the personality information as the Markdown format.
 If the date is over the range, it will be error message.
+
+### `locales: Record<string, string>`
+
+The locales table.
+
+The property keys have ISO 639-1 string and values exact name.
 
 ## Type definitions (for TypeScript)
 

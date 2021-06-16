@@ -1,6 +1,6 @@
 import { getDetail } from '@kurone-kito/dantalion-core';
 import { createAccessors } from '@kurone-kito/dantalion-i18n';
-import type { VFC } from 'react';
+import { useMemo, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePSDecoder } from '../../hooks/usePersonality';
 import AccompanyingResult from './AccompanyingResult';
@@ -15,7 +15,7 @@ import VectorResultDetail from './VectorResultDetail';
 /** The result component. */
 const Component: VFC = () => {
   const { t } = useTranslation();
-  const accessors = createAccessors(t);
+  const accessors = useMemo(() => createAccessors(t), [t]);
   const [ps, nickname] = usePSDecoder();
   const dt = ps && getDetail(ps.inner);
   return ps && dt ? (
