@@ -7,10 +7,12 @@ import type { FormState } from '../stores/FormReducer';
 import { decode, encode } from '../utils/psCompress';
 import useIsSsr from './useIsSsr';
 
+/** The splitter that between to personality code and nickname. */
 export const spliter = '~';
 
 const excludes = Object.freeze(['genius', 'lang']);
 
+/** It's the React custom hook which it decodes to personality code. */
 export const usePSDecoder = (): readonly [Personality | undefined, string] => {
   const isSsr = useIsSsr();
   const { query } = useRouter();
@@ -25,6 +27,11 @@ export const usePSDecoder = (): readonly [Personality | undefined, string] => {
   ] as const;
 };
 
+/**
+ * It's the React custom hook which it encodes to personality code
+ * and redirects.
+ * @param props Specifies the store object.
+ */
 export const usePSRedirection = ({
   birthday,
   nickname,

@@ -16,6 +16,10 @@ export interface Props {
   readonly url?: string;
 }
 
+/**
+ * Create the Tweet button URL.
+ * @param props The props.
+ */
 const createUrl = ({ hashtag, text, url }: Omit<Props, 'children'>) =>
   [
     'https://twitter.com/intent/tweet',
