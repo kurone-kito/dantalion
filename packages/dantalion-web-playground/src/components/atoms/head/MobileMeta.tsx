@@ -35,7 +35,7 @@ const Component: VFC<Props> = ({
     )}
     <meta
       name="msapplication-config"
-      content={`${baseUrl}/dantalion/favicons/browserconfig.xml`}
+      content={`${baseUrl}/favicons/browserconfig.xml`}
     />
   </>
 );
