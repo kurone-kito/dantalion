@@ -21,7 +21,6 @@ const Component: VFC<Props> = ({ className, id, label, ...props }) => (
         'appearance-none duration-200 flex-grow leading-5 mr-1 w-full nm-inset-gray-100 px-8 py-4 rounded-full focus:nm-inset-gray-50 hover:nm-inset-gray-50 sm:w-2/3',
         className
       )}
-      style={{ WebkitAppearance: 'none' }}
       id={id}
       tabIndex={0}
       // eslint-disable-next-line react/jsx-props-no-spreading
