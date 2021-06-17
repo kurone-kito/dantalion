@@ -2,6 +2,34 @@
 
 # Changelog
 
+## v0.19.0 (2021-06-17)
+
+### Features
+
+- i18n: Added a locales table. ([15c3713](https://github.com/kurone-kito/dantalion/commit/15c3713))
+
+### Refactors
+
+- cli, web: Updated the dependencies. ([0daf2bb](https://github.com/kurone-kito/dantalion/commit/0daf2bb))
+
+### Chores
+
+- Added a environment variable for CI process ([19b29ab](https://github.com/kurone-kito/dantalion/commit/19b29ab))
+
+#### Web updates
+
+- The app can now change the language manually by specifying the language
+  in the URL. ([954caac](https://github.com/kurone-kito/dantalion/commit/954caac))
+- Improved the metadata for HTML. ([e5bd991](https://github.com/kurone-kito/dantalion/commit/e5bd991))
+- Improved the page component type. ([9f5553f](https://github.com/kurone-kito/dantalion/commit/9f5553f))
+- Migrated from deprecated method for whether SSR mode. ([ba88cc7](https://github.com/kurone-kito/dantalion/commit/ba88cc7))
+- Separated a DOM structure of the page into a separate component as a
+  template. ([d1c776c](https://github.com/kurone-kito/dantalion/commit/d1c776c))
+- Fixed the Sentry tracking was not working. ([c5a898d](https://github.com/kurone-kito/dantalion/commit/c5a898d))
+- Suppressed unnecessary re-rendering. ([fc16dd0](https://github.com/kurone-kito/dantalion/commit/fc16dd0))
+- Migrated the Next.js v11 configurations ([b9d2e62](https://github.com/kurone-kito/dantalion/commit/b9d2e62))
+- Improved the ESLint configurations ([dfabc7b](https://github.com/kurone-kito/dantalion/commit/dfabc7b))
+
 ## v0.18.0 (2021-06-15)
 
 ### Features
