@@ -1,14 +1,14 @@
-import classNames from 'classnames';
 import type { InputHTMLAttributes, ReactNode, VFC } from 'react';
 
 /** Type definition of the required attributes. */
-export interface Props extends InputHTMLAttributes<HTMLInputElement> {
+export interface Props
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'className'> {
   /** The label for control */
   readonly label?: ReactNode;
 }
 
 /** The input control component */
-const Component: VFC<Props> = ({ className, id, label, ...props }) => (
+const Component: VFC<Props> = ({ id, label, ...props }) => (
   <label
     className="flex flex-col my-4 sm:flex-row sm:items-center"
     htmlFor={id}
@@ -17,10 +17,7 @@ const Component: VFC<Props> = ({ className, id, label, ...props }) => (
       {label}
     </span>
     <input
-      className={classNames(
-        'appearance-none duration-200 flex-grow leading-5 mr-1 w-full nm-inset-gray-100 px-8 py-4 rounded-full focus:nm-inset-gray-50 hover:nm-inset-gray-50 sm:w-2/3',
-        className
-      )}
+      className="appearance-none duration-200 flex-grow leading-5 mr-1 w-full nm-inset-gray-100 px-8 py-4 rounded-full focus:nm-inset-gray-50 hover:nm-inset-gray-50 sm:w-2/3"
       id={id}
       tabIndex={0}
       // eslint-disable-next-line react/jsx-props-no-spreading
