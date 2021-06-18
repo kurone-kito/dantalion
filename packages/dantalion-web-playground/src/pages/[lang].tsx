@@ -3,8 +3,10 @@ import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Template from '../components/templates/Template';
 
+/** Type definition of the required attributes. */
 export type Query = { readonly lang: string };
 
+/** Type definition of the required attributes. */
 export interface Props {
   readonly lang?: string;
 }

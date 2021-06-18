@@ -6,7 +6,9 @@ export default Object.freeze<Meta>({
   title: `molecules/${Footer.displayName}`,
 });
 
-const Template: Story<Props> = ({ author }) => <Footer author={author} />;
+const Template: Story<Props> = ({ author, children }) => (
+  <Footer author={author}>{children}</Footer>
+);
 
 export const Default = Template.bind({});
-Default.args = { author: 'Author' };
+Default.args = { author: 'Author', children: 'Children' };

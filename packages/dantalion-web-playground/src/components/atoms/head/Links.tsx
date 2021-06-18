@@ -18,7 +18,7 @@ const Component: VFC<Props> = ({ baseUrl = '' }) => {
       <link
         rel="apple-touch-icon"
         sizes="180x180"
-        href={`${baseUrl}/dantalion/favicons/apple-touch-icon.png`}
+        href={`${baseUrl}/favicons/apple-touch-icon.png`}
       />
       <link rel="bookmark" href={rootUrl} />
       <link rel="canonical" href={rootUrl} />
@@ -27,39 +27,33 @@ const Component: VFC<Props> = ({ baseUrl = '' }) => {
         rel="icon"
         type="image/png"
         sizes="32x32"
-        href={`${baseUrl}/dantalion/favicons/favicon-32x32.png`}
+        href={`${baseUrl}/favicons/favicon-32x32.png`}
       />
       <link
         rel="icon"
         type="image/png"
         sizes="194x194"
-        href={`${baseUrl}/dantalion/favicons/favicon-194x194.png`}
+        href={`${baseUrl}/favicons/favicon-194x194.png`}
       />
       <link
         rel="icon"
         type="image/png"
         sizes="192x192"
-        href={`${baseUrl}/dantalion/favicons/android-chrome-192x192.png`}
+        href={`${baseUrl}/favicons/android-chrome-192x192.png`}
       />
       <link
         rel="icon"
         type="image/png"
         sizes="16x16"
-        href={`${baseUrl}/dantalion/favicons/favicon-16x16.png`}
+        href={`${baseUrl}/favicons/favicon-16x16.png`}
       />
-      <link
-        rel="manifest"
-        href={`${baseUrl}/dantalion/favicons/site.webmanifest`}
-      />
+      <link rel="manifest" href={`${baseUrl}/favicons/site.webmanifest`} />
       <link
         rel="mask-icon"
-        href={`${baseUrl}/dantalion/favicons/safari-pinned-tab.svg`}
+        href={`${baseUrl}/favicons/safari-pinned-tab.svg`}
         color="#374151"
       />
-      <link
-        rel="shortcut icon"
-        href={`${baseUrl}/dantalion/favicons/favicon.ico`}
-      />
+      <link rel="shortcut icon" href={`${baseUrl}/favicons/favicon.ico`} />
     </>
   );
 };

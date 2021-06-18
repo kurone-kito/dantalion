@@ -2,14 +2,17 @@ const { withSentryConfig } = require('@sentry/nextjs');
 
 const localDomain = '';
 const productDomain = 'https://kurone-kito.github.io';
-const productPath = '/dantalion/';
-const isCIProd = !!process.env.CI && process.env.NODE_ENV === 'production';
-const assetPrefix = isCIProd ? productDomain + productPath : localDomain;
+const productPath = '/dantalion';
+const isProd = process.env.NODE_ENV === 'production';
+const isCI = !!process.env.CI;
+const path = !isCI && isProd ? '' : productPath;
+const assetPrefix = (isCI && isProd ? productDomain : localDomain) + path;
 
 /** @type {Partial<import('next/dist/next-server/server/config-shared').NextConfig>} */
 const providedExports = {
   assetPrefix,
-  env: { assetPrefix, productDomain, productPath },
+  basePath: path,
+  env: { assetPrefix },
   future: { strictPostcssConfiguration: true },
   // i18n: { defaultLocale: 'en', locales: ['en', 'ja'] },
   reactStrictMode: true,

@@ -3,6 +3,11 @@ import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useIsSsr from './useIsSsr';
 
+/**
+ * It's the React custom hook which it changes language
+ * by the i18next library.
+ * @param lang Specifies the language,
+ */
 const useInternalChangeLaunguage = (lang: Router['query']['lang']) => {
   const { i18n } = useTranslation();
   const isSsr = useIsSsr();
@@ -16,6 +21,11 @@ const useInternalChangeLaunguage = (lang: Router['query']['lang']) => {
   );
 };
 
+/**
+ * It's the React custom hook which it changes language
+ * by the i18next library.
+ * @param lang Specifies the language,
+ */
 const useChangeLanguage = (lang: Router['query']['lang']): void => {
   const changeLanguage = useInternalChangeLaunguage(lang);
   changeLanguage(false);

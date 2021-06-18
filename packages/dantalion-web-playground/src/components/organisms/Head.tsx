@@ -7,7 +7,9 @@ import HeadContents from '../molecules/HeadContents';
 /** The web app name. */
 const appName = 'Dantalion';
 
+/** Type definition of the required attributes. */
 export interface Props {
+  /** Whether the icon specifies as a superscript. */
   readonly pageName?: string;
 }
 

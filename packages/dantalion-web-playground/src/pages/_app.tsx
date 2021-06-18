@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app';
 import type { VFC } from 'react';
-import 'tailwindcss/tailwind.css';
+import '../styles/global.css';
 import useChangeLanguage from '../hooks/useChangeLanguage';
 import '../i18n';
 
