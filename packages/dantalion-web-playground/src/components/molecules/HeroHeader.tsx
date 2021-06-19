@@ -1,7 +1,9 @@
 import type { VFC } from 'react';
 import Logo from '../atoms/Logo';
 
-export interface Props {}
+export interface Props {
+  readonly __: unknown;
+}
 
 const Component: VFC<Props> = () => (
   <header className="bg-gray-200 flex">
