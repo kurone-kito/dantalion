@@ -2,6 +2,25 @@
 
 # Changelog
 
+## v0.19.1 (2021-06-20)
+
+### Refactors
+
+- cli, i18n, web: updated the dependencies ([8627249](https://github.com/kurone-kito/dantalion/commit/8627249))
+
+### Chores
+
+#### web: Updates
+
+- Added the languages selector to footer component. ([566e95e](https://github.com/kurone-kito/dantalion/commit/566e95e), [3e67ad7](https://github.com/kurone-kito/dantalion/commit/3e67ad7), [49167c1](https://github.com/kurone-kito/dantalion/commit/49167c1))
+- Added the custom hooks of query ([0c0148d](https://github.com/kurone-kito/dantalion/commit/0c0148d))
+- Added a lang attribute by the languages ([abe97a4](https://github.com/kurone-kito/dantalion/commit/abe97a4))
+- Fixed non-exemplary a bug where the appearance prefix in CSS did not work. ([9267f2c](https://github.com/kurone-kito/dantalion/commit/9267f2c), [db54a3f](https://github.com/kurone-kito/dantalion/commit/db54a3f))
+- Fixed the problem that the OGP tag was wrong. ([af92a17](https://github.com/kurone-kito/dantalion/commit/af92a17))
+- Improved the path settings ([5b096f3](https://github.com/kurone-kito/dantalion/commit/5b096f3))
+- Added the parts for Hero component ([4ee77e2](https://github.com/kurone-kito/dantalion/commit/4ee77e2), [31646c2](https://github.com/kurone-kito/dantalion/commit/31646c2), [3397e2b](https://github.com/kurone-kito/dantalion/commit/3397e2b))
+- Added the documentations ([4a5af47](https://github.com/kurone-kito/dantalion/commit/4a5af47))
+
 ## v0.19.0 (2021-06-17)
 
 ### Features
