@@ -2,7 +2,7 @@ import type { VFC } from 'react';
 import Logo from '../atoms/Logo';
 
 export interface Props {
-  readonly __: unknown;
+  readonly __?: unknown;
 }
 
 const Component: VFC<Props> = () => (
