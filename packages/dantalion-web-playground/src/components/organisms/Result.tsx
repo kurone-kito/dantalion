@@ -9,6 +9,7 @@ import LifeBaseResultDetail from './LifeBaseResultDetail';
 import MotivationResultDetail from './MotivationResultDetail';
 import PotentialResultDetail from './PotentialResultDetail';
 import PersonalityFileId from './PersonalityFileId';
+import SubGeniusResultDetail from './SubGeniusResultDetail';
 import TweetButton from './TweetButton';
 import VectorResultDetail from './VectorResultDetail';
 
@@ -32,9 +33,15 @@ const Component: VFC = () => {
           details={accessors.genius.getCategoryDetail()}
           inner={accessors.genius.getByKey(ps.inner)}
           nickname={nickname}
-          outer={accessors.genius.getByKey(ps.outer)}
-          workStyle={accessors.genius.getByKey(ps.workStyle)}
-        />
+        >
+          <SubGeniusResultDetail
+            descriptions={accessors.getDescription()}
+            details={accessors.genius.getCategoryDetail()}
+            inner={accessors.genius.getByKey(ps.inner)}
+            outer={accessors.genius.getByKey(ps.outer)}
+            workStyle={accessors.genius.getByKey(ps.workStyle)}
+          />
+        </GeniusResultDetail>
         <LifeBaseResultDetail
           accessors={accessors.lifeBase}
           lifeBase={ps.lifeBase}
