@@ -1,3 +1,4 @@
+import { Genius, getDetail } from '@kurone-kito/dantalion-core';
 import { createAccessors } from '@kurone-kito/dantalion-i18n';
 import { useTranslation } from 'react-i18next';
 import { useMemo, VFC } from 'react';
@@ -13,11 +14,17 @@ import Result from '../organisms/Result';
 import { usePSDecoder } from '../../hooks/usePersonality';
 import FormReducer from '../../stores/FormReducer';
 
-const Component: VFC = () => {
+/** Type definition of the required attributes. */
+export interface Props {
+  readonly inner?: Genius;
+}
+
+const Component: VFC<Props> = ({ inner }) => {
   const { t } = useTranslation();
   const accessors = useMemo(() => createAccessors(t), [t]);
   const [ps, nickname] = usePSDecoder();
-  const dt = ps?.inner && getDetail(ps.inner);
+  const concreteInner = ps?.inner ?? inner;
+  const dt = concreteInner && getDetail(concreteInner);
   return (
     <>
       <Head pageName={ps && accessors.genius.getByKey(ps.inner).summary} />
@@ -25,10 +32,10 @@ const Component: VFC = () => {
         {ps ? t('web.result.heading', { nickname }) : t('web.description')}
       </Header>
       <main className="md:container mx-auto text-gray-600">
-        {!!(ps?.inner && dt) && (
+        {!!(concreteInner && dt) && (
           <Result
             detail={dt}
-            inner={ps.inner}
+            inner={concreteInner}
             nickname={nickname}
             personality={ps}
           />
