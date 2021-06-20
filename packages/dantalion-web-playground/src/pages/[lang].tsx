@@ -2,21 +2,17 @@ import { locales } from '@kurone-kito/dantalion-i18n';
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
 import Template from '../components/templates/Template';
+import type { PageProps } from './_app';
 
 /** Type definition of the required attributes. */
 export type Query = { readonly lang: string };
 
-/** Type definition of the required attributes. */
-export interface Props {
-  readonly lang?: string;
-}
-
 /** The index page component */
-const Component: NextPage<Props> = () =>
+const Component: NextPage<PageProps> = () =>
   useRouter().isFallback ? <>Loading...</> : <Template />;
 Component.displayName = '[lang]';
 
-export const getStaticProps: GetStaticProps<Props, Query> = async ({
+export const getStaticProps: GetStaticProps<PageProps, Query> = async ({
   params,
 }) => ({ props: { lang: params?.lang } });
 
