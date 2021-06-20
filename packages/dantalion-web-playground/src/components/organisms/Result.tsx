@@ -19,25 +19,28 @@ const Component: VFC = () => {
   const accessors = useMemo(() => createAccessors(t), [t]);
   const [ps, nickname] = usePSDecoder();
   const dt = ps && getDetail(ps.inner);
-  return ps && dt ? (
+  const descriptions = accessors.getDescription();
+  const geniusDetails = accessors.genius.getCategoryDetail();
+  const innerDetail = ps && accessors.genius.getByKey(ps.inner);
+  return ps && dt && innerDetail ? (
     <>
       <article>
         <VectorResultDetail
           accessor={accessors.vector}
           nickname={nickname}
-          strategy={accessors.getDescription().strategy}
+          strategy={descriptions.strategy}
           vector={dt.vector}
         />
         <GeniusResultDetail
-          descriptions={accessors.getDescription()}
-          details={accessors.genius.getCategoryDetail()}
-          inner={accessors.genius.getByKey(ps.inner)}
+          descriptions={descriptions}
+          details={geniusDetails}
+          inner={innerDetail}
           nickname={nickname}
         >
           <SubGeniusResultDetail
-            descriptions={accessors.getDescription()}
-            details={accessors.genius.getCategoryDetail()}
-            inner={accessors.genius.getByKey(ps.inner)}
+            descriptions={descriptions}
+            details={geniusDetails}
+            inner={innerDetail}
             outer={accessors.genius.getByKey(ps.outer)}
             workStyle={accessors.genius.getByKey(ps.workStyle)}
           />
@@ -64,10 +67,7 @@ const Component: VFC = () => {
         <PersonalityFileId personality={ps} />
       </article>
       <aside>
-        <TweetButton
-          nickname={nickname}
-          hooks={accessors.genius.getByKey(ps.inner).summary}
-        />
+        <TweetButton nickname={nickname} hooks={innerDetail.summary} />
       </aside>
     </>
   ) : null;
