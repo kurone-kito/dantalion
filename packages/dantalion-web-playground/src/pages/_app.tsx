@@ -14,10 +14,11 @@ export interface PageProps {
 }
 
 /** The app root component */
-const App: VFC<AppProps<PageProps>> = ({ Component, pageProps, router }) => {
-  useChangeLanguage(router.query.lang);
+const App: VFC<AppProps<PageProps>> = ({ Component, pageProps }) => {
+  const props = pageProps as PageProps;
+  useChangeLanguage(props?.lang);
   // eslint-disable-next-line react/jsx-props-no-spreading
-  return <Component {...pageProps} />;
+  return <Component {...props} />;
 };
 App.displayName = 'App';
 
