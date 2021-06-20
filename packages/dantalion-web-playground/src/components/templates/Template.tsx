@@ -17,6 +17,7 @@ const Component: VFC = () => {
   const { t } = useTranslation();
   const accessors = useMemo(() => createAccessors(t), [t]);
   const [ps, nickname] = usePSDecoder();
+  const dt = ps?.inner && getDetail(ps.inner);
   return (
     <>
       <Head pageName={ps && accessors.genius.getByKey(ps.inner).summary} />
@@ -24,7 +25,14 @@ const Component: VFC = () => {
         {ps ? t('web.result.heading', { nickname }) : t('web.description')}
       </Header>
       <main className="md:container mx-auto text-gray-600">
-        <Result />
+        {!!(ps?.inner && dt) && (
+          <Result
+            detail={dt}
+            inner={ps.inner}
+            nickname={nickname}
+            personality={ps}
+          />
+        )}
         <FormReducer.Provider>
           <BirthForm />
         </FormReducer.Provider>
