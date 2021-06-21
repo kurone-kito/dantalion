@@ -9,6 +9,7 @@ export interface Props {
   readonly pageName?: string;
 }
 
+/** The page title component. */
 const Component: VFC<Props> = ({ appName, pageName }) => (
   <Head>
     <title>{(pageName ? [pageName, appName] : [appName]).join('::')}</title>
