@@ -13,7 +13,7 @@ export interface Props {
   readonly pageName?: string;
 }
 
-const Component: VFC<Props> = ({ pageName = '' }) => {
+const Component: VFC<Props> = ({ pageName }) => {
   const { t } = useTranslation();
   return (
     <>

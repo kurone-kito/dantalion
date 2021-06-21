@@ -1,4 +1,5 @@
 import type { VFC } from 'react';
+import createTitle from '../../../utils/createTitle';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -26,39 +27,34 @@ const Component: VFC<Props> = ({
   bannerUrl,
   bannerWidth,
   description,
-  pageName,
-}) => {
-  const title = pageName || appName;
-  return (
-    <>
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:creator" content="@kurone_kito" />
-      {!!description && (
-        <meta name="twitter:description" content={description} />
-      )}
-      {!!bannerUrl && <meta name="twitter:image" content={bannerUrl} />}
-      {!!title && <meta name="twitter:title" content={title} />}
-      {!!description && (
-        <meta property="og:description" content={description} />
-      )}
-      {!!bannerUrl && (
-        <>
-          <meta property="og:image" content={bannerUrl} />
-          {!!bannerHeight && (
-            <meta property="og:image:height" content={`${bannerHeight}`} />
-          )}
-          {!!bannerWidth && (
-            <meta property="og:image:width" content={`${bannerWidth}`} />
-          )}
-        </>
-      )}
-      {!!appName && <meta property="og:site_name" content={appName} />}
-      {!!title && <meta property="og:title" content={title} />}
-      <meta property="og:type" content={article ? 'article' : 'website'} />
-      <meta property="op:markup_version" content="v1.0" />
-    </>
-  );
-};
+  pageName = appName,
+}) => (
+  <>
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@kurone_kito" />
+    {!!description && <meta name="twitter:description" content={description} />}
+    {!!bannerUrl && <meta name="twitter:image" content={bannerUrl} />}
+    {!!pageName && (
+      <meta name="twitter:title" content={createTitle({ appName, pageName })} />
+    )}
+    {!!description && <meta property="og:description" content={description} />}
+    {!!bannerUrl && (
+      <>
+        <meta property="og:image" content={bannerUrl} />
+        {!!bannerHeight && (
+          <meta property="og:image:height" content={`${bannerHeight}`} />
+        )}
+        {!!bannerWidth && (
+          <meta property="og:image:width" content={`${bannerWidth}`} />
+        )}
+      </>
+    )}
+    {!!appName && <meta property="og:site_name" content={appName} />}
+    {!!pageName && <meta property="og:title" content={pageName} />}
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="op:markup_version" content="v1.0" />
+  </>
+);
 Component.displayName = 'OpenGraphMeta';
 
 export default Component;

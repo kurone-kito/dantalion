@@ -25,9 +25,11 @@ const Component: VFC<Props> = ({ inner }) => {
   const [ps, nickname] = usePSDecoder();
   const concreteInner = ps?.inner ?? inner;
   const dt = concreteInner && getDetail(concreteInner);
+  const pageName =
+    concreteInner && accessors.genius.getByKey(concreteInner).summary;
   return (
     <>
-      <Head pageName={ps && accessors.genius.getByKey(ps.inner).summary} />
+      <Head pageName={pageName} />
       <Header>
         {ps ? t('web.result.heading', { nickname }) : t('web.description')}
       </Header>
