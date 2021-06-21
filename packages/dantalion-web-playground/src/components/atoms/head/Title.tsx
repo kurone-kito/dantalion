@@ -1,18 +1,14 @@
 import Head from 'next/head';
 import type { VFC } from 'react';
+import createTitle, { Options } from '../../../utils/createTitle';
 
 /** Type definition of the required attributes. */
-export interface Props {
-  /** Specifies the web app name. */
-  readonly appName?: string;
-  /** Specifies the page name. */
-  readonly pageName?: string;
-}
+export type Props = Options;
 
 /** The page title component. */
-const Component: VFC<Props> = ({ appName, pageName }) => (
+const Component: VFC<Props> = (props) => (
   <Head>
-    <title>{(pageName ? [pageName, appName] : [appName]).join('::')}</title>
+    <title>{createTitle(props)}</title>
   </Head>
 );
 Component.displayName = 'Title';
