@@ -1,8 +1,10 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 const neumorphism = require('tailwindcss-neumorphism');
 
+const neumorphismVariants = ['dark', 'focus', 'hover', 'responsive'];
+
 module.exports = {
-  darkMode: 'media', // false, or 'media' or 'class'
+  darkMode: 'class', // false, or 'media' or 'class'
   plugins: [neumorphism],
   purge: {
     content: [
@@ -35,5 +37,11 @@ module.exports = {
       },
     },
   },
-  variants: { extend: {} },
+  variants: {
+    extend: {},
+    neumorphismConcave: neumorphismVariants,
+    neumorphismConvex: neumorphismVariants,
+    neumorphismFlat: neumorphismVariants,
+    neumorphismInset: neumorphismVariants,
+  },
 };
