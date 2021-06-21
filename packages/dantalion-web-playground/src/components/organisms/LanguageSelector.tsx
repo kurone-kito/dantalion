@@ -4,23 +4,36 @@ import { useTranslation } from 'react-i18next';
 import { useLanguage, useRoute } from '../../hooks/useQuery';
 import Select from '../atoms/Select';
 
+/** The type definition of the source. */
 type Source = readonly (readonly [string, string])[];
 
+/** Constant key indicating automatic recognition. */
 const autoKey = 'auto';
+
+/** The language list. */
 const baseSource: Source = Object.entries(locales);
 
-const Component: VFC = () => {
+/** Create the callback on changed control by the user. */
+const useOnChange = (): ChangeEventHandler<HTMLSelectElement> => {
   const route = useRoute();
-  const { t } = useTranslation();
-  const language = useLanguage() ?? autoKey;
-  const onChange = useCallback<ChangeEventHandler<HTMLSelectElement>>(
-    (e) => {
+  const { i18n } = useTranslation();
+  return useCallback(
+    async (e) => {
       e.preventDefault();
       const { value } = e.currentTarget;
-      route({ lang: value === autoKey ? '' : value });
+      const nextLang = value === autoKey ? undefined : value;
+      await route({ lang: nextLang ?? '' });
+      await i18n.changeLanguage(nextLang);
     },
-    [route]
+    [i18n, route]
   );
+};
+
+/** The language select component. */
+const Component: VFC = () => {
+  const { t } = useTranslation();
+  const language = useLanguage() ?? autoKey;
+  const onChange = useOnChange();
   const source = useMemo<Source>(
     () => [[autoKey, t('web.language.automatic')], ...baseSource],
     [t]
