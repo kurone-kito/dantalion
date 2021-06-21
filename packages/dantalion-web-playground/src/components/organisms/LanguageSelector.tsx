@@ -1,4 +1,4 @@
-import { locales } from '@kurone-kito/dantalion-i18n';
+import { getLocale, locales } from '@kurone-kito/dantalion-i18n';
 import { ChangeEventHandler, useCallback, useMemo, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage, useRoute } from '../../hooks/useQuery';
@@ -23,7 +23,7 @@ const useOnChange = (): ChangeEventHandler<HTMLSelectElement> => {
       const { value } = e.currentTarget;
       const nextLang = value === autoKey ? undefined : value;
       await route({ lang: nextLang ?? '' });
-      await i18n.changeLanguage(nextLang);
+      await i18n.changeLanguage(nextLang ?? getLocale());
     },
     [i18n, route]
   );

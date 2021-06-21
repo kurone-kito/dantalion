@@ -1,3 +1,4 @@
+import { getLocale } from '@kurone-kito/dantalion-i18n';
 import type { Router } from 'next/router';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,9 +15,9 @@ const useInternalChangeLaunguage = (lang: Router['query']['lang']) => {
   return useCallback(
     async (browser: boolean) =>
       isSsr(browser) &&
-      !!lang &&
-      typeof lang === 'string' &&
-      i18n.changeLanguage(lang),
+      i18n.changeLanguage(
+        !!lang && typeof lang === 'string' ? lang : getLocale()
+      ),
     [i18n, isSsr, lang]
   );
 };
