@@ -26,17 +26,17 @@ const Component: VFC<Props> = ({
   tooltip,
 }) => (
   <details
-    className="my-5 nm-flat-gray-200-sm rounded-2xl md:mx-1 md:rounded-3xl"
+    className="my-5 nm-flat-gray-200-sm rounded-2xl dark:nm-flat-gray-700-sm md:mx-1 md:rounded-3xl"
     open={open}
   >
     <summary
-      className="bg-gray-200 cursor-pointer duration-200 ease-in-out outline-none px-8 py-4 rounded-2xl select-none text-xl transform transition focus:bg-gray-100 hover:bg-gray-100 md:rounded-3xl sm:text-2xl"
+      className="bg-gray-200 cursor-pointer duration-200 ease-in-out outline-none px-8 py-4 rounded-2xl select-none text-gray-700 text-xl transform transition dark:bg-gray-700 dark:text-gray-200 dark:focus:bg-gray-800 focus:bg-gray-100 dark:hover:bg-gray-800 hover:bg-gray-100 md:rounded-3xl sm:text-2xl"
       tabIndex={0}
       title={tooltip}
     >
       <Heading className="font-bold inline">{caption}</Heading>
     </summary>
-    <div className="border-gray-300 border-t-2 mx-4 overflow-y-scroll p-2">
+    <div className="border-gray-500 border-opacity-50 border-t-2 mx-4 overflow-y-scroll p-2">
       <InlineMarkdownList className="list-disc p-4 md:px-8">
         {children}
       </InlineMarkdownList>

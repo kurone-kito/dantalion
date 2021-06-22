@@ -38,7 +38,7 @@ export default class MyDocument extends Document<Props> {
         prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article# website: http://ogp.me/ns/website#"
       >
         <Head />
-        <body className="antialiased bg-gray-200 text-gray-700">
+        <body className="antialiased bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200">
           <Main />
           <NextScript />
         </body>

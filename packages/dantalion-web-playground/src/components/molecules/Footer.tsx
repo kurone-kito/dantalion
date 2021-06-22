@@ -12,7 +12,7 @@ export interface Props {
 /** The footer component */
 const Component: VFC<Props> = ({ author, children }) => (
   <footer
-    className="nm-flat-gray-300-xs mt-4 py-4 text-gray-700 text-sm"
+    className="nm-flat-gray-300-xs mt-4 py-4 text-gray-700 text-sm dark:nm-flat-gray-600-xs dark:text-gray-200"
     role="contentinfo"
   >
     <nav className="flex flex-col mx-auto sm:flex-row lg:container">

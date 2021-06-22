@@ -8,6 +8,7 @@ const Component: VFC<ReactMarkdownOptions> = ({
   ...props
 }) => (
   <ReactMarkdown
+    className="markdown text-gray-700 dark:text-gray-200"
     components={{ p: ({ children: c }) => <>{c}</>, ...components }}
     // eslint-disable-next-line react/jsx-props-no-spreading
     {...props}

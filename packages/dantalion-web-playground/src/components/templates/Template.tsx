@@ -52,7 +52,7 @@ const Component: VFC<Props> = ({ inner }) => {
         >
           {t('web.preface', { joinArrays: '\n\n' })}
         </Article>
-        <ReactMarkdown className="mx-0 my-5 nm-inset-gray-500-sm overflow-auto p-6 text-white md:rounded-3xl">
+        <ReactMarkdown className="mx-0 my-5 nm-inset-gray-500-sm overflow-auto p-6 text-white dark:nm-inset-gray-800-sm dark:text-gray-200 md:rounded-3xl">
           {t('web.install', { joinArrays: '\n' })}
         </ReactMarkdown>
         <p className="font-bold text-center text-xl py-6">

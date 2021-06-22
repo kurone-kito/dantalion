@@ -15,6 +15,6 @@ const Template: Story<Props> = ({ children, className, itemType, order }) => (
 export const Default = Template.bind({});
 Default.args = {
   children: ['A', 'B', 'C'],
-  className: 'list-disc text-red-900',
+  className: 'list-disc text-red-900 dark:text-red-300',
   order: false,
 };

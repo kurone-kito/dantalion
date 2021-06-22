@@ -15,7 +15,7 @@ export interface Props {
 const Component: VFC<Props> = ({ children, className, onClick }) => (
   <div className={classNames('flex justify-center pt-8', className)}>
     <button
-      className="duration-200 ease-in-out flex-grow font-bold leading-5 nm-flat-gray-300 px-8 py-4 rounded-full tracking-widest transform transition uppercase hover:nm-flat-gray-50-lg"
+      className="duration-200 ease-in-out flex-grow font-bold leading-5 nm-flat-gray-300 px-8 py-4 rounded-full text-gray-800 tracking-widest transform transition uppercase dark:nm-flat-gray-600 dark:text-gray-300 dark:hover:nm-flat-gray-800-lg dark:hover:text-gray-100 hover:nm-flat-gray-50-lg hover:text-gray-900"
       onClick={onClick}
       tabIndex={0}
       type="submit"

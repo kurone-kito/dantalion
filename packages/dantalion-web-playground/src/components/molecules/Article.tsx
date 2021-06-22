@@ -34,7 +34,7 @@ const Component: VFC<Props> = ({
         // eslint-disable-next-line react/jsx-props-no-spreading
         p: ({ node, ...props }) => <p className="py-3" {...props} />,
       }}
-      className="font-light leading-loose p-3 text-lg sm:px-2"
+      className="font-light leading-loose markdown p-3 text-gray-700 text-lg dark:text-gray-200 sm:px-2"
       linkTarget="_blank"
     >
       {children}

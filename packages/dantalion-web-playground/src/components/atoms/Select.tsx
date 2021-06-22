@@ -23,12 +23,12 @@ const Component: VFC<Props> = ({
   source,
 }) => (
   <label className="flex flex-col sm:flex-row sm:items-center" htmlFor={id}>
-    <span className="font-bold mb-1 text-sm tracking-widest text-gray-700 sm:mb-0 sm:mr-8 sm:w-1/4">
+    <span className="font-bold mb-1 text-sm tracking-widest text-gray-700 dark:text-gray-200 sm:mb-0 sm:mr-8 sm:w-1/4">
       {label}
     </span>
-    <div className="rounded-full duration-200 nm-flat-gray-200 flex-growhover:nm-flat-gray-50 sm:w-3/4">
+    <div className="rounded-full duration-200 nm-flat-gray-200 flex-grow dark:nm-flat-gray-600  dark:hover:nm-flat-gray-800 hover:nm-flat-gray-50 sm:w-3/4">
       <select
-        className="appearance-none w-full px-8 py-4 bg-transparent font-semibold"
+        className="appearance-none w-full px-8 py-4 bg-transparent font-semibold text-gray-800 dark:text-gray-100"
         defaultValue={defaultValue}
         disabled={!source?.length}
         id={id}
