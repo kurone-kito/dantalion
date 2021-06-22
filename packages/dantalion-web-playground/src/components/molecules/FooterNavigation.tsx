@@ -20,8 +20,11 @@ const Component: VFC<Props> = ({ author }) => (
   <List
     className="divide-x-2 divide-gray-500 divide-opacity-50 flex flex-row justify-center p-4"
     itemType={({ className, ...props }) => (
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      <li className={classNames('px-3', className)} {...props} />
+      <li
+        className={classNames('place-self-center px-3', className)}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...props}
+      />
     )}
   >
     <>&copy; {author}</>

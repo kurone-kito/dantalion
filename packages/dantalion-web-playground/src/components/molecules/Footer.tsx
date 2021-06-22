@@ -1,4 +1,4 @@
-import type { ReactNode, VFC } from 'react';
+import { Children, ReactNode, ReactNodeArray, VFC } from 'react';
 import Logo from '../atoms/Logo';
 import FooterNavigation from './FooterNavigation';
 
@@ -7,7 +7,7 @@ export interface Props {
   /** Specifies the author name. */
   readonly author?: ReactNode;
   /** The children items. */
-  readonly children?: ReactNode;
+  readonly children?: ReactNodeArray;
 }
 
 /** The footer component */
@@ -23,7 +23,14 @@ const Component: VFC<Props> = ({ author, children }) => (
       <div className="flex flex-grow items-center justify-center">
         <FooterNavigation author={author} />
       </div>
-      <div className="flex-shrink p-4">{children}</div>
+      <div className="flex flex-col flex-shrink p-4 lg:flex-row">
+        {Children.toArray(children).map((child, index) => (
+          // eslint-disable-next-line react/no-array-index-key
+          <div className="flex-shrink p-4" key={index}>
+            {child}
+          </div>
+        ))}
+      </div>
     </nav>
   </footer>
 );
