@@ -1,5 +1,11 @@
 {
   "web": {
+    "appearance": {
+      "name": "Appearance",
+      "automatic": "⚙️ Automatic",
+      "dark": "🌙  Dark",
+      "light": "☀️ Light"
+    },
     "author": "Kurone Kito",
     "description": "Calculates the personality from the birthday.",
     "feature": {

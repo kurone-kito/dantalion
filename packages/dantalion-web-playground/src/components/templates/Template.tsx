@@ -9,6 +9,7 @@ import Article from '../molecules/Article';
 import Footer from '../molecules/Footer';
 import BirthForm from '../organisms/BirthForm';
 import Head from '../organisms/Head';
+import AppearanceSelector from '../organisms/AppearanceSelector';
 import LanguageSelector from '../organisms/LanguageSelector';
 import Result from '../organisms/Result';
 import { usePSDecoder } from '../../hooks/usePersonality';
@@ -63,6 +64,7 @@ const Component: VFC<Props> = ({ inner }) => {
       </main>
       <Footer author={t('web.author')}>
         <LanguageSelector />
+        <AppearanceSelector />
       </Footer>
     </>
   );
