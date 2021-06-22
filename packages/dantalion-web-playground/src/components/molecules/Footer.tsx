@@ -1,4 +1,5 @@
 import type { ReactNode, VFC } from 'react';
+import Logo from '../atoms/Logo';
 import FooterNavigation from './FooterNavigation';
 
 /** Type definition of the required attributes. */
@@ -16,6 +17,9 @@ const Component: VFC<Props> = ({ author, children }) => (
     role="contentinfo"
   >
     <nav className="flex flex-col mx-auto sm:flex-row lg:container">
+      <div className="hidden flex-shrink xl:block">
+        <Logo />
+      </div>
       <div className="flex flex-grow items-center justify-center">
         <FooterNavigation author={author} />
       </div>
