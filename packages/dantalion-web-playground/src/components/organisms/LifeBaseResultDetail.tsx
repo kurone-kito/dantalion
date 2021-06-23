@@ -22,7 +22,11 @@ export interface Props {
 }
 
 /** The result component. */
-const Component: VFC<Props> = ({ accessors, lifeBase, nickname }) => {
+const LifeBaseResultDetail: VFC<Props> = ({
+  accessors,
+  lifeBase,
+  nickname,
+}) => {
   const { t } = useTranslation();
   const { detail, name } = accessors.getByKey(lifeBase);
   const desc = t<string, DetailsBaseType>('web.result.lifeBase', {
@@ -39,6 +43,6 @@ const Component: VFC<Props> = ({ accessors, lifeBase, nickname }) => {
     />
   );
 };
-Component.displayName = 'LifeBaseResultDetail';
+LifeBaseResultDetail.displayName = 'LifeBaseResultDetail';
 
-export default Component;
+export default LifeBaseResultDetail;

@@ -15,7 +15,7 @@ export interface Props {
 }
 
 /** The external anchor component */
-const Component: VFC<Props> = ({ children, href, nofollow, tooltip }) => (
+const ExternalAnchor: VFC<Props> = ({ children, href, nofollow, tooltip }) => (
   <IconAnchor
     href={href}
     icon={faExternalLinkAlt}
@@ -27,6 +27,6 @@ const Component: VFC<Props> = ({ children, href, nofollow, tooltip }) => (
     {children}
   </IconAnchor>
 );
-Component.displayName = 'ExternalAnchor';
+ExternalAnchor.displayName = 'ExternalAnchor';
 
-export default Component;
+export default ExternalAnchor;

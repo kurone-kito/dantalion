@@ -34,7 +34,7 @@ export interface Props {
   readonly pageName?: string;
 }
 
-const Component: VFC<Props> = ({
+const HeadContents: VFC<Props> = ({
   appName,
   article,
   author,
@@ -72,6 +72,6 @@ const Component: VFC<Props> = ({
     <Links baseUrl={baseUrl} />
   </>
 );
-Component.displayName = 'HeadContents';
+HeadContents.displayName = 'HeadContents';
 
-export default Component;
+export default HeadContents;

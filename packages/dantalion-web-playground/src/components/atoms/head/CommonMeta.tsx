@@ -19,7 +19,7 @@ export interface Props {
 }
 
 /** The minimum metadata component. */
-const Component: VFC<Props> = ({
+const CommonMeta: VFC<Props> = ({
   appName,
   author,
   color,
@@ -47,6 +47,6 @@ const Component: VFC<Props> = ({
     {!!color && <meta name="theme-color" content={color} />}
   </>
 );
-Component.displayName = 'CommonMeta';
+CommonMeta.displayName = 'CommonMeta';
 
-export default Component;
+export default CommonMeta;

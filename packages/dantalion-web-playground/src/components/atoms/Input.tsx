@@ -8,7 +8,7 @@ export interface Props
 }
 
 /** The input control component */
-const Component: VFC<Props> = ({ id, label, ...props }) => (
+const Input: VFC<Props> = ({ id, label, ...props }) => (
   <label
     className="flex flex-col my-4 sm:flex-row sm:items-center"
     htmlFor={id}
@@ -25,6 +25,6 @@ const Component: VFC<Props> = ({ id, label, ...props }) => (
     />
   </label>
 );
-Component.displayName = 'Input';
+Input.displayName = 'Input';
 
-export default Component;
+export default Input;

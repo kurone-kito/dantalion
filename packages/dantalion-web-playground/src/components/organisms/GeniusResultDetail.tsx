@@ -23,7 +23,7 @@ export interface Props {
 }
 
 /** The result component. */
-const Component: VFC<Props> = ({
+const GeniusResultDetail: VFC<Props> = ({
   children,
   descriptions,
   details,
@@ -57,6 +57,6 @@ const Component: VFC<Props> = ({
     </ResultDetail>
   );
 };
-Component.displayName = 'GeniusResultDetail';
+GeniusResultDetail.displayName = 'GeniusResultDetail';
 
-export default Component;
+export default GeniusResultDetail;

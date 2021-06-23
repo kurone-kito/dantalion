@@ -40,7 +40,7 @@ const createSource = ({
   ]);
 
 /** The result component. */
-const Component: VFC<Props> = ({
+const SubGeniusResultDetail: VFC<Props> = ({
   descriptions,
   details,
   inner,
@@ -69,6 +69,6 @@ const Component: VFC<Props> = ({
     </>
   );
 };
-Component.displayName = 'SubGeniusResultDetail';
+SubGeniusResultDetail.displayName = 'SubGeniusResultDetail';
 
-export default Component;
+export default SubGeniusResultDetail;

@@ -14,7 +14,7 @@ export interface Props {
 }
 
 /** The heading for result */
-const Component: VFC<Props> = ({
+const ResultHeading: VFC<Props> = ({
   additional,
   children,
   detail = '',
@@ -36,6 +36,6 @@ const Component: VFC<Props> = ({
     </div>
   </header>
 );
-Component.displayName = 'ResultHeading';
+ResultHeading.displayName = 'ResultHeading';
 
-export default Component;
+export default ResultHeading;

@@ -18,7 +18,11 @@ export interface Props {
 }
 
 /** The result component. */
-const Component: VFC<Props> = ({ accessors, potentials, nickname }) => {
+const LifeBaseResultDetail: VFC<Props> = ({
+  accessors,
+  potentials,
+  nickname,
+}) => {
   const { t } = useTranslation();
   const desc = accessors.getCategoryDetail();
   return (
@@ -30,6 +34,6 @@ const Component: VFC<Props> = ({ accessors, potentials, nickname }) => {
     />
   );
 };
-Component.displayName = 'LifeBaseResultDetail';
+LifeBaseResultDetail.displayName = 'LifeBaseResultDetail';
 
-export default Component;
+export default LifeBaseResultDetail;

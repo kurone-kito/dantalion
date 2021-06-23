@@ -13,13 +13,13 @@ export interface Props {
 }
 
 /** The result component. */
-const Component: VFC<Props> = ({ accessors, motivation }) => (
+const MotivationResultDetail: VFC<Props> = ({ accessors, motivation }) => (
   <ResultFrame>
     <TupleList className="list-disc pl-8">
       {[[accessors.getCategoryDetail(), accessors.getByKey(motivation)]]}
     </TupleList>
   </ResultFrame>
 );
-Component.displayName = 'MotivationResultDetail';
+MotivationResultDetail.displayName = 'MotivationResultDetail';
 
-export default Component;
+export default MotivationResultDetail;

@@ -25,7 +25,7 @@ export interface Props {
 }
 
 /** The result component. */
-const Component: VFC<Props> = ({ detail, inner, nickname, personality }) => {
+const Result: VFC<Props> = ({ detail, inner, nickname, personality }) => {
   const { t } = useTranslation();
   const accessors = useMemo(() => createAccessors(t), [t]);
   const descriptions = accessors.getDescription();
@@ -87,6 +87,6 @@ const Component: VFC<Props> = ({ detail, inner, nickname, personality }) => {
     </>
   ) : null;
 };
-Component.displayName = 'Result';
+Result.displayName = 'Result';
 
-export default Component;
+export default Result;

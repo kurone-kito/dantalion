@@ -12,9 +12,9 @@ export type Query = {
 };
 
 /** The index page component */
-const Component: NextPage<PageProps> = ({ genius }) =>
+const Page: NextPage<PageProps> = ({ genius }) =>
   useRouter().isFallback ? <>Loading...</> : <Template inner={genius} />;
-Component.displayName = '[lang]';
+Page.displayName = '[lang]';
 
 /**
  * Determine the attributes to assign to each path.
@@ -41,4 +41,4 @@ export const getStaticPaths: GetStaticPaths<Query> = async () => ({
   ].flat(),
 });
 
-export default Component;
+export default Page;

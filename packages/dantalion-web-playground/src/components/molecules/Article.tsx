@@ -16,7 +16,7 @@ export interface Props {
 }
 
 /** The main article component */
-const Component: VFC<Props> = ({
+const Article: VFC<Props> = ({
   children,
   featureBody,
   featureHeading,
@@ -48,6 +48,6 @@ const Component: VFC<Props> = ({
     </Details>
   </article>
 );
-Component.displayName = 'Article';
+Article.displayName = 'Article';
 
-export default Component;
+export default Article;

@@ -2,7 +2,7 @@ import type { DetailsBaseType, DetailsType } from '@kurone-kito/dantalion-i18n';
 import type { VFC } from 'react';
 import { useTranslation } from 'react-i18next';
 import InlineMarkdown from '../atoms/InlineMarkdown';
-import ResultDetail from '../molecules/ResultDetail';
+import MoleculesResultDetail from '../molecules/ResultDetail';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -15,10 +15,10 @@ export interface Props {
 }
 
 /** The result details component. */
-const Component: VFC<Props> = ({ content, heading, nickname }) => {
+const ResultDetail: VFC<Props> = ({ content, heading, nickname }) => {
   const { t } = useTranslation();
   return (
-    <ResultDetail
+    <MoleculesResultDetail
       hookAdditional={<InlineMarkdown>{content.detail}</InlineMarkdown>}
       heading={heading.name}
       headingDetail={heading.detail}
@@ -31,6 +31,6 @@ const Component: VFC<Props> = ({ content, heading, nickname }) => {
     />
   );
 };
-Component.displayName = 'ResultDetail';
+ResultDetail.displayName = 'ResultDetail';
 
-export default Component;
+export default ResultDetail;

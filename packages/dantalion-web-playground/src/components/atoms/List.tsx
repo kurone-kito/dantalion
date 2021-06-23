@@ -19,18 +19,18 @@ export interface Props {
 }
 
 /** The generical list component */
-const Component: VFC<Props> = ({ children, className, itemType, order }) => {
-  const List = order ? 'ol' : 'ul';
+const List: VFC<Props> = ({ children, className, itemType, order }) => {
+  const Parent = order ? 'ol' : 'ul';
   const Item = itemType ?? 'li';
   return (
-    <List className={className}>
+    <Parent className={className}>
       {Children.toArray(children).map((child, index) => (
         // eslint-disable-next-line react/no-array-index-key
         <Item key={index}>{child}</Item>
       ))}
-    </List>
+    </Parent>
   );
 };
-Component.displayName = 'List';
+List.displayName = 'List';
 
-export default Component;
+export default List;

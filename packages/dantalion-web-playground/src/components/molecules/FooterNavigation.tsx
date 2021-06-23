@@ -16,7 +16,7 @@ export interface Props {
 }
 
 /** The footer component */
-const Component: VFC<Props> = ({ author }) => (
+const FooterNavigation: VFC<Props> = ({ author }) => (
   <List
     className="divide-x-2 divide-gray-500 divide-opacity-50 flex flex-row justify-center p-4"
     itemType={({ className, ...props }) => (
@@ -46,6 +46,6 @@ const Component: VFC<Props> = ({ author }) => (
     <IconAnchor href="https://kit.black/" icon={faHome} tooltip="Homepage" />
   </List>
 );
-Component.displayName = 'FooterNavigation';
+FooterNavigation.displayName = 'FooterNavigation';
 
-export default Component;
+export default FooterNavigation;

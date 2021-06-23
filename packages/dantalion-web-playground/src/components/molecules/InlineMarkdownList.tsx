@@ -9,7 +9,7 @@ export interface Props extends Omit<ListProps, 'children'> {
 }
 
 /** The generic list component which its items allow the Markdown format. */
-const Component: VFC<Props> = ({ children, ...props }) => (
+const InlineMarkdownList: VFC<Props> = ({ children, ...props }) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <List {...props}>
     {children?.map((child) => (
@@ -17,6 +17,6 @@ const Component: VFC<Props> = ({ children, ...props }) => (
     ))}
   </List>
 );
-Component.displayName = 'InlineMarkdownList';
+InlineMarkdownList.displayName = 'InlineMarkdownList';
 
-export default Component;
+export default InlineMarkdownList;

@@ -30,7 +30,7 @@ const useOnChange = (): ChangeEventHandler<HTMLSelectElement> => {
 };
 
 /** The language select component. */
-const Component: VFC = () => {
+const LanguageSelector: VFC = () => {
   const { t } = useTranslation();
   const language = useLanguage() ?? autoKey;
   const onChange = useOnChange();
@@ -48,6 +48,6 @@ const Component: VFC = () => {
     />
   );
 };
-Component.displayName = 'LanguageSelector';
+LanguageSelector.displayName = 'LanguageSelector';
 
-export default Component;
+export default LanguageSelector;

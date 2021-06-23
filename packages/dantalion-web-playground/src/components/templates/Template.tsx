@@ -20,7 +20,7 @@ export interface Props {
   readonly inner?: Genius;
 }
 
-const Component: VFC<Props> = ({ inner }) => {
+const Template: VFC<Props> = ({ inner }) => {
   const { t } = useTranslation();
   const accessors = useMemo(() => createAccessors(t), [t]);
   const [ps, nickname] = usePSDecoder();
@@ -69,6 +69,6 @@ const Component: VFC<Props> = ({ inner }) => {
     </>
   );
 };
-Component.displayName = 'Template';
+Template.displayName = 'Template';
 
-export default Component;
+export default Template;

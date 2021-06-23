@@ -1,7 +1,7 @@
 import { Personality, toCC } from '@kurone-kito/dantalion-core';
 import type { VFC } from 'react';
 import { useTranslation } from 'react-i18next';
-import PersonalityFileId from '../molecules/PersonalityFileId';
+import MoleculesPersonalityFileId from '../molecules/PersonalityFileId';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -10,14 +10,14 @@ export interface Props {
 }
 
 /** The personality file component */
-const Component: VFC<Props> = ({ personality }) => {
+const PersonalityFileId: VFC<Props> = ({ personality }) => {
   const { t } = useTranslation();
   return (
-    <PersonalityFileId caption={t('web.result.profile')}>
+    <MoleculesPersonalityFileId caption={t('web.result.profile')}>
       {toCC(personality)}
-    </PersonalityFileId>
+    </MoleculesPersonalityFileId>
   );
 };
-Component.displayName = 'PersonalityFileId';
+PersonalityFileId.displayName = 'PersonalityFileId';
 
-export default Component;
+export default PersonalityFileId;

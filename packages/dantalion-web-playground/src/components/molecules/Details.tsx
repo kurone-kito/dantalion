@@ -18,7 +18,7 @@ export interface Props {
 /**
  * The collapsable list component which its items allow the Markdown format.
  */
-const Component: VFC<Props> = ({
+const Details: VFC<Props> = ({
   caption,
   children,
   headingLevel: Heading = 'h4',
@@ -43,6 +43,6 @@ const Component: VFC<Props> = ({
     </div>
   </details>
 );
-Component.displayName = 'Details';
+Details.displayName = 'Details';
 
-export default Component;
+export default Details;

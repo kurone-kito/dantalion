@@ -11,11 +11,11 @@ export interface Props {
 }
 
 /** The personality file component */
-const Component: VFC<Props> = ({ caption, children }) => (
+const PersonalityFileId: VFC<Props> = ({ caption, children }) => (
   <ResultFrame>
     {caption}:&nbsp;<InlineMarkdown>{`\`${children}\``}</InlineMarkdown>
   </ResultFrame>
 );
-Component.displayName = 'PersonalityFileId';
+PersonalityFileId.displayName = 'PersonalityFileId';
 
-export default Component;
+export default PersonalityFileId;

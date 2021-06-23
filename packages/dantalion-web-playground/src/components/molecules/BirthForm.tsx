@@ -36,7 +36,7 @@ export interface Props {
 }
 
 /** The birthday form component. */
-const Component: VFC<Props> = ({
+const BirthForm: VFC<Props> = ({
   birthday,
   birthdayLabel,
   buttonLabel,
@@ -89,6 +89,6 @@ const Component: VFC<Props> = ({
     </fieldset>
   </form>
 );
-Component.displayName = 'BirthForm';
+BirthForm.displayName = 'BirthForm';
 
-export default Component;
+export default BirthForm;

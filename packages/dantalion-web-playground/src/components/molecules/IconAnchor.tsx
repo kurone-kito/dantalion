@@ -22,7 +22,7 @@ export interface Props {
 }
 
 /** The footer component */
-const Component: VFC<Props> = ({
+const IconAnchor: VFC<Props> = ({
   children,
   href,
   icon,
@@ -41,6 +41,6 @@ const Component: VFC<Props> = ({
     </Anchor>
   );
 };
-Component.displayName = 'IconAnchor';
+IconAnchor.displayName = 'IconAnchor';
 
-export default Component;
+export default IconAnchor;

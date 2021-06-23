@@ -11,7 +11,7 @@ export interface Props {
 }
 
 /** The footer component */
-const Component: VFC<Props> = ({ author, children }) => (
+const Footer: VFC<Props> = ({ author, children }) => (
   <footer
     className="nm-flat-gray-300-xs mt-4 py-4 text-gray-700 text-sm dark:nm-flat-gray-600-xs dark:text-gray-200"
     role="contentinfo"
@@ -34,6 +34,6 @@ const Component: VFC<Props> = ({ author, children }) => (
     </nav>
   </footer>
 );
-Component.displayName = 'Footer';
+Footer.displayName = 'Footer';
 
-export default Component;
+export default Footer;
