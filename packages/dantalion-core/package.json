@@ -1,6 +1,6 @@
 {
   "name": "@kurone-kito/dantalion-core",
-  "version": "0.19.1",
+  "version": "0.19.2",
   "description": "NPM library that calculates the personality from the birthday.",
   "keywords": [
     "ba-zi",
