@@ -2,6 +2,32 @@
 
 # Changelog
 
+## v0.19.2 (2021-06-23)
+
+### Refactor
+
+- cli, web: updated the dependencies ([e59eb2c](https://github.com/kurone-kito/dantalion/commit/e59eb2c))
+
+### Chores
+
+#### web: Updates
+
+- Implemented the dark mode. ([f9d30d0](https://github.com/kurone-kito/dantalion/commit/f9d30d0), [5cea6f9](https://github.com/kurone-kito/dantalion/commit/5cea6f9), [8cb128c](https://github.com/kurone-kito/dantalion/commit/8cb128c), [87f3ed6](https://github.com/kurone-kito/dantalion/commit/87f3ed6))
+- added the page each by genius type and languages ([e010a78](https://github.com/kurone-kito/dantalion/commit/e010a78), [a2051e1](https://github.com/kurone-kito/dantalion/commit/a2051e1), [506002b](https://github.com/kurone-kito/dantalion/commit/506002b), [1221cbd](https://github.com/kurone-kito/dantalion/commit/1221cbd), [e524aa1](https://github.com/kurone-kito/dantalion/commit/e524aa1), [fdc7de9](https://github.com/kurone-kito/dantalion/commit/fdc7de9), [a2328d0](https://github.com/kurone-kito/dantalion/commit/a2328d0))
+- added the logo to footer. ([65121ae](https://github.com/kurone-kito/dantalion/commit/65121ae))
+- Improved the OGP metadata ([d9f7a5c](https://github.com/kurone-kito/dantalion/commit/d9f7a5c), [91ff0fc](https://github.com/kurone-kito/dantalion/commit/91ff0fc))
+- Fixed the bug that can't render the tweet button on the server-side ([904ec1c](https://github.com/kurone-kito/dantalion/commit/904ec1c))
+- Fixed a bug in which the automatic language detection did not work except for the first time ([bff44c3](https://github.com/kurone-kito/dantalion/commit/bff44c3), [983d785](https://github.com/kurone-kito/dantalion/commit/983d785))
+- Changed to get language information from props. ([3b3c814](https://github.com/kurone-kito/dantalion/commit/3b3c814))
+  - Getting the value directly from the slug is a potential source of problems.
+- improved redundant and superfluous processing in the result component ([03f4617](https://github.com/kurone-kito/dantalion/commit/03f4617))
+- changed the components name ([c35c7a9](https://github.com/kurone-kito/dantalion/commit/c35c7a9))
+- Added the documentation ([9a98370](https://github.com/kurone-kito/dantalion/commit/9a98370))
+- Improved some configurations.
+  - Next.js ([dda7085](https://github.com/kurone-kito/dantalion/commit/dda7085))
+  - Storybook ([1c2c7c6](https://github.com/kurone-kito/dantalion/commit/1c2c7c6))
+  - TailwindCSS ([cd2033c](https://github.com/kurone-kito/dantalion/commit/cd2033c))
+
 ## v0.19.1 (2021-06-20)
 
 ### Refactors
