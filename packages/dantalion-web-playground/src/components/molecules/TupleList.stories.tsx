@@ -19,6 +19,6 @@ Default.args = {
     ['Bar', 'Fuga'],
     ['Qux', 'Piyo'],
   ],
-  className: 'list-disc text-red-900',
+  className: 'list-disc text-red-900 dark:text-red-200',
   order: false,
 };

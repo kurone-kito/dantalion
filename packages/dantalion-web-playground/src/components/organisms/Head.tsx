@@ -1,4 +1,4 @@
-import Head from 'next/head';
+import NextHead from 'next/head';
 import { useTranslation } from 'react-i18next';
 import { VFC } from 'react';
 import Title from '../atoms/head/Title';
@@ -13,12 +13,12 @@ export interface Props {
   readonly pageName?: string;
 }
 
-const Component: VFC<Props> = ({ pageName = '' }) => {
+const Head: VFC<Props> = ({ pageName }) => {
   const { t } = useTranslation();
   return (
     <>
       <Title appName={appName} pageName={pageName} />
-      <Head>
+      <NextHead>
         <HeadContents
           baseUrl={process.env.assetPrefix}
           author={`${t('web.author')}, @kurone_kito`}
@@ -47,10 +47,10 @@ const Component: VFC<Props> = ({ pageName = '' }) => {
           ]}
           pageName={pageName}
         />
-      </Head>
+      </NextHead>
     </>
   );
 };
-Component.displayName = 'Head';
+Head.displayName = 'Head';
 
-export default Component;
+export default Head;

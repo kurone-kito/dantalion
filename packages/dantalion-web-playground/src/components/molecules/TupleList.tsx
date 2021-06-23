@@ -8,7 +8,7 @@ export interface Props extends Omit<ListProps, 'children'> {
 }
 
 /** The generic list component which its items allow the Markdown format. */
-const Component: VFC<Props> = ({ children, ...props }) => (
+const TupleList: VFC<Props> = ({ children, ...props }) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <List {...props}>
     {children?.map(([caption, content], index) => (
@@ -20,6 +20,6 @@ const Component: VFC<Props> = ({ children, ...props }) => (
     ))}
   </List>
 );
-Component.displayName = 'TupleList';
+TupleList.displayName = 'TupleList';
 
-export default Component;
+export default TupleList;

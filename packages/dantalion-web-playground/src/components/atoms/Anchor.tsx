@@ -18,7 +18,7 @@ export interface Props {
 }
 
 /** The anchor component */
-const Component: VFC<Props> = ({
+const Anchor: VFC<Props> = ({
   children,
   className,
   href,
@@ -28,7 +28,10 @@ const Component: VFC<Props> = ({
 }) => (
   // eslint-disable-next-line react/jsx-no-target-blank
   <a
-    className={classNames('text-blue-800 hover:text-blue-500', className)}
+    className={classNames(
+      'text-blue-800 dark:text-blue-300 dark:hover:text-blue-100 hover:text-blue-500',
+      className
+    )}
     href={href}
     rel={classNames('noopener noreferrer', { nofollow })}
     tabIndex={0}
@@ -39,6 +42,6 @@ const Component: VFC<Props> = ({
     {children}
   </a>
 );
-Component.displayName = 'Anchor';
+Anchor.displayName = 'Anchor';
 
-export default Component;
+export default Anchor;

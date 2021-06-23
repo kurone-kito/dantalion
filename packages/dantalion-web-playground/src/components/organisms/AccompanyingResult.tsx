@@ -17,7 +17,7 @@ export interface Props {
 }
 
 /** The accompany results component. */
-const Component: VFC<Props> = ({ accessors, nickname, details }) => (
+const AccompanyingResult: VFC<Props> = ({ accessors, nickname, details }) => (
   <>
     <ResultDetail
       content={accessors.brain.getByKey(details.brain)}
@@ -46,6 +46,6 @@ const Component: VFC<Props> = ({ accessors, nickname, details }) => (
     />
   </>
 );
-Component.displayName = 'AccompanyingResult';
+AccompanyingResult.displayName = 'AccompanyingResult';
 
-export default Component;
+export default AccompanyingResult;

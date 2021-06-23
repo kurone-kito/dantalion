@@ -10,7 +10,7 @@ export interface Props {
 const root = '/';
 
 /** The links list component. */
-const Component: VFC<Props> = ({ baseUrl = '' }) => {
+const Links: VFC<Props> = ({ baseUrl = '' }) => {
   const rootUrl = baseUrl || root;
   return (
     <>
@@ -57,6 +57,6 @@ const Component: VFC<Props> = ({ baseUrl = '' }) => {
     </>
   );
 };
-Component.displayName = 'Links';
+Links.displayName = 'Links';
 
-export default Component;
+export default Links;

@@ -20,7 +20,7 @@ export interface Props {
 }
 
 /** The detail of result */
-const Component: VFC<Props> = ({
+const ResultDetail: VFC<Props> = ({
   children,
   heading,
   headingDetail,
@@ -42,6 +42,6 @@ const Component: VFC<Props> = ({
     {children}
   </ResultFrame>
 );
-Component.displayName = 'ResultDetail';
+ResultDetail.displayName = 'ResultDetail';
 
-export default Component;
+export default ResultDetail;

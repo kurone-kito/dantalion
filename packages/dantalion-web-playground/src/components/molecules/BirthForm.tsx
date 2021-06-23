@@ -36,7 +36,7 @@ export interface Props {
 }
 
 /** The birthday form component. */
-const Component: VFC<Props> = ({
+const BirthForm: VFC<Props> = ({
   birthday,
   birthdayLabel,
   buttonLabel,
@@ -48,9 +48,14 @@ const Component: VFC<Props> = ({
   onSubmit,
   notes,
 }) => (
-  <form className="nm-flat-gray-300-xs p-6 md:rounded-3xl" onSubmit={onSubmit}>
+  <form
+    className="nm-flat-gray-300-xs p-6 dark:nm-flat-gray-600-xs md:rounded-3xl"
+    onSubmit={onSubmit}
+  >
     <fieldset>
-      <legend className="font-light text-xl">{legendLabel}</legend>
+      <legend className="font-light text-gray-700 text-xl dark:text-gray-200">
+        {legendLabel}
+      </legend>
       <Input
         autoComplete="bday"
         defaultValue={birthday}
@@ -76,7 +81,7 @@ const Component: VFC<Props> = ({
         placeholder={nicknameLabel}
         type="text"
       />
-      <List className="text-red-900 text-sm">{notes}</List>
+      <List className="text-red-900 text-sm dark:text-red-200">{notes}</List>
       <Button>
         <FontAwesomeIcon className="animate-pulse mx-2" icon={faSearch} />
         {buttonLabel}
@@ -84,6 +89,6 @@ const Component: VFC<Props> = ({
     </fieldset>
   </form>
 );
-Component.displayName = 'BirthForm';
+BirthForm.displayName = 'BirthForm';
 
-export default Component;
+export default BirthForm;

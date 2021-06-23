@@ -5,13 +5,13 @@ export interface Props {
   readonly __?: unknown;
 }
 
-const Component: VFC<Props> = () => (
+const HeroHeader: VFC<Props> = () => (
   <header className="bg-gray-200 flex">
     <h1>
       <Logo />
     </h1>
   </header>
 );
-Component.displayName = 'HeroHeader';
+HeroHeader.displayName = 'HeroHeader';
 
-export default Component;
+export default HeroHeader;

@@ -18,7 +18,12 @@ export interface Props {
 }
 
 /** The detail component. */
-const Component: VFC<Props> = ({ accessor, nickname, strategy, vector }) => {
+const VectorResultDetail: VFC<Props> = ({
+  accessor,
+  nickname,
+  strategy,
+  vector,
+}) => {
   const { t } = useTranslation();
   const heading = accessor.getCategoryDetail();
   const detail = accessor.getByKey(vector);
@@ -35,6 +40,6 @@ const Component: VFC<Props> = ({ accessor, nickname, strategy, vector }) => {
     </ResultDetail>
   );
 };
-Component.displayName = 'VectorResultDetail';
+VectorResultDetail.displayName = 'VectorResultDetail';
 
-export default Component;
+export default VectorResultDetail;

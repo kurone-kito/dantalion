@@ -11,4 +11,4 @@ const Template: Story<Props> = ({ author, children }) => (
 );
 
 export const Default = Template.bind({});
-Default.args = { author: 'Author', children: 'Children' };
+Default.args = { author: 'Author', children: ['Children'] };

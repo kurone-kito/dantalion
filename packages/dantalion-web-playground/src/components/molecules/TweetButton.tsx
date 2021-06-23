@@ -27,10 +27,10 @@ const createUrl = ({ hashtag, text, url }: Omit<Props, 'children'>) =>
   ].join('');
 
 /** Tweet button component. */
-const Component: VFC<Props> = ({ children, ...props }) => (
+const TweetButton: VFC<Props> = ({ children, ...props }) => (
   <p className="text-center mb-4 select-none">
     <Anchor
-      className="block duration-200 ease-in-out flex-grow font-bold leading-5 nm-flat-indigo-100 px-8 py-4 rounded-full text-md sm:text-xl tracking-widest transform transition uppercase hover:nm-flat-blue-50-lg"
+      className="block duration-200 ease-in-out flex-grow font-bold leading-5 nm-flat-indigo-100 px-8 py-4 rounded-full text-md sm:text-xl tracking-widest transform transition uppercase dark:nm-flat-purple-800 dark:hover:nm-flat-purple-900 hover:nm-flat-blue-50-lg"
       href={createUrl(props)}
       noblank
       nofollow
@@ -40,6 +40,6 @@ const Component: VFC<Props> = ({ children, ...props }) => (
     </Anchor>
   </p>
 );
-Component.displayName = 'TweetButton';
+TweetButton.displayName = 'TweetButton';
 
-export default Component;
+export default TweetButton;

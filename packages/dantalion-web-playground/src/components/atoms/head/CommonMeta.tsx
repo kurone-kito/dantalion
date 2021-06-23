@@ -19,7 +19,7 @@ export interface Props {
 }
 
 /** The minimum metadata component. */
-const Component: VFC<Props> = ({
+const CommonMeta: VFC<Props> = ({
   appName,
   author,
   color,
@@ -27,11 +27,16 @@ const Component: VFC<Props> = ({
   keywords,
 }) => (
   <>
+    <script
+      type="text/javascript"
+      // eslint-disable-next-line react/no-danger
+      dangerouslySetInnerHTML={{ __html: process.env.applyDarkMode ?? '' }}
+    />
     <meta httpEquiv="cleartype" content="on" />
     <meta httpEquiv="x-ua-compatible" content="ie=Edge" />
     {!!appName && <meta name="application-name" content={appName} />}
     {!!author && <meta name="author" content={author} />}
-    <meta name="color-scheme" content="only light" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="coverage" content="Worldwide" />
     {!!description && <meta name="description" content={description} />}
     <meta name="format-detection" content="telephone=no" />
@@ -42,6 +47,6 @@ const Component: VFC<Props> = ({
     {!!color && <meta name="theme-color" content={color} />}
   </>
 );
-Component.displayName = 'CommonMeta';
+CommonMeta.displayName = 'CommonMeta';
 
-export default Component;
+export default CommonMeta;

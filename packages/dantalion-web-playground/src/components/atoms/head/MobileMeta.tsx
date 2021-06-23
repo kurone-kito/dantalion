@@ -13,7 +13,7 @@ export interface Props {
 }
 
 /** The component of metadata for mobile browser. */
-const Component: VFC<Props> = ({
+const MobileMeta: VFC<Props> = ({
   appName,
   color,
   description,
@@ -39,6 +39,6 @@ const Component: VFC<Props> = ({
     />
   </>
 );
-Component.displayName = 'MobileMeta';
+MobileMeta.displayName = 'MobileMeta';
 
-export default Component;
+export default MobileMeta;

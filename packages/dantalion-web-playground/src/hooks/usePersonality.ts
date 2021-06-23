@@ -34,7 +34,13 @@ export const usePSRedirection = ({
       e.preventDefault();
       const ps = getPersonality(birthday);
       const n = Base64.encode(nickname, true);
-      return ps && route({ result: `${encode(ps)}${n && `${spliter}${n}`}` });
+      return (
+        ps &&
+        route({
+          genius: ps.inner,
+          result: `${encode(ps)}${n && `${spliter}${n}`}`,
+        })
+      );
     },
     [birthday, nickname, route]
   );
