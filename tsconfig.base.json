@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
@@ -8,7 +10,14 @@
     "incremental": true,
     "module": "commonjs",
     "moduleResolution": "node",
+    "newLine": "LF",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "paths": {},
+    "preserveWatchOutput": true,
     "resolveJsonModule": true,
     "sourceMap": true,
     "strict": true,
