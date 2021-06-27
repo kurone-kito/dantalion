@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise */
 import { Personality, types } from '@kurone-kito/dantalion-core';
 import { Base64 } from 'js-base64';
-import chunk from 'lodash.chunk';
+import chunk from 'lodash/chunk';
 
 export interface PSWithName extends Personality {
   readonly name?: string;

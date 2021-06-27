@@ -1,5 +1,5 @@
 import '../src/styles/global.css';
-import DocsContainer from './components/DocContainer';
+import DocsContainer from './components/DocsContainer';
 
 export const parameters = {
   actions: { argTypesRegex: '^on[A-Z].*' },

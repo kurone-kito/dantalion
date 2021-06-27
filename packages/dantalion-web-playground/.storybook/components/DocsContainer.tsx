@@ -3,8 +3,8 @@ import {
   DocsContainer as BaseContainer,
   DocsContainerProps,
   DocsContextProps,
-} from '@storybook/addon-docs/blocks';
-import merge from 'lodash.merge';
+} from '@storybook/addon-docs';
+import merge from 'lodash/merge';
 import { useDarkMode } from 'storybook-dark-mode';
 import { themes } from '@storybook/theming';
 
