@@ -30,7 +30,7 @@ const CommonMeta: VFC<Props> = ({
     <script
       type="text/javascript"
       // eslint-disable-next-line react/no-danger
-      dangerouslySetInnerHTML={{ __html: process.env.applyDarkMode ?? '' }}
+      dangerouslySetInnerHTML={{ __html: process.env['applyDarkMode'] ?? '' }}
     />
     <meta httpEquiv="cleartype" content="on" />
     <meta httpEquiv="x-ua-compatible" content="ie=Edge" />

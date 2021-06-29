@@ -20,7 +20,7 @@ const Head: VFC<Props> = ({ pageName }) => {
       <Title appName={appName} pageName={pageName} />
       <NextHead>
         <HeadContents
-          baseUrl={process.env.assetPrefix}
+          baseUrl={process.env['assetPrefix']}
           author={`${t('web.author')}, @kurone_kito`}
           appName={appName}
           article={!!pageName}

@@ -23,7 +23,7 @@ const excludes = Object.freeze(['genius', 'lang']);
 /** Detect the language from the query. */
 export const useGenius = (): Genius | undefined => {
   const { query } = useRouter();
-  const result = query.genius ?? query.lang;
+  const result = query['genius'] ?? query['lang'];
   return typeof result === 'string' &&
     !Number.isNaN(Number.parseInt(result, 10))
     ? (result as Genius)

@@ -13,25 +13,27 @@ const keys = ['automatic', 'light', 'dark'] as const;
 const useOnChange = (): ChangeEventHandler<HTMLSelectElement> => {
   return useCallback(async (e) => {
     const root = window.document.getElementsByTagName('html')[0];
-    switch (e.currentTarget.value) {
-      case 'automatic':
-        localStorage.removeItem('theme');
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    if (root) {
+      switch (e.currentTarget.value) {
+        case 'automatic':
+          localStorage.removeItem('theme');
+          if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            root.classList.add('dark');
+          } else {
+            root.classList.remove('dark');
+          }
+          break;
+        case 'dark':
+          localStorage['theme'] = 'dark';
           root.classList.add('dark');
-        } else {
+          break;
+        case 'light':
+          localStorage['theme'] = 'light';
           root.classList.remove('dark');
-        }
-        break;
-      case 'dark':
-        localStorage.theme = 'dark';
-        root.classList.add('dark');
-        break;
-      case 'light':
-        localStorage.theme = 'light';
-        root.classList.remove('dark');
-        break;
-      default:
-        break;
+          break;
+        default:
+          break;
+      }
     }
     e.preventDefault();
   }, []);
@@ -48,7 +50,9 @@ const AppearanceSelector: VFC = () => {
   );
   return isSsr() ? null : (
     <Select
-      defaultValue={!('theme' in localStorage) ? undefined : localStorage.theme}
+      defaultValue={
+        !('theme' in localStorage) ? undefined : localStorage['theme']
+      }
       id="appearance"
       label={t('web.appearance.name')}
       onChange={onChange}
