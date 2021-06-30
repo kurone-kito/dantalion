@@ -1,3 +1,6 @@
+/** @typedef {import('@storybook/core-common').StorybookConfig} StorybookConfig */
+
+/** @type {StorybookConfig} */
 module.exports = {
   addons: [
     '@storybook/addon-essentials',
@@ -9,5 +12,5 @@ module.exports = {
   ],
   core: { builder: 'webpack5' },
   stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
-  typescript: { check: true, reactDocgen: 'react-docgen-typescript' },
+  typescript: { check: true },
 };
