@@ -28,11 +28,9 @@ const CommonMeta: VFC<Props> = ({
 }) => (
   <>
     <script
-      type="text/javascript"
       // eslint-disable-next-line react/no-danger
       dangerouslySetInnerHTML={{ __html: process.env['applyDarkMode'] ?? '' }}
     />
-    <meta httpEquiv="cleartype" content="on" />
     <meta httpEquiv="x-ua-compatible" content="ie=Edge" />
     {!!appName && <meta name="application-name" content={appName} />}
     {!!author && <meta name="author" content={author} />}

@@ -3,6 +3,7 @@ import type { VFC } from 'react';
 const Logo: VFC = () => (
   <svg
     className="h-full w-full"
+    role="banner"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 960 190"
   >
