@@ -30,6 +30,9 @@
       ],
       "submit": "Check the personality!"
     },
+    "header": {
+      "menu": "Open the main menu"
+    },
     "install": [
       "```sh",
       "# Using for CLI (Linux / macOS / Windows / or others Node.js >= v12.1 environment)",
