@@ -1,6 +1,6 @@
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 import type { ReactNode, VFC } from 'react';
-import IconAnchor from './IconAnchor';
+import { IconAnchor } from './IconAnchor';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -15,7 +15,12 @@ export interface Props {
 }
 
 /** The external anchor component */
-const ExternalAnchor: VFC<Props> = ({ children, href, nofollow, tooltip }) => (
+export const ExternalAnchor: VFC<Props> = ({
+  children,
+  href,
+  nofollow,
+  tooltip,
+}) => (
   <IconAnchor
     href={href}
     icon={faExternalLinkAlt}
@@ -28,5 +33,3 @@ const ExternalAnchor: VFC<Props> = ({ children, href, nofollow, tooltip }) => (
   </IconAnchor>
 );
 ExternalAnchor.displayName = 'ExternalAnchor';
-
-export default ExternalAnchor;

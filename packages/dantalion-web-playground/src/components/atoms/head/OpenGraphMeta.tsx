@@ -20,7 +20,7 @@ export interface Props {
 }
 
 /** The component of metadata for social site. */
-const OpenGraphMeta: VFC<Props> = ({
+export const OpenGraphMeta: VFC<Props> = ({
   appName,
   article,
   bannerHeight,
@@ -56,5 +56,3 @@ const OpenGraphMeta: VFC<Props> = ({
   </>
 );
 OpenGraphMeta.displayName = 'OpenGraphMeta';
-
-export default OpenGraphMeta;

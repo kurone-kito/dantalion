@@ -1,7 +1,7 @@
 import type { VFC } from 'react';
 import { useTranslation } from 'react-i18next';
 import useIsSsr from '../../hooks/useIsSsr';
-import MoleculesTweetButton from '../molecules/TweetButton';
+import { TweetButton as MoleculesTweetButton } from '../molecules/TweetButton';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -12,7 +12,7 @@ export interface Props {
 }
 
 /** Tweet button component. */
-const TweetButton: VFC<Props> = ({ hooks, nickname }) => {
+export const TweetButton: VFC<Props> = ({ hooks, nickname }) => {
   const { t } = useTranslation();
   const isSsr = useIsSsr();
   return (
@@ -26,5 +26,3 @@ const TweetButton: VFC<Props> = ({ hooks, nickname }) => {
   );
 };
 TweetButton.displayName = 'TweetButton';
-
-export default TweetButton;

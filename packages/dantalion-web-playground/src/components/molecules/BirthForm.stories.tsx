@@ -1,6 +1,6 @@
 import type { Meta, Story } from '@storybook/react';
 import { useCallback } from 'react';
-import BirthForm, { Props } from './BirthForm';
+import { BirthForm, Props } from './BirthForm';
 
 export default Object.freeze<Meta>({
   argTypes: {

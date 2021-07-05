@@ -1,6 +1,6 @@
 import { ChangeEventHandler, useCallback, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
-import MoleculesBirthForm from '../molecules/BirthForm';
+import { BirthForm as MoleculesBirthForm } from '../molecules/BirthForm';
 import { usePSRedirection } from '../../hooks/usePersonality';
 import FormReducer, {
   setBirthday,
@@ -8,7 +8,8 @@ import FormReducer, {
 } from '../../stores/FormReducer';
 
 /** The birthday form component. */
-const BirthForm: VFC = () => {
+// eslint-disable-next-line import/prefer-default-export
+export const BirthForm: VFC = () => {
   const { t } = useTranslation();
   const [state, action] = FormReducer.useContainer();
   return (
@@ -33,5 +34,3 @@ const BirthForm: VFC = () => {
   );
 };
 BirthForm.displayName = 'BirthForm';
-
-export default BirthForm;

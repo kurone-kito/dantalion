@@ -1,5 +1,5 @@
 import type { Meta, Story } from '@storybook/react';
-import Select, { Props } from './Select';
+import { Props, Select } from './Select';
 
 export default Object.freeze<Meta>({
   argTypes: { onChange: { action: 'changed' } },

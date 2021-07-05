@@ -3,15 +3,15 @@ import { createAccessors } from '@kurone-kito/dantalion-i18n';
 import { useTranslation } from 'react-i18next';
 import { useMemo, VFC } from 'react';
 import ReactMarkdown from 'react-markdown';
-import Anchor from '../atoms/Anchor';
-import Header from '../atoms/Header';
-import Article from '../molecules/Article';
-import Footer from '../molecules/Footer';
-import BirthForm from '../organisms/BirthForm';
-import Head from '../organisms/Head';
-import AppearanceSelector from '../organisms/AppearanceSelector';
-import LanguageSelector from '../organisms/LanguageSelector';
-import Result from '../organisms/Result';
+import { Anchor } from '../atoms/Anchor';
+import { Header } from '../atoms/Header';
+import { Article } from '../molecules/Article';
+import { Footer } from '../molecules/Footer';
+import { BirthForm } from '../organisms/BirthForm';
+import { Head } from '../organisms/Head';
+import { AppearanceSelector } from '../organisms/AppearanceSelector';
+import { LanguageSelector } from '../organisms/LanguageSelector';
+import { Result } from '../organisms/Result';
 import { usePSDecoder } from '../../hooks/usePersonality';
 import FormReducer from '../../stores/FormReducer';
 
@@ -20,7 +20,7 @@ export interface Props {
   readonly inner?: Genius;
 }
 
-const Template: VFC<Props> = ({ inner }) => {
+export const Template: VFC<Props> = ({ inner }) => {
   const { t } = useTranslation();
   const accessors = useMemo(() => createAccessors(t), [t]);
   const [ps, nickname] = usePSDecoder();
@@ -70,5 +70,3 @@ const Template: VFC<Props> = ({ inner }) => {
   );
 };
 Template.displayName = 'Template';
-
-export default Template;

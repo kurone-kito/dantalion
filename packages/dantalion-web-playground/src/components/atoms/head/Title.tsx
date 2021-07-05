@@ -6,11 +6,9 @@ import createTitle, { Options } from '../../../utils/createTitle';
 export type Props = Options;
 
 /** The page title component. */
-const Title: VFC<Props> = (props) => (
+export const Title: VFC<Props> = (props) => (
   <Head>
     <title>{createTitle(props)}</title>
   </Head>
 );
 Title.displayName = 'Title';
-
-export default Title;

@@ -2,15 +2,15 @@ import type { Detail, Genius, Personality } from '@kurone-kito/dantalion-core';
 import { createAccessors } from '@kurone-kito/dantalion-i18n';
 import { useMemo, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
-import AccompanyingResult from './AccompanyingResult';
-import GeniusResultDetail from './GeniusResultDetail';
-import LifeBaseResultDetail from './LifeBaseResultDetail';
-import MotivationResultDetail from './MotivationResultDetail';
-import PotentialResultDetail from './PotentialResultDetail';
-import PersonalityFileId from './PersonalityFileId';
-import SubGeniusResultDetail from './SubGeniusResultDetail';
-import TweetButton from './TweetButton';
-import VectorResultDetail from './VectorResultDetail';
+import { AccompanyingResult } from './AccompanyingResult';
+import { GeniusResultDetail } from './GeniusResultDetail';
+import { LifeBaseResultDetail } from './LifeBaseResultDetail';
+import { MotivationResultDetail } from './MotivationResultDetail';
+import { PotentialResultDetail } from './PotentialResultDetail';
+import { PersonalityFileId } from './PersonalityFileId';
+import { SubGeniusResultDetail } from './SubGeniusResultDetail';
+import { TweetButton } from './TweetButton';
+import { VectorResultDetail } from './VectorResultDetail';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -25,7 +25,12 @@ export interface Props {
 }
 
 /** The result component. */
-const Result: VFC<Props> = ({ detail, inner, nickname, personality }) => {
+export const Result: VFC<Props> = ({
+  detail,
+  inner,
+  nickname,
+  personality,
+}) => {
   const { t } = useTranslation();
   const accessors = useMemo(() => createAccessors(t), [t]);
   const descriptions = accessors.getDescription();
@@ -88,5 +93,3 @@ const Result: VFC<Props> = ({ detail, inner, nickname, personality }) => {
   ) : null;
 };
 Result.displayName = 'Result';
-
-export default Result;

@@ -1,6 +1,6 @@
 import type { VFC } from 'react';
-import InlineMarkdown from '../atoms/InlineMarkdown';
-import List, { Props as ListProps } from '../atoms/List';
+import { InlineMarkdown } from '../atoms/InlineMarkdown';
+import { List, Props as ListProps } from '../atoms/List';
 
 /** Type definition of the required attributes. */
 export interface Props extends Omit<ListProps, 'children'> {
@@ -9,7 +9,7 @@ export interface Props extends Omit<ListProps, 'children'> {
 }
 
 /** The generic list component which its items allow the Markdown format. */
-const InlineMarkdownList: VFC<Props> = ({ children, ...props }) => (
+export const InlineMarkdownList: VFC<Props> = ({ children, ...props }) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <List {...props}>
     {children?.map((child) => (
@@ -18,5 +18,3 @@ const InlineMarkdownList: VFC<Props> = ({ children, ...props }) => (
   </List>
 );
 InlineMarkdownList.displayName = 'InlineMarkdownList';
-
-export default InlineMarkdownList;

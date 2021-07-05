@@ -6,7 +6,7 @@ import type {
 import { useMemo, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
-import InlineMarkdownList from '../molecules/InlineMarkdownList';
+import { InlineMarkdownList } from '../molecules/InlineMarkdownList';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -40,7 +40,7 @@ const createSource = ({
   ]);
 
 /** The result component. */
-const SubGeniusResultDetail: VFC<Props> = ({
+export const SubGeniusResultDetail: VFC<Props> = ({
   descriptions,
   details,
   inner,
@@ -70,5 +70,3 @@ const SubGeniusResultDetail: VFC<Props> = ({
   );
 };
 SubGeniusResultDetail.displayName = 'SubGeniusResultDetail';
-
-export default SubGeniusResultDetail;

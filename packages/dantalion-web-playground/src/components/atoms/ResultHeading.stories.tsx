@@ -1,5 +1,5 @@
 import type { Meta, Story } from '@storybook/react';
-import ResultHeading, { Props } from './ResultHeading';
+import { Props, ResultHeading } from './ResultHeading';
 
 export default Object.freeze<Meta>({
   component: ResultHeading,

@@ -1,7 +1,7 @@
 import { ChangeEventHandler, useCallback, useMemo, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Select } from '../atoms/Select';
 import useIsSsr from '../../hooks/useIsSsr';
-import Select from '../atoms/Select';
 
 /** The type definition of the source. */
 type Source = readonly (readonly [string, string])[];
@@ -40,7 +40,8 @@ const useOnChange = (): ChangeEventHandler<HTMLSelectElement> => {
 };
 
 /** The appearance select component. */
-const AppearanceSelector: VFC = () => {
+// eslint-disable-next-line import/prefer-default-export
+export const AppearanceSelector: VFC = () => {
   const { t } = useTranslation();
   const isSsr = useIsSsr();
   const onChange = useOnChange();
@@ -61,5 +62,3 @@ const AppearanceSelector: VFC = () => {
   );
 };
 AppearanceSelector.displayName = 'AppearanceSelector';
-
-export default AppearanceSelector;

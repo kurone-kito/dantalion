@@ -1,5 +1,5 @@
 import type { Meta, Story } from '@storybook/react';
-import Input, { Props } from './Input';
+import { Input, Props } from './Input';
 
 export default Object.freeze<Meta>({
   argTypes: { onBlur: { action: 'blured' }, onChange: { action: 'changed' } },

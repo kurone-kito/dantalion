@@ -1,5 +1,5 @@
 import type { ReactNode, VFC } from 'react';
-import InlineMarkdown from './InlineMarkdown';
+import { InlineMarkdown } from './InlineMarkdown';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -14,7 +14,7 @@ export interface Props {
 }
 
 /** The heading for result */
-const ResultHeading: VFC<Props> = ({
+export const ResultHeading: VFC<Props> = ({
   additional,
   children,
   detail = '',
@@ -37,5 +37,3 @@ const ResultHeading: VFC<Props> = ({
   </header>
 );
 ResultHeading.displayName = 'ResultHeading';
-
-export default ResultHeading;

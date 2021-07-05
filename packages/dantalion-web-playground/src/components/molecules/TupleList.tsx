@@ -1,5 +1,5 @@
 import type { ReactNode, VFC } from 'react';
-import List, { Props as ListProps } from '../atoms/List';
+import { List, Props as ListProps } from '../atoms/List';
 
 /** Type definition of the required attributes. */
 export interface Props extends Omit<ListProps, 'children'> {
@@ -8,7 +8,7 @@ export interface Props extends Omit<ListProps, 'children'> {
 }
 
 /** The generic list component which its items allow the Markdown format. */
-const TupleList: VFC<Props> = ({ children, ...props }) => (
+export const TupleList: VFC<Props> = ({ children, ...props }) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <List {...props}>
     {children?.map(([caption, content], index) => (
@@ -21,5 +21,3 @@ const TupleList: VFC<Props> = ({ children, ...props }) => (
   </List>
 );
 TupleList.displayName = 'TupleList';
-
-export default TupleList;

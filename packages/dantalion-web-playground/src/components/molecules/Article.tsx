@@ -1,7 +1,7 @@
 import type { ReactNode, VFC } from 'react';
 import ReactMarkdown from 'react-markdown';
-import Details from './Details';
-import ExternalAnchor from './ExternalAnchor';
+import { Details } from './Details';
+import { ExternalAnchor } from './ExternalAnchor';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -16,7 +16,7 @@ export interface Props {
 }
 
 /** The main article component */
-const Article: VFC<Props> = ({
+export const Article: VFC<Props> = ({
   children,
   featureBody,
   featureHeading,
@@ -49,5 +49,3 @@ const Article: VFC<Props> = ({
   </article>
 );
 Article.displayName = 'Article';
-
-export default Article;

@@ -1,5 +1,5 @@
 import type { Meta, Story } from '@storybook/react';
-import TupleList, { Props } from './TupleList';
+import { Props, TupleList } from './TupleList';
 
 export default Object.freeze<Meta>({
   component: TupleList,

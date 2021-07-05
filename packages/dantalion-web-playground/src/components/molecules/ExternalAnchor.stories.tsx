@@ -1,5 +1,5 @@
 import type { Meta, Story } from '@storybook/react';
-import ExternalAnchor, { Props } from './ExternalAnchor';
+import { ExternalAnchor, Props } from './ExternalAnchor';
 
 export default Object.freeze<Meta>({
   component: ExternalAnchor,

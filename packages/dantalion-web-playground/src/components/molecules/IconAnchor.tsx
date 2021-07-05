@@ -1,7 +1,7 @@
 import type { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { ReactNode, VFC } from 'react';
-import Anchor from '../atoms/Anchor';
+import { Anchor } from '../atoms/Anchor';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -22,7 +22,7 @@ export interface Props {
 }
 
 /** The footer component */
-const IconAnchor: VFC<Props> = ({
+export const IconAnchor: VFC<Props> = ({
   children,
   href,
   icon,
@@ -42,5 +42,3 @@ const IconAnchor: VFC<Props> = ({
   );
 };
 IconAnchor.displayName = 'IconAnchor';
-
-export default IconAnchor;

@@ -7,9 +7,9 @@ import type {
   ReactNodeArray,
   VFC,
 } from 'react';
-import Button from '../atoms/Button';
-import Input from '../atoms/Input';
-import List from '../atoms/List';
+import { Button } from '../atoms/Button';
+import { Input } from '../atoms/Input';
+import { List } from '../atoms/List';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -36,7 +36,7 @@ export interface Props {
 }
 
 /** The birthday form component. */
-const BirthForm: VFC<Props> = ({
+export const BirthForm: VFC<Props> = ({
   birthday,
   birthdayLabel,
   buttonLabel,
@@ -90,5 +90,3 @@ const BirthForm: VFC<Props> = ({
   </form>
 );
 BirthForm.displayName = 'BirthForm';
-
-export default BirthForm;

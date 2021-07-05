@@ -1,5 +1,5 @@
 import type { Meta, Story } from '@storybook/react';
-import FooterNavigation, { Props } from './FooterNavigation';
+import { FooterNavigation, Props } from './FooterNavigation';
 
 export default Object.freeze<Meta>({
   component: FooterNavigation,

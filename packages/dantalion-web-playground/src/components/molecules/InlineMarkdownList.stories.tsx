@@ -1,15 +1,15 @@
 import type { Meta, Story } from '@storybook/react';
-import InlineMarkdown, { Props } from './InlineMarkdownList';
+import { InlineMarkdownList, Props } from './InlineMarkdownList';
 
 export default Object.freeze<Meta>({
-  component: InlineMarkdown,
-  title: `molecules/${InlineMarkdown.displayName}`,
+  component: InlineMarkdownList,
+  title: `molecules/${InlineMarkdownList.displayName}`,
 });
 
 const Template: Story<Props> = ({ children, className, itemType, order }) => (
-  <InlineMarkdown className={className} itemType={itemType} order={order}>
+  <InlineMarkdownList className={className} itemType={itemType} order={order}>
     {children}
-  </InlineMarkdown>
+  </InlineMarkdownList>
 );
 
 export const Default = Template.bind({});

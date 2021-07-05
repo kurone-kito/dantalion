@@ -6,8 +6,8 @@ import {
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import type { ReactNode, VFC } from 'react';
-import List from '../atoms/List';
-import IconAnchor from './IconAnchor';
+import { List } from '../atoms/List';
+import { IconAnchor } from './IconAnchor';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -16,7 +16,7 @@ export interface Props {
 }
 
 /** The footer component */
-const FooterNavigation: VFC<Props> = ({ author }) => (
+export const FooterNavigation: VFC<Props> = ({ author }) => (
   <List
     className="divide-x-2 divide-gray-500 divide-opacity-50 flex flex-row justify-center p-4"
     itemType={({ className, ...props }) => (
@@ -47,5 +47,3 @@ const FooterNavigation: VFC<Props> = ({ author }) => (
   </List>
 );
 FooterNavigation.displayName = 'FooterNavigation';
-
-export default FooterNavigation;

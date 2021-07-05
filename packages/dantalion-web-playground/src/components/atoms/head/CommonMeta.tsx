@@ -19,7 +19,7 @@ export interface Props {
 }
 
 /** The minimum metadata component. */
-const CommonMeta: VFC<Props> = ({
+export const CommonMeta: VFC<Props> = ({
   appName,
   author,
   color,
@@ -46,5 +46,3 @@ const CommonMeta: VFC<Props> = ({
   </>
 );
 CommonMeta.displayName = 'CommonMeta';
-
-export default CommonMeta;

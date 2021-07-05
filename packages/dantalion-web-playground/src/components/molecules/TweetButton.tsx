@@ -2,7 +2,7 @@ import { faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { stringify } from 'qs';
 import type { ReactNode, VFC } from 'react';
-import Anchor from '../atoms/Anchor';
+import { Anchor } from '../atoms/Anchor';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -27,7 +27,7 @@ const createUrl = ({ hashtag, text, url }: Omit<Props, 'children'>) =>
   ].join('');
 
 /** Tweet button component. */
-const TweetButton: VFC<Props> = ({ children, ...props }) => (
+export const TweetButton: VFC<Props> = ({ children, ...props }) => (
   <p className="text-center mb-4 select-none">
     <Anchor
       className="block duration-200 ease-in-out flex-grow font-bold leading-5 nm-flat-indigo-100 px-8 py-4 rounded-full text-md sm:text-xl tracking-widest transform transition uppercase dark:nm-flat-purple-800 dark:hover:nm-flat-purple-900 hover:nm-flat-blue-50-lg"
@@ -41,5 +41,3 @@ const TweetButton: VFC<Props> = ({ children, ...props }) => (
   </p>
 );
 TweetButton.displayName = 'TweetButton';
-
-export default TweetButton;

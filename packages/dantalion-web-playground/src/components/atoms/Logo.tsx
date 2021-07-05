@@ -1,6 +1,7 @@
 import type { VFC } from 'react';
 
-const Logo: VFC = () => (
+// eslint-disable-next-line import/prefer-default-export
+export const Logo: VFC = () => (
   <svg
     className="h-full w-full"
     role="banner"
@@ -36,5 +37,3 @@ const Logo: VFC = () => (
   </svg>
 );
 Logo.displayName = 'Logo';
-
-export default Logo;

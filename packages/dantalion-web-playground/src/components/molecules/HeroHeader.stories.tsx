@@ -1,5 +1,5 @@
 import type { Meta, Story } from '@storybook/react';
-import HeroHeader, { Props } from './HeroHeader';
+import { HeroHeader, Props } from './HeroHeader';
 
 export default Object.freeze<Meta>({
   argTypes: { onToggleMenu: { action: 'onToggleMenu' } },

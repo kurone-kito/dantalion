@@ -1,6 +1,6 @@
 import { faCat } from '@fortawesome/free-solid-svg-icons';
 import type { Meta, Story } from '@storybook/react';
-import IconAnchor, { Props } from './IconAnchor';
+import { IconAnchor, Props } from './IconAnchor';
 
 export default Object.freeze<Meta>({
   component: IconAnchor,

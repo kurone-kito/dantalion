@@ -1,5 +1,5 @@
 import type { Meta, Story } from '@storybook/react';
-import PersonalityFileId, { Props } from './PersonalityFileId';
+import { PersonalityFileId, Props } from './PersonalityFileId';
 
 export default Object.freeze<Meta>({
   component: PersonalityFileId,

@@ -1,8 +1,8 @@
 import NextHead from 'next/head';
 import { useTranslation } from 'react-i18next';
 import { VFC } from 'react';
-import Title from '../atoms/head/Title';
-import HeadContents from '../molecules/HeadContents';
+import { Title } from '../atoms/head/Title';
+import { HeadContents } from '../molecules/HeadContents';
 
 /** The web app name. */
 const appName = 'Dantalion';
@@ -13,7 +13,7 @@ export interface Props {
   readonly pageName?: string;
 }
 
-const Head: VFC<Props> = ({ pageName }) => {
+export const Head: VFC<Props> = ({ pageName }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -52,5 +52,3 @@ const Head: VFC<Props> = ({ pageName }) => {
   );
 };
 Head.displayName = 'Head';
-
-export default Head;

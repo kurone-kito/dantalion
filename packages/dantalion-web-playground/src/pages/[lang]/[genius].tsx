@@ -2,7 +2,7 @@ import { Genius, types } from '@kurone-kito/dantalion-core';
 import { locales } from '@kurone-kito/dantalion-i18n';
 import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import Template from '../../components/templates/Template';
+import { Template } from '../../components/templates/Template';
 import type { PageProps } from '../_app';
 
 /** Type definition of the required attributes. */

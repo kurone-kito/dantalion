@@ -1,5 +1,5 @@
 import type { Meta, Story } from '@storybook/react';
-import Button, { Props } from './Button';
+import { Button, Props } from './Button';
 
 export default Object.freeze<Meta>({
   argTypes: { onClick: { action: 'clicked' } },

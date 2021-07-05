@@ -1,8 +1,8 @@
 import type { VFC } from 'react';
-import CommonMeta from '../atoms/head/CommonMeta';
-import Links from '../atoms/head/Links';
-import MobileMeta from '../atoms/head/MobileMeta';
-import OpenGraphMeta from '../atoms/head/OpenGraphMeta';
+import { CommonMeta } from '../atoms/head/CommonMeta';
+import { Links } from '../atoms/head/Links';
+import { MobileMeta } from '../atoms/head/MobileMeta';
+import { OpenGraphMeta } from '../atoms/head/OpenGraphMeta';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -34,7 +34,7 @@ export interface Props {
   readonly pageName?: string;
 }
 
-const HeadContents: VFC<Props> = ({
+export const HeadContents: VFC<Props> = ({
   appName,
   article,
   author,
@@ -73,5 +73,3 @@ const HeadContents: VFC<Props> = ({
   </>
 );
 HeadContents.displayName = 'HeadContents';
-
-export default HeadContents;

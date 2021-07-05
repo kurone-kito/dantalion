@@ -2,7 +2,8 @@ import type { VFC } from 'react';
 import ReactMarkdown, { ReactMarkdownOptions } from 'react-markdown';
 
 /** The inline markdown component */
-const InlineMarkdown: VFC<ReactMarkdownOptions> = ({
+// eslint-disable-next-line import/prefer-default-export
+export const InlineMarkdown: VFC<ReactMarkdownOptions> = ({
   children,
   components,
   ...props
@@ -17,5 +18,3 @@ const InlineMarkdown: VFC<ReactMarkdownOptions> = ({
   </ReactMarkdown>
 );
 InlineMarkdown.displayName = 'InlineMarkdown';
-
-export default InlineMarkdown;

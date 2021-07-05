@@ -1,5 +1,5 @@
 import type { ReactNode, VFC } from 'react';
-import InlineMarkdownList from './InlineMarkdownList';
+import { InlineMarkdownList } from './InlineMarkdownList';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -18,7 +18,7 @@ export interface Props {
 /**
  * The collapsable list component which its items allow the Markdown format.
  */
-const Details: VFC<Props> = ({
+export const Details: VFC<Props> = ({
   caption,
   children,
   headingLevel: Heading = 'h4',
@@ -44,5 +44,3 @@ const Details: VFC<Props> = ({
   </details>
 );
 Details.displayName = 'Details';
-
-export default Details;

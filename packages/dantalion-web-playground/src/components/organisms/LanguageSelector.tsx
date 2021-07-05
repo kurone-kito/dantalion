@@ -2,7 +2,7 @@ import { getLocale, locales } from '@kurone-kito/dantalion-i18n';
 import { ChangeEventHandler, useCallback, useMemo, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLanguage, useRoute } from '../../hooks/useQuery';
-import Select from '../atoms/Select';
+import { Select } from '../atoms/Select';
 
 /** The type definition of the source. */
 type Source = readonly (readonly [string, string])[];
@@ -30,7 +30,8 @@ const useOnChange = (): ChangeEventHandler<HTMLSelectElement> => {
 };
 
 /** The language select component. */
-const LanguageSelector: VFC = () => {
+// eslint-disable-next-line import/prefer-default-export
+export const LanguageSelector: VFC = () => {
   const { t } = useTranslation();
   const language = useLanguage() ?? autoKey;
   const onChange = useOnChange();
@@ -49,5 +50,3 @@ const LanguageSelector: VFC = () => {
   );
 };
 LanguageSelector.displayName = 'LanguageSelector';
-
-export default LanguageSelector;

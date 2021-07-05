@@ -1,7 +1,7 @@
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { MouseEventHandler, ReactNode, VFC } from 'react';
-import Logo from '../atoms/Logo';
+import { Logo } from '../atoms/Logo';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -10,7 +10,7 @@ export interface Props {
   readonly onToggleMenu?: MouseEventHandler<HTMLButtonElement>;
 }
 
-const HeroHeader: VFC<Props> = ({ menuResource, onToggleMenu }) => (
+export const HeroHeader: VFC<Props> = ({ menuResource, onToggleMenu }) => (
   <header className="bg-gray-200 overflow-hidden text-gray-700 dark:bg-gray-700 dark:text-gray-200">
     <div className="pt-6 pb-16 sm:pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -39,5 +39,3 @@ const HeroHeader: VFC<Props> = ({ menuResource, onToggleMenu }) => (
   </header>
 );
 HeroHeader.displayName = 'HeroHeader';
-
-export default HeroHeader;

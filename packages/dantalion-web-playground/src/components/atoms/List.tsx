@@ -19,7 +19,7 @@ export interface Props {
 }
 
 /** The generical list component */
-const List: VFC<Props> = ({ children, className, itemType, order }) => {
+export const List: VFC<Props> = ({ children, className, itemType, order }) => {
   const Parent = order ? 'ol' : 'ul';
   const Item = itemType ?? 'li';
   return (
@@ -32,5 +32,3 @@ const List: VFC<Props> = ({ children, className, itemType, order }) => {
   );
 };
 List.displayName = 'List';
-
-export default List;

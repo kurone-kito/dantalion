@@ -1,8 +1,8 @@
 import type { Motivation } from '@kurone-kito/dantalion-core';
 import type { DetailAccessor } from '@kurone-kito/dantalion-i18n';
 import type { VFC } from 'react';
-import ResultFrame from '../atoms/ResultFrame';
-import TupleList from '../molecules/TupleList';
+import { ResultFrame } from '../atoms/ResultFrame';
+import { TupleList } from '../molecules/TupleList';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -13,7 +13,10 @@ export interface Props {
 }
 
 /** The result component. */
-const MotivationResultDetail: VFC<Props> = ({ accessors, motivation }) => (
+export const MotivationResultDetail: VFC<Props> = ({
+  accessors,
+  motivation,
+}) => (
   <ResultFrame>
     <TupleList className="list-disc pl-8">
       {[[accessors.getCategoryDetail(), accessors.getByKey(motivation)]]}
@@ -21,5 +24,3 @@ const MotivationResultDetail: VFC<Props> = ({ accessors, motivation }) => (
   </ResultFrame>
 );
 MotivationResultDetail.displayName = 'MotivationResultDetail';
-
-export default MotivationResultDetail;

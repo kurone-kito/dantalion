@@ -1,6 +1,6 @@
 import { Children, ReactNode, ReactNodeArray, VFC } from 'react';
-import Logo from '../atoms/Logo';
-import FooterNavigation from './FooterNavigation';
+import { Logo } from '../atoms/Logo';
+import { FooterNavigation } from './FooterNavigation';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -11,7 +11,7 @@ export interface Props {
 }
 
 /** The footer component */
-const Footer: VFC<Props> = ({ author, children }) => (
+export const Footer: VFC<Props> = ({ author, children }) => (
   <footer
     className="nm-flat-gray-300-xs mt-4 py-4 text-gray-700 text-sm dark:nm-flat-gray-600-xs dark:text-gray-200"
     role="contentinfo"
@@ -35,5 +35,3 @@ const Footer: VFC<Props> = ({ author, children }) => (
   </footer>
 );
 Footer.displayName = 'Footer';
-
-export default Footer;

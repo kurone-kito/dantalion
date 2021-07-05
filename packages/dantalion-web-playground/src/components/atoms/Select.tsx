@@ -15,7 +15,13 @@ export interface Props {
 }
 
 /** The select component. */
-const Select: VFC<Props> = ({ defaultValue, id, label, onChange, source }) => (
+export const Select: VFC<Props> = ({
+  defaultValue,
+  id,
+  label,
+  onChange,
+  source,
+}) => (
   <label className="flex flex-col sm:flex-row sm:items-center" htmlFor={id}>
     <span className="font-bold mb-1 text-sm tracking-widest text-gray-700 dark:text-gray-200 sm:mb-0 sm:mr-8 sm:w-1/4">
       {label}
@@ -43,5 +49,3 @@ const Select: VFC<Props> = ({ defaultValue, id, label, onChange, source }) => (
   </label>
 );
 Select.displayName = 'Select';
-
-export default Select;

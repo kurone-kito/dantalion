@@ -2,7 +2,7 @@ import type { Potential } from '@kurone-kito/dantalion-core';
 import type { DetailAccessor } from '@kurone-kito/dantalion-i18n';
 import type { VFC } from 'react';
 import { useTranslation } from 'react-i18next';
-import ResultDetail from '../molecules/ResultDetail';
+import { ResultDetail } from '../molecules/ResultDetail';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -18,7 +18,7 @@ export interface Props {
 }
 
 /** The result component. */
-const LifeBaseResultDetail: VFC<Props> = ({
+export const PotentialResultDetail: VFC<Props> = ({
   accessors,
   potentials,
   nickname,
@@ -34,6 +34,4 @@ const LifeBaseResultDetail: VFC<Props> = ({
     />
   );
 };
-LifeBaseResultDetail.displayName = 'LifeBaseResultDetail';
-
-export default LifeBaseResultDetail;
+PotentialResultDetail.displayName = 'PotentialResultDetail';

@@ -1,7 +1,7 @@
 import type { ReactNode, VFC } from 'react';
-import ResultFrame from '../atoms/ResultFrame';
-import ResultHeading from '../atoms/ResultHeading';
-import InlineMarkdownList from './InlineMarkdownList';
+import { ResultFrame } from '../atoms/ResultFrame';
+import { ResultHeading } from '../atoms/ResultHeading';
+import { InlineMarkdownList } from './InlineMarkdownList';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -20,7 +20,7 @@ export interface Props {
 }
 
 /** The detail of result */
-const ResultDetail: VFC<Props> = ({
+export const ResultDetail: VFC<Props> = ({
   children,
   heading,
   headingDetail,
@@ -43,5 +43,3 @@ const ResultDetail: VFC<Props> = ({
   </ResultFrame>
 );
 ResultDetail.displayName = 'ResultDetail';
-
-export default ResultDetail;

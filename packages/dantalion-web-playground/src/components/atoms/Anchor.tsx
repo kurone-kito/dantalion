@@ -18,7 +18,7 @@ export interface Props {
 }
 
 /** The anchor component */
-const Anchor: VFC<Props> = ({
+export const Anchor: VFC<Props> = ({
   children,
   className,
   href,
@@ -43,5 +43,3 @@ const Anchor: VFC<Props> = ({
   </a>
 );
 Anchor.displayName = 'Anchor';
-
-export default Anchor;

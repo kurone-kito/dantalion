@@ -1,7 +1,7 @@
 import type { Detail } from '@kurone-kito/dantalion-core';
 import type { Accessors } from '@kurone-kito/dantalion-i18n';
 import type { VFC } from 'react';
-import ResultDetail from './ResultDetail';
+import { ResultDetail } from './ResultDetail';
 
 /** Using keys for accessors. */
 type Keys = 'brain' | 'communication' | 'management' | 'position' | 'response';
@@ -17,7 +17,11 @@ export interface Props {
 }
 
 /** The accompany results component. */
-const AccompanyingResult: VFC<Props> = ({ accessors, nickname, details }) => (
+export const AccompanyingResult: VFC<Props> = ({
+  accessors,
+  nickname,
+  details,
+}) => (
   <>
     <ResultDetail
       content={accessors.brain.getByKey(details.brain)}
@@ -47,5 +51,3 @@ const AccompanyingResult: VFC<Props> = ({ accessors, nickname, details }) => (
   </>
 );
 AccompanyingResult.displayName = 'AccompanyingResult';
-
-export default AccompanyingResult;

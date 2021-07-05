@@ -2,8 +2,8 @@ import type { Vector } from '@kurone-kito/dantalion-core';
 import type { Accessors } from '@kurone-kito/dantalion-i18n';
 import type { ReactNode, VFC } from 'react';
 import { useTranslation } from 'react-i18next';
-import Details from '../molecules/Details';
-import ResultDetail from '../molecules/ResultDetail';
+import { Details } from '../molecules/Details';
+import { ResultDetail } from '../molecules/ResultDetail';
 
 /** Type definition of the required attributes. */
 export interface Props {
@@ -18,7 +18,7 @@ export interface Props {
 }
 
 /** The detail component. */
-const VectorResultDetail: VFC<Props> = ({
+export const VectorResultDetail: VFC<Props> = ({
   accessor,
   nickname,
   strategy,
@@ -41,5 +41,3 @@ const VectorResultDetail: VFC<Props> = ({
   );
 };
 VectorResultDetail.displayName = 'VectorResultDetail';
-
-export default VectorResultDetail;
