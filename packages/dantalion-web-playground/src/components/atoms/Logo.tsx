@@ -1,5 +1,6 @@
 import type { VFC } from 'react';
 
+/** The Dantalion's logo component */
 // eslint-disable-next-line import/prefer-default-export
 export const Logo: VFC = () => (
   <svg
