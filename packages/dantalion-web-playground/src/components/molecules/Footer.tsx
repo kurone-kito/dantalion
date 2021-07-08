@@ -17,7 +17,7 @@ export const Footer: VFC<Props> = ({ author, children }) => (
     role="contentinfo"
   >
     <nav className="flex flex-col mx-auto sm:flex-row lg:container">
-      <div className="hidden flex-shrink xl:block">
+      <div className="flex-2 hidden flex-shrink xl:block">
         <Logo />
       </div>
       <div className="flex flex-grow items-center justify-center">
