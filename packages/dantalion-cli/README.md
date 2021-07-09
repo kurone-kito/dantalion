@@ -26,8 +26,19 @@ _Four Pillars of Destiny (Ba-Zi)_.
 
 ## Usage
 
-- Require: Node.js >= v12.1
+- Require: Node.js >= v12.1 (Strongly recommend: >= 14.17)
 - OS independent (It's a terminal app)
+
+Dantalion will **no more support by Node.js version v12.x** soon.
+
+For the time being, the app maybe works fine in v12.x (will with a few warnings on install).
+However, several factors helped us to let go of the v12.x, including the following:
+
+1. We want to migrate our distribution from CommonJS to ES Modules in the future.
+2. The web playground crashes in specific environments such as Apple Silicon.
+   - We considered separating the web app version from monorepo and
+     moving it to a separate repository but decided it would be less
+     expensive to separate the v12.x support for the reasons in _1_.
 
 ### Install
 
