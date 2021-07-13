@@ -1,4 +1,4 @@
-import '../src/styles/global.css';
+import 'tailwindcss/tailwind.css';
 import DocsContainer from './components/DocsContainer';
 
 export const parameters = {

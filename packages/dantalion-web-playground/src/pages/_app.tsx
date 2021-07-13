@@ -1,7 +1,7 @@
 import type { Genius } from '@kurone-kito/dantalion-core';
 import type { AppProps } from 'next/app';
 import type { VFC } from 'react';
-import '../styles/global.css';
+import 'tailwindcss/tailwind.css';
 import useChangeLanguage from '../hooks/useChangeLanguage';
 import '../i18n';
 
