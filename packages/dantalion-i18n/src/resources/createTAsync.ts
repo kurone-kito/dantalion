@@ -27,11 +27,7 @@ export interface CreateTAsyncOptions extends Pick<InitOptions, 'lng'> {
   /** Specify the additional resources if you need */
   readonly additions?: ResourceLanguage;
   /** The use function is there to load additional plugins to i18next. */
-  readonly use?:
-    | Module
-    | Newable<Module>
-    | ThirdPartyModule[]
-    | Newable<ThirdPartyModule>[];
+  readonly use?: Module | Newable<Module> | Newable<ThirdPartyModule>;
 }
 
 /**
