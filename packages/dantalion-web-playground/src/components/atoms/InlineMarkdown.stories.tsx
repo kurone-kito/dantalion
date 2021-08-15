@@ -1,5 +1,5 @@
 import type { Meta, Story } from '@storybook/react';
-import type { ReactMarkdownOptions } from 'react-markdown';
+import type { Options } from 'react-markdown';
 import { InlineMarkdown } from './InlineMarkdown';
 
 export default Object.freeze<Meta>({
@@ -7,7 +7,7 @@ export default Object.freeze<Meta>({
   title: `atoms/${InlineMarkdown.displayName}`,
 });
 
-const Template: Story<ReactMarkdownOptions> = ({ children }) => (
+const Template: Story<Options> = ({ children }) => (
   <InlineMarkdown>{children}</InlineMarkdown>
 );
 

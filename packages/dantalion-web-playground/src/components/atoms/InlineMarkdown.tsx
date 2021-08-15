@@ -1,9 +1,9 @@
 import type { VFC } from 'react';
-import ReactMarkdown, { ReactMarkdownOptions } from 'react-markdown';
+import ReactMarkdown, { Options } from 'react-markdown';
 
 /** The inline markdown component */
 // eslint-disable-next-line import/prefer-default-export
-export const InlineMarkdown: VFC<ReactMarkdownOptions> = ({
+export const InlineMarkdown: VFC<Options> = ({
   children,
   components,
   ...props
