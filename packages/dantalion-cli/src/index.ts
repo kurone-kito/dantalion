@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import commander from 'commander';
+import { program } from 'commander';
 import { version } from '../package.json';
 import detail from './detail';
 import personality from './personality';
@@ -9,7 +9,7 @@ import showMd from './render/showMd';
 
 [detail, personality].forEach(
   ({ getDescriptionAsync, getObject, alias, command, description }) =>
-    commander
+    program
       .command(command)
       .alias(alias)
       .option('-r, --raw', 'Returns the raw JSON')
@@ -21,8 +21,8 @@ import showMd from './render/showMd';
       )
 );
 
-commander.version(version);
-commander.parse(process.argv);
+program.version(version);
+program.parse(process.argv);
 if (process.argv.length < 1) {
-  commander.help();
+  program.help();
 }
