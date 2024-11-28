@@ -17,7 +17,7 @@ The app can specify a birthday within the range from February 1, 1873, to Decemb
 
 ## Usage
 
-Require: Node.js >= v12.1
+Require: Node.js >= v18.20
 
 ### For those who want to use this app with CLI
 

@@ -1,21 +1,37 @@
 {
-  "eslint.workingDirectories": [
-    {
-      "changeProcessCWD": true,
-      "directory": "./packages/dantalion-cli"
-    },
-    {
-      "changeProcessCWD": true,
-      "directory": "./packages/dantalion-core"
-    },
-    {
-      "changeProcessCWD": true,
-      "directory": "./packages/dantalion-i18n"
-    },
-    {
-      "changeProcessCWD": true,
-      "directory": "./packages/dantalion-web-playground"
-    }
-  ],
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.md": "${capture}.*.md",
+    ".gitattributes": ".gitignore",
+    ".markdownlint.*": ".markdownlint-cli2.*",
+    ".tool-versions": ".node-version, .nvmrc",
+    "package.json": ".npmrc, pnpm-lock.yaml, pnpm-workspace.yaml",
+    "prettier.config.*": ".prettierignore",
+    "tsconfig.json": "*.tsbuildinfo"
+  },
+  "files.associations": {
+    ".imgbotconfig": "json",
+    "LICENSE": "plaintext"
+  },
+  "files.readonlyInclude": {
+    "**/node_modules/**/*": true
+  },
+  "files.watcherExclude": {
+    "**/.eslintcache": true,
+    "**/node_modules/**/*": true
+  },
+  "git.branchProtection": ["main"],
+  "search.exclude": {
+    "**/node_modules/**/*": true
+  },
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/packages/cspell-types/cspell.schema.json": [
+      "cspell.config.yml"
+    ],
+    "https://storage.googleapis.com/coderabbit_public_assets/schema.v2.json": [
+      ".coderabbit.yaml"
+    ]
+  }
 }

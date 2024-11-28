@@ -1,0 +1,11 @@
+### THE PROJECT SPECIFIES #################################################
+
+### Node ###
+# Husky
+.husky/_
+
+# Ignorefiles
+.*ignore
+
+# pnpm
+pnpm-lock.yaml

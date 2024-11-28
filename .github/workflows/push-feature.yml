@@ -1,50 +1,52 @@
-name: CI on push the feature branches
+name: The CI workflow on push
 on:
   push:
-    branches:
-      - '*'
-      - '!master'
+permissions:
+  contents: read
 jobs:
   build:
-    name: Build and testing code
-    runs-on: ubuntu-20.04
+    defaults:
+      run:
+        shell: ${{ matrix.platform.shell }}
+    name: The build process
+    runs-on: ${{ matrix.platform.os }}
+    steps:
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - name: Stages the pushed branch
+        uses: actions/checkout@v4
+      - name: Pre-prepare the Node.js version ${{ matrix.node-version }} environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Enable the corepack
+        run: corepack enable
+      - name: Post-prepare the Node.js version ${{ matrix.node-version }} environment
+        uses: actions/setup-node@v4
+        with:
+          cache: ${{ !env.ACT && 'pnpm' || '' }}
+          node-version: ${{ matrix.node-version }}
+      - env:
+          HUSKY: 0
+        name: Install the dependencies
+        run: pnpm i --prefer-frozen-lockfile
+      - name: Run the tests
+        run: pnpm run test
     strategy:
       matrix:
         node-version:
-          - '12.x'
-          - '14.x'
-          - '16.x'
-        cache-key:
-          - '19a27acd-b393-4a8a-a09f-276a4663454d'
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: set npm config
-        run: npm config set unsafe-perm true
-      - name: Determine npm cache directory
-        id: npm-cache
-        run: echo "::set-output name=dir::$(npm config get cache)"
-      - name: Persist the cache of dependent packages.
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.npm-cache.outputs.dir }}
-          key: ${{ matrix.cache-key }}_${{ runner.os }}-node_v${{ matrix.node-version }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ matrix.cache-key }}_${{ runner.os }}-node_v${{ matrix.node-version }}-
-            ${{ matrix.cache-key }}_${{ runner.os }}-node_v
-            ${{ matrix.cache-key }}_${{ runner.os }}-node-
-            ${{ matrix.cache-key }}_${{ runner.os }}-
-      - run: npm ci --legacy-peer-deps
-      - run: npm run prepack
-        env:
-          CI: true
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-          SENTRY_URL: ${{ secrets.SENTRY_URL }}
-      - run: npm test
-        env:
-          CI: true
+          - 18.x
+          - 20.x
+          - 22.x
+          - 23.x
+        platform:
+          - os: ubuntu-latest
+            shell: bash
+          - os: windows-latest
+            shell: bash
+          - os: windows-latest
+            shell: powershell
+      fail-fast: false
+    timeout-minutes: 30
