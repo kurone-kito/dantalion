@@ -21,9 +21,9 @@
   "bugs": {
     "url": "https://github.com/kurone-kito/dantalion/issues"
   },
+  "repository": "github:kurone-kito/dantalion",
   "license": "MIT",
   "author": "kurone-kito <krone@kit.black> (https://kit.black/)",
-  "repository": "github:kurone-kito/dantalion",
   "type": "module",
   "files": [],
   "scripts": {
@@ -55,7 +55,7 @@
     "@kurone-kito/typescript-config": "^0.17.1-alpha.1",
     "@typescript-eslint/parser": "^8.16.0",
     "cspell": "^8.16.1",
-    "eslint": "^9.15.0",
+    "eslint": "^9.16.0",
     "eslint-formatter-codeframe": "^7.32.1",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.10",
@@ -67,9 +67,10 @@
     "prettier-plugin-sort-json": "^4.0.0",
     "rimraf": "^5.0.10",
     "typescript": "~5.7.2",
-    "typescript-eslint-language-service": "^5.0.5"
+    "typescript-eslint-language-service": "^5.0.5",
+    "vitest": "^2.1.6"
   },
-  "packageManager": "pnpm@9.14.3+sha512.c0f53ee99477ed969b82b289ad011a5d16bf1623c957e7f29eabe8d0c00b574c29b8c7f54f6c67ee710c73f285c8154d07ce44b46fe2c0eeb476a90441bac371",
+  "packageManager": "pnpm@9.14.4+sha512.c8180b3fbe4e4bca02c94234717896b5529740a6cbadf19fa78254270403ea2f27d4e1d46a08a0f56c89b63dc8ebfd3ee53326da720273794e6200fcf0d184ab",
   "engines": {
     "node": "^18.20 || ^20.10 || >=22"
   },

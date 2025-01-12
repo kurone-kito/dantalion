@@ -4,7 +4,6 @@
   "description": "Converts results of dantalion into detailed documentation.",
   "keywords": [
     "ba-zi",
-    "bazi",
     "birthday",
     "chinese-astrology",
     "four-pillars",
@@ -18,46 +17,49 @@
   "bugs": {
     "url": "https://github.com/kurone-kito/dantalion/issues"
   },
-  "license": "MIT",
-  "author": "kurone-kito <krone@kit.black> (https://kit.black/)",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kurone-kito/dantalion.git",
     "directory": "packages/dantalion-i18n"
   },
+  "license": "MIT",
+  "author": "kurone-kito <krone@kit.black> (https://kit.black/)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "lint": "eslint --cache --fix .",
     "prepack": "tsc --project tsconfig.build.json",
     "start": "tsc --project tsconfig.build.json --watch",
-    "test": "jest --coverage"
+    "test": "vitest run"
   },
   "dependencies": {
     "@kurone-kito/dantalion-core": "^0.19.2",
-    "i18next": "^20.3.2",
+    "i18next": "^24.0.2",
     "lodash.merge": "^4.6.2"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.23",
+    "@types/jest": "^29.5.14",
     "@types/lodash.merge": "^4.6.6",
-    "@typescript-eslint/eslint-plugin": "^4.28.0",
-    "@typescript-eslint/parser": "^4.28.0",
-    "eslint": "^7.29.0",
-    "eslint-config-airbnb-typescript": "^12.3.1",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-import-resolver-typescript": "^2.4.0",
+    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/parser": "^8.16.0",
+    "eslint": "^9.16.0",
+    "eslint-config-airbnb-typescript": "^18.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-jest": "^24.3.6",
-    "eslint-plugin-prettier": "^3.4.0",
-    "jest": "^27.0.5",
-    "jest-cli": "^27.0.5",
-    "prettier": "^2.3.1",
-    "ts-jest": "^27.0.3",
-    "typescript": "^4.3.4"
+    "eslint-plugin-jest": "^28.9.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "jest": "^29.7.0",
+    "jest-cli": "^29.7.0",
+    "prettier": "^3.4.1",
+    "rimraf": "^5.0.10",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.1",
+    "vitest": "^2.1.6"
   },
   "engines": {
-    "node": ">=12.1"
+    "node": "^18.20 || ^20.10 || >=22"
   },
   "publishConfig": {
     "access": "public"

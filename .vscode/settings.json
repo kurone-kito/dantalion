@@ -3,6 +3,8 @@
   "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
     "*.md": "${capture}.*.md",
+    "*.mjs": "${capture}.*",
+    "*.mts": "${capture}.test.mts",
     ".gitattributes": ".gitignore",
     ".markdownlint.*": ".markdownlint-cli2.*",
     ".tool-versions": ".node-version, .nvmrc",
@@ -21,7 +23,7 @@
     "**/.eslintcache": true,
     "**/node_modules/**/*": true
   },
-  "git.branchProtection": ["main"],
+  "git.branchProtection": ["master"],
   "search.exclude": {
     "**/node_modules/**/*": true
   },

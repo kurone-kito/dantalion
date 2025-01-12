@@ -5,6 +5,13 @@ cache:
   useCache: true
 import:
   - '@kurone-kito/cspell-config'
-ignorePaths:
-  - node_modules
 version: '0.2'
+words:
+  - bazi
+  - generical
+  - npmjs
+  - ziweidoushu
+  # TODO: Fix them
+  - dcoef
+  - febrary
+  - ommited
