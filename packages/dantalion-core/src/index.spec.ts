@@ -1,27 +1,31 @@
-import { Genius, getDetail, getPersonality, toCC } from '.';
+import { describe, expect, it } from 'vitest';
+import type { Genius } from './index.js';
+import { getDetail, getPersonality, toCC } from './index.js';
 import {
-  DetailTestData,
+  type DetailTestData,
   getDetailTestData,
   getPersonalityTestData,
-} from './tests';
+} from './tests/index.js';
 
 describe('integration testing', () => {
   describe('get the details', () => {
-    it.each(Object.entries(getDetailTestData()) as [Genius, DetailTestData][])(
-      'Outputs the same value as the data source from all genius: %s',
-      (genius, expected) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { affinity, ...actual } = getDetail(genius);
-        expect(actual).toStrictEqual(expected);
-      }
-    );
+    it.each(
+      Object.entries(getDetailTestData()) as [Genius, DetailTestData][],
+    )('Outputs the same value as the data source from all genius: %s', (genius, expected) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { affinity, ...actual } = getDetail(genius);
+      expect(actual).toStrictEqual(expected);
+    });
   });
   describe('get the personality', () => {
     const testData = getPersonalityTestData();
-    it.each(['1873-01-31', '2051-01-01', 'NaN', ''])(
-      'Return an undefined value when specified an out ranged date: “%s”',
-      (date) => expect(getPersonality(date)).toBeUndefined()
-    );
+    it.each([
+      '1873-01-31',
+      '2051-01-01',
+      'NaN',
+      '',
+    ])('Return an undefined value when specified an out ranged date: “%s”', (date) =>
+      expect(getPersonality(date)).toBeUndefined());
     it('Outputs the same value as the data source from all dates in the range', () => {
       testData.forEach((source) => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

@@ -1,6 +1,6 @@
-import type { Source2D } from './create2DAccessor';
-import type { BirthdayDetails } from './getBirthdayDetails';
-import shiftAndModulo from './shiftAndModulo';
+import type { Source2D } from './create2DAccessor.js';
+import type { BirthdayDetails } from './getBirthdayDetails.js';
+import shiftAndModulo from './shiftAndModulo.js';
 
 /** Intermediate values that determine the factors of personality. */
 export interface Factors {
@@ -42,10 +42,10 @@ export default (source: FactorSource): Factors => {
   const workStyle = full + 9 - early(lessThan);
   const cycle = new Int32Array([hi * 4.25, (shifted + 1) * 0.6]).reduce(
     (acc, cur) => acc + cur,
-    Math.floor((lo - early()) * 5.25) + date + 7
+    Math.floor((lo - early()) * 5.25) + date + 7,
   );
   const potentials = [workStyle - 2, full * 2 + outer + 2].map((v) =>
-    shiftAndModulo(v, 10)
+    shiftAndModulo(v, 10),
   );
   return {
     cycle: shiftAndModulo(cycle, 10),

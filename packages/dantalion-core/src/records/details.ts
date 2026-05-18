@@ -1,16 +1,27 @@
-import type { AffinityLevel } from '../types/AffinityLevel';
-import brain, { Brain } from '../types/brain';
-import communication, { Communication } from '../types/communication';
-import geniusTable, { Genius } from '../types/genius';
-import management, { Management } from '../types/management';
-import motivation, { Motivation } from '../types/motivation';
-import position, { Position } from '../types/position';
-import response, { Response } from '../types/response';
-import vector, { Vector } from '../types/vector';
-import createGeniusRecord from '../utils/createGeniusRecord';
-import { detailsMap } from '../masterData.json';
-import bizRecords from './bizRecords';
-import loveRecords from './loveRecords';
+import masterData from '../masterData.json' with { type: 'json' };
+
+const { detailsMap } = masterData;
+
+import type { AffinityLevel } from '../types/AffinityLevel.js';
+import type { Brain } from '../types/brain.js';
+import brain from '../types/brain.js';
+import type { Communication } from '../types/communication.js';
+import communication from '../types/communication.js';
+import type { Genius } from '../types/genius.js';
+import geniusTable from '../types/genius.js';
+import type { Management } from '../types/management.js';
+import management from '../types/management.js';
+import type { Motivation } from '../types/motivation.js';
+import motivation from '../types/motivation.js';
+import type { Position } from '../types/position.js';
+import position from '../types/position.js';
+import type { Response } from '../types/response.js';
+import response from '../types/response.js';
+import type { Vector } from '../types/vector.js';
+import vector from '../types/vector.js';
+import createGeniusRecord from '../utils/createGeniusRecord.js';
+import bizRecords from './bizRecords.js';
+import loveRecords from './loveRecords.js';
 
 /** Type of the source. */
 type DetailsSourceMap = [
@@ -20,7 +31,7 @@ type DetailsSourceMap = [
   number,
   number,
   number,
-  number
+  number,
 ];
 
 /** The lists of affinity by genius type. */
@@ -65,5 +76,5 @@ export default createGeniusRecord(
     position: position[row[3]],
     response: response[row[2]],
     vector: vector[row[6]],
-  }))
+  })),
 );

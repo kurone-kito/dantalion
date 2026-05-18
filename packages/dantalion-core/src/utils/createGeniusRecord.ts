@@ -1,5 +1,5 @@
-import genius, { Genius } from '../types/genius';
-
+import type { Genius } from '../types/genius.js';
+import genius from '../types/genius.js';
 /**
  * Create a record for each genius type from the source.
  * @param source Source.

@@ -1,14 +1,23 @@
-import brain, { Brain } from './brain';
-import communication, { Communication } from './communication';
-import genius, { Genius } from './genius';
-import lifeBase, { LifeBase, cc as lifeBaseCC } from './lifeBase';
-import management, { Management } from './management';
-import motivation, { Motivation } from './motivation';
-import position, { Position } from './position';
-import potential, { Potential, cc as potentialCC } from './potential';
-import response, { Response } from './response';
-import vector, { Vector } from './vector';
-
+import type { Brain } from './brain.js';
+import brain from './brain.js';
+import type { Communication } from './communication.js';
+import communication from './communication.js';
+import type { Genius } from './genius.js';
+import genius from './genius.js';
+import type { LifeBase } from './lifeBase.js';
+import lifeBase, { cc as lifeBaseCC } from './lifeBase.js';
+import type { Management } from './management.js';
+import management from './management.js';
+import type { Motivation } from './motivation.js';
+import motivation from './motivation.js';
+import type { Position } from './position.js';
+import position from './position.js';
+import type { Potential } from './potential.js';
+import potential, { cc as potentialCC } from './potential.js';
+import type { Response } from './response.js';
+import response from './response.js';
+import type { Vector } from './vector.js';
+import vector from './vector.js';
 /** All types list. */
 export interface AllTypes {
   /** The list that the types of thought methods. */

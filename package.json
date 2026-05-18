@@ -64,6 +64,7 @@
     "@kurone-kito/is-prerelease": "^0.1.0",
     "@kurone-kito/lint-staged-config": "^0.23.0-alpha.1",
     "@kurone-kito/markdownlint-config": "^0.23.0-alpha.1",
+    "@types/node": "^25.9.0",
     "@vitest/coverage-v8": "^4.1.2",
     "cspell": "^9.7.0",
     "husky": "^9.1.7",

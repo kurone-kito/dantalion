@@ -1,6 +1,6 @@
-import { cc as lifeBaseCC } from '../types/lifeBase';
-import { cc as potentialCC } from '../types/potential';
-import type { Personality } from './getPersonality';
+import { cc as lifeBaseCC } from '../types/lifeBase.js';
+import { cc as potentialCC } from '../types/potential.js';
+import type { Personality } from './getPersonality.js';
 
 /**
  * Create a CC string from personality object.
@@ -12,7 +12,7 @@ export default (personality: Personality): string => {
   const c1 = cycle % 10;
   const pcc = potentials.reduceRight(
     (acc, cur) => `${acc}-${potentialCC[cur]}`,
-    ''
+    '',
   );
   return `${inner}-${outer}-${workStyle}-${inner}${c1}-${lifeBaseCC[lifeBase]}${pcc}`;
 };
