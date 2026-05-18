@@ -1,6 +1,6 @@
-import type { DetailsBaseType, DetailsType } from '../resources/types';
-import article from './article';
-import { line, list } from './list';
+import type { DetailsBaseType, DetailsType } from '../resources/types.js';
+import article from './article.js';
+import { line, list } from './list.js';
 
 /**
  * The options for the `detailsBase` and `detailsMore` function.

@@ -1,4 +1,3 @@
-import type { ResourceLanguage, TFunction, WithT } from 'i18next';
 import type {
   Brain,
   Communication,
@@ -11,8 +10,10 @@ import type {
   Response,
   Vector,
 } from '@kurone-kito/dantalion-core';
-import createGenericAccessor, { DetailAccessor } from './createGenericAccessor';
-import createTAsync from './createTAsync';
+import type { ResourceLanguage, TFunction, WithT } from 'i18next';
+import type { DetailAccessor } from './createGenericAccessor.js';
+import createGenericAccessor from './createGenericAccessor.js';
+import createTAsync from './createTAsync.js';
 import type {
   DesctiptionsType,
   DetailsBaseType,
@@ -20,7 +21,7 @@ import type {
   PersonalityDetailType,
   PersonalityType,
   VectorType,
-} from './types';
+} from './types.js';
 
 /** The type definition of the concreted accessors collection */
 export interface Accessors {
@@ -49,7 +50,7 @@ export interface Accessors {
   /** Get the resources of the descriptions heading. */
   readonly getDescription: (
     /** The genius type or birthday */
-    type?: string
+    type?: string,
   ) => DesctiptionsType;
 
   /**
@@ -143,7 +144,7 @@ export const createAccessors = (t: TFunction): Accessors => {
  */
 export default async (
   lng?: string,
-  additions?: ResourceLanguage
+  additions?: ResourceLanguage,
 ): Promise<Accessors & WithT> => {
   const t = await createTAsync({ lng, additions });
   return { ...createAccessors(t), t };

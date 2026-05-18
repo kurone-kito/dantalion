@@ -1,4 +1,4 @@
-import i18next, {
+import type {
   InitOptions,
   Module,
   Newable,
@@ -7,10 +7,11 @@ import i18next, {
   TFunction,
   ThirdPartyModule,
 } from 'i18next';
+import i18next from 'i18next';
 import merge from 'lodash.merge';
-import getLocale from '../getLocale';
-import en from './en.json';
-import ja from './ja.json';
+import getLocale from '../getLocale.js';
+import en from './en.json' with { type: 'json' };
+import ja from './ja.json' with { type: 'json' };
 
 /** The language that uses as a fallback. */
 export const fallbackLng = 'en';
@@ -41,12 +42,14 @@ export interface CreateTAsyncOptions extends Pick<InitOptions, 'lng'> {
 const initResources = (addition?: ResourceLanguage): Resource =>
   Object.entries(merge(addition, { en, ja })).reduce<Resource>(
     (acc, [k, v]) => ({ ...acc, [k]: { translation: v } }),
-    {}
+    {},
   );
 
 /** Create and initialize the i18next instance asynchronously. */
 export default (options: CreateTAsyncOptions = {}): Promise<TFunction> => {
   const { additions, lng = getLocale(), use } = options;
   const init: InitOptions = { lng, resources: initResources(additions) };
-  return use ? i18next.use(use).init(init) : i18next.init(init);
+  return use
+    ? i18next.use(use as Module | Newable<Module>).init(init)
+    : i18next.init(init);
 };

@@ -1,4 +1,4 @@
-import { line } from './list';
+import { line } from './list.js';
 
 /** The options for the `article` function. */
 export interface Options {

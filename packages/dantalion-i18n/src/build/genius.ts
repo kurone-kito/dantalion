@@ -1,9 +1,10 @@
 import type { Personality } from '@kurone-kito/dantalion-core';
-import type { Accessors } from '../resources/createAccessorsAsync';
-import type { DesctiptionsType, PersonalityType } from '../resources/types';
-import article, { Options } from './article';
-import { detailsBase } from './details';
-import { line, list, order } from './list';
+import type { Accessors } from '../resources/createAccessorsAsync.js';
+import type { DesctiptionsType, PersonalityType } from '../resources/types.js';
+import type { Options } from './article.js';
+import article from './article.js';
+import { detailsBase } from './details.js';
+import { line, list, order } from './list.js';
 
 /**
  * Create the Markdown only summary from the Genius resources.
@@ -12,11 +13,11 @@ import { line, list, order } from './list';
  */
 const fromGeniusOnlySummary = (
   source: Pick<PersonalityType, 'detail' | 'name' | 'summary'>,
-  level?: number
+  level?: number,
 ) =>
   line(
     article({ body: source.summary, head: source.name, level }),
-    list(...source.detail)
+    list(...source.detail),
   );
 
 /**
@@ -28,13 +29,13 @@ const fromGeniusOnlySummary = (
 const fromGeniusOnlyDesctiption = (
   { strategy, weak }: Pick<DesctiptionsType, 'strategy' | 'weak'>,
   source: Pick<PersonalityType, 'strategy' | 'weak'>,
-  level?: number
+  level?: number,
 ) =>
   line(
     ...(<Options[]>[
       { head: strategy, body: list(...source.strategy) },
       { head: weak, body: list(...source.weak) },
-    ]).map((options) => article({ ...options, level }))
+    ]).map((options) => article({ ...options, level })),
   );
 
 /**
@@ -50,7 +51,7 @@ export const createFromGenius =
   (source: PersonalityType, level: number): string =>
     line(
       fromGeniusOnlySummary(source, level),
-      fromGeniusOnlyDesctiption(descriptions, source, level + 1)
+      fromGeniusOnlyDesctiption(descriptions, source, level + 1),
     );
 
 /**
@@ -60,7 +61,7 @@ export const createFromGenius =
  */
 export const fromGeniusForPersonality = (
   source: Pick<Personality, 'inner' | 'outer' | 'workStyle'>,
-  accessors: Accessors
+  accessors: Accessors,
 ): string => {
   const descriptions = accessors.getDescription();
   const {
@@ -78,7 +79,7 @@ export const fromGeniusForPersonality = (
         [fromGeniusOnlySummary, source.workStyle, workStyle],
       ] as const
     ).map(([fn, type, head]) =>
-      article({ body: fn(accessors.genius.getByKey(type), 4), head, level: 3 })
-    )
+      article({ body: fn(accessors.genius.getByKey(type), 4), head, level: 3 }),
+    ),
   );
 };

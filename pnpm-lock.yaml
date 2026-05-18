@@ -75,7 +75,7 @@ importers:
         version: 0.19.2
       '@kurone-kito/dantalion-i18n':
         specifier: ^0.19.2
-        version: link:../dantalion-i18n
+        version: 0.19.2
       '@types/marked':
         specifier: ^2.0.3
         version: 2.0.5
@@ -143,10 +143,10 @@ importers:
   packages/dantalion-i18n:
     dependencies:
       '@kurone-kito/dantalion-core':
-        specifier: ^0.19.2
-        version: 0.19.2
+        specifier: workspace:^
+        version: link:../dantalion-core
       '@types/lodash.merge':
-        specifier: ^4.6.6
+        specifier: ^4.6.9
         version: 4.6.9
       i18next:
         specifier: ^20.3.2
@@ -154,52 +154,6 @@ importers:
       lodash.merge:
         specifier: ^4.6.2
         version: 4.6.2
-    devDependencies:
-      '@types/jest':
-        specifier: ^26.0.23
-        version: 26.0.24
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^4.28.0
-        version: 4.33.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@4.9.5))(eslint@7.32.0)(typescript@4.9.5)
-      '@typescript-eslint/parser':
-        specifier: ^4.28.0
-        version: 4.33.0(eslint@7.32.0)(typescript@4.9.5)
-      eslint:
-        specifier: ^7.29.0
-        version: 7.32.0
-      eslint-config-airbnb-typescript:
-        specifier: ^12.3.1
-        version: 12.3.1(eslint-plugin-import@2.32.0)(eslint-plugin-jsx-a11y@6.10.2(eslint@7.32.0))(eslint-plugin-react-hooks@4.6.2(eslint@7.32.0))(eslint-plugin-react@7.37.5(@types/eslint@9.6.1)(eslint@7.32.0))(eslint@7.32.0)(typescript@4.9.5)
-      eslint-config-prettier:
-        specifier: ^8.3.0
-        version: 8.10.2(eslint@7.32.0)
-      eslint-import-resolver-typescript:
-        specifier: ^2.4.0
-        version: 2.7.1(eslint-plugin-import@2.32.0)(eslint@7.32.0)
-      eslint-plugin-import:
-        specifier: ^2.23.4
-        version: 2.32.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@4.9.5))(eslint-import-resolver-typescript@2.7.1)(eslint@7.32.0)
-      eslint-plugin-jest:
-        specifier: ^24.3.6
-        version: 24.7.0(@typescript-eslint/eslint-plugin@4.33.0(@typescript-eslint/parser@4.33.0(eslint@7.32.0)(typescript@4.9.5))(eslint@7.32.0)(typescript@4.9.5))(eslint@7.32.0)(typescript@4.9.5)
-      eslint-plugin-prettier:
-        specifier: ^3.4.0
-        version: 3.4.1(eslint-config-prettier@8.10.2(eslint@7.32.0))(eslint@7.32.0)(prettier@2.8.8)
-      jest:
-        specifier: ^27.0.5
-        version: 27.5.1
-      jest-cli:
-        specifier: ^27.0.5
-        version: 27.5.1
-      prettier:
-        specifier: ^2.3.1
-        version: 2.8.8
-      ts-jest:
-        specifier: ^27.0.3
-        version: 27.1.5(@babel/core@7.29.0)(@types/jest@26.0.24)(babel-jest@27.5.1(@babel/core@7.29.0))(jest@27.5.1)(typescript@4.9.5)
-      typescript:
-        specifier: ^4.3.4
-        version: 4.9.5
 
 packages:
 
@@ -887,6 +841,10 @@ packages:
   '@kurone-kito/dantalion-core@0.19.2':
     resolution: {integrity: sha512-45NZisYx6kY30aWu6FwyKPsy7vR7E9xjSiB9qi2XA+oiI5eXX0u/B19rpOHw+ZIKQo5VpcHcHRvJS0C5UxfnXA==}
     engines: {node: '>=12'}
+
+  '@kurone-kito/dantalion-i18n@0.19.2':
+    resolution: {integrity: sha512-fartJDP9k1jhhurC6LazLU3tExzfNMK0xy5j5nOaebjA26bQJrgDSGKNrEsD8X4oYUhfcofmU6FMKUjRjF7C/w==}
+    engines: {node: '>=12.1'}
 
   '@kurone-kito/is-prerelease@0.1.0':
     resolution: {integrity: sha512-+borQVaj0WocBjGrhGjFjqNlSLxvbyOJ808mtIRZa4K8fe9eVLU1YF43qUIzCi6WtyF4z5jtHaAXiwtgJ8tQfg==}
@@ -4839,6 +4797,12 @@ snapshots:
       cspell: 9.8.0
 
   '@kurone-kito/dantalion-core@0.19.2': {}
+
+  '@kurone-kito/dantalion-i18n@0.19.2':
+    dependencies:
+      '@kurone-kito/dantalion-core': 0.19.2
+      i18next: 20.6.1
+      lodash.merge: 4.6.2
 
   '@kurone-kito/is-prerelease@0.1.0':
     dependencies:

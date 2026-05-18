@@ -1,21 +1,16 @@
-import {
-  Detail,
-  Genius,
-  Personality,
-  getDetail,
-  toCC,
-} from '@kurone-kito/dantalion-core';
-import type { Accessors } from '../resources/createAccessorsAsync';
-import article from './article';
-import { detailsBase, detailsMore } from './details';
-import { createFromGenius, fromGeniusForPersonality } from './genius';
-import { line } from './list';
+import type { Detail, Genius, Personality } from '@kurone-kito/dantalion-core';
+import { getDetail, toCC } from '@kurone-kito/dantalion-core';
+import type { Accessors } from '../resources/createAccessorsAsync.js';
+import article from './article.js';
+import { detailsBase, detailsMore } from './details.js';
+import { createFromGenius, fromGeniusForPersonality } from './genius.js';
+import { line } from './list.js';
 import {
   fromLifeBase,
   fromMotivation,
   fromPotential,
   fromVector,
-} from './specialized';
+} from './specialized.js';
 
 /**
  * Create the Markdown only accompany resources.
@@ -39,7 +34,7 @@ const onlyAccompanying = (
     | 'motivation'
     | 'position'
     | 'response'
-  >
+  >,
 ) =>
   line(
     detailsBase({ src: accessors.brain.getCategoryDetail() }),
@@ -54,7 +49,7 @@ const onlyAccompanying = (
     detailsMore({ src: accessors.response.getByKey(source.response) }),
     detailsBase({ src: accessors.position.getCategoryDetail() }),
     detailsMore({ src: accessors.position.getByKey(source.position) }),
-    fromMotivation(accessors.motivation, source.motivation)
+    fromMotivation(accessors.motivation, source.motivation),
   );
 
 /**
@@ -65,7 +60,7 @@ const onlyAccompanying = (
 export const createDetailsTemplate = (
   type: Genius,
   source: Detail,
-  accessors: Accessors
+  accessors: Accessors,
 ): string => {
   const desc = accessors.getDescription();
   return line(
@@ -73,7 +68,7 @@ export const createDetailsTemplate = (
     fromVector(desc.strategy, accessors.vector.getByKey(source.vector)),
     detailsBase({ src: accessors.genius.getCategoryDetail() }),
     createFromGenius(desc)(accessors.genius.getByKey(type), 3),
-    onlyAccompanying(source, accessors)
+    onlyAccompanying(source, accessors),
   );
 };
 
@@ -84,7 +79,7 @@ export const createDetailsTemplate = (
  */
 export const createPersonalityTemplate = (
   source: Personality,
-  accessors: Accessors
+  accessors: Accessors,
 ): string => {
   const details = getDetail(source.inner);
   const { cc, strategy } = accessors.getDescription();
@@ -95,6 +90,6 @@ export const createPersonalityTemplate = (
     fromLifeBase(accessors.lifeBase, source.lifeBase),
     fromPotential(accessors.potential, source.potentials),
     onlyAccompanying(details, accessors),
-    article({ head: cc, body: toCC(source), level: 2 })
+    article({ head: cc, body: toCC(source), level: 2 }),
   );
 };

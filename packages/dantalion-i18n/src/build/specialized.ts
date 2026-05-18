@@ -3,10 +3,10 @@ import type {
   Motivation,
   Personality,
 } from '@kurone-kito/dantalion-core';
-import type { DetailAccessor } from '../resources/createGenericAccessor';
-import type { DetailsBaseType, VectorType } from '../resources/types';
-import article from './article';
-import { line, list } from './list';
+import type { DetailAccessor } from '../resources/createGenericAccessor.js';
+import type { DetailsBaseType, VectorType } from '../resources/types.js';
+import article from './article.js';
+import { line, list } from './list.js';
 
 /**
  * Create the Markdown from the LifeBase resources.
@@ -18,12 +18,12 @@ export const fromLifeBase = (
     getByKey,
     getCategoryDetail,
   }: DetailAccessor<DetailsBaseType<string[]>, LifeBase, string>,
-  source: LifeBase
+  source: LifeBase,
 ): string => {
   const { detail, name } = getByKey(source);
   return line(
     article({ body: name, head: getCategoryDetail(), level: 2 }),
-    list(...detail)
+    list(...detail),
   );
 };
 
@@ -34,7 +34,7 @@ export const fromLifeBase = (
  */
 export const fromMotivation = (
   { getByKey, getCategoryDetail }: DetailAccessor<string, Motivation, string>,
-  source: Motivation
+  source: Motivation,
 ): string =>
   article({ body: getByKey(source), head: getCategoryDetail(), level: 2 });
 
@@ -45,12 +45,12 @@ export const fromMotivation = (
  */
 export const fromPotential = (
   accessor: DetailAccessor<readonly string[], Personality['potentials']>,
-  source: Personality['potentials']
+  source: Personality['potentials'],
 ): string => {
   const desc = accessor.getCategoryDetail();
   return line(
     article({ body: desc.detail, head: desc.name, level: 2 }),
-    list(...accessor.getByKey(source))
+    list(...accessor.getByKey(source)),
   );
 };
 
@@ -62,5 +62,5 @@ export const fromPotential = (
 export const fromVector = (description: string, source: VectorType): string =>
   line(
     article({ head: source.name, body: list(...source.detail), level: 3 }),
-    article({ head: description, body: list(...source.strategy), level: 4 })
+    article({ head: description, body: list(...source.strategy), level: 4 }),
   );
