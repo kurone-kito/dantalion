@@ -135,11 +135,6 @@ typings/
 .nuxt
 dist
 
-# Storybook build outputs
-.out
-.storybook-out
-storybook-static
-
 # rollup.js default build output
 dist/
 

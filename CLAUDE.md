@@ -88,10 +88,9 @@ Use workspace-scoped commands when targeting a specific package:
 Per-package modernization in Phase 2 of the roadmap therefore runs
 strictly `core → i18n → cli` (issues #87 → #88 → #89).
 
-The web playground (`packages/dantalion-web-playground/` in pre-v1
-history) has been split out to
-[`kurone-kito/dantalion-web-demo`](https://github.com/kurone-kito/dantalion-web-demo)
-and is no longer part of this repository.
+The browser-facing web demo lives in its own repository,
+[`kurone-kito/dantalion-web-demo`](https://github.com/kurone-kito/dantalion-web-demo),
+and is no longer part of this monorepo.
 
 ## Commit rules
 

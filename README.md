@@ -43,6 +43,12 @@ console.log(getDetail('555'));
 
 _[See the wiki for more details.](https://github.com/kurone-kito/dantalion/wiki)_
 
+## Web demo
+
+The browser-facing playground that previously lived under
+`packages/dantalion-web-playground/` has moved to its own repository:
+[`kurone-kito/dantalion-web-demo`](https://github.com/kurone-kito/dantalion-web-demo).
+
 ## License
 
 MIT

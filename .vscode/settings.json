@@ -11,10 +11,6 @@
     {
       "changeProcessCWD": true,
       "directory": "./packages/dantalion-i18n"
-    },
-    {
-      "changeProcessCWD": true,
-      "directory": "./packages/dantalion-web-playground"
     }
   ],
   "typescript.tsdk": "node_modules/typescript/lib"
