@@ -3,7 +3,7 @@ import {
   createAccessorsAsync,
   getPersonalityMarkdown,
 } from '@kurone-kito/dantalion-i18n';
-import type { Command } from './type';
+import type { Command } from './type.js';
 
 const command: Command = {
   getDescriptionAsync: async (birthday) =>

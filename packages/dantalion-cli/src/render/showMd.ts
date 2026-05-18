@@ -1,7 +1,12 @@
 import marked from 'marked';
 import TerminalRenderer from 'marked-terminal';
 
-marked.setOptions({ renderer: new TerminalRenderer() });
+// marked-terminal's TerminalRenderer extends marked's Renderer; cast to
+// satisfy the narrower v2 type definition that doesn't infer the relation.
+marked.setOptions({
+  // biome-ignore lint/suspicious/noExplicitAny: marked v2 typing limitation
+  renderer: new TerminalRenderer() as any,
+});
 
 /**
  * Render the markdown document for terminal.

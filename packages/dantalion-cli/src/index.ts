@@ -1,25 +1,33 @@
 #!/usr/bin/env node
 
+import { createRequire } from 'node:module';
 import commander from 'commander';
-import { version } from '../package.json';
-import detail from './detail';
-import personality from './personality';
-import showJson from './render/showJson';
-import showMd from './render/showMd';
+import detail from './detail.js';
+import personality from './personality.js';
+import showJson from './render/showJson.js';
+import showMd from './render/showMd.js';
 
-[detail, personality].forEach(
-  ({ getDescriptionAsync, getObject, alias, command, description }) =>
-    commander
-      .command(command)
-      .alias(alias)
-      .option('-r, --raw', 'Returns the raw JSON')
-      .description(description)
-      .action(async (arg, { raw }) =>
-        !raw
-          ? showMd(await getDescriptionAsync(arg))
-          : showJson(await getObject(arg))
-      )
-);
+const { version } = createRequire(import.meta.url)('../package.json') as {
+  version: string;
+};
+
+for (const { getDescriptionAsync, getObject, alias, command, description } of [
+  detail,
+  personality,
+]) {
+  commander
+    .command(command)
+    .alias(alias)
+    .option('-r, --raw', 'Returns the raw JSON')
+    .description(description)
+    .action(async (arg, { raw }) => {
+      if (raw) {
+        showJson(await getObject(arg));
+      } else {
+        showMd(await getDescriptionAsync(arg));
+      }
+    });
+}
 
 commander.version(version);
 commander.parse(process.argv);
