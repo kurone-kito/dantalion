@@ -1,7 +1,8 @@
 import type { Genius } from '@kurone-kito/dantalion-core';
-import { createAccessors } from '../resources/createAccessorsAsync';
-import createTAsync from '../resources/createTAsync';
-import { getDetailMarkdown, getPersonalityMarkdown } from '.';
+import { describe, expect, it } from 'vitest';
+import { createAccessors } from '../resources/createAccessorsAsync.js';
+import createTAsync from '../resources/createTAsync.js';
+import { getDetailMarkdown, getPersonalityMarkdown } from './index.js';
 
 describe.each(['en', 'ja'])('LANG=%s', (lng) => {
   describe('`getDetailMarkdown()` function', () => {

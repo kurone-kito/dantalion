@@ -14,7 +14,7 @@ export const createListFunc =
       .reduce<string>(
         (acc, cur) => `${acc}
 ${prefix}${cur}`,
-        ''
+        '',
       )
       .trim()}
 `;

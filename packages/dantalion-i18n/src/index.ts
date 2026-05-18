@@ -1,17 +1,17 @@
-export { default as getLocale } from './getLocale';
-export { getDetailMarkdown, getPersonalityMarkdown } from './build';
+export { getDetailMarkdown, getPersonalityMarkdown } from './build/index.js';
+export { default as getLocale } from './getLocale.js';
+export type { Accessors } from './resources/createAccessorsAsync.js';
 export {
-  Accessors,
   createAccessors,
   default as createAccessorsAsync,
-} from './resources/createAccessorsAsync';
-export type { DetailAccessor } from './resources/createGenericAccessor';
+} from './resources/createAccessorsAsync.js';
+export type { DetailAccessor } from './resources/createGenericAccessor.js';
+export type { CreateTAsyncOptions } from './resources/createTAsync.js';
 export {
   default as createTAsync,
   fallbackLng as fallbackLanguage,
-  CreateTAsyncOptions,
   locales,
-} from './resources/createTAsync';
+} from './resources/createTAsync.js';
 export type {
   DesctiptionsType,
   DetailsBaseType,
@@ -20,4 +20,4 @@ export type {
   PersonalityDetailType,
   PersonalityType,
   VectorType,
-} from './resources/types';
+} from './resources/types.js';

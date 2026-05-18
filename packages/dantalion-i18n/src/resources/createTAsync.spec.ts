@@ -1,4 +1,5 @@
-import createTAsync from './createTAsync';
+import { describe, expect, it } from 'vitest';
+import createTAsync from './createTAsync.js';
 
 describe('`createTAsync()` function', () => {
   it('Get the function', async () =>

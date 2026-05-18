@@ -1,4 +1,5 @@
-import getLocale from './getLocale';
+import { describe, expect, it } from 'vitest';
+import getLocale from './getLocale.js';
 
 describe('`getLocale()` function', () => {
   describe('getLocale()', () => {

@@ -1,9 +1,12 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "declaration": true,
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
+    "resolveJsonModule": true
   },
-  "exclude": ["dist", "node_modules"]
+  "include": ["src/**/*.ts", "src/**/*.json"],
+  "exclude": ["dist", "node_modules", "**/*.spec.ts"]
 }

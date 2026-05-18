@@ -9,8 +9,11 @@ import type {
   Response,
   Vector,
 } from '@kurone-kito/dantalion-core';
-import createAccessorsAsync, { createAccessors } from './createAccessorsAsync';
-import createTAsync from './createTAsync';
+import { describe, expect, it } from 'vitest';
+import createAccessorsAsync, {
+  createAccessors,
+} from './createAccessorsAsync.js';
+import createTAsync from './createTAsync.js';
 
 describe.each(['en', 'ja'])('LANG=%s', (lng) => {
   describe('`createAccessors()` function', () => {
@@ -54,18 +57,18 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
     ['createAccessorsAsync', () => createAccessorsAsync(lng)],
   ])('`%s()` function', (__, func) => {
     describe('`Accessors.brain.getByKey()` method', () => {
-      it.each<Brain>(['left', 'right'])(
-        '("%s") => Get the specified object',
-        async (key) => {
-          const expected = (await func()).brain.getByKey(key);
-          expect(expected).toEqual({
-            detail: expect.any(String),
-            more: expect.any(Array),
-            name: expect.any(String),
-          });
-          expect(expected).toMatchSnapshot();
-        }
-      );
+      it.each<Brain>([
+        'left',
+        'right',
+      ])('("%s") => Get the specified object', async (key) => {
+        const expected = (await func()).brain.getByKey(key);
+        expect(expected).toEqual({
+          detail: expect.any(String),
+          more: expect.any(Array),
+          name: expect.any(String),
+        });
+        expect(expected).toMatchSnapshot();
+      });
     });
     describe('`Accessors.brain.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {
@@ -78,18 +81,18 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       });
     });
     describe('`Accessors.communication.getByKey()` method', () => {
-      it.each<Communication>(['fix', 'flex'])(
-        '("%s") => Get the specified object',
-        async (key) => {
-          const expected = (await func()).communication.getByKey(key);
-          expect(expected).toEqual({
-            detail: expect.any(String),
-            more: expect.any(Array),
-            name: expect.any(String),
-          });
-          expect(expected).toMatchSnapshot();
-        }
-      );
+      it.each<Communication>([
+        'fix',
+        'flex',
+      ])('("%s") => Get the specified object', async (key) => {
+        const expected = (await func()).communication.getByKey(key);
+        expect(expected).toEqual({
+          detail: expect.any(String),
+          more: expect.any(Array),
+          name: expect.any(String),
+        });
+        expect(expected).toMatchSnapshot();
+      });
     });
     describe('`Accessors.communication.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {
@@ -161,24 +164,24 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         });
         expect(expected).toMatchSnapshot();
       });
-      it.each(['foo', 'bar'])(
-        '("%s") => includes the same string',
-        async (placeholder) => {
-          const expected = (await func()).getDescription(placeholder);
-          expect(expected).toEqual({
-            cc: expect.any(String),
-            detail: expect.stringContaining(placeholder),
-            details: expect.any(String),
-            genius1: expect.any(String),
-            genius2: expect.any(String),
-            invalid: expect.stringContaining(placeholder),
-            personality: expect.stringContaining(placeholder),
-            strategy: expect.any(String),
-            weak: expect.any(String),
-          });
-          expect(expected).toMatchSnapshot();
-        }
-      );
+      it.each([
+        'foo',
+        'bar',
+      ])('("%s") => includes the same string', async (placeholder) => {
+        const expected = (await func()).getDescription(placeholder);
+        expect(expected).toEqual({
+          cc: expect.any(String),
+          detail: expect.stringContaining(placeholder),
+          details: expect.any(String),
+          genius1: expect.any(String),
+          genius2: expect.any(String),
+          invalid: expect.stringContaining(placeholder),
+          personality: expect.stringContaining(placeholder),
+          strategy: expect.any(String),
+          weak: expect.any(String),
+        });
+        expect(expected).toMatchSnapshot();
+      });
     });
     describe('`Accessors.lifeBase.getByKey()` method', () => {
       it.each<LifeBase>([
@@ -209,18 +212,18 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       });
     });
     describe('`Accessors.management.getByKey()` method', () => {
-      it.each<Management>(['care', 'hope'])(
-        '("%s") => Get the specified object',
-        async (key) => {
-          const expected = (await func()).management.getByKey(key);
-          expect(expected).toEqual({
-            detail: expect.any(String),
-            more: expect.any(Array),
-            name: expect.any(String),
-          });
-          expect(expected).toMatchSnapshot();
-        }
-      );
+      it.each<Management>([
+        'care',
+        'hope',
+      ])('("%s") => Get the specified object', async (key) => {
+        const expected = (await func()).management.getByKey(key);
+        expect(expected).toEqual({
+          detail: expect.any(String),
+          more: expect.any(Array),
+          name: expect.any(String),
+        });
+        expect(expected).toMatchSnapshot();
+      });
     });
     describe('`Accessors.management.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {
@@ -254,18 +257,20 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       });
     });
     describe('`Accessors.position.getByKey()` method', () => {
-      it.each<Position>(['adjust', 'brain', 'direct', 'quick'])(
-        '("%s") => Get the specified object',
-        async (key) => {
-          const expected = (await func()).position.getByKey(key);
-          expect(expected).toEqual({
-            detail: expect.any(String),
-            more: expect.any(Array),
-            name: expect.any(String),
-          });
-          expect(expected).toMatchSnapshot();
-        }
-      );
+      it.each<Position>([
+        'adjust',
+        'brain',
+        'direct',
+        'quick',
+      ])('("%s") => Get the specified object', async (key) => {
+        const expected = (await func()).position.getByKey(key);
+        expect(expected).toEqual({
+          detail: expect.any(String),
+          more: expect.any(Array),
+          name: expect.any(String),
+        });
+        expect(expected).toMatchSnapshot();
+      });
     });
     describe('`Accessors.position.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {
@@ -278,18 +283,18 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       });
     });
     describe('`Accessors.response.getByKey()` method', () => {
-      it.each<Response>(['action', 'mind'])(
-        '("%s") => Get the specified object',
-        async (key) => {
-          const expected = (await func()).response.getByKey(key);
-          expect(expected).toEqual({
-            detail: expect.any(String),
-            more: expect.any(Array),
-            name: expect.any(String),
-          });
-          expect(expected).toMatchSnapshot();
-        }
-      );
+      it.each<Response>([
+        'action',
+        'mind',
+      ])('("%s") => Get the specified object', async (key) => {
+        const expected = (await func()).response.getByKey(key);
+        expect(expected).toEqual({
+          detail: expect.any(String),
+          more: expect.any(Array),
+          name: expect.any(String),
+        });
+        expect(expected).toMatchSnapshot();
+      });
     });
     describe('`Accessors.response.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {
@@ -302,18 +307,19 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       });
     });
     describe('`Accessors.vector.getByKey()` method', () => {
-      it.each<Vector>(['authority', 'economically', 'humanely'])(
-        '("%s") => Get the specified object',
-        async (key) => {
-          const expected = (await func()).vector.getByKey(key);
-          expect(expected).toEqual({
-            detail: expect.any(Array),
-            name: expect.any(String),
-            strategy: expect.any(Array),
-          });
-          expect(expected).toMatchSnapshot();
-        }
-      );
+      it.each<Vector>([
+        'authority',
+        'economically',
+        'humanely',
+      ])('("%s") => Get the specified object', async (key) => {
+        const expected = (await func()).vector.getByKey(key);
+        expect(expected).toEqual({
+          detail: expect.any(Array),
+          name: expect.any(String),
+          strategy: expect.any(Array),
+        });
+        expect(expected).toMatchSnapshot();
+      });
     });
     describe('`Accessors.vector.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {

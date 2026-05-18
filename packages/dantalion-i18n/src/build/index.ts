@@ -1,13 +1,12 @@
+import type { Genius } from '@kurone-kito/dantalion-core';
+import { getDetail, getPersonality, types } from '@kurone-kito/dantalion-core';
+import type { Accessors } from '../resources/createAccessorsAsync.js';
+import article from './article.js';
+import { list } from './list.js';
 import {
-  Genius,
-  getDetail,
-  getPersonality,
-  types,
-} from '@kurone-kito/dantalion-core';
-import type { Accessors } from '../resources/createAccessorsAsync';
-import article from './article';
-import { list } from './list';
-import { createDetailsTemplate, createPersonalityTemplate } from './template';
+  createDetailsTemplate,
+  createPersonalityTemplate,
+} from './template.js';
 
 type ParsableDate = ConstructorParameters<typeof Date>[0];
 
@@ -23,7 +22,7 @@ type ParsableDate = ConstructorParameters<typeof Date>[0];
  */
 export const getDetailMarkdown = (
   accessors: Accessors,
-  genius?: Genius
+  genius?: Genius,
 ): string => {
   const result = genius && getDetail(genius);
   const desc = accessors.getDescription(genius);
@@ -52,7 +51,7 @@ export const getDetailMarkdown = (
  */
 export const getPersonalityMarkdown = (
   accessors: Accessors,
-  birth: ParsableDate
+  birth: ParsableDate,
 ): string => {
   const result = getPersonality(birth);
   const desc = accessors.getDescription(new Date(birth).toDateString());

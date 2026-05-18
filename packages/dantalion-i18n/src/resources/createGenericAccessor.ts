@@ -1,5 +1,5 @@
 import type { StringMap, TFunction, TFunctionResult } from 'i18next';
-import type { DetailsBaseType } from './types';
+import type { DetailsBaseType } from './types.js';
 
 /**
  * The type definition with a function to access
@@ -11,12 +11,12 @@ import type { DetailsBaseType } from './types';
 export interface DetailAccessor<
   T extends TFunctionResult,
   K,
-  D extends DetailsBaseType | string = DetailsBaseType
+  D extends DetailsBaseType | string = DetailsBaseType,
 > {
   /** The function acquires the resource corresponding to the key. */
   readonly getByKey: (
     /** The key. */
-    key: K
+    key: K,
   ) => T;
   /**
    * The function acquires the resource corresponding to the specific category.
@@ -29,32 +29,32 @@ export interface Accessor {
   /** Get the resource as a detailed object */
   readonly tCategoryStringedDetail: <
     T extends TFunctionResult,
-    K extends string = string
+    K extends string = string,
   >(
     /** The key of category. */
-    category: string
+    category: string,
   ) => DetailAccessor<T, K, string>;
 
   /** Get the resource as a detailed object */
   readonly tDetail: <
     T extends TFunctionResult,
     K extends string = string,
-    D extends DetailsBaseType = DetailsBaseType
+    D extends DetailsBaseType = DetailsBaseType,
   >(
     /** The key of category. */
-    category: string
+    category: string,
   ) => DetailAccessor<T, K, D>;
 
   /** Get the resource as an object */
   readonly tObj: <T extends TFunctionResult>(
     key: string,
-    placeholder?: StringMap
+    placeholder?: StringMap,
   ) => T;
 
   /** Get the resource as a detailed object */
   readonly tStringedDetail: <K extends string = string>(
     /** The key of category. */
-    category: string
+    category: string,
   ) => DetailAccessor<string, K, string>;
 }
 
