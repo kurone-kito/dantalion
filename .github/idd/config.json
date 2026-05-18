@@ -9,9 +9,7 @@
     "staleAge": "PT24H",
     "heartbeatInterval": "PT12H"
   },
-  "trustedMarkerActors": [
-    "kurone-kito"
-  ],
+  "trustedMarkerActors": ["kurone-kito"],
   "commands": {
     "install-deps": "corepack enable && pnpm install",
     "fix-validate": "pnpm run lint:fix && pnpm run lint",
