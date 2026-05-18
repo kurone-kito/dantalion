@@ -1,4 +1,6 @@
-import { lifeBaseCoefficients } from '../masterData.json';
+import masterData from '../masterData.json' with { type: 'json' };
+
+const { lifeBaseCoefficients } = masterData;
 
 /**
  * Get the life base factor from the month, day, and coefficient.
@@ -8,5 +10,5 @@ import { lifeBaseCoefficients } from '../masterData.json';
  */
 export default (month: number, dcoef: number): number =>
   lifeBaseCoefficients[month - 1]?.find(
-    (v) => dcoef < (v.t ?? Number.MAX_VALUE)
+    (v) => dcoef < (v.t ?? Number.MAX_VALUE),
   )?.v ?? Number.NaN;

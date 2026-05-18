@@ -1,4 +1,6 @@
-import { monthlyCoefficients } from '../masterData.json';
+import masterData from '../masterData.json' with { type: 'json' };
+
+const { monthlyCoefficients } = masterData;
 
 /**
  * Calculate the monthly coefficient index from the date.

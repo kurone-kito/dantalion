@@ -8,7 +8,9 @@ import:
 version: '0.2'
 words:
   - bazi
+  - coef
   - dantalion
+  - dcoef
   - goetia
   - lemegeton
   - ziweidoushu

@@ -1,5 +1,5 @@
 import type { Genius } from '..';
-import createGeniusRecord from './createGeniusRecord';
+import createGeniusRecord from './createGeniusRecord.js';
 
 /**
  * Create a record for each genius type from the source.

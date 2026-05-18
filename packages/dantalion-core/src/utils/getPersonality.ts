@@ -1,13 +1,13 @@
-import geniusTable from '../records/geniusTable';
-import getMonthlyCoefficients from '../records/getMonthlyCoefficients';
-import lifeBaseCoefficients from '../records/lifeBaseCoefficients';
-import lifeBaseTable from '../records/lifeBaseTable';
-import potentialTable from '../records/potentialTable';
-import type { Genius } from '../types/genius';
-import type { LifeBase } from '../types/lifeBase';
-import type { Potential } from '../types/potential';
-import getBirthdayDetails from './getBirthdayDetails';
-import getFactors from './getFactors';
+import geniusTable from '../records/geniusTable.js';
+import getMonthlyCoefficients from '../records/getMonthlyCoefficients.js';
+import lifeBaseCoefficients from '../records/lifeBaseCoefficients.js';
+import lifeBaseTable from '../records/lifeBaseTable.js';
+import potentialTable from '../records/potentialTable.js';
+import type { Genius } from '../types/genius.js';
+import type { LifeBase } from '../types/lifeBase.js';
+import type { Potential } from '../types/potential.js';
+import getBirthdayDetails from './getBirthdayDetails.js';
+import getFactors from './getFactors.js';
 
 /** The details for Personality. */
 export interface Personality {
@@ -36,7 +36,7 @@ export interface Personality {
  * If the date is over the range, it will be `undefined`.
  */
 export default (
-  birth: ConstructorParameters<typeof Date>[0]
+  birth: ConstructorParameters<typeof Date>[0],
 ): Personality | undefined => {
   const birthObj = new Date(birth);
   const monthlyCoefficients = getMonthlyCoefficients(birthObj);

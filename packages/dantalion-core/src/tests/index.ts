@@ -1,8 +1,8 @@
-import type { Detail } from '../records/details';
-import type { Genius } from '../types/genius';
-import type { Personality } from '../utils/getPersonality';
-import details from './details.json';
-import personality from './personality.json';
+import type { Detail } from '../records/details.js';
+import type { Genius } from '../types/genius.js';
+import type { Personality } from '../utils/getPersonality.js';
+import details from './details.json' with { type: 'json' };
+import personality from './personality.json' with { type: 'json' };
 
 export type DetailTestData = Omit<Detail, 'affinity'>;
 
