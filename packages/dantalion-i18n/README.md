@@ -16,7 +16,7 @@ This library uses the Intl API to determine the language and outputs
 it in the appropriate language. It's only in Japanese and partly English
 yet, but we'll gradually support multiple languages.
 
-### Breaking changes since v0.19.x
+## Breaking changes since v0.19.x
 
 - ESM-only output. Consumers must use `import` rather than
   `require`; no CommonJS bridge is provided.
@@ -26,7 +26,6 @@ yet, but we'll gradually support multiple languages.
 
 See the [root CHANGELOG](../../CHANGELOG.md) for the complete
 migration notes.
-
 
 ## Usage
 

@@ -16,7 +16,7 @@ By using this package, you can quickly implement birthday divination in
 your Node.js apps. Its calculation is using the method of
 _Four Pillars of Destiny (Ba-Zi)_.
 
-### Breaking changes since v0.19.x
+## Breaking changes since v0.19.x
 
 - ESM-only output. Consumers must use `import` rather than
   `require`; no CommonJS bridge is provided.
@@ -26,7 +26,6 @@ _Four Pillars of Destiny (Ba-Zi)_.
 
 See the [root CHANGELOG](../../CHANGELOG.md) for the complete
 migration notes.
-
 
 ## Note
 

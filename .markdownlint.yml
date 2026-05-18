@@ -1,1 +1,5 @@
 extends: '@kurone-kito/markdownlint-config'
+
+# Disable strict table column alignment — too fragile across Japanese / wide-char
+# cells and across documents imported from idd-template / pnpm-workspace-template.
+MD060: false
