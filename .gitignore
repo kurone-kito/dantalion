@@ -282,3 +282,56 @@ packages/**/LICENSE
 # Others
 packages/**/dist/
 *.d.ts
+
+# === Imported from pnpm-workspace-template ===
+!.vscode/*.code-snippets
+# Built Visual Studio Code Extensions
+# Created by https://www.toptal.com/developers/gitignore/api/linux,macos,node,vim,visualstudiocode,windows
+# Docusaurus cache and generated files
+# Edit at https://www.toptal.com/developers/gitignore?templates=linux,macos,node,vim,visualstudiocode,windows
+# End of https://www.toptal.com/developers/gitignore/api/linux,macos,node,vim,visualstudiocode,windows
+# LICENSE
+# Local History for Visual Studio Code
+# Playwright
+# Serverless Webpack directories
+# Snowpack dependency directory (https://snowpack.dev/)
+# SvelteKit build / generate output
+# Vinxi
+# Vite / Vitest
+# dotenv environment variable files
+# iCloud generated files
+# pnpm
+# vuepress v2.x temp and cache directory
+# xsea
+# yarn v2
+### Node Patch ###
+### THE PROJECT SPECIFIES #################################################
+### Text ###
+### macOS Patch ###
+*.config.timestamp_*
+*.icloud
+*.vsix
+.docusaurus
+.env.development.local
+.env.local
+.env.production.local
+.env.test.local
+.history/
+.output/
+.pnp.*
+.pnpm-debug.log*
+.svelte-kit
+.temp
+.vinxi/
+.webpack/
+.yarn/build-state.yml
+.yarn/cache
+.yarn/install-state.gz
+.yarn/unplugged
+out
+packages/*/LICENSE
+pnpm-lock.yaml.*
+sea
+test-results/
+v8-compile-cache-*
+web_modules/
