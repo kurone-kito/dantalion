@@ -1,9 +1,10 @@
-import { Genius, getDetail, types } from '@kurone-kito/dantalion-core';
+import type { Genius } from '@kurone-kito/dantalion-core';
+import { getDetail, types } from '@kurone-kito/dantalion-core';
 import {
   createAccessorsAsync,
   getDetailMarkdown,
 } from '@kurone-kito/dantalion-i18n';
-import type { Command } from './type';
+import type { Command } from './type.js';
 
 const command: Command = {
   getDescriptionAsync: async (detail) =>
