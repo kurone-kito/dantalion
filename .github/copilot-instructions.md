@@ -182,11 +182,9 @@ Per-package modernization in Phase 2 of the roadmap runs strictly
 
 ### Excluded from this repository
 
-The web playground (`packages/dantalion-web-playground/` in pre-v1
-history) has been split out to
-[`kurone-kito/dantalion-web-demo`](https://github.com/kurone-kito/dantalion-web-demo)
-and is no longer part of this repository. Issues touching the web
-demo belong on the new repository.
+The browser-facing web demo lives in its own repository,
+[`kurone-kito/dantalion-web-demo`](https://github.com/kurone-kito/dantalion-web-demo).
+Issues touching the web demo belong on that repository.
 
 ### Scoped instructions
 
