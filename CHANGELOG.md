@@ -1,6 +1,86 @@
-<!-- markdownlint-disable MD024 -->
+<!-- markdownlint-disable MD024 MD013 -->
 
 # Changelog
+
+## v1.0.0 (unreleased)
+
+First stable release on the modernized toolchain.
+
+### BREAKING CHANGES
+
+- All published packages are now **ESM-only**. Consumers must use
+  `import` rather than `require`; no CommonJS bridge is provided.
+- `engines.node` raised to `^20.18 || ^22 || >=24`. Node 12 / 14 /
+  16 / 18 are no longer supported.
+- `package.json#exports` replaces `main` / `types` for module
+  resolution.
+- The web playground previously hosted under
+  `packages/dantalion-web-playground/` has moved to a separate
+  repository:
+  [`kurone-kito/dantalion-web-demo`](https://github.com/kurone-kito/dantalion-web-demo).
+- Documentation typo fix: the `Personality.potentials` field was
+  sometimes documented as `potential` (singular) in v0.19.x
+  READMEs. The runtime field name has always been `potentials`;
+  the documentation now matches.
+
+### Features
+
+- Repository scaffolding migrated to **pnpm workspaces**, **Biome**,
+  **Vitest**, **TypeScript 6**, and the
+  [`kurone-kito/pnpm-workspace-template`](https://github.com/kurone-kito/pnpm-workspace-template)
+  baseline.
+- **IDD (Issue-Driven Development)** workflow from
+  [`kurone-kito/idd-skill`](https://github.com/kurone-kito/idd-skill)
+  imported into `.github/instructions/` for autopilot-driven
+  contribution loops.
+- Default branch renamed from `master` to `main`.
+
+### Internal
+
+- Dropped Lerna 4; pnpm `workspace:^` replaces hoisted npm
+  dependencies.
+- ESLint + Prettier replaced by Biome 2.
+- Jest 27 replaced by Vitest 4.
+- GitHub Actions workflows rebuilt with a Node 20.18 / 22 / 24
+  test matrix.
+- 6 stale Dependabot / reviewpad PRs closed as part of the
+  migration (#66, #67, #75, #76, #77, #78).
+
+### Deferred to follow-up
+
+- **i18next major bump** (`@kurone-kito/dantalion-i18n`): pinned at
+  `^20.3.2` because v22+ removed `TFunctionResult` and `StringMap`
+  types that require source-level migration.
+- **commander / marked / marked-terminal major bumps**
+  (`@kurone-kito/dantalion-cli`): pinned at v7 / v2 / v4
+  respectively because v12 / v15 / v7 require API rewrites.
+- **`DesctiptionsType` → `DescriptionsType`** typo fix in exported
+  type names: deferred because the rename is a breaking change
+  beyond the v1.0.0 scope.
+
+---
+
+## v1.0.0-rc.0 (unreleased)
+
+Release candidate. Identical to v1.0.0 modulo bug fixes from the
+soak window.
+
+## v1.0.0-beta.0 (2026-05-18)
+
+[`@kurone-kito/dantalion-cli`](https://www.npmjs.com/package/@kurone-kito/dantalion-cli)
+migrated to the modernized stack. See #89.
+
+## v1.0.0-alpha.1 (2026-05-18)
+
+[`@kurone-kito/dantalion-i18n`](https://www.npmjs.com/package/@kurone-kito/dantalion-i18n)
+migrated to the modernized stack. See #88.
+
+## v1.0.0-alpha.0 (2026-05-18)
+
+[`@kurone-kito/dantalion-core`](https://www.npmjs.com/package/@kurone-kito/dantalion-core)
+migrated to the modernized stack. See #87.
+
+---
 
 ## v0.19.2 (2021-06-23)
 

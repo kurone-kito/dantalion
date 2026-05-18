@@ -3,7 +3,6 @@
 # 🦁 Dantalion: i18n resources library
 
 [![npm version](https://badge.fury.io/js/%40kurone-kito%2Fdantalion-i18n.svg)](https://badge.fury.io/js/%40kurone-kito%2Fdantalion-i18n)
-[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
 This package provides a function that infers the personality details
 from the specified birthday. By using this package, you can quickly
@@ -17,21 +16,33 @@ This library uses the Intl API to determine the language and outputs
 it in the appropriate language. It's only in Japanese and partly English
 yet, but we'll gradually support multiple languages.
 
+### Breaking changes since v0.19.x
+
+- ESM-only output. Consumers must use `import` rather than
+  `require`; no CommonJS bridge is provided.
+- `engines.node` raised to `^20.18 || ^22 || >=24` (was `>=12`).
+- `package.json#exports` replaces `main` / `types` for module
+  resolution.
+
+See the [root CHANGELOG](../../CHANGELOG.md) for the complete
+migration notes.
+
+
 ## Usage
 
-Require: Node.js >= v12.1
+Require: Node.js ^20.18 || ^22 || >=24
 
 ### Add to dependency
 
 ```sh
-npm install -S @kurone-kito/dantalion-core @kurone-kito/dantalion-i18n
+pnpm add @kurone-kito/dantalion-core @kurone-kito/dantalion-i18n
 ```
 
 ### Get the details of the personality
 
 ```js
-const { getPersonality } = require('@kurone-kito/dantalion-core');
-const { genius } = require('@kurone-kito/dantalion-i18n');
+import { getPersonality  } from '@kurone-kito/dantalion-core';
+import { genius  } from '@kurone-kito/dantalion-i18n';
 
 const personality = getPersonality('1993-10-09');
 console.log(personality.inner); // === '555'
