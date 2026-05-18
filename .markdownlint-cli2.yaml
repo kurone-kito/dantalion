@@ -2,4 +2,11 @@ ignores:
   - '**/node_modules/**/*'
   - '**/test-results/**/*'
   - .github/CODE_OF_CONDUCT*
+  - .github/CONTRIBUTING*
+  - .github/instructions/**
+  - .github/copilot-instructions.md
+  - docs/**
+  - AUDIT-SUMMARY.md
+  - LINTING_VERIFICATION_*.md
+  - PLAN.md
   - node_modules/**/*

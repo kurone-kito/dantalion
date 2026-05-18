@@ -21,8 +21,8 @@ minimum project rules immediately. The canonical full guide lives in
 - Clean: `pnpm run clean`
 
 > **Bootstrap caveat**: until issue #84 merges, the commands above
-> are not yet available — the repository still runs on Lerna + npm
-> + Jest. Pre-#84 issues should follow their own command sets.
+> are not yet available — the repository still runs on Lerna, npm,
+> and Jest. Pre-#84 issues should follow their own command sets.
 
 ## Immediate rules
 
