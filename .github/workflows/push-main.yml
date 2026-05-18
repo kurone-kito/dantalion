@@ -1,8 +1,8 @@
-name: CI/CD on master branch
+name: CI/CD on main branch
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
 jobs:
   deploy:
     name: Build and deploy
