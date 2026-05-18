@@ -3,7 +3,6 @@
 # 🦁 Dantalion: Core library
 
 [![npm version](https://badge.fury.io/js/%40kurone-kito%2Fdantalion-core.svg)](https://badge.fury.io/js/%40kurone-kito%2Fdantalion-core)
-[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
 “Dantalion” is the seventy-first demon in the demonological grimoire,
 _[the Lesser Key of Solomon](https://en.wikipedia.org/wiki/The_Lesser_Key_of_Solomon)_.
@@ -17,6 +16,18 @@ By using this package, you can quickly implement birthday divination in
 your Node.js apps. Its calculation is using the method of
 _Four Pillars of Destiny (Ba-Zi)_.
 
+### Breaking changes since v0.19.x
+
+- ESM-only output. Consumers must use `import` rather than
+  `require`; no CommonJS bridge is provided.
+- `engines.node` raised to `^20.18 || ^22 || >=24` (was `>=12`).
+- `package.json#exports` replaces `main` / `types` for module
+  resolution.
+
+See the [root CHANGELOG](../../CHANGELOG.md) for the complete
+migration notes.
+
+
 ## Note
 
 - OS independent and dependent free.
@@ -27,18 +38,18 @@ _Four Pillars of Destiny (Ba-Zi)_.
 
 ## Usage
 
-Require: Node.js >= v12
+Require: Node.js ^20.18 || ^22 || >=24
 
 ### Add to dependency
 
 ```sh
-npm install -S @kurone-kito/dantalion-core
+pnpm add @kurone-kito/dantalion-core
 ```
 
 ### Get the personality
 
 ```js
-const { getPersonality } = require('@kurone-kito/dantalion-core');
+import { getPersonality  } from '@kurone-kito/dantalion-core';
 
 console.log(getPersonality('1993-10-09'));
 ```
@@ -53,7 +64,7 @@ In strictly, The function gets the raw object, not the JSON.
   "inner": "555",
   "lifeBase": "application",
   "outer": "789",
-  "potential": ["Io", "Ii"],
+  "potentials": ["Io", "Ii"],
   "workStyle": "125"
 }
 ```
@@ -61,7 +72,7 @@ In strictly, The function gets the raw object, not the JSON.
 ### Get detailed information on personality
 
 ```js
-const { getDetail } = require('@kurone-kito/dantalion-core');
+import { getDetail  } from '@kurone-kito/dantalion-core';
 
 console.log(getDetail('555'));
 ```
@@ -117,7 +128,7 @@ In strictly, The function gets the raw object, not the JSON.
 All types list.
 
 ```js
-const { types } = require('@kurone-kito/dantalion-core');
+import { types  } from '@kurone-kito/dantalion-core';
 
 console.log(types); // AllTypes Object
 ```
