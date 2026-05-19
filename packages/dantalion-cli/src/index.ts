@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { createRequire } from 'node:module';
-import commander from 'commander';
+import { Command } from 'commander';
 import detail from './detail.js';
 import personality from './personality.js';
 import showJson from './render/showJson.js';
@@ -11,16 +11,18 @@ const { version } = createRequire(import.meta.url)('../package.json') as {
   version: string;
 };
 
+const program = new Command();
+
 for (const { getDescriptionAsync, getObject, alias, command, description } of [
   detail,
   personality,
 ]) {
-  commander
+  program
     .command(command)
     .alias(alias)
     .option('-r, --raw', 'Returns the raw JSON')
     .description(description)
-    .action(async (arg, { raw }) => {
+    .action(async (arg: string | undefined, { raw }: { raw?: boolean }) => {
       if (raw) {
         showJson(await getObject(arg));
       } else {
@@ -29,8 +31,8 @@ for (const { getDescriptionAsync, getObject, alias, command, description } of [
     });
 }
 
-commander.version(version);
-commander.parse(process.argv);
+program.version(version);
+program.parse(process.argv);
 if (process.argv.length < 1) {
-  commander.help();
+  program.help();
 }

@@ -1,16 +1,16 @@
-import marked from 'marked';
-import TerminalRenderer from 'marked-terminal';
+import { marked } from 'marked';
+// @ts-expect-error — marked-terminal v7 ships no types and no
+// @types/marked-terminal exists for v7; the runtime export is a
+// `markedTerminal()` plugin factory returning a marked extension.
+import { markedTerminal } from 'marked-terminal';
 
-// marked-terminal's TerminalRenderer extends marked's Renderer; cast to
-// satisfy the narrower v2 type definition that doesn't infer the relation.
-marked.setOptions({
-  // biome-ignore lint/suspicious/noExplicitAny: marked v2 typing limitation
-  renderer: new TerminalRenderer() as any,
-});
+marked.use(markedTerminal());
 
 /**
  * Render the markdown document for terminal.
- * @param result The markdown document.
+ * @param source The markdown document.
  */
-// eslint-disable-next-line no-console
-export default (source: string): void => console.info(marked(source));
+export default (source: string): void => {
+  // biome-ignore lint/suspicious/noConsole: this CLI's stdout contract
+  console.info(marked.parse(source));
+};
