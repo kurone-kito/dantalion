@@ -24,7 +24,7 @@ export const fallbackLng = 'en';
 export const locales = Object.freeze({ en: en.name, ja: ja.name });
 
 /** The type definition that the options of the createTAsync function. */
-export interface CreateTAsyncOptions extends Pick<InitOptions, 'lng'> {
+export interface CreateTAsyncOptions {
   /** The locale to use, e.g. `en` or `ja`. */
   readonly lng?: string | undefined;
   /** Specify the additional resources if you need */
