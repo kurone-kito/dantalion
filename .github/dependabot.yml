@@ -1,0 +1,5 @@
+# Dependabot is intentionally disabled in favor of Renovate.
+# See #97 for the rationale; remove this file (or revert to a populated
+# `updates:` list) if reverting to Dependabot for any reason.
+version: 2
+updates: []
