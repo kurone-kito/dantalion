@@ -1,5 +1,21 @@
-import type { StringMap, TFunction, TFunctionResult } from 'i18next';
+import type { TFunction } from 'i18next';
 import type { DetailsBaseType } from './types.js';
+
+/**
+ * Local alias for the placeholder argument type. i18next v22+
+ * removed the public `StringMap` export; this matches the runtime
+ * shape consumers pass into `t()`.
+ */
+type StringMap = Record<string, unknown>;
+
+/**
+ * Local alias for the generic constraint on accessor return types.
+ * i18next renamed `TFunctionResult` to `TFunctionReturn` between
+ * v20 and v23 and tightened its generic signature; this alias
+ * keeps the package's public type parameters legible by matching
+ * the runtime-possible union.
+ */
+type TFunctionResult = string | object | null | undefined;
 
 /**
  * The type definition with a function to access
@@ -70,7 +86,9 @@ const createTObj =
    * @param placeholder The placeholder for i18next.
    */
   (key: string, placeholder?: StringMap) =>
-    t(key, { returnObjects: true, ...placeholder });
+    // i18next v26's overloaded `t()` returns a union including
+    // `$SpecialObject`; the caller's generic `<T>` narrows the type.
+    t(key, { returnObjects: true, ...placeholder }) as never;
 
 /**
  * Create the i18n function.
@@ -78,6 +96,12 @@ const createTObj =
  */
 export default (t: TFunction): Accessor => {
   const tObj = createTObj(t);
+  // Wrap the raw TFunction so its v26 overload signature matches
+  // Accessor['tObj']'s simpler shape. The placeholder spread is
+  // structurally identical to tObj's; the difference is the absence
+  // of `returnObjects: true`, so t() returns the raw string.
+  const tString: Accessor['tObj'] = (key, placeholder) =>
+    t(key, placeholder as never) as never;
   const getDetail =
     (f: Accessor['tObj'], fc: Accessor['tObj'] = f) =>
     (category: string) => {
@@ -88,9 +112,9 @@ export default (t: TFunction): Accessor => {
       return { getCategoryDetail: get(fc), getByKey: get(f) };
     };
   return {
-    tCategoryStringedDetail: getDetail(tObj, t),
+    tCategoryStringedDetail: getDetail(tObj, tString),
     tDetail: getDetail(tObj),
     tObj,
-    tStringedDetail: getDetail(t),
+    tStringedDetail: getDetail(tString),
   };
 };
