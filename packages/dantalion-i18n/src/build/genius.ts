@@ -1,6 +1,6 @@
 import type { Personality } from '@kurone-kito/dantalion-core';
 import type { Accessors } from '../resources/createAccessorsAsync.js';
-import type { DesctiptionsType, PersonalityType } from '../resources/types.js';
+import type { DescriptionsType, PersonalityType } from '../resources/types.js';
 import type { Options } from './article.js';
 import article from './article.js';
 import { detailsBase } from './details.js';
@@ -26,8 +26,8 @@ const fromGeniusOnlySummary = (
  * @param source The source.
  * @param level The heading level.
  */
-const fromGeniusOnlyDesctiption = (
-  { strategy, weak }: Pick<DesctiptionsType, 'strategy' | 'weak'>,
+const fromGeniusOnlyDescription = (
+  { strategy, weak }: Pick<DescriptionsType, 'strategy' | 'weak'>,
   source: Pick<PersonalityType, 'strategy' | 'weak'>,
   level?: number,
 ) =>
@@ -43,7 +43,7 @@ const fromGeniusOnlyDesctiption = (
  * @param descriptions The resource of tne description.
  */
 export const createFromGenius =
-  (descriptions: Pick<DesctiptionsType, 'strategy' | 'weak'>) =>
+  (descriptions: Pick<DescriptionsType, 'strategy' | 'weak'>) =>
   /**
    * @param source The source.
    * @param level The heading level.
@@ -51,7 +51,7 @@ export const createFromGenius =
   (source: PersonalityType, level: number): string =>
     line(
       fromGeniusOnlySummary(source, level),
-      fromGeniusOnlyDesctiption(descriptions, source, level + 1),
+      fromGeniusOnlyDescription(descriptions, source, level + 1),
     );
 
 /**

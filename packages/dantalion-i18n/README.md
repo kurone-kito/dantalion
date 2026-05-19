@@ -220,7 +220,7 @@ interface Accessors {
   >;
   readonly response: DetailAccessor<DetailsType, Response>;
   readonly vector: DetailAccessor<VectorType, Vector>;
-  getDescription(type?: string): DesctiptionsType;
+  getDescription(type?: string): DescriptionsType;
 }
 ```
 
@@ -239,7 +239,7 @@ interface Accessors {
 
 | Method definition                                 | Description                                    |
 | :------------------------------------------------ | :--------------------------------------------- |
-| `getDescription(type?: string): DesctiptionsType` | Get the resources of the descriptions heading. |
+| `getDescription(type?: string): DescriptionsType` | Get the resources of the descriptions heading. |
 
 ### `CreateTAsyncOptions`
 
@@ -265,12 +265,12 @@ interface CreateTAsyncOptions {
 
 (\*: See the type definition as it is long :/)
 
-### `DesctiptionsType`
+### `DescriptionsType`
 
 The type definition that the resources of description.
 
 ```ts
-interface DesctiptionsType {
+interface DescriptionsType {
   readonly cc: string;
   readonly detail: string;
   readonly details: string;

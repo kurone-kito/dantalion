@@ -15,7 +15,7 @@ import type { DetailAccessor } from './createGenericAccessor.js';
 import createGenericAccessor from './createGenericAccessor.js';
 import createTAsync from './createTAsync.js';
 import type {
-  DesctiptionsType,
+  DescriptionsType,
   DetailsBaseType,
   DetailsType,
   PersonalityDetailType,
@@ -51,7 +51,7 @@ export interface Accessors {
   readonly getDescription: (
     /** The genius type or birthday */
     type?: string,
-  ) => DesctiptionsType;
+  ) => DescriptionsType;
 
   /**
    * The instance provides a set of functions that retrieve

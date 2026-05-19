@@ -23,6 +23,10 @@ First stable release on the modernized toolchain.
   sometimes documented as `potential` (singular) in v0.19.x
   READMEs. The runtime field name has always been `potentials`;
   the documentation now matches.
+- **`@kurone-kito/dantalion-i18n`** renames the exported type
+  `DesctiptionsType` → `DescriptionsType` (transposed-letter typo
+  fix). Consumers referencing the type by name in their own
+  TypeScript code must rename. The runtime shape is unchanged.
 
 ### Features
 
@@ -55,9 +59,6 @@ First stable release on the modernized toolchain.
 - **commander / marked / marked-terminal major bumps**
   (`@kurone-kito/dantalion-cli`): pinned at v7 / v2 / v4
   respectively because v12 / v15 / v7 require API rewrites.
-- **`DesctiptionsType` → `DescriptionsType`** typo fix in exported
-  type names: deferred because the rename is a breaking change
-  beyond the v1.0.0 scope.
 
 ---
 
