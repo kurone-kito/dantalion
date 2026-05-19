@@ -20,7 +20,7 @@ _Four Pillars of Destiny (Ba-Zi)_.
 
 - ESM-only output. Consumers must use `import` rather than
   `require`; no CommonJS bridge is provided.
-- `engines.node` raised to `^20.18 || ^22 || >=24` (was `>=12`).
+- `engines.node` raised to `^22 || >=24` (was `>=12`).
 - `package.json#exports` replaces `main` / `types` for module
   resolution.
 
@@ -37,7 +37,7 @@ migration notes.
 
 ## Usage
 
-Require: Node.js ^20.18 || ^22 || >=24
+Require: Node.js ^22 || >=24
 
 ### Add to dependency
 

@@ -30,7 +30,7 @@ The library can compute personalities for any birthday between
 
 ## Requirements
 
-- **Node.js** `^20.18 || ^22 || >=24` (CommonJS support dropped in
+- **Node.js** `^22 || >=24` (CommonJS support dropped in
   v1.0.0; the published packages are ESM-only)
 - **pnpm** 10+ for contributor work (consumers can install via npm,
   yarn, or any package manager)
@@ -76,8 +76,8 @@ console.log(getDetail('555'));
 
 - ESM-only output; consumers must use `import` rather than
   `require`.
-- Node.js floor raised from `>=12.1` to
-  `^20.18 || ^22 || >=24`.
+- Node.js floor raised from `>=12.1` (originally) to
+  `^22 || >=24`.
 - The `Personality.potentials` field is plural (a 2-tuple). The
   v0.19.x README example showed `potential` (singular), which was
   a documentation bug — the runtime field has always been
