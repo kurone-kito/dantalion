@@ -1,3 +1,5 @@
+import assertDefined from './assertDefined.js';
+
 /** The params for create2DAccessor function. */
 export interface Source<T extends string> {
   /** Labels associated with the table. */
@@ -23,5 +25,10 @@ export default <T extends string>({
   label,
   table,
 }: Source<T>): (({ x, y }: Source2D) => T) =>
-  ({ x = 0, y = 0 }) =>
-    label[table[y]?.[x]];
+  ({ x = 0, y = 0 }) => {
+    // Invariant: callers (geniusTable, lifeBaseTable, potentialTable)
+    // pass coordinates from modulo-bounded factors; out-of-range is
+    // unreachable.
+    const idx = assertDefined(assertDefined(table[y])[x]);
+    return assertDefined(label[idx]);
+  };

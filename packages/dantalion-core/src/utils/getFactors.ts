@@ -1,3 +1,4 @@
+import assertDefined from './assertDefined.js';
 import type { Source2D } from './create2DAccessor.js';
 import type { BirthdayDetails } from './getBirthdayDetails.js';
 import shiftAndModulo from './shiftAndModulo.js';
@@ -53,7 +54,7 @@ export default (source: FactorSource): Factors => {
     inner: shiftAndModulo(shifted * 6 + hi * 4 + cycle - 6, 12),
     lifeBase: date - monthlyCoefficients,
     outer: shiftAndModulo(outer, 12),
-    potentials: [potentials[0], potentials[1]],
+    potentials: [assertDefined(potentials[0]), assertDefined(potentials[1])],
     workStyle: shiftAndModulo(workStyle, 12),
   };
 };
