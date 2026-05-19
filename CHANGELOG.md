@@ -27,6 +27,13 @@ First stable release on the modernized toolchain.
   `DesctiptionsType` → `DescriptionsType` (transposed-letter typo
   fix). Consumers referencing the type by name in their own
   TypeScript code must rename. The runtime shape is unchanged.
+- **`@kurone-kito/dantalion-i18n`** bumps `i18next` to v26 (was
+  v20). The migration is mostly internal — the package's exported
+  API (`createTAsync`, `createAccessorsAsync`, `Accessors`,
+  `DetailAccessor`, `CreateTAsyncOptions`, etc.) keeps its v0.19.x
+  signatures. Consumers that previously passed an `i18next.use(...)`
+  plugin via `CreateTAsyncOptions.use` should confirm the plugin
+  is compatible with i18next v26.
 
 ### Features
 
@@ -53,9 +60,6 @@ First stable release on the modernized toolchain.
 
 ### Deferred to follow-up
 
-- **i18next major bump** (`@kurone-kito/dantalion-i18n`): pinned at
-  `^20.3.2` because v22+ removed `TFunctionResult` and `StringMap`
-  types that require source-level migration.
 - **commander / marked / marked-terminal major bumps**
   (`@kurone-kito/dantalion-cli`): pinned at v7 / v2 / v4
   respectively because v12 / v15 / v7 require API rewrites.
