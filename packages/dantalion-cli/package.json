@@ -45,7 +45,7 @@
     "@kurone-kito/dantalion-core": "workspace:^",
     "@kurone-kito/dantalion-i18n": "workspace:^",
     "commander": "^7.2.0",
-    "marked": "^2.1.2",
+    "marked": "^4.0.10",
     "marked-terminal": "^4.1.1"
   },
   "devDependencies": {
