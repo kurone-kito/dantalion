@@ -3,7 +3,7 @@ import { line } from './list.js';
 /** The options for the `article` function. */
 export interface Options {
   /** The body text. */
-  readonly body?: string;
+  readonly body?: string | undefined;
   /** The heading text. */
   readonly head: string;
   /**
@@ -11,7 +11,7 @@ export interface Options {
    *
    * This argument can use only natural numbers.
    */
-  readonly level?: number;
+  readonly level?: number | undefined;
 }
 
 /**

@@ -6,6 +6,7 @@ import potentialTable from '../records/potentialTable.js';
 import type { Genius } from '../types/genius.js';
 import type { LifeBase } from '../types/lifeBase.js';
 import type { Potential } from '../types/potential.js';
+import assertDefined from './assertDefined.js';
 import getBirthdayDetails from './getBirthdayDetails.js';
 import getFactors from './getFactors.js';
 
@@ -57,7 +58,7 @@ export default (
     inner: geniusTable(getXY(inner)),
     lifeBase: lifeBaseTable(getXY(lifeBaseCoef)),
     outer: geniusTable(getXY(outer)),
-    potentials: [p[0], p[1]],
+    potentials: [assertDefined(p[0]), assertDefined(p[1])],
     workStyle: geniusTable(getXY(workStyle)),
   };
 };

@@ -19,6 +19,7 @@ import type { Response } from '../types/response.js';
 import response from '../types/response.js';
 import type { Vector } from '../types/vector.js';
 import vector from '../types/vector.js';
+import assertDefined from '../utils/assertDefined.js';
 import createGeniusRecord from '../utils/createGeniusRecord.js';
 import bizRecords from './bizRecords.js';
 import loveRecords from './loveRecords.js';
@@ -64,17 +65,23 @@ export interface Detail {
 
 /** The list that the details corresponding to personality type. */
 export default createGeniusRecord(
-  (detailsMap as DetailsSourceMap[]).map<Detail>((row, index) => ({
-    affinity: {
-      biz: bizRecords[geniusTable[index]],
-      love: loveRecords[geniusTable[index]],
-    },
-    brain: brain[row[5]],
-    communication: communication[row[0]],
-    management: management[row[1]],
-    motivation: motivation[row[4]],
-    position: position[row[3]],
-    response: response[row[2]],
-    vector: vector[row[6]],
-  })),
+  (detailsMap as DetailsSourceMap[]).map<Detail>((row, index) => {
+    // Invariant: detailsMap, geniusTable, and the seven category arrays
+    // are statically aligned in masterData.json (curated). The 100% test
+    // coverage exercises every (index, row[i]) combination.
+    const genius = assertDefined(geniusTable[index]);
+    return {
+      affinity: {
+        biz: assertDefined(bizRecords[genius]),
+        love: assertDefined(loveRecords[genius]),
+      },
+      brain: assertDefined(brain[row[5]]),
+      communication: assertDefined(communication[row[0]]),
+      management: assertDefined(management[row[1]]),
+      motivation: assertDefined(motivation[row[4]]),
+      position: assertDefined(position[row[3]]),
+      response: assertDefined(response[row[2]]),
+      vector: assertDefined(vector[row[6]]),
+    };
+  }),
 );

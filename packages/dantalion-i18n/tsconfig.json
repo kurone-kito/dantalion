@@ -3,8 +3,6 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
-    "noUncheckedIndexedAccess": false,
-    "exactOptionalPropertyTypes": false,
     "resolveJsonModule": true
   },
   "include": ["src/**/*.ts", "src/**/*.json"],

@@ -36,7 +36,10 @@ describe('integration testing', () => {
         });
       });
     });
-    it('Outputs the string from the toCC function', () =>
-      expect(toCC(testData[0])).toEqual(expect.any(String)));
+    it('Outputs the string from the toCC function', () => {
+      // biome-ignore lint/style/noNonNullAssertion: testData is a fixture; first row is guaranteed.
+      const first = testData[0]!;
+      expect(toCC(first)).toEqual(expect.any(String));
+    });
   });
 });
