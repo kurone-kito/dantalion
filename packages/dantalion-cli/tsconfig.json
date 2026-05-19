@@ -3,8 +3,6 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": ".",
-    "noUncheckedIndexedAccess": false,
-    "exactOptionalPropertyTypes": false,
     "resolveJsonModule": true,
     "types": ["node"]
   },
