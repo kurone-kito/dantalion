@@ -48,7 +48,6 @@
     "publish": "pnpm -r publish --no-git-checks",
     "publish:next": "pnpm -r publish --tag next --no-git-checks",
     "test": "pnpm run \"/test:.+/\"",
-    "test:e2e": "pnpm run -r test:e2e",
     "test:ts": "pnpm --aggregate-output --workspace-concurrency=0 -r exec tsc -p tsconfig.test.json --noEmit",
     "test:vitest": "NODE_OPTIONS=\"--conditions=browser\" vitest run --coverage",
     "pretest": "pnpm --aggregate-output --if-present --workspace-concurrency=0 -r run build"
