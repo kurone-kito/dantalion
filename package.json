@@ -48,7 +48,6 @@
     "publish": "pnpm -r publish --no-git-checks",
     "publish:next": "pnpm -r publish --tag next --no-git-checks",
     "test": "pnpm run \"/test:.+/\"",
-    "test:e2e": "pnpm run -r test:e2e",
     "test:ts": "pnpm --aggregate-output --workspace-concurrency=0 -r exec tsc -p tsconfig.test.json --noEmit",
     "test:vitest": "NODE_OPTIONS=\"--conditions=browser\" vitest run --coverage",
     "pretest": "pnpm --aggregate-output --if-present --workspace-concurrency=0 -r run build"
@@ -76,7 +75,7 @@
   },
   "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319",
   "engines": {
-    "node": "^20.18 || ^22 || >=24"
+    "node": "^22 || >=24"
   },
   "publishConfig": {
     "access": "public"

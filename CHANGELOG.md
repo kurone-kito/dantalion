@@ -10,8 +10,9 @@ First stable release on the modernized toolchain.
 
 - All published packages are now **ESM-only**. Consumers must use
   `import` rather than `require`; no CommonJS bridge is provided.
-- `engines.node` raised to `^20.18 || ^22 || >=24`. Node 12 / 14 /
-  16 / 18 are no longer supported.
+- `engines.node` raised to `^22 || >=24`. Node 12 / 14 / 16 / 18 /
+  20 are no longer supported. (Node 20 "Iron" reached EOL on
+  2026-04-30; it was dropped before the first `v1.0.0` publish.)
 - `package.json#exports` replaces `main` / `types` for module
   resolution.
 - The web playground previously hosted under
