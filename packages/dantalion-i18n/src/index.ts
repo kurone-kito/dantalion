@@ -13,7 +13,7 @@ export {
   locales,
 } from './resources/createTAsync.js';
 export type {
-  DesctiptionsType,
+  DescriptionsType,
   DetailsBaseType,
   DetailsType,
   PersonalityDetailBaseType,
