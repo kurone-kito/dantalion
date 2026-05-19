@@ -44,13 +44,9 @@
   "dependencies": {
     "@kurone-kito/dantalion-core": "workspace:^",
     "@kurone-kito/dantalion-i18n": "workspace:^",
-    "commander": "^7.2.0",
-    "marked": "^2.1.2",
-    "marked-terminal": "^4.1.1"
-  },
-  "devDependencies": {
-    "@types/marked": "^2.0.3",
-    "@types/marked-terminal": "^3.1.1"
+    "commander": "^14.0.0",
+    "marked": "^18.0.0",
+    "marked-terminal": "^7.0.0"
   },
   "engines": {
     "node": "^22 || >=24"

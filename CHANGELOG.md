@@ -34,6 +34,12 @@ First stable release on the modernized toolchain.
   signatures. Consumers that previously passed an `i18next.use(...)`
   plugin via `CreateTAsyncOptions.use` should confirm the plugin
   is compatible with i18next v26.
+- **`@kurone-kito/dantalion-cli`** bumps `commander` v7 → v14,
+  `marked` v2 → v18, `marked-terminal` v4 → v7. The CLI binary
+  contract (`dantalion personality <date>`, `dantalion detail
+  <genius>`, `--raw`) is preserved; `--help` output formatting may
+  differ slightly from v0.19.2 because commander v14's help
+  renderer has been tweaked.
 
 ### Features
 
@@ -57,12 +63,6 @@ First stable release on the modernized toolchain.
   test matrix.
 - 6 stale Dependabot / reviewpad PRs closed as part of the
   migration (#66, #67, #75, #76, #77, #78).
-
-### Deferred to follow-up
-
-- **commander / marked / marked-terminal major bumps**
-  (`@kurone-kito/dantalion-cli`): pinned at v7 / v2 / v4
-  respectively because v12 / v15 / v7 require API rewrites.
 
 ---
 
