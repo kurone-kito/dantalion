@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "group:allNonMajor",
+    "schedule:weekly",
+    ":separateMajorReleases",
+    ":semanticCommitsDisabled"
+  ],
+  "commitMessagePrefix": "chore(deps):",
+  "commitMessageAction": "bump",
+  "labels": ["dependencies"],
+  "ignorePaths": ["node_modules/**"],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 4am on monday"]
+  },
+  "packageRules": [
+    {
+      "matchPackageNames": ["/^@kurone-kito//"],
+      "groupName": "kurone-kito shared configs"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true
+    },
+    {
+      "matchPackageNames": ["node"],
+      "enabled": false
+    }
+  ]
+}
