@@ -64,9 +64,6 @@ First stable release on the modernized toolchain.
 - 6 stale Dependabot / reviewpad PRs closed as part of the
   migration (#66, #67, #75, #76, #77, #78).
 
-### Deferred to follow-up
-
-
 ---
 
 ## v1.0.0-rc.0 (unreleased)
