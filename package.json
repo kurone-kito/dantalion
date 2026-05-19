@@ -1,6 +1,6 @@
 {
   "name": "@kurone-kito/dantalion",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-rc.0",
   "description": "Calculates the personality from the birthday using Four Pillars of Destiny (Ba-Zi).",
   "keywords": [
     "ba-zi",
