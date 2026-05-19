@@ -66,7 +66,7 @@ First stable release on the modernized toolchain.
 
 ---
 
-## v1.0.0-rc.0 (unreleased)
+## v1.0.0-rc.0 (2026-05-20)
 
 Release candidate. Identical to v1.0.0 modulo bug fixes from the
 soak window.

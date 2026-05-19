@@ -1,6 +1,6 @@
 {
   "name": "@kurone-kito/dantalion-i18n",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-rc.0",
   "description": "Converts results of dantalion into detailed documentation.",
   "keywords": [
     "ba-zi",
