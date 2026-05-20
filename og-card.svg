@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="120" x2="1080" y1="40" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7c2d12"/>
+      <stop offset=".45" stop-color="#ea580c"/>
+      <stop offset="1" stop-color="#facc15"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="170" x2="530" y1="140" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff7ed" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#fff7ed" stop-opacity=".08"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" rx="48" fill="url(#bg)"/>
+  <rect x="72" y="72" width="1056" height="486" rx="42" fill="#111827" opacity=".15"/>
+  <g transform="translate(86 86)">
+    <rect width="360" height="458" rx="36" fill="url(#panel)"/>
+    <g transform="translate(46 44)">
+      <g fill="#fff7ed" opacity=".95">
+        <circle cx="134" cy="48" r="24"/>
+        <circle cx="78" cy="70" r="22"/>
+        <circle cx="190" cy="70" r="22"/>
+        <circle cx="44" cy="122" r="24"/>
+        <circle cx="224" cy="122" r="24"/>
+        <circle cx="42" cy="184" r="24"/>
+        <circle cx="226" cy="184" r="24"/>
+        <circle cx="78" cy="238" r="22"/>
+        <circle cx="190" cy="238" r="22"/>
+        <circle cx="134" cy="260" r="24"/>
+      </g>
+      <path
+        fill="#fff7ed"
+        d="M134 58c-54 0-98 43-98 96 0 33 16 61 42 79l-13 50 51-28c6 2 12 3 18 3s12-1 18-3l51 28-13-50c26-18 42-46 42-79 0-53-44-96-98-96Z"
+      />
+      <g fill="#7c2d12">
+        <circle cx="102" cy="136" r="13"/>
+        <circle cx="166" cy="136" r="13"/>
+        <path d="M134 156c-13 0-24 10-24 23 0 4 2 6 6 6h36c4 0 6-2 6-6 0-13-11-23-24-23Z"/>
+        <path d="M98 205c10 16 22 25 36 25s26-9 36-25" fill="none" stroke="#7c2d12" stroke-linecap="round" stroke-width="14"/>
+        <path d="M85 103c11-17 28-26 49-26s38 9 49 26" fill="none" stroke="#7c2d12" stroke-linecap="round" stroke-width="16"/>
+      </g>
+    </g>
+  </g>
+  <g fill="#fff7ed">
+    <text x="500" y="210" font-family="Verdana, DejaVu Sans, sans-serif" font-size="44" font-weight="700" letter-spacing="6">PERSONALITY DEMO</text>
+    <text x="500" y="305" font-family="Verdana, DejaVu Sans, sans-serif" font-size="98" font-weight="700">Dantalion</text>
+    <text x="500" y="374" font-family="Verdana, DejaVu Sans, sans-serif" font-size="32">Birthday personality routes, locale-aware pages, and static SEO metadata.</text>
+  </g>
+  <g>
+    <rect x="500" y="434" width="120" height="54" rx="27" fill="#fff7ed" opacity=".18"/>
+    <rect x="636" y="434" width="132" height="54" rx="27" fill="#fff7ed" opacity=".18"/>
+    <text x="560" y="469" fill="#fff7ed" font-family="Verdana, DejaVu Sans, sans-serif" font-size="24" font-weight="700" text-anchor="middle">EN</text>
+    <text x="702" y="469" fill="#fff7ed" font-family="Verdana, DejaVu Sans, sans-serif" font-size="24" font-weight="700" text-anchor="middle">JA</text>
+  </g>
+</svg>
