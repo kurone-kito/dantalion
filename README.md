@@ -88,8 +88,12 @@ notes.
 
 ## Web demo
 
-The browser-facing playground lives in its own repository:
-[`kurone-kito/dantalion-web-demo`](https://github.com/kurone-kito/dantalion-web-demo).
+Try it live: <https://kurone-kito.github.io/dantalion/>.
+
+The browser-facing playground lives in its own repository,
+[`kurone-kito/dantalion-web-demo`](https://github.com/kurone-kito/dantalion-web-demo),
+which consumes the modernized `v1.0.0-rc.x` line of the published
+packages and redeploys to the URL above on every push to its `main`.
 
 ## Contributing
 

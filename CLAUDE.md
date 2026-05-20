@@ -90,7 +90,8 @@ strictly `core → i18n → cli` (issues #87 → #88 → #89).
 
 The browser-facing web demo lives in its own repository,
 [`kurone-kito/dantalion-web-demo`](https://github.com/kurone-kito/dantalion-web-demo),
-and is no longer part of this monorepo.
+and is no longer part of this monorepo. It is published live at
+<https://kurone-kito.github.io/dantalion/>.
 
 ## Commit rules
 
