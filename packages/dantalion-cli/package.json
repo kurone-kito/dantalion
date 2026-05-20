@@ -53,5 +53,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "execa": "^9.6.1"
   }
 }
