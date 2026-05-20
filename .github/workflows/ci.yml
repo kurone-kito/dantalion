@@ -72,3 +72,22 @@ jobs:
           HUSKY: 0
         run: pnpm install --frozen-lockfile --prefer-offline
       - run: pnpm run build
+
+  mutation:
+    name: mutation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - env:
+          HUSKY: 0
+        run: pnpm install --frozen-lockfile --prefer-offline
+      - run: pnpm --filter @kurone-kito/dantalion-core run test:mutation
