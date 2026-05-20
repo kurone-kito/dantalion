@@ -8,6 +8,16 @@ export default defineConfig({
       provider: 'v8',
       include: ['src/**/*.ts'],
       exclude: ['src/**/*.spec.ts'],
+      // Baseline measured 2026-05-20 after #149 landed:
+      // stmt 100%, branch 95.2%, func 100%, lines 100%.
+      // Thresholds set 2–5 pp below baseline to allow modest refactor
+      // churn while catching real regressions.
+      thresholds: {
+        statements: 98,
+        branches: 90,
+        functions: 98,
+        lines: 98,
+      },
     },
   },
 });
