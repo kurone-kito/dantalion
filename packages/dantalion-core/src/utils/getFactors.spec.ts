@@ -100,26 +100,16 @@ describe('getFactors', () => {
   });
 
   describe('known-value pin tests', () => {
-    it.each<
-      [
-        string,
-        { cycle: number; inner: number; outer: number; workStyle: number },
-      ]
-    >([
-      ['2000-01-07', { cycle: 1, inner: 1, outer: 2, workStyle: 4 }],
-      ['2000-01-08', { cycle: 2, inner: 2, outer: 2, workStyle: 4 }],
-      ['2000-01-09', { cycle: 3, inner: 3, outer: 2, workStyle: 4 }],
-      ['2000-01-10', { cycle: 4, inner: 4, outer: 2, workStyle: 4 }],
-      ['2000-01-17', { cycle: 1, inner: 11, outer: 2, workStyle: 4 }],
-      ['2000-02-05', { cycle: 10, inner: 6, outer: 3, workStyle: 5 }],
-      ['1984-02-05', { cycle: 6, inner: 6, outer: 3, workStyle: 1 }],
-      ['2024-12-31', { cycle: 6, inner: 6, outer: 1, workStyle: 5 }],
-    ])('%s → cycle=%i, inner=%i, outer=%i, workStyle=%i', (dateStr, {
-      cycle,
-      inner,
-      outer,
-      workStyle,
-    }) => {
+    it.each<[string, number, number, number, number]>([
+      ['2000-01-07', 1, 1, 2, 4],
+      ['2000-01-08', 2, 2, 2, 4],
+      ['2000-01-09', 3, 3, 2, 4],
+      ['2000-01-10', 4, 4, 2, 4],
+      ['2000-01-17', 1, 11, 2, 4],
+      ['2000-02-05', 10, 6, 3, 5],
+      ['1984-02-05', 6, 6, 3, 1],
+      ['2024-12-31', 6, 6, 1, 5],
+    ])('%s → cycle=%i, inner=%i, outer=%i, workStyle=%i', (dateStr, cycle, inner, outer, workStyle) => {
       const factors = getFactors(makeSource(dateStr));
       expect(factors.cycle).toBe(cycle);
       expect(factors.inner).toBe(inner);
