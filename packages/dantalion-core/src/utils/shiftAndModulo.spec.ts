@@ -14,7 +14,7 @@ describe('shiftAndModulo', () => {
     expect(shiftAndModulo(a, n)).toBe(expected);
   });
 
-  it('produces a value in the half-open range (0, n] for any positive dividend', () => {
+  it('produces a value in [1, n] for any non-negative dividend', () => {
     for (let a = 0; a <= 200; a++) {
       const r = shiftAndModulo(a, 12);
       expect(r).toBeGreaterThanOrEqual(1);
