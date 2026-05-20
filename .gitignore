@@ -335,3 +335,7 @@ sea
 test-results/
 v8-compile-cache-*
 web_modules/
+
+### Stryker mutation testing (per-package outputs) ###
+packages/*/reports/
+packages/*/.stryker-tmp/

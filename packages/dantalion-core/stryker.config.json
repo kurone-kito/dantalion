@@ -1,0 +1,22 @@
+{
+  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker-js/master/packages/api/schema/stryker-core.json",
+  "_comment": "Trial configuration for #151. The trial may be removed after the recommendation lands.",
+  "packageManager": "pnpm",
+  "testRunner": "vitest",
+  "plugins": ["@stryker-mutator/vitest-runner"],
+  "vitest": {
+    "configFile": "vitest.config.mts"
+  },
+  "reporters": ["progress", "clear-text", "json"],
+  "concurrency": 2,
+  "mutate": [
+    "src/**/*.ts",
+    "!src/**/*.spec.ts",
+    "!src/tests/**",
+    "!src/records/**",
+    "!src/index.ts",
+    "!src/types/**"
+  ],
+  "coverageAnalysis": "perTest",
+  "timeoutMS": 30000
+}
