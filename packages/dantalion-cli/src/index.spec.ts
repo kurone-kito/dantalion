@@ -13,9 +13,13 @@ const runCli = (args: string[]) =>
 
 describe('dantalion CLI smoke', () => {
   beforeAll(async () => {
-    // Ensure the dist artifact exists. Vitest is run from `pnpm run test`,
-    // which has a `pretest` build hook on the workspace root, but if a
-    // contributor invokes `vitest run` directly the artifact may be stale.
+    // The `pretest:vitest` script in this package's package.json runs
+    // `pnpm run build` before vitest, so `dist/src/index.js` should be
+    // present whenever the tests are launched through the standard
+    // `test:vitest` or `pnpm run test` paths. This probe is a defensive
+    // sanity check that surfaces a clear error if someone bypasses the
+    // pretest hook (e.g., invoking `vitest run` directly against an
+    // empty dist).
     const probe = await runCli(['--version']);
     if (probe.exitCode !== 0) {
       throw new Error(
