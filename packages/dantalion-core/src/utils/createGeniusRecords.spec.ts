@@ -59,13 +59,10 @@ describe('createGeniusRecords', () => {
   });
 
   describe('row independence (row-walker mutation guard)', () => {
-    it('each outer key maps to a distinct inner record (rows not aliased)', () => {
+    it('all inner records are pairwise distinct objects (no aliasing)', () => {
       const result = createGeniusRecords(TABLE);
       const rows = genius.map((id) => result[id as keyof typeof result]);
-      const first = rows[0];
-      for (let i = 1; i < rows.length; i++) {
-        expect(rows[i]).not.toBe(first);
-      }
+      expect(new Set(rows).size).toBe(genius.length);
     });
   });
 });
