@@ -40,6 +40,7 @@
     "build": "tsc -p tsconfig.build.json",
     "clean": "rimraf dist *.tsbuildinfo",
     "dev": "tsc -p tsconfig.build.json --watch",
+    "test:mutation": "stryker run",
     "test:vitest": "vitest run --coverage",
     "test:ts": "tsc -p tsconfig.test.json --noEmit"
   },
@@ -50,6 +51,8 @@
     "access": "public"
   },
   "devDependencies": {
+    "@stryker-mutator/core": "^9.6.1",
+    "@stryker-mutator/vitest-runner": "^9.6.1",
     "fast-check": "^4.8.0"
   }
 }
