@@ -23,14 +23,15 @@
  * The (animal → Genius ID) mapping itself is dantalion-internal, so
  * the test fails if any of those 12 assignments are silently swapped
  * while the rest of the algorithm continues to compute the same 60
- * 甲子 position — which is precisely the regression the regression
- * fixture cannot detect.
+ * 甲子 position — exactly the class of bug the self-generated
+ * `personality.json` baseline cannot detect.
  *
  * Coverage: 60 sequential entries for 60甲子 positions 1..60
  * (2000-01-07 .. 2000-03-06) plus 5 dedicated boundary entries
- * (historical anchor 1924-02-05, modern leap-year 2024-02-29, year
- * boundary 2024-12-31 / 2025-01-01, and a duplicate-of-main-sequence
- * leap-day 2000-02-29 kept for documentation).
+ * (1924-02-05 historical anchor, 1984-02-04 立春 boundary,
+ * 2024-02-29 modern leap day, 2024-12-31 / 2025-01-01 year
+ * boundary). 2000-02-29 is already covered by the main sequence as
+ * 60甲子 #54.
  */
 import { describe, expect, it } from 'vitest';
 import getPersonality from '../utils/getPersonality.js';
@@ -578,13 +579,20 @@ describe('reference: getPersonality matches external 60甲子 + 動物占い® m
     expect(REFERENCE_ENTRIES.length).toBeGreaterThanOrEqual(30);
   });
 
-  it('covers every 60甲子 position 1..60', () => {
-    const positions = new Set(REFERENCE_ENTRIES.map((e) => e.sixtyKoshi));
-    for (let n = 1; n <= 60; n++) {
-      expect(positions.has(n), `60甲子 #${n} should appear in entries`).toBe(
-        true,
-      );
-    }
+  it('main sequence covers exactly 60甲子 positions 1..60 once each', () => {
+    // Restrict to entries within the documented anchor window so that
+    // boundary entries (which intentionally duplicate some positions
+    // from outside the window) cannot mask gaps in the main sequence.
+    const ANCHOR_WINDOW_START = '2000-01-07';
+    const ANCHOR_WINDOW_END = '2000-03-06';
+    const mainSequence = REFERENCE_ENTRIES.filter(
+      (e) => e.date >= ANCHOR_WINDOW_START && e.date <= ANCHOR_WINDOW_END,
+    );
+    expect(mainSequence).toHaveLength(60);
+    const positions = mainSequence
+      .map((e) => e.sixtyKoshi)
+      .sort((a, b) => a - b);
+    expect(positions).toEqual(Array.from({ length: 60 }, (_, i) => i + 1));
   });
 
   it('covers every Genius ID at least once', () => {
