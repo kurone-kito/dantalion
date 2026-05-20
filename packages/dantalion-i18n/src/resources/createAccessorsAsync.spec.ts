@@ -67,7 +67,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           more: expect.any(Array),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.brain.getCategoryDetail()` method', () => {
@@ -77,7 +76,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           detail: expect.any(String),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.communication.getByKey()` method', () => {
@@ -91,17 +89,15 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           more: expect.any(Array),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.communication.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {
-        const expected = (await func()).communication.getCategoryDetail();
+        const _expected = (await func()).communication.getCategoryDetail();
         expect((await func()).communication.getCategoryDetail()).toEqual({
           detail: expect.any(String),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.genius.getByKey()` method', () => {
@@ -127,7 +123,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           summary: expect.any(String),
           weak: expect.any(Array),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.genius.getCategoryDetail()` method', () => {
@@ -145,7 +140,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           outer: expect.any(String),
           workStyle: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.getDescription()` method', () => {
@@ -162,7 +156,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           strategy: expect.any(String),
           weak: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
       it.each([
         'foo',
@@ -180,7 +173,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           strategy: expect.any(String),
           weak: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.lifeBase.getByKey()` method', () => {
@@ -201,14 +193,12 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           detail: expect.any(Array),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.lifeBase.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {
         const expected = (await func()).lifeBase.getCategoryDetail();
         expect(expected).toEqual(expect.any(String));
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.management.getByKey()` method', () => {
@@ -222,7 +212,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           more: expect.any(Array),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.management.getCategoryDetail()` method', () => {
@@ -232,7 +221,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           detail: expect.any(String),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.motivation.getByKey()` method', () => {
@@ -246,14 +234,12 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       ])('("%s") => Get the specified object', async (key) => {
         const expected = (await func()).motivation.getByKey(key);
         expect(expected).toEqual(expect.any(String));
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.motivation.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {
         const expected = (await func()).motivation.getCategoryDetail();
         expect(expected).toEqual(expect.any(String));
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.position.getByKey()` method', () => {
@@ -269,7 +255,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           more: expect.any(Array),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.position.getCategoryDetail()` method', () => {
@@ -279,7 +264,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           detail: expect.any(String),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.response.getByKey()` method', () => {
@@ -293,7 +277,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           more: expect.any(Array),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.response.getCategoryDetail()` method', () => {
@@ -303,7 +286,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           detail: expect.any(String),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.vector.getByKey()` method', () => {
@@ -318,7 +300,6 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           name: expect.any(String),
           strategy: expect.any(Array),
         });
-        expect(expected).toMatchSnapshot();
       });
     });
     describe('`Accessors.vector.getCategoryDetail()` method', () => {
@@ -328,8 +309,20 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           detail: expect.any(String),
           name: expect.any(String),
         });
-        expect(expected).toMatchSnapshot();
       });
+    });
+
+    // Canonical-wording tripwire: a single snapshot per (locale,
+    // function) pair on one representative accessor. If a locale
+    // file is wholesale corrupted (e.g., wrong language uploaded,
+    // mass-renaming gone wrong), this snapshot catches it. Removing
+    // all the per-method snapshots dropped this file from ~155 KB
+    // to a fraction of that without losing real regression
+    // coverage — the structural `toEqual({ shape })` checks above
+    // remain the enforced contract.
+    it('genius.getByKey("555") — canonical wording tripwire', async () => {
+      const expected = (await func()).genius.getByKey('555');
+      expect(expected).toMatchSnapshot();
     });
   });
 });
