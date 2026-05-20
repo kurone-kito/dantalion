@@ -38,6 +38,7 @@
     "clean": "rimraf dist *.tsbuildinfo",
     "dantalion": "node dist/src/index.js",
     "dev": "tsc -p tsconfig.build.json --watch",
+    "pretest:vitest": "pnpm run build",
     "test:vitest": "vitest run --coverage",
     "test:ts": "tsc -p tsconfig.test.json --noEmit"
   },
@@ -53,5 +54,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "execa": "^9.6.1"
   }
 }

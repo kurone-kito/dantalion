@@ -7,7 +7,7 @@ import personality from './personality.js';
 import showJson from './render/showJson.js';
 import showMd from './render/showMd.js';
 
-const { version } = createRequire(import.meta.url)('../package.json') as {
+const { version } = createRequire(import.meta.url)('../../package.json') as {
   version: string;
 };
 
