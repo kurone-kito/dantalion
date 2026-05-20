@@ -111,7 +111,11 @@ importers:
         specifier: ^9.6.1
         version: 9.6.1
 
-  packages/dantalion-core: {}
+  packages/dantalion-core:
+    devDependencies:
+      fast-check:
+        specifier: ^4.8.0
+        version: 4.8.0
 
   packages/dantalion-i18n:
     dependencies:
@@ -1198,6 +1202,10 @@ packages:
     resolution: {integrity: sha512-knvyeauYhqjOYvQ66MznSMs83wmHrCycNEN6Ao+2AeYEfxUIkuiVxdEa1qlGEPK+We3n0THiDciYSsCcgW/DoA==}
     engines: {node: '>=12.0.0'}
 
+  fast-check@4.8.0:
+    resolution: {integrity: sha512-GOJ158CUMnN6cSahsv4+ExARvIDuzzinFjkp0E9WtiBa5zcVeLozVkWaE4IzFcc+Y48Wp1EDlUZsXRyAztQcSg==}
+    engines: {node: '>=12.17.0'}
+
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
 
@@ -1770,6 +1778,9 @@ packages:
   punycode.js@2.3.1:
     resolution: {integrity: sha512-uxFIHU0YlHYhDQtV4R9J6a52SLx28BCjT+4ieh7IGbgwVJWO+km431c4yRlREUAsAmt/uMjQUyQHNEPf0M39CA==}
     engines: {node: '>=6'}
+
+  pure-rand@8.4.0:
+    resolution: {integrity: sha512-IoM8YF/jY0hiugFo/wOWqfmarlE6J0wc6fDK1PhftMk7MGhVZl88sZimmqBBFomLOCSmcCCpsfj7wXASCpvK9A==}
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
@@ -3167,6 +3178,10 @@ snapshots:
 
   expect-type@1.3.0: {}
 
+  fast-check@4.8.0:
+    dependencies:
+      pure-rand: 8.4.0
+
   fast-deep-equal@3.1.3: {}
 
   fast-equals@6.0.0: {}
@@ -3792,6 +3807,8 @@ snapshots:
       parse-ms: 4.0.0
 
   punycode.js@2.3.1: {}
+
+  pure-rand@8.4.0: {}
 
   queue-microtask@1.2.3: {}
 
