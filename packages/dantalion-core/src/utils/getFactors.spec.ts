@@ -17,9 +17,12 @@ import getBirthdayDetails from './getBirthdayDetails.js';
 import getFactors from './getFactors.js';
 
 const makeSource = (dateStr: string) => {
-  // Parse as local-time date (not UTC midnight) so tests are stable across
-  // timezones. new Date('YYYY-MM-DD') gives UTC midnight, which shifts the
-  // calendar day on non-UTC runners when getBirthdayDetails uses local getters.
+  // Avoid the new Date('YYYY-MM-DD') UTC-midnight pitfall: that form parses as
+  // UTC midnight, shifting the local calendar day on non-UTC runners since
+  // getBirthdayDetails uses local getters (getDate/getMonth/getFullYear).
+  // Note: getMonthlyCoefficients also uses a fixed-epoch anchor with local
+  // getters, so full timezone-independence is not claimed; the fix only ensures
+  // dateStr's calendar day is not inadvertently offset by the TZ difference.
   const [y, m, d] = dateStr.split('-').map(Number) as [number, number, number];
   const date = new Date(y, m - 1, d);
   return {
