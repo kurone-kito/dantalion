@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { argv } from 'node:process';
 import { pathToFileURL } from 'node:url';
@@ -63,8 +64,21 @@ export const buildProgram = (): Command => {
 // Run only when this module is the program entry point (i.e., invoked
 // as `dantalion` from the shell). Under `vitest` the test file imports
 // `buildProgram` and the block below stays inert.
-const entryPoint = argv[1] ? pathToFileURL(argv[1]).href : '';
-if (import.meta.url === entryPoint) {
+//
+// `argv[1]` may be a symlink path (npm/yarn `node_modules/.bin` and
+// global installs hard-link to the bin), while `import.meta.url` is
+// the resolved target. Resolve the symlink before comparing so the
+// guard still fires when launched via `dantalion` rather than
+// `node dist/src/index.js`.
+const resolveEntryUrl = (): string => {
+  if (!argv[1]) return '';
+  try {
+    return pathToFileURL(realpathSync(argv[1])).href;
+  } catch {
+    return pathToFileURL(argv[1]).href;
+  }
+};
+if (import.meta.url === resolveEntryUrl()) {
   const program = buildProgram();
   program.parse(argv);
   if (argv.length < 1) {
