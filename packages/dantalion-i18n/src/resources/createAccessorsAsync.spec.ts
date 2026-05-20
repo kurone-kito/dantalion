@@ -93,8 +93,8 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
     });
     describe('`Accessors.communication.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {
-        const _expected = (await func()).communication.getCategoryDetail();
-        expect((await func()).communication.getCategoryDetail()).toEqual({
+        const expected = (await func()).communication.getCategoryDetail();
+        expect(expected).toEqual({
           detail: expect.any(String),
           name: expect.any(String),
         });

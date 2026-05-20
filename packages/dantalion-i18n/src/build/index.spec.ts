@@ -157,15 +157,22 @@ const PERSONALITY_BIRTHDAYS: readonly string[] = [
 const TRIPWIRE_GENIUS: Genius = '555';
 const TRIPWIRE_BIRTHDAY = '1873-02-01';
 
+// Markdown produced by both renderers must look like Markdown: at
+// least one heading marker (`#`) at line start. This is the cheapest
+// structural check that distinguishes "rendered Markdown" from
+// "accidentally empty / error string / unrendered template".
+const MARKDOWN_HEADING = /^#/m;
+
 describe.each(['en', 'ja'])('LANG=%s', (lng) => {
   describe('`getDetailMarkdown()` function', () => {
     it.each(
       DETAIL_GENIUS_LIST,
-    )('(t, %p) => returns a non-empty Markdown string', async (genius) => {
+    )('(t, %p) => returns a Markdown string with at least one heading', async (genius) => {
       const accessors = createAccessors(await createTAsync({ lng }));
       const actual = getDetailMarkdown(accessors, genius);
       expect(actual).toEqual(expect.any(String));
       expect(actual.length).toBeGreaterThan(0);
+      expect(actual).toMatch(MARKDOWN_HEADING);
     });
 
     it(`(t, ${TRIPWIRE_GENIUS}) — canonical wording tripwire`, async () => {
@@ -178,11 +185,12 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
   describe('`getPersonalityMarkdown()` function', () => {
     it.each(
       PERSONALITY_BIRTHDAYS,
-    )('(t, %p) => returns a non-empty Markdown string', async (birthday) => {
+    )('(t, %p) => returns a Markdown string with at least one heading', async (birthday) => {
       const accessors = createAccessors(await createTAsync({ lng }));
       const actual = getPersonalityMarkdown(accessors, birthday);
       expect(actual).toEqual(expect.any(String));
       expect(actual.length).toBeGreaterThan(0);
+      expect(actual).toMatch(MARKDOWN_HEADING);
     });
 
     it(`(t, ${TRIPWIRE_BIRTHDAY}) — canonical wording tripwire`, async () => {
