@@ -14,7 +14,7 @@ export default defineConfig({
       // churn while catching real regressions.
       thresholds: {
         statements: 98,
-        branches: 90,
+        branches: 91,
         functions: 98,
         lines: 98,
       },
