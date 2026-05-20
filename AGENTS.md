@@ -60,7 +60,8 @@ minimum project rules immediately. The canonical full guide lives in
 
 Cross-package dependency direction: `core ← i18n ← cli`.
 The former web playground has been split out to
-[`kurone-kito/dantalion-web-demo`](https://github.com/kurone-kito/dantalion-web-demo).
+[`kurone-kito/dantalion-web-demo`](https://github.com/kurone-kito/dantalion-web-demo)
+and is published live at <https://kurone-kito.github.io/dantalion/>.
 
 ## IDD workflow
 
