@@ -71,7 +71,7 @@ describe('getPersonality — algebraic invariants', () => {
     fc.assert(
       fc.property(inRangeDate, (date) => {
         const p = getPersonality(date);
-        if (!p) return true; // out-of-range slipped through
+        if (!p) return false; // in-range generator must not yield undefined
         return Number.isInteger(p.cycle) && p.cycle >= 1 && p.cycle <= 10;
       }),
     );
@@ -98,7 +98,7 @@ describe('getPersonality — algebraic invariants', () => {
       fc.property(safeWindow, (date) => {
         const a = getPersonality(date);
         const b = getPersonality(addDays(date, 10));
-        if (!a || !b) return true;
+        if (!a || !b) return false; // both dates in safe window must resolve
         return a.cycle === b.cycle;
       }),
     );
@@ -118,7 +118,7 @@ describe('getPersonality — algebraic invariants', () => {
     fc.assert(
       fc.property(inRangeDate, (date) => {
         const p = getPersonality(date);
-        if (!p) return true;
+        if (!p) return false; // in-range generator must not yield undefined
         return (
           VALID_GENIUS.has(p.inner) &&
           VALID_GENIUS.has(p.outer) &&
@@ -132,7 +132,7 @@ describe('getPersonality — algebraic invariants', () => {
     fc.assert(
       fc.property(inRangeDate, (date) => {
         const p = getPersonality(date);
-        if (!p) return true;
+        if (!p) return false; // in-range generator must not yield undefined
         return VALID_LIFEBASE.has(p.lifeBase);
       }),
     );
@@ -141,6 +141,14 @@ describe('getPersonality — algebraic invariants', () => {
   it('F: out-of-range dates return undefined', () => {
     fc.assert(
       fc.property(outOfRangeDate, (date) => getPersonality(date) === undefined),
+    );
+  });
+
+  it('sanity: in-range generator never yields undefined', () => {
+    // Negative control: confirm the `if (!p) return false` guards in
+    // A/B/D/E are not silently failing on every shrunk input.
+    fc.assert(
+      fc.property(inRangeDate, (date) => getPersonality(date) !== undefined),
     );
   });
 
