@@ -8,19 +8,20 @@ export default defineConfig({
       provider: 'v8',
       include: ['src/**/*.ts'],
       exclude: ['src/**/*.spec.ts'],
-      // The CLI smoke spec (#145) invokes the built `dist/src/index.js`
-      // through `execa`, so v8 instrumentation cannot follow the
-      // subprocess and reports 0% coverage here. Setting any positive
-      // threshold would fail CI immediately. The thresholds remain
-      // declared (as the project standard) at 0, and an in-process
-      // CLI matrix that would produce real coverage numbers is
-      // intentionally tracked separately in #152.
-      // Baseline measured 2026-05-20.
+      // After #152 landed, the in-process unit specs (detail.spec,
+      // personality.spec, index.unit.spec, render/*.spec) lift v8
+      // coverage off the floor:
+      //   stmt 83% / branch 60% / func 100% / lines 83% (2026-05-20)
+      // The remaining uncovered code is the entry-point guard block
+      // and the version-fallback path, both of which only fire when
+      // the module is invoked as the program (covered by the execa
+      // smoke spec, but v8 doesn't follow into subprocesses). Set
+      // thresholds 3–10 pp below the measured baseline.
       thresholds: {
-        statements: 0,
-        branches: 0,
-        functions: 0,
-        lines: 0,
+        statements: 80,
+        branches: 50,
+        functions: 95,
+        lines: 80,
       },
     },
   },
