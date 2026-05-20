@@ -127,13 +127,17 @@ describe('dantalion CLI smoke', () => {
       expect(stdout).toMatch(/[぀-ゟ゠-ヿ一-鿿]/);
     });
 
-    it('LANG=en_US.UTF-8 produces ASCII-leaning Markdown output', async () => {
+    it('LANG=en_US.UTF-8 produces non-empty, CJK-free output', async () => {
       const { exitCode, stdout } = await runCli(['detail', '555'], {
         LANG: 'en_US.UTF-8',
       });
       expect(exitCode).toBe(0);
-      // English Markdown should contain at least one ASCII Markdown heading.
-      expect(stdout).toMatch(/^#/m);
+      expect(stdout.length).toBeGreaterThan(0);
+      // marked-terminal rewrites Markdown headings into ANSI-styled
+      // text, so the rendered output may not contain a literal `#`.
+      // Assert the locale is honored by requiring zero CJK code
+      // points (the same range the ja_JP test checks for presence of).
+      expect(stdout).not.toMatch(/[぀-ゟ゠-ヿ一-鿿]/);
     });
   });
 

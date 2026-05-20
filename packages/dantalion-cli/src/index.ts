@@ -2,8 +2,9 @@
 
 import { realpathSync } from 'node:fs';
 import { createRequire } from 'node:module';
+import { resolve as resolvePath } from 'node:path';
 import { argv } from 'node:process';
-import { pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import { Command } from 'commander';
 import detail from './detail.js';
 import personality from './personality.js';
@@ -65,20 +66,24 @@ export const buildProgram = (): Command => {
 // as `dantalion` from the shell). Under `vitest` the test file imports
 // `buildProgram` and the block below stays inert.
 //
-// `argv[1]` may be a symlink path (npm/yarn `node_modules/.bin` and
-// global installs hard-link to the bin), while `import.meta.url` is
-// the resolved target. Resolve the symlink before comparing so the
-// guard still fires when launched via `dantalion` rather than
-// `node dist/src/index.js`.
-const resolveEntryUrl = (): string => {
-  if (!argv[1]) return '';
+// Normalization needed because:
+//   * `argv[1]` may be relative (`node dist/src/index.js`) — `pathToFileURL`
+//     rejects relative paths;
+//   * `argv[1]` may be a symlink (npm/yarn `node_modules/.bin`, global
+//     installs) — the symlink path differs from `import.meta.url`'s
+//     resolved target.
+// Resolve to an absolute realpath on both sides before comparing.
+const isProgramEntry = (): boolean => {
+  if (!argv[1]) return false;
   try {
-    return pathToFileURL(realpathSync(argv[1])).href;
+    const argvRealpath = realpathSync(resolvePath(argv[1]));
+    const moduleRealpath = realpathSync(fileURLToPath(import.meta.url));
+    return argvRealpath === moduleRealpath;
   } catch {
-    return pathToFileURL(argv[1]).href;
+    return false;
   }
 };
-if (import.meta.url === resolveEntryUrl()) {
+if (isProgramEntry()) {
   const program = buildProgram();
   program.parse(argv);
   if (argv.length < 1) {
