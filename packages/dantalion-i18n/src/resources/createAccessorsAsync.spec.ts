@@ -117,16 +117,14 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       ])('("%s") => Get the specified object', async (key) => {
         const expected = (await func()).genius.getByKey(key);
         expect(expected).toEqual({
-          detail: expect.any(Array),
+          detail: expect.arrayContaining([expect.any(String)]),
           name: expect.any(String),
-          strategy: expect.any(Array),
+          strategy: expect.arrayContaining([expect.any(String)]),
           summary: expect.any(String),
-          weak: expect.any(Array),
+          weak: expect.arrayContaining([expect.any(String)]),
         });
-        expect(expected.detail.length).toBeGreaterThan(0);
-        expect(expected.strategy.length).toBeGreaterThan(0);
-        expect(expected.weak.length).toBeGreaterThan(0);
         expect(expected.name.length).toBeGreaterThan(0);
+        expect(expected.summary.length).toBeGreaterThan(0);
       });
     });
 
@@ -250,12 +248,14 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       ])('("%s") => Get the specified object', async (key) => {
         const expected = (await func()).motivation.getByKey(key);
         expect(expected).toEqual(expect.any(String));
+        expect(expected.length).toBeGreaterThan(0);
       });
     });
     describe('`Accessors.motivation.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {
         const expected = (await func()).motivation.getCategoryDetail();
         expect(expected).toEqual(expect.any(String));
+        expect(expected.length).toBeGreaterThan(0);
       });
     });
     describe('`Accessors.position.getByKey()` method', () => {
