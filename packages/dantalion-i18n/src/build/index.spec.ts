@@ -180,6 +180,16 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       const actual = getDetailMarkdown(accessors, TRIPWIRE_GENIUS);
       expect(actual).toMatchSnapshot();
     });
+
+    // Cross-input distinctness: ensure two different Genius IDs do
+    // not collapse onto identical markdown output (which a buggy
+    // renderer could silently do without the snapshots).
+    it('two different Genius IDs produce distinct Markdown', async () => {
+      const accessors = createAccessors(await createTAsync({ lng }));
+      const a = getDetailMarkdown(accessors, '000');
+      const b = getDetailMarkdown(accessors, '555');
+      expect(a).not.toBe(b);
+    });
   });
 
   describe('`getPersonalityMarkdown()` function', () => {
@@ -197,6 +207,15 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       const accessors = createAccessors(await createTAsync({ lng }));
       const actual = getPersonalityMarkdown(accessors, TRIPWIRE_BIRTHDAY);
       expect(actual).toMatchSnapshot();
+    });
+
+    // Cross-input distinctness: ensure two different birthdays do
+    // not collapse onto identical markdown output.
+    it('two different birthdays produce distinct Markdown', async () => {
+      const accessors = createAccessors(await createTAsync({ lng }));
+      const a = getPersonalityMarkdown(accessors, '1873-02-01');
+      const b = getPersonalityMarkdown(accessors, '1873-03-15');
+      expect(a).not.toBe(b);
     });
   });
 });

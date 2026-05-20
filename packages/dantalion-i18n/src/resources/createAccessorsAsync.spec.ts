@@ -123,8 +123,24 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
           summary: expect.any(String),
           weak: expect.any(Array),
         });
+        expect(expected.detail.length).toBeGreaterThan(0);
+        expect(expected.strategy.length).toBeGreaterThan(0);
+        expect(expected.weak.length).toBeGreaterThan(0);
+        expect(expected.name.length).toBeGreaterThan(0);
       });
     });
+
+    // Cross-input distinctness check: with shape-only assertions a
+    // regression that collapses every Genius key onto the same
+    // payload would still pass. Spot-check that two distinct keys
+    // produce distinct names.
+    it('genius.getByKey: distinct keys produce distinct names', async () => {
+      const accessors = await func();
+      const a = accessors.genius.getByKey('000');
+      const b = accessors.genius.getByKey('555');
+      expect(a.name).not.toBe(b.name);
+    });
+
     describe('`Accessors.genius.getCategoryDetail()` method', () => {
       it('Get the specified object', async () => {
         const expected = (await func()).genius.getCategoryDetail();
