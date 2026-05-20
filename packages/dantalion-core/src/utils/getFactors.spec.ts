@@ -5,11 +5,11 @@
  *   getFactors.ts:54  shiftAndModulo(shifted * 6 + hi * 4 + cycle - 6, 12)
  *                     ↳ mutant: cycle + 6
  *
- * This is a provably equivalent mutant. shiftAndModulo(a, n) has period n, so
- * shiftAndModulo(v + 12, 12) === shiftAndModulo(v, 12) for all v. The two
- * expressions differ by exactly 12 (the modulus), making them identical for
- * all inputs. No test can distinguish them — this is a mathematical certainty,
- * not a coverage gap.
+ * This is a provably equivalent mutant given the current shiftAndModulo.ts
+ * implementation: shiftAndModulo(a, n) = ((((a-1) % n) + n) % n) + 1, which
+ * has period n. Therefore shiftAndModulo(v + 12, 12) === shiftAndModulo(v, 12)
+ * for all v ∈ ℤ. The two expressions differ by exactly 12 (the modulus), making
+ * them identical for all inputs. No test can distinguish them.
  */
 import { describe, expect, it } from 'vitest';
 import getMonthlyCoefficients from '../records/getMonthlyCoefficients.js';
@@ -17,7 +17,11 @@ import getBirthdayDetails from './getBirthdayDetails.js';
 import getFactors from './getFactors.js';
 
 const makeSource = (dateStr: string) => {
-  const date = new Date(dateStr);
+  // Parse as local-time date (not UTC midnight) so tests are stable across
+  // timezones. new Date('YYYY-MM-DD') gives UTC midnight, which shifts the
+  // calendar day on non-UTC runners when getBirthdayDetails uses local getters.
+  const [y, m, d] = dateStr.split('-').map(Number) as [number, number, number];
+  const date = new Date(y, m - 1, d);
   return {
     ...getBirthdayDetails(date),
     monthlyCoefficient: getMonthlyCoefficients(date),
