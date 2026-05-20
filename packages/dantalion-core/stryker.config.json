@@ -1,6 +1,5 @@
 {
-  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker-js/master/packages/api/schema/stryker-core.json",
-  "_comment": "Trial configuration for #151. The trial may be removed after the recommendation lands.",
+  "$schema": "https://json.schemastore.org/stryker",
   "packageManager": "pnpm",
   "testRunner": "vitest",
   "plugins": ["@stryker-mutator/vitest-runner"],

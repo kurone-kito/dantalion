@@ -40,6 +40,7 @@
     "build": "tsc -p tsconfig.build.json",
     "clean": "rimraf dist *.tsbuildinfo",
     "dev": "tsc -p tsconfig.build.json --watch",
+    "test:mutation": "stryker run",
     "test:vitest": "vitest run --coverage",
     "test:ts": "tsc -p tsconfig.test.json --noEmit"
   },
