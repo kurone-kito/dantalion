@@ -4,6 +4,7 @@ import lifeBaseCoefficients from '../records/lifeBaseCoefficients.js';
 import lifeBaseTable from '../records/lifeBaseTable.js';
 import potentialTable from '../records/potentialTable.js';
 import type { Genius } from '../types/genius.js';
+import type { HeavenlyStem } from '../types/heavenlyStem.js';
 import type { LifeBase } from '../types/lifeBase.js';
 import type { Potential } from '../types/potential.js';
 import assertDefined from './assertDefined.js';
@@ -13,7 +14,7 @@ import getFactors from './getFactors.js';
 /** The details for Personality. */
 export interface Personality {
   /** The sub-personality (cycle). */
-  cycle: number;
+  cycle: HeavenlyStem;
   /** The inner personality. */
   inner: Genius;
   /** The life base. */

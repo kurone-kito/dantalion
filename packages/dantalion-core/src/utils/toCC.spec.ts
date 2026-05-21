@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type { HeavenlyStem } from '../types/heavenlyStem.js';
 import type { Personality } from './getPersonality.js';
 import toCC from './toCC.js';
 
@@ -27,7 +28,7 @@ describe('toCC', () => {
     expect(cc.split('-')[3]).toBe('8880');
   });
 
-  it.each<[number, string]>([
+  it.each<[HeavenlyStem, string]>([
     [1, '1'],
     [2, '2'],
     [5, '5'],

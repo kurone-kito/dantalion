@@ -7,6 +7,7 @@ export type { AffinityLevel } from './types/AffinityLevel.js';
 export type { Brain } from './types/brain.js';
 export type { Communication } from './types/communication.js';
 export type { Genius } from './types/genius.js';
+export type { HeavenlyStem } from './types/heavenlyStem.js';
 export type { AllTypes } from './types/index.js';
 export { default as types } from './types/index.js';
 export type { LifeBase } from './types/lifeBase.js';
