@@ -44,8 +44,8 @@
       "_dantalion-XN8HyjQm.js"
     ]
   },
-  "_personality-form-CZUaKdn-.js": {
-    "file": "assets/personality-form-CZUaKdn-.js",
+  "_personality-form-Mi_Uz0vG.js": {
+    "file": "assets/personality-form-Mi_Uz0vG.js",
     "name": "personality-form",
     "imports": [
       "_dantalion-XN8HyjQm.js",
@@ -138,7 +138,7 @@
     ]
   },
   "src/routes/[lang]/index.tsx?pick=default&pick=$css": {
-    "file": "assets/index-Cr50_OLA.js",
+    "file": "assets/index-CQfpk8NT.js",
     "name": "index",
     "src": "src/routes/[lang]/index.tsx?pick=default&pick=$css",
     "isEntry": true,
@@ -146,7 +146,7 @@
     "imports": [
       "_dantalion-XN8HyjQm.js",
       "_web-copy-CeFIjHtJ.js",
-      "_personality-form-CZUaKdn-.js",
+      "_personality-form-Mi_Uz0vG.js",
       "_route-meta-pM73tEXy.js",
       "_demo-page-Bo1fp6l-.js",
       "_share-url-CVzSl1h7.js",
@@ -168,7 +168,7 @@
     ]
   },
   "src/routes/index.tsx?pick=default&pick=$css": {
-    "file": "assets/index-DzychuzY.js",
+    "file": "assets/index-BP8vypUw.js",
     "name": "index",
     "src": "src/routes/index.tsx?pick=default&pick=$css",
     "isEntry": true,
@@ -176,7 +176,7 @@
     "imports": [
       "_dantalion-XN8HyjQm.js",
       "_demo-shell-DGN4txpo.js",
-      "_personality-form-CZUaKdn-.js",
+      "_personality-form-Mi_Uz0vG.js",
       "_route-meta-pM73tEXy.js",
       "_demo-page-Bo1fp6l-.js",
       "_web-copy-CeFIjHtJ.js",
@@ -185,7 +185,7 @@
     ]
   },
   "virtual:$vinxi/handler/client": {
-    "file": "assets/client-DMUGnpm2.js",
+    "file": "assets/client-DrZRkdV7.js",
     "name": "client",
     "src": "virtual:$vinxi/handler/client",
     "isEntry": true,
