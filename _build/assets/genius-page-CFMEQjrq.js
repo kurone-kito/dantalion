@@ -1,0 +1,1 @@
+import{a as o}from"./web-copy-CfHtk9_3.js";import{o as r}from"./dantalion-QOBu4QkV.js";const n=(a=r,m)=>{const e=o(a).geniusPage,t=`${e.titlePrefix}${m}`;return{breadcrumbHomeLabel:e.breadcrumbHomeLabel,ctaLabel:e.ctaLabel,loadingLabel:e.loadingLabel,metaTitle:`${e.metaTitlePrefix}${t}`,summary:e.summary,title:t}},s=(a=r)=>o(a).notFoundPage;export{s as a,n as g};
