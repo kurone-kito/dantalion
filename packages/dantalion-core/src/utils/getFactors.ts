@@ -1,3 +1,4 @@
+import type { HeavenlyStem } from '../types/heavenlyStem.js';
 import assertDefined from './assertDefined.js';
 import type { Source2D } from './create2DAccessor.js';
 import type { BirthdayDetails } from './getBirthdayDetails.js';
@@ -6,7 +7,7 @@ import shiftAndModulo from './shiftAndModulo.js';
 /** Intermediate values that determine the factors of personality. */
 export interface Factors {
   /** The factors that determine the sub-personality (cycle). */
-  cycle: number;
+  cycle: HeavenlyStem;
   /** Gets the coordinates of the table. */
   getXY: (value: number) => Source2D;
   /** The factors that determine the inner personality. */
@@ -49,7 +50,7 @@ export default (source: FactorSource): Factors => {
     shiftAndModulo(v, 10),
   );
   return {
-    cycle: shiftAndModulo(cycle, 10),
+    cycle: shiftAndModulo(cycle, 10) as HeavenlyStem,
     getXY: (value: number): Source2D => ({ x: value - 1, y: cycle % 10 }),
     inner: shiftAndModulo(shifted * 6 + hi * 4 + cycle - 6, 12),
     lifeBase: date - monthlyCoefficients,
