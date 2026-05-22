@@ -1,0 +1,1 @@
+import{j as a,h as t}from"./dantalion-0t4RtXf0.js";import{D as n}from"./demo-shell-Df6IIn5s.js";import{p as o,L as i}from"./web-copy-DuPUaqzk.js";import"./demo-page-w7ft28L7.js";function u(e){const r=()=>e.params.lang;return a(()=>{o(r())}),t(i,{get language(){return r()},get children(){return t(n,{get children(){return e.children}})}})}export{u as default};
