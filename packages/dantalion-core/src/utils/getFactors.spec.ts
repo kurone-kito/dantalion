@@ -141,5 +141,13 @@ describe('getFactors', () => {
       expect(day10.cycle).toBe(10);
       expect(day11.cycle).toBe(1);
     });
+
+    it.each<[string, number]>([
+      ['1900-01-01', 1],
+      ['1900-02-28', 9],
+      ['1900-03-01', 10],
+    ])('%s uses the corrected century-boundary day stem', (dateStr, cycle) => {
+      expect(getFactors(makeSource(dateStr)).cycle).toBe(cycle);
+    });
   });
 });

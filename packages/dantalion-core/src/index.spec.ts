@@ -30,10 +30,7 @@ describe('integration testing', () => {
       testData.forEach((source) => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const result = getPersonality(source.date)!;
-        expect({ ...result, date: source.date }).toStrictEqual({
-          ...source,
-          lifeBase: source.lifeBase ?? result.lifeBase,
-        });
+        expect({ ...result, date: source.date }).toStrictEqual(source);
       });
     });
     it('Outputs the string from the toCC function', () => {
