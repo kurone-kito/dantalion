@@ -22,6 +22,13 @@ describe('buildProgram (in-process)', () => {
     expect(program.version()).toMatch(/^\d+\.\d+\.\d+/);
   });
 
+  it('registers the global --lang option with en/ja choices', () => {
+    const program = buildProgram();
+    const lang = program.options.find((option) => option.long === '--lang');
+    expect(lang).toBeDefined();
+    expect(lang?.argChoices).toEqual(['en', 'ja']);
+  });
+
   it('each subcommand declares the `-r, --raw` option', () => {
     const program = buildProgram();
     for (const cmd of program.commands) {

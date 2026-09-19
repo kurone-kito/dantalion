@@ -5,7 +5,7 @@ import { createRequire } from 'node:module';
 import { resolve as resolvePath } from 'node:path';
 import { argv } from 'node:process';
 import { fileURLToPath } from 'node:url';
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 import detail from './detail.js';
 import personality from './personality.js';
 import showJson from './render/showJson.js';
@@ -38,6 +38,12 @@ const readVersion = (): string => {
  */
 export const buildProgram = (): Command => {
   const program = new Command();
+  program.addOption(
+    new Option('--lang <en|ja>', 'Select the output language.').choices([
+      'en',
+      'ja',
+    ]),
+  );
   for (const {
     getDescriptionAsync,
     getObject,
@@ -54,7 +60,8 @@ export const buildProgram = (): Command => {
         if (raw) {
           showJson(await getObject(arg));
         } else {
-          showMd(await getDescriptionAsync(arg));
+          const { lang } = program.opts<{ lang?: string }>();
+          showMd(await getDescriptionAsync(arg, { lang }));
         }
       });
   }

@@ -1,10 +1,13 @@
+export interface CommandOptions {
+  readonly lang?: string | undefined;
+}
+
 export interface Command {
   readonly getDescriptionAsync: (
-    ...arg: readonly unknown[]
+    arg?: string,
+    options?: CommandOptions,
   ) => string | Promise<string>;
-  readonly getObject: (
-    ...arg: readonly unknown[]
-  ) => unknown | Promise<unknown>;
+  readonly getObject: (arg?: string) => unknown | Promise<unknown>;
   readonly alias: string;
   readonly command: string;
   readonly description: string;
