@@ -110,6 +110,14 @@ jobs:
           # never drift apart.
           PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
         run: |
+          # GH_TOKEN and GH_ENTERPRISE_TOKEN select credentials, while
+          # GH_HOST selects the GitHub Enterprise hostname. Derive the
+          # latter from the runner-provided server URL before any gh call;
+          # gh otherwise defaults API requests to github.com on GHES.
+          GH_HOST="${GITHUB_SERVER_URL#https://}"
+          GH_HOST="${GH_HOST#http://}"
+          GH_HOST="${GH_HOST%%/*}"
+          export GH_HOST
           # workflow_dispatch's `pr_number` input is `type: number` in the
           # UI, but that constraint is not strictly enforced for direct API
           # dispatches, and `gh pr view` also accepts a full PR URL --
@@ -165,6 +173,13 @@ jobs:
           # expression directly into the `run:` script.
           PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
         run: |
+          # Keep gh pointed at the server that triggered this run. The
+          # token variables below authenticate against that host, while
+          # GH_HOST prevents gh from silently defaulting to github.com.
+          GH_HOST="${GITHUB_SERVER_URL#https://}"
+          GH_HOST="${GH_HOST#http://}"
+          GH_HOST="${GH_HOST%%/*}"
+          export GH_HOST
           set +e
           if [ -z "$PR_NUMBER" ]; then
             echo "::error::PR_NUMBER is empty"
@@ -288,6 +303,13 @@ jobs:
           RETRY_ATTEMPTS: ${{ steps.cleanup.outputs.retry_attempts }}
           RETRY_BOUND_EXHAUSTED: ${{ steps.cleanup.outputs.retry_bound_exhausted }}
         run: |
+          # Keep both the duplicate-record lookup and the evidence post on
+          # the server that triggered this run; GH_HOST is required for gh
+          # on GHES even when GH_ENTERPRISE_TOKEN is present.
+          GH_HOST="${GITHUB_SERVER_URL#https://}"
+          GH_HOST="${GH_HOST#http://}"
+          GH_HOST="${GH_HOST%%/*}"
+          export GH_HOST
           # Avoid duplicate evidence comments, but only on a genuinely
           # converged outcome. Workflow-level concurrency only serialises
           # this workflow's own runs; an agent F4 (or a maintainer
