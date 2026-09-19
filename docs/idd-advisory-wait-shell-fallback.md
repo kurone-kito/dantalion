@@ -635,6 +635,7 @@ OWNER=${REPOSITORY%%/*}
 REPO=${REPOSITORY#*/}
 PR_METADATA=$(gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}")
 PR_HEAD_SHA=$(printf '%s' "$PR_METADATA" | jq -er '.head.sha')
+PR_CREATED_AT=$(printf '%s' "$PR_METADATA" | jq -er '.created_at')
 PR_BASE_SHA=$(printf '%s' "$PR_METADATA" | jq -er '.base.sha')
 CONFIG=$(mktemp)
 trap 'rm -f "$CONFIG"' EXIT
@@ -671,11 +672,6 @@ if [ "$QUIET_MINUTES" -le 0 ]; then
   exit 2
 fi
 
-PR_HEAD_COMMITTED_AT=$(
-  gh api "repos/${OWNER}/${REPO}/commits/${PR_HEAD_SHA}" \
-    | jq -er '.commit.committer.date // .commit.author.date'
-)
-
 # Use GitHub's Date header, not the executor's local wall clock.
 SERVER_NOW=$(
   gh api "repos/${OWNER}/${REPO}/issues/${PR_NUMBER}" --include \
@@ -688,6 +684,31 @@ if [ -z "$SERVER_NOW" ]; then
   exit 2
 fi
 NOW_EPOCH=$(date -u -d "$SERVER_NOW" +%s)
+
+if ! TIMELINE_RAW=$(gh api "repos/${OWNER}/${REPO}/issues/${PR_NUMBER}/timeline" --paginate); then
+  echo "hold: PR timeline fetch failed; server-side branch movement is unreadable" >&2
+  exit 2
+fi
+if ! TIMELINE_JSON=$(printf '%s\n' "$TIMELINE_RAW" | jq -s 'add // []'); then
+  echo "hold: PR timeline response was not valid JSON" >&2
+  exit 2
+fi
+if ! BRANCH_TIP_MOVEMENTS_JSON=$(printf '%s' "$TIMELINE_JSON" | jq -c '
+  map(select(
+    ((.event == "committed"
+      or .event == "head_ref_force_pushed"
+      or .event == "head_ref_deleted"
+      or .event == "synchronize")
+      and ((.created_at // .updated_at // "") != ""))
+  ) | {at: (.created_at // .updated_at), type: (.event // "branch-tip-movement")})
+  | sort_by(.at)
+'); then
+  echo "hold: PR timeline branch-movement records were not valid JSON" >&2
+  exit 2
+fi
+HEAD_ACTIVITY_AT=$(printf '%s' "$BRANCH_TIP_MOVEMENTS_JSON" | jq -r --arg created "$PR_CREATED_AT" '
+  (.[-1].at // $created)
+')
 
 ISSUE_COMMENTS_JSON=$(
   gh api "repos/${OWNER}/${REPO}/issues/${PR_NUMBER}/comments?per_page=100" \
@@ -703,15 +724,17 @@ REVIEW_COMMENTS_JSON=$(
 )
 
 # This is a fail-closed, conservative approximation of the helper's
-# effective.maxActivityUpdatedAt. Keep all three review surfaces and all
-# readable activity timestamps; filtering can only make the wait shorter.
+# effective.maxActivityUpdatedAt. Keep all three review surfaces, the
+# server-observed branch movement events, and all readable timestamps;
+# filtering can only make the wait shorter.
 ACTIVITY_JSON=$(
   jq -n \
     --argjson issue_comments "$ISSUE_COMMENTS_JSON" \
     --argjson reviews "$REVIEWS_JSON" \
-    --argjson review_comments "$REVIEW_COMMENTS_JSON" '
-      ($issue_comments + $reviews + $review_comments)
-      | map({at: (.updated_at // .submitted_at // .created_at // ""),
+    --argjson review_comments "$REVIEW_COMMENTS_JSON" \
+    --argjson branch_tip_movements "$BRANCH_TIP_MOVEMENTS_JSON" '
+      ($issue_comments + $reviews + $review_comments + $branch_tip_movements)
+      | map({at: (.at // .updated_at // .submitted_at // .created_at // ""),
              body: (.body // ""),
              login: (.user.login // .author.login // "")})
       | map(select(.at != ""))
@@ -725,7 +748,7 @@ LATEST_ACTIVITY_AT=$(printf '%s' "$ACTIVITY_JSON" | jq -r '.[-1].at // empty')
 # short five-minute confirmation buffer, capped by the configured window.
 SECONDARY_LATEST_JSON=$(
   printf '%s' "$ISSUE_COMMENTS_JSON" \
-    | jq -c --arg login "$SECONDARY_LOGIN" --arg head "$PR_HEAD_COMMITTED_AT" '
+    | jq -c --arg login "$SECONDARY_LOGIN" --arg head "$HEAD_ACTIVITY_AT" '
         map(select(((.user.login // .author.login // "") | ascii_downcase)
                    == ($login | ascii_downcase)))
         | map({at: (.updated_at // .created_at // ""), body: (.body // "")})

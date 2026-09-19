@@ -196,10 +196,12 @@ The helper throws an error if:
   (`new Date()`), **not** a server timestamp; pass `--now <ISO8601>` to
   pin it to a server-derived time when exact server-relative evaluation
   matters
-- Branch-tip movement uses the head commit's **committer** date, which is
-  refreshed on (re)create / rebase / cherry-pick / amend, rather than the
-  author date, which preserves the original (possibly very old) authorship
-  time. (Both are Git commit-object fields, not server timestamps.)
+- Branch-tip movement must use a GitHub-server-observed PR timeline or
+  ref-update timestamp (`committed`, `head_ref_force_pushed`,
+  `synchronize`, or an equivalent server-side head snapshot), never a
+  commit object's author or committer date. If that server-side signal is
+  unavailable or the timeline is incomplete, return hold/inconclusive
+  evidence instead of treating the quiet window as satisfied.
 - Normalizes timestamps to ISO8601 UTC with a `Z` suffix
 - Treats `ci-running` as blocking even if its timestamp would otherwise
   fall outside the window

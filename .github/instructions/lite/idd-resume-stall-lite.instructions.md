@@ -68,6 +68,12 @@ Require **no** external progress in the last 30 minutes:
 - no CI `queued` / `in_progress`;
 - no new review/comment/CI completion activity.
 
+For a PR-backed check, branch-tip movement must be derived from a
+GitHub-server PR timeline or ref-update event (`committed`,
+`head_ref_force_pushed`, `synchronize`, or an equivalent server-side head
+snapshot). Never use a commit object's author/committer date as movement
+evidence. Missing, partial, or ambiguous ref-update evidence is a hold.
+
 Helper fields: `quiet_window_met`, `reason`, `latest_activity`.
 
 | Result                                                         | Action                                                 |

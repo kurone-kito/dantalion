@@ -826,6 +826,11 @@ Interpretation rules:
   (`activity_count_in_window`, `blocking_activities`,
   `has_heartbeat_in_window`, `has_ci_running`,
   `has_branch_tip_movement`)
+- `has_branch_tip_movement` is valid only when the producer observed a
+  GitHub-server PR timeline/ref-update event (for example `committed`,
+  `head_ref_force_pushed`, or `synchronize`); commit author/committer
+  dates are not branch-movement evidence. Missing or incomplete server
+  ref-update data is a hold/inconclusive result.
 - `ci-running` activities always break the quiet window regardless
   of their timestamp; all other types are checked against
   `window_start = now - quiet_window_ms`

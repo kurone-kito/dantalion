@@ -135,6 +135,13 @@ stable fields `quiet_window_met`, `quiet_window_ms`, `window_start`,
 `has_heartbeat_in_window`, `has_ci_running`,
 `has_branch_tip_movement`).
 
+The helper's branch-tip signal must come from a GitHub-server PR timeline
+or ref-update event (`committed`, `head_ref_force_pushed`, `synchronize`,
+or an equivalent server-side head snapshot). A commit object's author or
+committer date is not a server-side movement timestamp. If that evidence is
+missing, pagination is incomplete, or the source is ambiguous, treat the
+quiet check as hold/inconclusive and do not take over.
+
 The helper gathers evidence only. It never decides trusted-marker
 validity, stale-age, advisory state, forced-handoff routing, or takeover
 eligibility by itself. If helper runtime is unavailable, the command

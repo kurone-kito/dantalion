@@ -157,7 +157,7 @@
         },
         "has_branch_tip_movement": {
           "type": "boolean",
-          "description": "Whether branch-tip movement was observed in the quiet window"
+          "description": "Whether GitHub-server-observed PR timeline or ref-update movement was observed in the quiet window; commit author/committer dates are not sufficient"
         }
       },
       "additionalProperties": false
