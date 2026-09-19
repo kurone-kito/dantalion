@@ -165,6 +165,16 @@ describe('dantalion CLI smoke', () => {
       expect(stdout).not.toMatch(/[぀-ゟ゠-ヿ一-鿿]/);
     });
 
+    it('--lang ja is propagated to detail on an English host locale', async () => {
+      const { exitCode, stdout } = await runCli(
+        ['detail', '555', '--lang', 'ja'],
+        { LANG: 'en_US.UTF-8', LC_ALL: '', LC_CTYPE: '' },
+      );
+      expect(exitCode).toBe(0);
+      expect(stdout).toContain('詳細');
+      expect(stdout).toMatch(/[぀-ゟ゠-ヿ一-鿿]/);
+    });
+
     it('rejects unsupported language choices', async () => {
       const { exitCode, stderr } = await runCli([
         'personality',
