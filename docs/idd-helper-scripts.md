@@ -270,9 +270,12 @@ Before switching from `instructions-only`, verify the pinned helper source
 and its output schema for the S2 branch-tip contract: server-observed
 timeline/ref-update or equivalent current-head snapshot evidence, the
 current PR head SHA bound to that evidence, and an explicit completeness
-flag. A helper that uses a commit object's author/committer date, or omits
-those bindings, is not eligible for activation; keep the profile at
-`instructions-only` until the helper and schema are updated together.
+flag. Also verify that malformed `--claim-created-at` values are rejected
+before output, rather than copied into a schema-invalid policy envelope. A
+helper that uses a commit object's author/committer date, omits those
+bindings, or emits unvalidated claim timestamps is not eligible for
+activation; keep the profile at `instructions-only` until the helper and
+schema are updated together.
 
 ## Profile Wiring Surface
 

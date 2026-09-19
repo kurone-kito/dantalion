@@ -261,6 +261,32 @@ When enabling this policy surface:
 - in solo-maintainer repositories, use the helper-generated waiver
   comment instead of PR self-approval as the authorization surface
 
+### ciGate F2 bootstrap
+
+`pre-merge-readiness` (F2) reads `.github/idd/config.json` from the
+PR's trusted **base** ref, not the PR head. A pull request that both
+introduces a new `ciGate.*` key and needs that key for its own F2
+evaluation can never become ready: the gate still sees the old base
+config. Do not invent a waiver helper, a schema field, a workflow job,
+or a generalization of the
+`idd-advisory-convergence` self-referential-bootstrap-auto path
+(kurone-kito/idd-skill#2657) to cover an arbitrary `ciGate.*` key.
+
+**Default (C) — preload-first.** Land the intended `ciGate.*` value as
+a config-only change on the trusted base **before** a later PR (or a
+GitHub-side required-check pin) needs F2 to honor it. The landing PR
+must still be F2-satisfiable against the old base: it must not itself
+depend on the new key.
+
+**Rare off-ramp (B) — named one-off merge.** Use this only when F2 is
+already structurally unsatisfiable for every PR. A repository owner or
+a Maintain/Admin collaborator may merge that bootstrap PR outside the
+autonomous F2 path after CI, commit signing, and the advisory-wait
+protocol still pass, with the PR body naming the bootstrapped flag. F2
+itself stays fail-closed. The off-ramp is not an F3 solo-CODEOWNER
+`gh pr merge --admin` retry, a ruleset bypass, or a general waiver.
+Autonomous F2/F3 never takes this off-ramp.
+
 ## Phase ID Compatibility Contract
 
 Treat phase IDs as a compatibility surface, not as presentation text.

@@ -436,9 +436,8 @@ IDD_AGENT_LOGIN_JSON=$(
     fi
   } | sed '/^[[:space:]]*$/d' | sort -fu | jq -Rsc 'split("\n") | map(select(length > 0))'
 )
-TRUSTED_REVIEW_ACK_LOGIN_JSON=$(printf '%s' "${BASE_CONFIG_CONTENT}" | base64 "${BASE64_DECODE_ARGS}" | jq -c \
-  --arg extra "${IDD_TRUSTED_MARKER_ACTORS:-}" '
-  ((.trustedMarkerActors // []) + ($extra | split(",")))
+TRUSTED_REVIEW_ACK_LOGIN_JSON=$(printf '%s' "${BASE_CONFIG_CONTENT}" | base64 "${BASE64_DECODE_ARGS}" | jq -c '
+  (.trustedMarkerActors // [])
   | map(select(type == "string" and length > 0) | ascii_downcase)
   | unique')
 

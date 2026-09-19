@@ -41,7 +41,7 @@ idd-stalled-session-quiet-check \
   --pr <number> \
   [--owner <owner>] \
   [--repo <repo>] \
-  [--token <token>] \
+  [--gh-token <token>] \
   --now <server-anchored-ISO8601> \
   [--quiet-window-ms <ms>] \
   [--claim-created-at <ISO8601>] \
@@ -55,7 +55,7 @@ node scripts/stalled-session-quiet-check.mjs \
   --pr <number> \
   [--owner <owner>] \
   [--repo <repo>] \
-  [--token <token>] \
+  [--gh-token <token>] \
   --now <server-anchored-ISO8601> \
   [--quiet-window-ms <ms>] \
   [--claim-created-at <ISO8601>] \
@@ -70,7 +70,7 @@ node scripts/stalled-session-quiet-check.mjs \
 
 - `--owner <owner>`: Repository owner; defaults to the current repository
 - `--repo <repo>`: Repository name; defaults to the current repository
-- `--token <token>`: GitHub token override for `gh` API calls
+- `--gh-token <token>`: GitHub token override for `gh` API calls
 - `--now <ISO8601>`: Reference timestamp; defaults to current UTC time
 - `--quiet-window-ms <ms>`: Quiet-window duration in milliseconds;
   defaults to the policy value or `1800000`
@@ -85,6 +85,13 @@ node scripts/stalled-session-quiet-check.mjs \
 Resume already performs. If helper runtime is unavailable or the helper
 output is unusable, the written manual procedure in
 `idd-resume-stall.instructions.md` remains authoritative.
+
+The helper must reject a malformed `--claim-created-at` as a call error
+before emitting JSON. It must never copy an unvalidated raw value into
+`policy.claim_created_at`, because the schema accepts only `null` or an
+exact UTC timestamp. Until the pinned helper producer enforces this
+contract, keep the repository on `instructions-only` and treat helper
+output as unavailable.
 
 ## Stable output fields consumed by Resume/S2
 
