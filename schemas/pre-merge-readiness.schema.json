@@ -36,7 +36,13 @@
       },
       "then": {
         "properties": {
-          "blockers": { "maxItems": 0 }
+          "blockers": { "maxItems": 0 },
+          "secondaryQuietWindow": {
+            "required": ["elapsed"],
+            "properties": {
+              "elapsed": { "const": true }
+            }
+          }
         }
       }
     },

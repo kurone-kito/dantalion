@@ -319,6 +319,30 @@
         },
         "required": ["secondaryBotLogin"]
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "lastCopilotCommit": { "const": "" },
+          "copilotPending": { "const": false },
+          "sameHeadMarkerPresent": { "const": false },
+          "sameHeadRequestMarkerPresent": { "const": false },
+          "requestMarkerCount": { "const": 0 }
+        },
+        "required": [
+          "lastCopilotCommit",
+          "copilotPending",
+          "sameHeadMarkerPresent",
+          "sameHeadRequestMarkerPresent",
+          "requestMarkerCount"
+        ]
+      },
+      "then": {
+        "properties": {
+          "outcome": { "not": { "const": "SATISFIED" } },
+          "f3Outcome": { "not": { "const": "SATISFIED" } }
+        }
+      }
     }
   ],
   "additionalProperties": false

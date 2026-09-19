@@ -35,7 +35,7 @@
   "critiqueLoop": {
     "deferAfterRounds": 5,
     "telemetryHook": {
-      "command": "idd-critique-telemetry"
+      "command": "node tools/idd-critique-telemetry.mjs"
     }
   },
   "forcedHandoff": {

@@ -174,10 +174,15 @@ Before any mutating action in F3, apply the
      that landed between F2 and this final gate, for example a
      required `{development-branch}` sync. Before running them,
      confirm the local worktree is checked out at `${PR_HEAD_SHA_F3}`
-     exactly (`git fetch` plus `git checkout`/`git reset --hard` if a
-     resumed or external-push session left it stale) — D3.5 step 7's
-     `git log` and D3.7's inherited `git diff` both read local git
-     state, not the remote PR directly. Skip D3.5 steps 6-7 under the
+     exactly. Before any checkout or reset, fetch the remote and confirm
+     `git status --porcelain` is empty and that the local branch has no
+     commits absent from the remote (the right-hand count from
+     `git rev-list --left-right --count "origin/{development-branch}...HEAD"`
+     must be `0`). If either check fails, do not use `git reset --hard`;
+     route to Resume/hold and preserve the local work. Only a clean
+     worktree with no local-only commits may be synchronized to the exact
+     PR head. D3.5 step 7's `git log` and D3.7's inherited `git diff` both
+     read local git state, not the remote PR directly. Skip D3.5 steps 6-7 under the
      same non-default-`{development-branch}` exemption D3.5 itself
      carries. On a mismatch, fix it per D3.5/D3.7's own documented
      handling. Any fix here — whether or not it changes HEAD, since a

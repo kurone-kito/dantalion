@@ -643,32 +643,5 @@ carries items — **AW6** (#1511) handles that residual from F2 instead.
 
 ## Advisory courtesy-ack convergence
 
-A trusted advisory bot's post-disposition courtesy reply (e.g. "thanks
-for confirming") advances the PR's `updatedAt`, which a naive
-review-currency check would treat as new activity and loop the
-review/snapshot cycle forever.
-
-**Rule**: once every `ReviewItems_snapshot` item has an
-`**Accepted**`/`**Rejected**` disposition at the **current HEAD SHA**, a
-later **ack-only** comment from a trusted advisory bot does not reopen
-the loop — bind the merge to current HEAD and proceed. An **ack-only**
-comment opens no new thread, carries no `CHANGES_REQUESTED`, and raises
-no new finding; anything else re-opens the loop normally.
-
-**Helper evidence**: when the advisory-bot identity is configured, the
-activity-snapshot / `pre-merge-readiness` evidence emits the structural
-half of this classification (`reviewCurrency.live.ackOnly.items`,
-`reviewCurrency.comparisonReason: ack-only-post-disposition`); the
-agent still confirms the semantic residual (no new finding), and this
-never weakens the disposition-evidence or unreplied-comment backstops.
-
-**Disposition-evidence parity (advisory-only)**: the same ack can also
-re-trip the `dispositionEvidence` backstop on an already-resolved
-thread (`route: return-to-e1`). `pre-merge-readiness` flags each such
-thread `ackOnlyPostDisposition: true`; when
-`dispositionEvidence.soleCauseAckOnlyPostDisposition` is `true` (every
-blocking item is one such thread), autopilot may deterministically
-override `return-to-e1` and proceed (see `idd-pre-merge.instructions.md`
-F2). Any non-ack blocking cause keeps it `false`, so the backstop holds
-otherwise. (`inPlaceEditOnly`/`soleCauseInPlaceEditOnly`, #1313, is a
-stricter subset — not an override path of its own.)
+Read the [advisory acknowledgement convergence rules](../../docs/idd-review-triage-advisory-ack.md)
+before deciding whether a post-disposition advisory comment reopens E1.

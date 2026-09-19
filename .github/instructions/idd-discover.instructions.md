@@ -705,29 +705,7 @@ mutation policy, coordination rules, decision flow, and edge cases.
 
 ## Roadmap markers
 
-Two hidden HTML comment markers are used in issue bodies to support the
-discover phase:
+Read the [roadmap marker rules](../../docs/idd-discover-roadmap-markers.md)
+when evaluating dantalion-roadmap-id or dantalion-blocked-by.
 
-- **Roadmap identity** (`dantalion-roadmap-id`): in the
-  roadmap issue body; A3 uses it for `blocked-by` lookups. A1 finds the
-  roadmap by its label or umbrella structure, not this marker.
-- **Sequential dependency** (`dantalion-blocked-by`): in an
-  issue body — this issue **cannot start until** the roadmap with the
-  matching `roadmap-id` is closed.
-
-**Do not use `dantalion-blocked-by` to group sub-tasks under
-an active roadmap** — those belong in the roadmap's task list as
-`- [ ] #NNN` entries. `blocked-by` is only for a separate, prior
-roadmap that must close first; see the
-[A3 diagnostic](../../docs/idd-design-rationale.md#a3--diagnostic-all-candidates-blocked-by-an-open-roadmap)
-for the deadlock this prevents.
-
-## Scope invariant (summary)
-
-Do not widen issue-selection scope beyond A2's query allowlist (A0-T,
-A0-O, A1, A1.5, A3, A4.5) or a same-run operator opt-in per A3 step 5
-(never inferred from standing instructions). An explicit target
-authorizes only that issue, except when A0-T step 2 classifies it as a
-roadmap node: then it authorizes normal selection scoped to that
-roadmap's own descendants only, never an unrelated orphan issue (A0-O
-stays excluded, per A0-T step 2).
+Scope: [doc](../../docs/idd-discover-roadmap-markers.md).
