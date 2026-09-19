@@ -67,23 +67,18 @@ Copilot when working in the corresponding package directory.
 
 ## Bootstrap state
 
-The repository is mid-modernization. Until **issue #84** lands,
-the steady-state commands listed below (`pnpm run lint`, `pnpm run
-test`, `pnpm run build`) **do not work** — the repository still
-runs on Lerna 4 + npm + Jest 27 + ESLint 7 + Node 12.
+The repository completed the modernization tracked by issue #84. The
+steady-state commands listed below (`pnpm run lint`, `pnpm run test`,
+`pnpm run build`) are available for current work.
 
-Pre-#84 issues should follow their own command sets and note the
-bootstrap state in the PR description. Required-status-check gating
-on `main` (`lint`, `test`, `build`) is **not yet active** — that
-ruleset rule lands with issue #82, which itself is blocked by #86
-(CI workflow modernization).
+The main branch Ruleset currently requires `lint`, `test (22)`,
+`test (24)`, and `build`; verify the live GitHub policy before relying
+on those checks.
 
 ## Commit rules
 
 This project follows
 [Conventional Commits](https://www.conventionalcommits.org/).
-A `.gitmessage` template will live at the repository root once
-issue #84 imports it.
 
 ### Format
 

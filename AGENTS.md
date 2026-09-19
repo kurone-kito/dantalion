@@ -20,9 +20,9 @@ minimum project rules immediately. The canonical full guide lives in
 - Test: `pnpm run test`
 - Clean: `pnpm run clean`
 
-> **Bootstrap caveat**: until issue #84 merges, the commands above
-> are not yet available — the repository still runs on Lerna, npm,
-> and Jest. Pre-#84 issues should follow their own command sets.
+> The repository uses the pnpm, Biome, Vitest, and TypeScript toolchain.
+> The commands above are available for current work; follow any narrower
+> command set explicitly stated by an issue.
 
 ## Immediate rules
 

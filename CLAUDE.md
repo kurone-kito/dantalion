@@ -20,11 +20,9 @@ The canonical full guide lives in
 - Test: `pnpm run test`
 - Clean: `pnpm run clean`
 
-> **Bootstrap caveat**: until issue #84 (pnpm-workspace-template
-> import) merges, the commands above are not yet available — the
-> repository still runs on Lerna + npm + Jest. Agents working on
-> pre-#84 issues should follow that issue's specific commands and
-> note the bootstrap state in the PR description.
+> The repository uses the pnpm, Biome, Vitest, and TypeScript toolchain.
+> The commands above are available for current work; follow any narrower
+> command set explicitly stated by an issue.
 
 ## Immediate rules
 
