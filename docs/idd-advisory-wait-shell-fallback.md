@@ -396,9 +396,10 @@ if ! THREADS_RAW=$(gh api graphql --paginate -f query='
         reviewThreads(first:100, after:$endCursor) {
           pageInfo { hasNextPage endCursor }
           nodes {
+            id
             isResolved
             comments(first:100) {
-              pageInfo { hasNextPage }
+              pageInfo { hasNextPage endCursor }
               nodes { author { login } body createdAt commit { oid } }
             }
           }
@@ -421,6 +422,77 @@ if ! THREADS_JSON=$(printf '%s\n' "${THREADS_RAW}" | jq -s '
   echo "hold: review-thread response was incomplete or invalid JSON" >&2
   exit 2
 fi
+
+# The outer `--paginate` only advances reviewThreads. Fetch each thread's
+# remaining comments separately so a long conversation cannot look complete
+# merely because its first 100 comments were readable.
+while IFS="$(printf '\t')" read -r THREAD_ID COMMENT_CURSOR; do
+  [ -n "$THREAD_ID" ] || continue
+  while [ -n "$COMMENT_CURSOR" ]; do
+    if ! COMMENT_PAGE=$(gh api graphql -f query='
+      query($threadId:ID!, $commentCursor:String) {
+        node(id:$threadId) {
+          ... on PullRequestReviewThread {
+            comments(first:100, after:$commentCursor) {
+              pageInfo { hasNextPage endCursor }
+              nodes { author { login } body createdAt commit { oid } }
+            }
+          }
+        }
+      }' -F threadId="$THREAD_ID" -F commentCursor="$COMMENT_CURSOR"); then
+      echo "hold: nested review-comment fetch failed; partial pagination is unusable" >&2
+      exit 2
+    fi
+    if ! printf '%s' "$COMMENT_PAGE" | jq -e '
+      if ((.errors // []) | length) > 0 then
+        error("nested review-comment GraphQL response contained errors")
+      elif .data.node == null then
+        error("nested review-comment GraphQL response omitted thread")
+      elif (.data.node.comments.nodes | type) != "array" then
+        error("nested review-comment GraphQL response omitted nodes")
+      else true
+      end' >/dev/null; then
+      echo "hold: nested review-comment response was incomplete or invalid JSON" >&2
+      exit 2
+    fi
+    COMMENT_NODES=$(printf '%s' "$COMMENT_PAGE" | jq -c '.data.node.comments.nodes')
+    COMMENT_HAS_NEXT=$(printf '%s' "$COMMENT_PAGE" | jq -r '.data.node.comments.pageInfo.hasNextPage')
+    COMMENT_CURSOR_NEXT=$(printf '%s' "$COMMENT_PAGE" | jq -r '.data.node.comments.pageInfo.endCursor // empty')
+    if [ "$COMMENT_HAS_NEXT" = "true" ] && [ -z "$COMMENT_CURSOR_NEXT" ]; then
+      echo "hold: nested review-comment pagination omitted its next cursor" >&2
+      exit 2
+    fi
+    if [ "$COMMENT_HAS_NEXT" = "true" ]; then
+      if ! THREADS_JSON=$(printf '%s' "$THREADS_JSON" | jq \
+        --arg id "$THREAD_ID" --argjson nodes "$COMMENT_NODES" \
+        --arg cursor "$COMMENT_CURSOR_NEXT" \
+        'map(if .id == $id
+             then .comments.nodes += $nodes
+             | .comments.pageInfo.endCursor = $cursor
+             else .
+             end)'); then
+        echo "hold: nested review-comment state could not be assembled" >&2
+        exit 2
+      fi
+      COMMENT_CURSOR="$COMMENT_CURSOR_NEXT"
+    else
+      if ! THREADS_JSON=$(printf '%s' "$THREADS_JSON" | jq \
+        --arg id "$THREAD_ID" --argjson nodes "$COMMENT_NODES" \
+        'map(if .id == $id
+             then .comments.nodes += $nodes
+             | .comments.pageInfo.hasNextPage = false
+             | .comments.pageInfo.endCursor = null
+             else .
+             end)'); then
+        echo "hold: nested review-comment state could not be assembled" >&2
+        exit 2
+      fi
+      COMMENT_CURSOR=""
+    fi
+  done
+done <<EOF
+$(printf '%s' "$THREADS_JSON" | jq -r '.[] | select(.comments.pageInfo.hasNextPage) | [.id, .comments.pageInfo.endCursor] | @tsv')
+EOF
 
 # F2 accepts only IDD-agent / trusted-marker authors (same set the helper
 # reuses as iddAgentLogins). Empty set fails closed. Review acknowledgements
@@ -725,7 +797,20 @@ if [ -z "$SERVER_NOW" ]; then
   echo "hold: GitHub server Date header was unavailable" >&2
   exit 2
 fi
-NOW_EPOCH=$(date -u -d "$SERVER_NOW" +%s)
+
+iso_to_epoch() {
+  IDD_ISO_TIMESTAMP="$1" node -e '
+    const timestamp = process.env.IDD_ISO_TIMESTAMP;
+    const milliseconds = Date.parse(timestamp);
+    if (!Number.isFinite(milliseconds)) process.exit(1);
+    process.stdout.write(String(Math.floor(milliseconds / 1000)));
+  '
+}
+
+if ! NOW_EPOCH=$(iso_to_epoch "$SERVER_NOW"); then
+  echo "hold: GitHub server Date header was not parseable" >&2
+  exit 2
+fi
 
 if ! TIMELINE_RAW=$(gh api "repos/${OWNER}/${REPO}/issues/${PR_NUMBER}/timeline" --paginate); then
   echo "hold: PR timeline fetch failed; server-side branch movement is unreadable" >&2
@@ -736,17 +821,20 @@ if ! TIMELINE_JSON=$(printf '%s\n' "$TIMELINE_RAW" | jq -s 'add // []'); then
   exit 2
 fi
 if ! BRANCH_TIP_MOVEMENTS_JSON=$(printf '%s' "$TIMELINE_JSON" | jq -c --arg head "$PR_HEAD_SHA" '
+  def event_head_sha:
+    [ .sha, .commit_id, .head_sha, .after_commit_id, .after ]
+    | map(select(type == "string" and length > 0))
+    | .[0] // "";
   map(select(
     ((.event == "committed"
       or .event == "head_ref_force_pushed"
       or .event == "head_ref_deleted"
       or .event == "synchronize")
       and ((.created_at // .updated_at // "") != "")
-      and (((.sha // .commit_id // .head_sha // "") == "")
-           or ((.sha // .commit_id // .head_sha) == $head)))
+      and (event_head_sha == $head))
   ) | {at: (.created_at // .updated_at),
        type: (.event // "branch-tip-movement"),
-       head_sha: (.sha // .commit_id // .head_sha // $head)})
+       head_sha: event_head_sha})
   | sort_by(.at)
 '); then
   echo "hold: PR timeline branch-movement records were not valid JSON" >&2
@@ -895,7 +983,10 @@ if [ "$SECONDARY_STATUS" != "declined" ]; then
     ELAPSED_MINUTES=null
     REMAINING_MINUTES=0
   else
-    ANCHOR_EPOCH=$(date -u -d "$ANCHOR_AT" +%s)
+    if ! ANCHOR_EPOCH=$(iso_to_epoch "$ANCHOR_AT"); then
+      echo "hold: activity anchor was not parseable" >&2
+      exit 2
+    fi
     ELAPSED_SECONDS=$((NOW_EPOCH - ANCHOR_EPOCH))
     if [ "$ELAPSED_SECONDS" -lt 0 ]; then ELAPSED_SECONDS=0; fi
     ELAPSED_MINUTES=$((ELAPSED_SECONDS / 60))

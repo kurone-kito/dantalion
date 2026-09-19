@@ -685,6 +685,20 @@ After picking, proceed to **A4.5** (`idd-suitability.instructions.md`).
 
 ## A4.5 — Pre-Claim Issue-Suitability Triage
 
+Before handing a selected candidate to A4.5, Discover is the consumer of
+the machine-readable suitability outcome marker. For the trusted-marker
+actor set, parse issue comments for the exact first-line rejection prefix
+`A4.5 suitability gate rejection` and, when present, the hidden marker
+`<!-- dantalion-triage-verdict: unclear|duplicate|out-of-scope|invalid -->`.
+Compare the rejection timestamp with the issue's latest substantive
+title/body edit using the same staleness rule as the suitability phase. A
+non-stale marked rejection removes the candidate before claim; a stale
+rejection remains eligible only after A4.5 posts its required reconciliation
+comment. A comment-fetch or staleness-read failure is inconclusive and must
+hold rather than treating the candidate as unmarked. The full seven-check
+procedure, including unmarked `needs-decision` and `blocked-by-human`
+rejections, remains authoritative in the suitability phase.
+
 Read [`idd-suitability.instructions.md`](idd-suitability.instructions.md)
 for the full suitability triage protocol: seven checks, failure outcomes,
 mutation policy, coordination rules, decision flow, and edge cases.

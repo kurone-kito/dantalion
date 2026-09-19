@@ -260,25 +260,38 @@ pull-request-only bypass actor that can satisfy GitHub at F3.
 
 ## Runtime Instruction Size and Bundle Budgets
 
-CI enforces two layers of instruction file size limits via `audit/sync-manifest.json`.
+The current upstream dogfooding layout keeps the shared core separate from
+each phase bundle. Dantalion does not vendor upstream's
+`audit/sync-manifest.json` checker, but these compatibility budgets document
+the limits that the imported instruction corpus is expected to follow.
 
 ### Per-file limits
 
 | Limit type    | Value        | Applies to                                                                 |
 | ------------- | ------------ | -------------------------------------------------------------------------- |
 | Always-loaded | 20,000 bytes | Files with `applyTo: "**"` in `.github/instructions/idd-*.instructions.md` |
-| Phase         | 30,000 bytes | Other files in `.github/instructions/idd-*.instructions.md`                |
+| Phase         | 36,000 bytes | Other files in `.github/instructions/idd-*.instructions.md`                |
 
-### Bundle limits
+The 36,000-byte phase ceiling is the upstream value used by the current
+dogfooding corpus; it replaces the older 30,000-byte value that predates the
+core/phase bundle split.
 
-| Bundle ID          | Files included                                                                                   | Limit        |
-| ------------------ | ------------------------------------------------------------------------------------------------ | ------------ |
-| `bundle-discovery` | `idd-overview-core` + `idd-overview-appendix` + `idd-discover` + `idd-suitability` + `idd-claim` | 75,300 bytes |
-| `bundle-resume`    | `idd-overview-core` + `idd-overview-appendix` + `idd-resume`                                     | 46,000 bytes |
+### Bundle layout
 
-Bundle checks run unconditionally (not filtered by changed files) and
-measure the combined byte length of all listed files. Adjust limits in
-`audit/sync-manifest.json` when deliberate growth is accepted.
+| Bundle ID                    | Phase-specific files                                                                |
+| ---------------------------- | ----------------------------------------------------------------------------------- |
+| `bundle-core`                | `idd-overview-core` + `idd-overview-appendix`                                      |
+| `bundle-discovery-phase`     | `idd-discover` + `idd-claim`                                                       |
+| `bundle-suitability-phase`   | `idd-suitability`                                                                  |
+| `bundle-resume-phase`        | `idd-resume`                                                                       |
+| `bundle-work-phase`          | `idd-work`                                                                         |
+| `bundle-review-triage-phase` | `idd-review-snapshot` + `idd-review-triage`                                        |
+| `bundle-review-fix-phase`    | `idd-review-fix` + `idd-advisory-wait` + `idd-ci`                                  |
+| `bundle-merge-phase`         | `idd-pre-merge` + `idd-merge-handoff` + `idd-merge` + `idd-advisory-wait` + `idd-ci` |
+
+Upstream's `audit/sync-manifest.json` remains the authoritative source for
+volatile bundle byte limits. When that checker is later adopted locally, use
+the same split rather than restoring the retired monolithic discovery bundle.
 
 ## Changing A Default
 
