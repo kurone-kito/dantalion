@@ -75,10 +75,14 @@ COPILOT_PENDING_COVERS_HEAD=$(
 ## AW2
 
 ```sh
-ADVISORY_COMMENTS_JSON=$(
-  gh api "repos/${OWNER}/${REPO}/issues/{pr-number}/comments" --paginate \
-    | jq -s 'add // []'
-)
+if ! ADVISORY_COMMENTS_RAW=$(gh api "repos/${OWNER}/${REPO}/issues/{pr-number}/comments" --paginate); then
+  echo "hold: advisory comment fetch failed; AW2 evidence is unavailable" >&2
+  exit 2
+fi
+if ! ADVISORY_COMMENTS_JSON=$(printf '%s\n' "${ADVISORY_COMMENTS_RAW}" | jq -s 'add // []'); then
+  echo "hold: advisory comment response was not valid JSON" >&2
+  exit 2
+fi
 CURRENT_MARKER_ACTOR=$(gh api user --jq '.login' 2>/dev/null || true)
 TRUSTED_MARKER_ACTORS="${IDD_TRUSTED_MARKER_ACTORS:-}"
 TRUST_COLLABORATOR_MARKERS="${IDD_TRUST_COLLABORATOR_MARKERS:-}"
@@ -393,7 +397,9 @@ if ! THREADS_JSON=$(printf '%s\n' "${THREADS_RAW}" | jq -s '
 fi
 
 # F2 accepts only IDD-agent / trusted-marker authors (same set the helper
-# reuses as iddAgentLogins). Empty set fails closed.
+# reuses as iddAgentLogins). Empty set fails closed. Review acknowledgements
+# use a narrower durable allowlist below; the current credential is not
+# automatically trusted for that escape hatch.
 CURRENT_MARKER_ACTOR=$(gh api user --jq '.login' 2>/dev/null || true)
 IDD_AGENT_LOGIN_JSON=$(
   {
@@ -404,6 +410,11 @@ IDD_AGENT_LOGIN_JSON=$(
     fi
   } | sed '/^[[:space:]]*$/d' | sort -fu | jq -Rsc 'split("\n") | map(select(length > 0))'
 )
+TRUSTED_REVIEW_ACK_LOGIN_JSON=$(printf '%s' "${BASE_CONFIG_CONTENT}" | base64 --decode | jq -c \
+  --arg extra "${IDD_TRUSTED_MARKER_ACTORS:-}" '
+  ((.trustedMarkerActors // []) + ($extra | split(",")))
+  | map(select(type == "string" and length > 0) | ascii_downcase)
+  | unique')
 
 # Originating comment is nodes[0]. A truncated comments page is unmet.
 # A disposition is fresh only when it is later than every non-disposition
@@ -447,7 +458,7 @@ fi
 REVIEW_ACK_VALID=$(printf '%s' "${COMMENTS_JSON}" | jq -r \
   --arg head "${PR_HEAD_SHA}" \
   --arg submitted "${LATEST_REVIEW_SUBMITTED_AT}" \
-  --argjson agents "${IDD_AGENT_LOGIN_JSON}" '
+  --argjson agents "${TRUSTED_REVIEW_ACK_LOGIN_JSON}" '
   def marker:
     try ((.body // "")
       | capture("^review-ack: (?<agent>[^[:space:]]+) (?<head>[0-9A-Fa-f]{40}) (?<ackAt>[^[:space:]]+)$"))
@@ -545,13 +556,14 @@ MISSING_THREADS=$(printf '%s' "${THREADS_JSON}" | jq -rs \
   --argjson advisory "${ADVISORY_BOT_LOGINS_JSON}" \
   --arg pr_author "${PR_AUTHOR_LOGIN}" '
   def author_login: (.author.login // .user.login // "");
-  def normalized_login:
-    (author_login | ascii_downcase);
+  def origin_login:
+    ((.comments.nodes[0].author.login // .comments.nodes[0].user.login // "")
+      | ascii_downcase);
   def is_idd_agent:
     ((author_login | ascii_downcase) as $u
       | ($agents | map(ascii_downcase) | index($u)) != null);
   def is_advisory_origin:
-    ((normalized_login) as $u
+    (origin_login as $u
       | ($advisory | index($u)) != null
         or ($u == "copilot-pull-request-reviewer")
         or ($u == "copilot-pull-request-reviewer[bot]"));
