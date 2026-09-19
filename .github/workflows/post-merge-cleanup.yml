@@ -320,18 +320,22 @@ jobs:
           )
           # Capture into a variable (not process substitution): a failure
           # inside `< <(gh api ...)` does not reliably propagate to this
-          # shell's default `-e`/`pipefail`, which could leave EXISTING
-          # empty and post a duplicate evidence comment on a transient
-          # `gh api` failure (rate limit/network). A plain command
-          # substitution assignment does trip `-e` on failure.
+          # shell's default `-e`/`pipefail`. Guard the assignment explicitly
+          # so a transient failure posts recheck-failed evidence instead of
+          # silently dropping the cleanup result or treating the fetch as an
+          # empty prior-record set.
           #
           # The API returns issue comments in creation-ascending order, so
           # iterating every match without an early `break` and keeping the
           # last assignment leaves EXISTING/EXISTING_STATUS holding the
           # *latest* trusted comment, not merely the first one found.
-          COMMENTS_TSV=$(gh api --paginate \
+          COMMENTS_FETCH_FAILED=0
+          if ! COMMENTS_TSV=$(gh api --paginate \
             "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
-            --jq '.[] | select(.body | startswith("<!-- idd-cleanup-evidence:")) | [.id, .user.login, (.body | split("\n")[0])] | @tsv')
+            --jq '.[] | select(.body | startswith("<!-- idd-cleanup-evidence:")) | [.id, .user.login, (.body | split("\n")[0])] | @tsv'); then
+            COMMENTS_FETCH_FAILED=1
+            echo "::warning::Could not fetch prior cleanup evidence; posting recheck-failed evidence."
+          fi
           EXISTING=""
           EXISTING_STATUS=""
           while IFS=$'\t' read -r candidate_id candidate_login candidate_marker_line; do
@@ -343,23 +347,43 @@ jobs:
                 | sed -n 's/^<!-- idd-cleanup-evidence: \([^ ]*\) .*/\1/p')
             fi
           done <<< "$COMMENTS_TSV"
-          if [ -n "$EXISTING" ] \
+          if [ "$COMMENTS_FETCH_FAILED" != "1" ] \
+            && [ -n "$EXISTING" ] \
             && { [ "$EXISTING_STATUS" = "applied" ] || [ "$EXISTING_STATUS" = "clean" ]; } \
             && { [ "$STATUS" = "applied" ] || [ "$STATUS" = "clean" ]; }; then
             echo "::notice::PR #${PR_NUMBER} already has a trusted-author idd-cleanup-evidence comment recording '${EXISTING_STATUS}', and this run's own outcome '${STATUS}' is also converged (id: ${EXISTING}); skipping workflow post."
             exit 0
           fi
-          BODY=$(printf '%s\n\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
-            "<!-- idd-cleanup-evidence: ${STATUS} applied:${APPLIED} failed:${FAILED} skipped:${SKIPPED} viewer-cannot-minimize:${BLOCKED} retry-attempts:${RETRY_ATTEMPTS} retry-bound-exhausted:${RETRY_BOUND_EXHAUSTED} -->" \
-            "**F4 Cleanup Evidence** (server-side fallback via \`post-merge-cleanup.yml\`)" \
-            "| Field              | Value |" \
-            "| ------------------ | ----- |" \
-            "| Status             | ${STATUS} |" \
-            "| Applied            | ${APPLIED} |" \
-            "| Failed             | ${FAILED} |" \
-            "| Skipped            | ${SKIPPED} |" \
-            "| Permission-blocked | ${BLOCKED} |" \
-            "| Retry attempts (bound-exhausted) | ${RETRY_ATTEMPTS} (${RETRY_BOUND_EXHAUSTED}) |" \
-            "| Posted by          | post-merge-cleanup workflow |" \
-          )
+          if [ "$COMMENTS_FETCH_FAILED" = "1" ]; then
+            BODY=$(printf '%s\n\n%s\n\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
+              "<!-- idd-cleanup-evidence: recheck-failed apply-status:${STATUS} applied:${APPLIED} failed:${FAILED} skipped:${SKIPPED} viewer-cannot-minimize:${BLOCKED} retry-attempts:${RETRY_ATTEMPTS} retry-bound-exhausted:${RETRY_BOUND_EXHAUSTED} -->" \
+              "**F4 Re-check Fetch Failure**" \
+              "The duplicate-record re-check itself failed immediately before posting; the apply outcome below may still be fully converged." \
+              "| Field                 | Value |" \
+              "| --------------------- | ----- |" \
+              "| Status                | recheck-failed |" \
+              "| Apply status (actual) | ${STATUS} |" \
+              "| Applied               | ${APPLIED} |" \
+              "| Failed                | ${FAILED} |" \
+              "| Skipped               | ${SKIPPED} |" \
+              "| Permission-blocked    | ${BLOCKED} |" \
+              "| Retry attempts (bound-exhausted) | ${RETRY_ATTEMPTS} (${RETRY_BOUND_EXHAUSTED}) |" \
+              "| Notes                 | re-check gh api fetch failure (auth / rate-limit / network) |" \
+              "| Posted by             | post-merge-cleanup workflow |" \
+            )
+          else
+            BODY=$(printf '%s\n\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
+              "<!-- idd-cleanup-evidence: ${STATUS} applied:${APPLIED} failed:${FAILED} skipped:${SKIPPED} viewer-cannot-minimize:${BLOCKED} retry-attempts:${RETRY_ATTEMPTS} retry-bound-exhausted:${RETRY_BOUND_EXHAUSTED} -->" \
+              "**F4 Cleanup Evidence** (server-side fallback via \`post-merge-cleanup.yml\`)" \
+              "| Field              | Value |" \
+              "| ------------------ | ----- |" \
+              "| Status             | ${STATUS} |" \
+              "| Applied            | ${APPLIED} |" \
+              "| Failed             | ${FAILED} |" \
+              "| Skipped            | ${SKIPPED} |" \
+              "| Permission-blocked | ${BLOCKED} |" \
+              "| Retry attempts (bound-exhausted) | ${RETRY_ATTEMPTS} (${RETRY_BOUND_EXHAUSTED}) |" \
+              "| Posted by          | post-merge-cleanup workflow |" \
+            )
+          fi
           printf '%s' "$BODY" | gh pr comment "$PR_NUMBER" --body-file -
