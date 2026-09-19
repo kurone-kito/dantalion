@@ -74,16 +74,16 @@ node scripts/advisory-wait-state.mjs \
 Contract: `docs/idd-helper-scripts.md#stable-helper-evidence-outputs`
 and `schemas/advisory-wait-state.schema.json`.
 
-Required helper fields: `prHeadSha`, `lastCopilotCommit`,
-`copilotPending`, `copilotPendingCoversHead`, `outcome`, `f3Outcome`,
-`earliestSameHeadAt`, `requestMarkerCount`, `requestCap`,
-`pendingWindowMinutes`, `settledWindowMinutes`, `pollIntervalMinutes`,
-`capExhaustedRoute`, `trustedMarkerSummary`.
-
-Optional non-gating secondary-bot fields (not in the `outcome`/
-`f3Outcome` enums; see **Secondary advisory bot supplement** below):
-`secondaryBotLogin` (empty when unconfigured or equal to the primary)
-and `secondaryRequestNeeded`.
+Required helper fields, matching
+`schemas/advisory-wait-state.schema.json`: `protocolVersion`, `prHeadSha`,
+`lastCopilotCommit`, `copilotPending`, `copilotPendingCoversHead`, `outcome`,
+`f3Outcome`, `secondaryBotLogin`, `secondaryRequestNeeded`, `now`,
+`requestCap`, `pendingWindowMinutes`, `settledWindowMinutes`,
+`pollIntervalMinutes`, `capExhaustedRoute`, `elapsedMinutes`,
+`sameHeadMarkerPresent`, `sameHeadRequestMarkerPresent`,
+`earliestSameHeadAt`, `sameHeadMarkerCount`, `requestMarkerCount`, and
+`trustedMarkerSummary`. Empty or false values remain present and must not be
+treated as missing.
 
 Allowed `outcome`/`f3Outcome` values: `SATISFIED`, `REQUEST_NEEDED`,
 `RECOVERY_NEEDED`, `CAP_EXHAUSTED`, `WAIT`. `HOLD` is a protocol-level

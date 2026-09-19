@@ -33,7 +33,10 @@
     "selectionDesync": "session-offset"
   },
   "critiqueLoop": {
-    "deferAfterRounds": 5
+    "deferAfterRounds": 5,
+    "telemetryHook": {
+      "command": "idd-critique-telemetry"
+    }
   },
   "forcedHandoff": {
     "mode": "human-gated",

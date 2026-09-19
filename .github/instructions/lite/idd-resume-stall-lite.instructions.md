@@ -35,10 +35,13 @@ SERVER_NOW=$(gh api repos/<owner>/<repo>/issues/<N> --include | node -e '
 NOW=$(node -e "console.log(new Date(process.argv[1]).toISOString().replace(/\.\d{3}Z$/, 'Z'))" "$SERVER_NOW")
 
 # Quiet-window evidence (always pass --now). Requires --pr; skip if none.
+# source repo / vendored-node:
 node scripts/stalled-session-quiet-check.mjs \
   --pr <pr-number> \
   --now "$NOW" \
   --claim-created-at <latest-valid-claimed-by-created_at>
+# package-manager / ephemeral-npx: use the profile-selected
+# idd-stalled-session-quiet-check command with the same arguments.
 ```
 
 The Node parser selects the first `Date:` response header without relying

@@ -296,12 +296,14 @@ other GitHub side effect, confirm all of the following:
    the source/vendored profile; resolve the package-manager /
    ephemeral-npx equivalent from `docs/idd-helper-scripts.md`). If it
    fails, returns invalid JSON, or is missing required fields
-   (`prHeadSha`, `lastCopilotCommit`, `copilotPending`,
+   (`protocolVersion`, `prHeadSha`, `lastCopilotCommit`, `copilotPending`,
    `copilotPendingCoversHead`, `outcome`, `f3Outcome`,
-   `secondaryBotLogin`, `secondaryRequestNeeded`, `earliestSameHeadAt`,
-   `requestMarkerCount`, `requestCap`, `pendingWindowMinutes`,
-   `settledWindowMinutes`, `pollIntervalMinutes`, `capExhaustedRoute`,
-   `trustedMarkerSummary` — the full contract in
+   `secondaryBotLogin`, `secondaryRequestNeeded`, `now`, `requestCap`,
+   `pendingWindowMinutes`, `settledWindowMinutes`, `pollIntervalMinutes`,
+   `capExhaustedRoute`, `elapsedMinutes`, `sameHeadMarkerPresent`,
+   `sameHeadRequestMarkerPresent`, `earliestSameHeadAt`,
+   `sameHeadMarkerCount`, `requestMarkerCount`, `trustedMarkerSummary` — the
+   full contract in
    `docs/idd-helper-scripts.md#stable-helper-evidence-outputs` and
    `schemas/advisory-wait-state.schema.json`), stop and ask — do not
    fall back to a manual per-field fetch.

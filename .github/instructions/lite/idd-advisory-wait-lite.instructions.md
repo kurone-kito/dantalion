@@ -73,15 +73,17 @@ Resolve the package-manager / ephemeral-npx equivalent from
 `docs/idd-helper-scripts.md`.
 
 Required fields (stop and ask if any are missing — matching
-`idd-review-fix-lite.instructions.md`'s E14 field list exactly):
-`prHeadSha`, `lastCopilotCommit`, `copilotPending`,
+`schemas/advisory-wait-state.schema.json` and the E14 contract):
+`protocolVersion`, `prHeadSha`, `lastCopilotCommit`, `copilotPending`,
 `copilotPendingCoversHead`, `outcome`, `f3Outcome`, `secondaryBotLogin`,
-`secondaryRequestNeeded`, `earliestSameHeadAt`, `requestMarkerCount`,
-`requestCap`, `pendingWindowMinutes`, `settledWindowMinutes`,
-`pollIntervalMinutes`, `capExhaustedRoute`, `trustedMarkerSummary`. The
-helper always emits every one of these — an empty/false value (e.g.
-`secondaryBotLogin: ""` unconfigured, or `f3Outcome` unused by E14) is
-still present, not missing. Validate presence, not truthiness.
+`secondaryRequestNeeded`, `now`, `requestCap`, `pendingWindowMinutes`,
+`settledWindowMinutes`, `pollIntervalMinutes`, `capExhaustedRoute`,
+`elapsedMinutes`, `sameHeadMarkerPresent`, `sameHeadRequestMarkerPresent`,
+`earliestSameHeadAt`, `sameHeadMarkerCount`, `requestMarkerCount`,
+`trustedMarkerSummary`. The helper always emits every one of these — an
+empty/false value (e.g. `secondaryBotLogin: ""` unconfigured, or
+`f3Outcome` unused by E14) is still present, not missing. Validate presence,
+not truthiness.
 
 The helper computes `outcome` directly from live evidence — never by
 hand from raw timestamps. Allowed values: `SATISFIED`,

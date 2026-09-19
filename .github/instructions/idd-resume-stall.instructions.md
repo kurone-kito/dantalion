@@ -134,11 +134,15 @@ Omitting `--now` falls back to the helper's local-clock default
 (`docs/stalled-session-quiet-check.md`), which does not satisfy the
 "server timestamps only" mandate above — always pass it explicitly.
 
-Use `node scripts/stalled-session-quiet-check.mjs ...` as the vendored
-equivalent when the packaged binary is unavailable. Consume the helper's
-stable fields `quiet_window_met`, `quiet_window_ms`, `window_start`,
-`now`, `latest_activity`, `latest_activity_type`, `reason`, and
-`evidence` (`activity_count_in_window`, `blocking_activities`,
+For `source`/`vendored-node`, use
+`node scripts/stalled-session-quiet-check.mjs ...` as the local helper
+equivalent. For `package-manager`/`ephemeral-npx`, resolve and invoke the
+profile-selected `idd-stalled-session-quiet-check` command from
+`docs/idd-helper-scripts.md`; those profiles do not vendor the `scripts/`
+tree. Consume the helper's stable fields `quiet_window_met`,
+`quiet_window_ms`, `window_start`, `now`, `latest_activity`,
+`latest_activity_type`, `reason`, and `evidence`
+(`activity_count_in_window`, `blocking_activities`,
 `has_heartbeat_in_window`, `has_ci_running`,
 `has_branch_tip_movement`, `branch_tip_evidence_source`,
 `branch_tip_evidence_head_sha`, `branch_tip_evidence_complete`).
