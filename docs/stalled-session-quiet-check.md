@@ -191,7 +191,9 @@ Before takeover, Resume/S4 must still:
 5. Use A5 race-safe claim verification after posting takeover.
 
 If the helper is unavailable, fails, or returns missing/contradictory
-output, repeat the written manual procedure above with fresh live signals.
+output, repeat the written S2 manual procedure in
+`.github/instructions/idd-resume-stall.instructions.md` with fresh live
+signals.
 Stop and restart Resume routing only when that manual recheck is itself
 incomplete, contradictory, or no longer quiet.
 
