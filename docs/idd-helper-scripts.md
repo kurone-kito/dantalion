@@ -745,6 +745,19 @@ Interpretation rules:
 - Read-only boundary: without `--apply`, the helper only diagnoses the
   rerun plan and does not rerun workflows by itself
 
+### Advisory convergence (F2)
+
+- F2's advisory-convergence gate consumes the profile-selected
+  advisory-convergence command for the current PR.
+- Source repo / vendored-node command:
+  `node scripts/advisory-convergence.mjs --pr <pr-number> --assert`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  advisory-convergence command from the helper runtime manifest wiring
+  above.
+- Read-only boundary: the command evaluates current PR review
+  disposition evidence only; it does not post replies, resolve threads,
+  request reviews, or rerun workflows by itself.
+
 ### Merge-gate evidence
 
 - When helper runtime is enabled, these commands are the preferred
@@ -794,6 +807,38 @@ Interpretation rules:
   required fields/sections are missing, or helper evidence conflicts with
   live GitHub state, discard helper output and use the portable manual
   fetch path.
+
+### Local-validation evidence helper
+
+- `pre-merge-readiness`'s `localValidationEvidence` section is
+  informational evidence for a CI-gate outage only.
+- It never makes an unavailable required check pass, and never acts as a
+  waiver.
+- When a repository documents a local-validation evidence helper, keep it
+  HEAD-pinned to the current PR or claim branch and surface its result
+  only through `pre-merge-readiness`.
+
+### Merge execution (F3)
+
+- Preferred command when helper runtime is enabled:
+  `node scripts/idd-merge-execute.mjs --pr <pr-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  merge-execution command from the helper runtime manifest wiring above.
+- Dry-run mode is read-only and returns the same merge-gate evidence the
+  F3 instructions inspect plus a `ready` flag and any `blockers[]`.
+- `--apply` is explicit. It revalidates the claim and current head, runs
+  the merge commit bound to the validated head SHA, and reports whether
+  an admin fallback was used.
+
+### Signed-commit merge wrapper (shared git procedure)
+
+- Some repositories use commit signing that is hostile to unattended
+  `git merge`, `git rebase`, or `--continue` flows.
+- When a repository blesses a fallback wrapper, use the same wrapper for
+  the initial mutating command and every follow-up `--continue` command.
+- The wrapper must preserve the underlying git subcommand, keep the
+  operation non-interactive, and add a conventional merge-commit subject
+  when the wrapped command creates a merge commit.
 
 ### E7 disposition verification
 
@@ -912,6 +957,28 @@ Interpretation rules:
   it with the written Resume/S2-S4 checks for the same active claim,
   stale-threshold gating, closed/merged guards, and A5 race-safe claim
   verification. `quiet_window_met = true` alone is never sufficient.
+
+### Provider outage park helper
+
+- Use the profile-selected provider-outage park helper only when a known
+  provider outage is the sole blocker.
+- The helper records the outage hold, releases the claim immediately,
+  and reports the bounded parked-change decision so the session does not
+  keep opening unmergeable pull requests.
+- If the helper is unavailable or its evidence is ambiguous, fail closed
+  to the written hold path instead of inferring a provider outage.
+
+### Provider outage declaration helper
+
+- Repositories may optionally record a sustained provider-outage
+  declaration for a specific external-check selector.
+- When helper runtime is enabled, use the profile-selected
+  provider-outage declaration helper to read that declaration instead of
+  re-deriving it from comments.
+- The declaration never proves a pull request's terminal advisory state
+  by itself; it only substitutes for the per-PR waiver once the current
+  PR independently satisfies the documented terminal-unavailability
+  checks.
 
 ## Friction Inventory
 

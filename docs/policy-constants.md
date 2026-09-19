@@ -221,6 +221,20 @@ merge-based post-publication sync path as fully active, align the
 downstream E/F-phase conflict instructions, pre-merge behavior, and any
 resume-routing helpers with the same policy.
 
+## High-contention shared files
+
+Some repository-level files attract edits from many concurrent IDD
+sessions. The discovery tie-breaker that prefers non-overlapping
+candidate files should treat these paths as shared contention hotspots:
+
+- F-phase bundle or workflow-policy files that every merge path updates;
+- `audit/sync-manifest.json`; and
+- any repository-local file a helper manifest documents as a shared
+  merge/readiness surface.
+
+This preference is advisory only. It may reorder otherwise tied
+candidates, but it never overrides suitability, claim, or review gates.
+
 ## External-Check Waiver Defaults
 
 | Policy default                                                            | Distributed value                                             | Owning surface                                                                                                                                                                                                           | Onboarding expectation                                                                                                                                |

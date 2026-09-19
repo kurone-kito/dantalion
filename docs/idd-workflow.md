@@ -117,6 +117,29 @@ the per-agent pass only under the selected mode; a missing, timed-out, or
 unreadable delegate result is not a clean critique and must follow the
 phase's hold/fallback rule.
 
+### Mutation / write-side helper lens
+
+Apply this lens when a helper or script mutates GitHub state, mutates git
+state, or performs a merge. Check four things:
+
+- fail-closed handling for missing or malformed inputs;
+- parity between the helper's validation path and its apply path;
+- suppression of unsafe or stale helper output; and
+- schema or field strictness that is at least as strong as the written
+  instruction contract.
+
+### Gate-mirroring helper lens
+
+Apply this lens when a helper predicts, mirrors, or pre-checks another
+workflow gate. Check that it preserves:
+
+- the full set of required inputs;
+- whole-identity comparisons, not partial matches;
+- snapshot identity between the evidence it reads and the gate it claims
+  to mirror; and
+- point-in-time parity, so it does not silently evaluate a different
+  head, review set, or CI run than the written gate.
+
 ## Orchestrator fan-out variant
 
 An orchestrator may select multiple independent issues, but each worker
@@ -214,6 +237,20 @@ limited to the PR that just merged and the local cleanup for that child
 issue. F5 then loops back to Discover, where roadmap completion can be
 checked with the broader parent context.
 
+## Branch publication and synchronization
+
+IDD treats the first D-phase push as the publication boundary. Before
+that push, the branch may be rebased onto the development branch as part
+of unpublished history cleanup. After publication, synchronization stays
+reviewable:
+
+- branch-state probes remain read-only;
+- a `BEHIND` state is evidence only unless repository policy requires an
+  up-to-date head; and
+- when synchronization is required, merge the development branch into the
+  PR branch and route the resulting diff back through review, CI, and
+  freshness gates instead of hiding it behind a last-minute rebase.
+
 ## Resume routing model
 
 Resume now starts with a deterministic external-signal classifier before
@@ -279,6 +316,8 @@ roadmap issue itself is being mutated, then release them once that
 roadmap-side effect is complete. They are not a proxy lock for child
 claims.
 
+## Recursive roadmap hierarchies
+
 Recursive roadmap hierarchies still follow that rule. Leaf execution
 issues finish first, then the deepest completed nested roadmap is
 audited and closed under its own `roadmap-audit/*` claim, and only then
@@ -293,6 +332,15 @@ heartbeat, release, or take over rather than holding the claim open.
 
 The docs audit keeps this guidance synchronized with the exported
 template so unattended runs can spot drift.
+
+## Grooming pass for rejected and below-floor issues (optional)
+
+Repositories may optionally run a separate grooming pass over issues that
+were rejected by A4.5 or repeatedly ranked below the suitability floor.
+That pass is a backlog-maintenance aid only: it clarifies issue bodies,
+repairs metadata, or links duplicates so future A4.5 runs can evaluate
+them cleanly. It never bypasses the normal A4.5 or A5 gates in the
+execution loop.
 
 ## Copilot review instruction scope
 
