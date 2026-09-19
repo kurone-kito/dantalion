@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kurone-kito.github.io/idd-skill/schemas/advisory-wait-state.schema.json",
+  "title": "Advisory Wait State",
+  "description": "Read-only advisory-wait evidence snapshot for a PR head.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "prHeadSha",
+    "lastCopilotCommit",
+    "copilotPending",
+    "copilotPendingCoversHead",
+    "outcome",
+    "f3Outcome",
+    "secondaryBotLogin",
+    "secondaryRequestNeeded",
+    "now",
+    "requestCap",
+    "pendingWindowMinutes",
+    "settledWindowMinutes",
+    "pollIntervalMinutes",
+    "capExhaustedRoute",
+    "elapsedMinutes",
+    "sameHeadMarkerPresent",
+    "sameHeadRequestMarkerPresent",
+    "earliestSameHeadAt",
+    "sameHeadMarkerCount",
+    "requestMarkerCount",
+    "trustedMarkerSummary"
+  ],
+  "properties": {
+    "protocolVersion": {
+      "type": "string",
+      "description": "Fixed contract-version tag for this snapshot shape.",
+      "pattern": "^1$"
+    },
+    "prHeadSha": {
+      "type": "string",
+      "description": "The PR HEAD commit SHA this snapshot is anchored to.",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "lastCopilotCommit": {
+      "type": "string",
+      "description": "commit_id of the primary bot's most recently submitted review, by submittedAt order, or empty when no such review exists.",
+      "pattern": "^$|^[0-9a-f]{40}$"
+    },
+    "copilotPending": {
+      "type": "boolean",
+      "description": "True when the primary bot currently appears in the PR's requested reviewers."
+    },
+    "copilotPendingCoversHead": {
+      "type": "boolean",
+      "description": "True when a review-requested event for the primary bot is proven to have occurred after the current HEAD's commit event, i.e. the pending request targets current HEAD."
+    },
+    "outcome": {
+      "type": "string",
+      "description": "Shared routing outcome consumed by E14, F2, and the shell-fallback path (AW1-AW5). On REQUEST_NEEDED, F2 returns to E14 while E14 itself requests Copilot and polls; F3 reads f3Outcome instead.",
+      "enum": [
+        "SATISFIED",
+        "REQUEST_NEEDED",
+        "RECOVERY_NEEDED",
+        "CAP_EXHAUSTED",
+        "WAIT"
+      ]
+    },
+    "f3Outcome": {
+      "type": "string",
+      "description": "F3-authoritative outcome; treats copilotPending=false as SATISFIED so F3 may merge a settled-but-not-re-reviewed advisory state. F3 uses this field exclusively when helper output is valid, which is why it can diverge from outcome.",
+      "enum": [
+        "SATISFIED",
+        "REQUEST_NEEDED",
+        "RECOVERY_NEEDED",
+        "CAP_EXHAUSTED",
+        "WAIT"
+      ]
+    },
+    "secondaryBotLogin": {
+      "type": "string",
+      "description": "Resolved OPTIONAL secondary advisory bot login (lower-cased), or empty when no secondary is configured. Non-gating supplement; never satisfies the primary advisory-wait gate."
+    },
+    "secondaryRequestNeeded": {
+      "type": "boolean",
+      "description": "True when the configured secondary advisory bot should be requested once for the current HEAD because the primary is cap-exhausted or stalled/rate-limited. Non-gating: never alters outcome/f3Outcome and posts no advisory-wait marker."
+    },
+    "now": {
+      "type": "string",
+      "description": "ISO-8601 capture instant of this run.",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+    },
+    "requestCap": {
+      "type": "integer",
+      "description": "Configured maximum trusted request markers before the outcome routes to CAP_EXHAUSTED instead of REQUEST_NEEDED (advisoryWait.requestCap, default 30).",
+      "minimum": 1
+    },
+    "pendingWindowMinutes": {
+      "type": "number",
+      "description": "Configured minutes a same-HEAD marker may wait while copilotPending before the outcome self-declares SATISFIED rather than WAIT (advisoryWait.pendingWindow, default 30).",
+      "exclusiveMinimum": 0
+    },
+    "settledWindowMinutes": {
+      "type": "number",
+      "description": "Configured minutes a same-HEAD marker must age once Copilot is no longer pending before the outcome declares SATISFIED (advisoryWait.settledWindow, default 10).",
+      "exclusiveMinimum": 0
+    },
+    "pollIntervalMinutes": {
+      "type": "number",
+      "description": "Configured recommended re-poll cadence, in minutes, while the outcome stays WAIT (advisoryWait.pollInterval, default 2).",
+      "exclusiveMinimum": 0
+    },
+    "capExhaustedRoute": {
+      "type": "string",
+      "description": "Configured routing on CAP_EXHAUSTED: phase-specific (default -- E14 skips to E15, F2/F3 hold) or hold (all three phases hold).",
+      "enum": ["phase-specific", "hold"]
+    },
+    "elapsedMinutes": {
+      "type": "number",
+      "description": "Minutes from the earliest trusted same-HEAD marker to now, or zero when no such marker exists."
+    },
+    "sameHeadMarkerPresent": {
+      "type": "boolean",
+      "description": "True when a trusted same-HEAD advisory-wait or advisory-wait-recovery marker already anchors the current HEAD."
+    },
+    "sameHeadRequestMarkerPresent": {
+      "type": "boolean",
+      "description": "#2327: true only when a trusted same-HEAD marker is specifically the plain request form (advisory-wait:), excluding advisory-wait-recovery: -- distinguishes 'a request was actually made for this HEAD' from 'only a prior recovery cycle's own marker exists'."
+    },
+    "earliestSameHeadAt": {
+      "type": "string",
+      "description": "GitHub created_at of the earliest trusted same-HEAD marker, or empty when none exists; the clock anchor for elapsedMinutes.",
+      "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+    },
+    "sameHeadMarkerCount": {
+      "type": "number",
+      "description": "Count of trusted comments whose body matches the current HEAD's advisory-wait or advisory-wait-recovery marker shape."
+    },
+    "requestMarkerCount": {
+      "type": "number",
+      "description": "Count of trusted comments requesting the primary bot for any HEAD, compared against requestCap."
+    },
+    "trustedMarkerSummary": {
+      "type": "object",
+      "description": "Trust-provenance breakdown behind the marker counts above.",
+      "required": [
+        "viewerLogin",
+        "configuredTrustedActors",
+        "collaboratorTrustEnabled",
+        "trustedMarkerLogins",
+        "trustedSameHeadMarkerCount",
+        "untrustedSameHeadMarkerCount",
+        "trustedRequestMarkerCount",
+        "untrustedRequestMarkerCount"
+      ],
+      "properties": {
+        "viewerLogin": {
+          "type": "string",
+          "description": "The authenticated actor's own login, lower-cased; auto-trusted so its own markers always count."
+        },
+        "configuredTrustedActors": {
+          "type": "array",
+          "description": "Resolved trusted-actor list from flag, environment, or config precedence.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "collaboratorTrustEnabled": {
+          "type": "boolean",
+          "description": "True when Write/Maintain/Admin collaborators are opted in as trusted marker authors."
+        },
+        "trustedMarkerLogins": {
+          "type": "array",
+          "description": "Final normalized set of logins used to classify markers as trusted: viewer plus configured actors plus, when enabled, collaborator-derived logins.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trustedSameHeadMarkerCount": {
+          "type": "number",
+          "description": "Same-HEAD markers authored by a trusted login."
+        },
+        "untrustedSameHeadMarkerCount": {
+          "type": "number",
+          "description": "Same-HEAD-shaped markers authored by an untrusted login; evidence they exist but do not count toward the gate."
+        },
+        "trustedRequestMarkerCount": {
+          "type": "number",
+          "description": "Request markers authored by a trusted login, for any HEAD."
+        },
+        "untrustedRequestMarkerCount": {
+          "type": "number",
+          "description": "Request-shaped markers authored by an untrusted login."
+        }
+      },
+      "additionalProperties": false
+    },
+    "trustedMarkerActors": {
+      "type": "array",
+      "description": "Resolved trusted-actor list re-emitted at the root, independent of the auto-trusted viewer and collaborator additions.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "trustedMarkerActorsSource": {
+      "type": "string",
+      "description": "Provenance of trustedMarkerActors: flag, env, config, or none, in that precedence order.",
+      "enum": ["flag", "env", "config", "none"]
+    },
+    "copilotRecovery": {
+      "type": "object",
+      "description": "#1572 terminal Copilot stall-recovery state. Deliberately independent of outcome/f3Outcome above: no field here is derived from them, and no field above is derived from this object. `state: \"COPILOT_UNAVAILABLE\"` is waiver *eligibility* only (see idd-advisory-wait.instructions.md) -- it must never be read as advisory satisfaction or readiness by any consumer.",
+      "required": [
+        "cap",
+        "completedCycleCount",
+        "remainingBudget",
+        "capExhausted",
+        "terminalWindowMinutes",
+        "clockAnchor",
+        "elapsedMinutes",
+        "windowElapsed",
+        "activeClaimProvided",
+        "state",
+        "reason"
+      ],
+      "properties": {
+        "cap": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Configured per-PR-HEAD recovery-cycle cap (advisoryWait.recoveryCycleCap, default 2)."
+        },
+        "completedCycleCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Count of trusted, active-claim-bound, current-HEAD-bound advisory-recovery markers. A completed cycle is counted by marker presence, never by the largest embedded attempt number (diagnostic only)."
+        },
+        "remainingBudget": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "max(cap - completedCycleCount, 0)."
+        },
+        "capExhausted": {
+          "type": "boolean",
+          "description": "completedCycleCount >= cap."
+        },
+        "terminalWindowMinutes": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Configured terminal-unavailability window in minutes (advisoryWait.terminalWindow, default 720 = 12h)."
+        },
+        "clockAnchor": {
+          "type": "string",
+          "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$",
+          "description": "GitHub created_at of the earliest trusted, bound, current-HEAD advisory-recovery marker; empty when none exists. Embedded marker timestamps never move this anchor -- only the GitHub-assigned comment created_at counts."
+        },
+        "elapsedMinutes": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Minutes between clockAnchor and now; 0 when there is no anchor."
+        },
+        "windowElapsed": {
+          "type": "boolean",
+          "description": "clockAnchor is non-empty AND elapsedMinutes >= terminalWindowMinutes."
+        },
+        "activeClaimProvided": {
+          "type": "boolean",
+          "description": "True only when both --claim-id and --agent-id were supplied to bind the active claim. False fails the whole object closed to NOT_TERMINAL, reason: active-claim-not-provided."
+        },
+        "state": {
+          "type": "string",
+          "enum": ["NOT_TERMINAL", "COPILOT_UNAVAILABLE"],
+          "description": "COPILOT_UNAVAILABLE only when the recovery-cycle cap is exhausted, the terminal window has elapsed since clockAnchor, and no current-HEAD Copilot review exists (lastCopilotCommit !== prHeadSha) -- all proven from trusted evidence. Any missing or ambiguous evidence fails closed to NOT_TERMINAL."
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Machine-readable reason for the current state: active-claim-not-provided, no-trusted-recovery-markers, recovery-cap-not-exhausted, terminal-window-not-elapsed, current-head-review-exists, or the COPILOT_UNAVAILABLE satisfied-all-conditions reason."
+        }
+      },
+      "additionalProperties": false
+    },
+    "staleRequestRecovery": {
+      "type": "object",
+      "description": "#1571 bounded stale-request recovery eligibility. Independent of outcome/f3Outcome and of copilotRecovery above: distinguishes the unproven-coverage (copilotPendingCoversHead=false) case PR #1562 identified from the pre-existing RECOVERY_NEEDED/AW3-R marker-anchor-only path (copilotPendingCoversHead=true). Consumed by AW3-S to decide whether the bounded cycle may run -- either E14's REQUEST_NEEDED-with-pending sub-path, or (#2327) the non-pending failed-to-register case: a same-head request marker exists, Copilot is not pending, and the settled-window re-check budget elapsed with no proof the request ever reached it.",
+      "required": ["action", "reason"],
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": ["attempt", "cap-exhausted", "not-applicable"],
+          "description": "'attempt': an unproven request for this HEAD (pending, or non-pending with the re-check budget spent) and recovery-cycle budget remains -- run AW3-S. 'cap-exhausted': same unproven condition, but the independent #1572 recovery-cycle cap is exhausted for this HEAD -- do not mutate; fall back to CAP_EXHAUSTED_ROUTE. 'not-applicable': no stale-request recovery decision applies."
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Machine-readable reason: active-claim-not-provided, not-pending, same-head-marker-present, recovery-marker-only-no-request-marker (#2327), proven-covers-head, recovery-cap-exhausted, recovery-attempt-eligible, recheck-budget-unspent (#2327), or non-pending-recovery-attempt-eligible (#2327)."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
