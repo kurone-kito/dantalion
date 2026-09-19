@@ -85,7 +85,10 @@ node scripts/stalled-session-quiet-check.mjs \
 `--claim-created-at` should come from the trusted active-claim parse that
 Resume already performs. If helper runtime is unavailable or the helper
 output is unusable, the written manual procedure in
-`idd-resume-stall.instructions.md` remains authoritative.
+`idd-resume-stall.instructions.md` remains authoritative for the
+standard Resume/S2 path. Helper-enabled lite profiles instead hold and
+stop, handing the quiet-window decision to a stronger session or the
+standard instructions.
 
 The helper must reject a malformed `--claim-created-at` as a call error
 before emitting JSON. It must never copy an unvalidated raw value into
@@ -179,7 +182,8 @@ Before takeover, Resume/S4 must still:
 1. Re-parse the active claim from trusted markers and confirm it is the
    same non-owned `{claim-id}` observed earlier.
 2. Re-run this helper against live GitHub state, or repeat the written
-   manual procedure when helper runtime is unavailable.
+   manual procedure when helper runtime is unavailable. Helper-enabled
+   lite profiles do not take this fallback; they hold and stop instead.
 3. Re-check the stale-threshold gate. `quiet_window_met = true` never
    waives stale-age by itself.
 4. Re-check closed/merged guards and stop if the issue or PR closed in
