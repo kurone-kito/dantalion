@@ -29,6 +29,10 @@
     {
       "matchPackageNames": ["node"],
       "enabled": false
+    },
+    {
+      "matchPackageNames": ["marked"],
+      "allowedVersions": "<16"
     }
   ]
 }
