@@ -106,7 +106,7 @@ They grow motivation where the environment that they can do on their plan.
 `;
 
 exports[`LANG=en > \`getPersonalityMarkdown()\` function > (t, 1873-02-01) — canonical wording tripwire 1`] = `
-"# Dantalion: The personality of the person whose birthday is Sat Feb 01 1873 and how to handle them.
+"# Dantalion: The personality of the person whose birthday is Sat, Feb 01, 1873 and how to handle them.
 
 ## Major categories of personality
 
@@ -362,7 +362,7 @@ exports[`LANG=ja > \`getDetailMarkdown()\` function > (t, 555) — canonical wor
 `;
 
 exports[`LANG=ja > \`getPersonalityMarkdown()\` function > (t, 1873-02-01) — canonical wording tripwire 1`] = `
-"# Dantalion: 誕生日が Sat Feb 01 1873 の人の性格と、取扱方法
+"# Dantalion: 誕生日が 1873年2月01日(土) の人の性格と、取扱方法
 
 ## 性格の大分類
 

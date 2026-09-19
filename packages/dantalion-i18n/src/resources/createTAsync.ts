@@ -46,6 +46,11 @@ export interface CreateTAsyncOptions {
   readonly use?: I18nextModule | readonly I18nextModule[] | undefined;
 }
 
+/** A translation function annotated with the initialized locale. */
+export type LocalizedTFunction = TFunction & {
+  readonly locale: string;
+};
+
 /**
  * Create the resources object.
  * @param addition The additional language and namespace resources.
@@ -54,7 +59,9 @@ const initResources = (addition?: Resource): Resource =>
   merge({}, { en: { translation: en }, ja: { translation: ja } }, addition);
 
 /** Create and initialize the i18next instance asynchronously. */
-export default (options: CreateTAsyncOptions = {}): Promise<TFunction> => {
+export default async (
+  options: CreateTAsyncOptions = {},
+): Promise<LocalizedTFunction> => {
   const { additions, lng = getLocale(), use } = options;
   const instance = i18next.createInstance();
   const init: InitOptions = { lng, resources: initResources(additions) };
@@ -62,5 +69,12 @@ export default (options: CreateTAsyncOptions = {}): Promise<TFunction> => {
   for (const module of modules) {
     instance.use(module);
   }
-  return instance.init(init);
+  const t = await instance.init(init);
+  Object.defineProperty(t, 'locale', {
+    configurable: false,
+    enumerable: false,
+    value: instance.language,
+    writable: false,
+  });
+  return t as LocalizedTFunction;
 };

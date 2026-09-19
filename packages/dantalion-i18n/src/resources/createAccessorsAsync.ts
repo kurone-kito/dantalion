@@ -11,9 +11,10 @@ import type {
   Vector,
 } from '@kurone-kito/dantalion-core';
 import type { Resource, TFunction, WithT } from 'i18next';
+import getLocale from '../getLocale.js';
 import type { DetailAccessor } from './createGenericAccessor.js';
 import createGenericAccessor from './createGenericAccessor.js';
-import createTAsync from './createTAsync.js';
+import createTAsync, { type LocalizedTFunction } from './createTAsync.js';
 import type {
   DescriptionsType,
   DetailsBaseType,
@@ -25,6 +26,9 @@ import type {
 
 /** The type definition of the concreted accessors collection */
 export interface Accessors {
+  /** The locale used to format localized output. */
+  readonly locale: string;
+
   /**
    * The instance provides a set of functions that retrieve
    * human-readable resources related to the thought method.
@@ -103,15 +107,30 @@ export interface Accessors {
   readonly vector: DetailAccessor<VectorType, Vector>;
 }
 
+/** Return a canonical locale or the runtime locale for invalid input. */
+const getValidLocale = (locale: string): string => {
+  try {
+    return Intl.getCanonicalLocales(locale)[0] ?? getLocale();
+  } catch {
+    return getLocale();
+  }
+};
+
 /**
  * Create the concreted accessors collection from the i18next instance
  * @param t Specify the i18next instance
+ * @param locale Specify the locale for localized output. If omitted, use the
+ * annotated translator locale or the runtime locale. Invalid locale tags use
+ * the runtime locale during date formatting.
  * @returns The instance of the concreted accessors collection
  */
-export const createAccessors = (t: TFunction): Accessors => {
+export const createAccessors = (t: TFunction, locale?: string): Accessors => {
   const { tCategoryStringedDetail, tDetail, tObj, tStringedDetail } =
     createGenericAccessor(t);
   const potentialsDetail = tDetail<readonly string[]>('potentials');
+  const requestedLocale =
+    locale ?? (t as LocalizedTFunction).locale ?? getLocale();
+  const resolvedLocale = getValidLocale(requestedLocale);
   return {
     brain: tDetail('brain'),
     communication: tDetail('communication'),
@@ -127,6 +146,7 @@ export const createAccessors = (t: TFunction): Accessors => {
     },
     response: tDetail('response'),
     vector: tDetail('vector'),
+    locale: resolvedLocale,
   };
 };
 

@@ -78,7 +78,7 @@ Since it's a long sentence, it omitted some parts.
 
 ## API
 
-### `createAccessors(t: i18next.TFunction): Accessors`
+### `createAccessors(t: i18next.TFunction, locale?: string): Accessors`
 
 Create the concreted accessors collection from the i18next instance
 
@@ -87,6 +87,7 @@ Create the concreted accessors collection from the i18next instance
 | Name | Type                                                          | Defaults     | Description                  |
 | :--- | :------------------------------------------------------------ | :----------- | :--------------------------- |
 | `t`  | [`i18next.TFunction`](https://www.i18next.com/overview/api#t) | _(Required)_ | Specify the i18next instance |
+| `locale` | `string?`                                                  | _(Optional)_ | Specify the locale for localized output. If omitted, use translator metadata or runtime locale; invalid tags use runtime locale. |
 
 #### Returns
 
@@ -97,8 +98,9 @@ Create the concreted accessors collection from the i18next instance
 Create the concreted accessors collection asynchronously
 
 It is a synonym function that combines
-[`createAccessors()`](#createaccessorst-i18nexttfunction-accessors) and
-[`createTAsync()`](#createtasyncoptions-createtasyncoptions-promisei18nexttfunction).
+[`createAccessors()`](#createaccessorst-i18nexttfunction-locale-string-accessors)
+and
+[`createTAsync()`](#createtasyncoptions-createtasyncoptions).
 
 #### Arguments
 
@@ -115,7 +117,7 @@ See: [useLocale()](#getlocale-string--undefined))
 [`Promise<Accessors & i18next.WithT>`](#accessors):
 The instance of the concreted accessors collection
 
-### `createTAsync(options?: CreateTAsyncOptions): Promise<i18next.TFunction>`
+### `createTAsync(options?: CreateTAsyncOptions)`
 
 Create and initialize the i18next instance asynchronously
 
@@ -127,8 +129,10 @@ Create and initialize the i18next instance asynchronously
 
 #### Returns
 
-[`Promise<i18next.TFunction>`](https://www.i18next.com/overview/api#t):
+[`Promise<i18next.TFunction & { readonly locale: string }>`](https://www.i18next.com/overview/api#t):
 The i18next instance which already initialized the resources.
+The returned translation function also exposes the initialized locale as its
+read-only `locale` property.
 
 ### `fallbackLanguage: 'en'`
 
@@ -174,7 +178,7 @@ Get the personality information corresponding to the specified birthday.
 | Name     | Type                       | Defaults     | Description                                                                                                     |
 | :------- | :------------------------- | :----------- | :-------------------------------------------------------------------------------------------------------------- |
 | `genius` | [`Accessors`](#accessors)  | _(Required)_ | The accessors instance for resources.                                                                           |
-| `birth`  | `string \| number \| Date` | _(Required)_ | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Ignore the _time_ information. |
+| `birth`  | `string \| number \| Date` | _(Required)_ | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Time components are not rendered. Date-only strings are treated as calendar dates and formatted with the accessors locale; other inputs use the local timezone. |
 
 #### Returns
 
@@ -199,6 +203,7 @@ The type definition of the concreted accessors collection
 
 ```ts
 interface Accessors {
+  readonly locale: string;
   readonly brain: DetailAccessor<DetailsType, Brain>;
   readonly communication: DetailAccessor<DetailsType, Communication>;
   readonly genius: DetailAccessor<
@@ -226,6 +231,7 @@ interface Accessors {
 
 | Property        | Type                                                                 | Description                                                                                                                                 |
 | :-------------- | :------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
+| `locale`        | `string`                                                             | The locale used to format localized output.                                                                                                |
 | `brain`         | `DetailAccessor<DetailsType, Brain>`                                 | The instance provides a set of functions that retrieve human-readable resources related to the thought method.                              |
 | `communication` | `DetailAccessor<DetailsType, Communication>`                         | The instance provides a set of functions that retrieve human-readable resources related to dialogue policy.                                 |
 | `genius`        | `DetailAccessor<PersonalityType, Genius, PersonalityDetailType>`     | The instance provides a set of functions that retrieve human-readable resources related to natural personality.                             |
