@@ -12,6 +12,8 @@ describe('`article()` function', () => {
     1.5,
     Number.NaN,
     Number.POSITIVE_INFINITY,
+    7,
+    Number.MAX_SAFE_INTEGER,
   ])('uses level 1 for invalid heading level %p', (level) => {
     expect(article({ head: 'Title', level })).toBe('# Title\n');
   });
