@@ -216,8 +216,9 @@ for the full procedure.
 
 Out of scope and explicitly **not** blocked:
 
-- B1 setup commands on the primary worktree's `main` (per the B1
-  Anti-patterns rule, which requires keeping primary HEAD on `main`).
+- B1 setup commands on the primary worktree's resolved
+  `{development-branch}` (normally `main`; per the B1 Anti-patterns rule,
+  which requires keeping primary HEAD on that resolved branch).
 - A1.5 roadmap-audit coordination operations (claims whose `branch:`
   starts with `roadmap-audit/`).
 - F4 post-merge cleanup (F4 itself removes the sibling worktree;
