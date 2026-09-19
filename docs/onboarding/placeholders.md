@@ -1,7 +1,10 @@
 # Onboarding Reference — Placeholder Values
 
-Use this reference with `idd-template/ONBOARDING.md` when you need the
-full derivation and replacement rules for the template placeholders.
+Use this reference with the pinned upstream onboarding guide when you
+need the full derivation and replacement rules for the template
+placeholders. Dantalion's resolved values are recorded in
+[`project-tuning.md`](project-tuning.md); this page explains generic
+derivation rules without changing those recorded values.
 
 This page is the detailed companion for:
 

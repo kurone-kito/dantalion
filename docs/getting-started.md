@@ -26,12 +26,23 @@ The agent that imports or runs IDD needs access to:
 ## 1. Import the Template
 
 Open an agent session in the target repository and ask it to import the
-IDD template from the idd-skill source repository. If the template has
-already been copied, start from the local `ONBOARDING.md` file instead.
+IDD template from the pinned upstream source revision recorded in
+[`docs/onboarding/project-tuning.md`](onboarding/project-tuning.md). If
+the template has already been copied, start from the local onboarding
+entry point instead.
 
 The onboarding guide copies the portable instruction files, asks for
 project-specific command values, and updates agent entry files such as
-`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, or Copilot instructions.
+`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, or Copilot instructions. The
+repository keeps an issue-mediated bootstrap record, so the import plan
+must be reviewed before files are changed.
+
+### Dantalion import baseline
+
+This checkout tracks upstream `idd-skill` main at
+`5c2704a1b50901f29d87865002047b1eb491865e` (release baseline
+`11105d705820e50be0a14fcc174587abbaf62b30`). Do not replace either pin
+with a floating `main` URL while this import is in flight.
 
 ## 2. Choose the Review Policy
 
@@ -67,7 +78,7 @@ the loop starts:
 For broad requests, use the optional issue-authoring companion to draft
 a roadmap and focused child issues before starting the execution loop.
 Use task-list links to group active roadmap work. Reserve
-`idd-skill-blocked-by` markers for true sequential dependencies on a
+`dantalion-blocked-by` markers for true sequential dependencies on a
 separate roadmap.
 
 When a project has genuine parallel tracks or multi-session coordination

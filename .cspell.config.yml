@@ -1,3 +1,4 @@
+allowCompoundWords: true
 cache:
   cacheFormat: universal
   cacheLocation: node_modules/.cache/cspell/.cspell.cache
@@ -5,28 +6,65 @@ cache:
   useCache: true
 import:
   - '@kurone-kito/cspell-config'
+enableGlobDot: true
+features:
+  weighted-suggestions: true
+globRoot: ${cwd}
+ignorePaths:
+  - .*ignore
+  - .git
+  - .github/CODE_OF_CONDUCT.*
+  - .github/CONTRIBUTING.*
+  - .vscode/extensions.json
+  - pnpm-lock.yaml
 version: '0.2'
+useGitignore: true
 words:
   - bazi
+  - CODEOWNER
+  - CODEOWNERS
   - coef
   - dantalion
+  - dedup
+  - desync
+  - desynced
   - dcoef
   - desctiptions
   - esync
   - febrary
   - ganzhi
   - generical
+  - GHEC
+  - GHES
   - goetia
+  - idd
+  - includ
   - isort
   - koshi
+  - Kiro
   - lemegeton
   - ommited
+  - ONNX
   - pylint
   - pyproject
   - pytest
   - saintist
+  - TOCTOU
+  - undispositioned
+  - unioned
+  - unmigrated
+  - unmirrored
   - unpushed
   - unreplied
+  - unrouted
+  - unscored
+  - unwaived
   - unreviewable
   - waivable
+  - minimizable
+  - nvmrc
+  - remediations
+  - resumability
+  - rollup
+  - vrchat
   - ziweidoushu

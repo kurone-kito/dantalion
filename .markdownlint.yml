@@ -1,5 +1,20 @@
-extends: '@kurone-kito/markdownlint-config'
-
-# Disable strict table column alignment — too fragile across Japanese / wide-char
-# cells and across documents imported from idd-template / pnpm-workspace-template.
-MD060: false
+default: true
+# Allow non-aligned table columns. Tables with long cell content are
+# impractical to keep aligned without breaking readability.
+table-column-style: false
+# Allow long generated tables and shell examples to remain readable.
+line-length:
+  code_blocks: false
+  headings: false
+  tables: false
+# Imported OKF pages can contain repeated section titles in separate
+# navigation tables; sibling duplicate headings are not a documentation error.
+no-duplicate-heading: false
+# Allow the semantic disclosure elements used by onboarding references.
+no-inline-html:
+  allowed_elements:
+    - details
+    - summary
+# Do not count OKF front matter as a second H1.
+single-title:
+  front_matter_title: ''

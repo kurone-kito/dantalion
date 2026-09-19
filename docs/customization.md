@@ -20,8 +20,8 @@ behavior change too.
 | Branch synchronization  | Rebase before the first PR-branch push; after publication, default to merge-from-`main`, keep `BEHIND`-only states read-only, and reserve rebase plus force-push for explicit exceptions | Keep `.github/copilot-instructions.md`, `.github/instructions/idd-pr-submit.instructions.md`, [IDD workflow guide](idd-workflow.md#branch-publication-and-synchronization), and [IDD policy constants](policy-constants.md#branch-synchronization-defaults) aligned when local branch-sync policy changes.                                                                                                                                                                                                                                |
 | Stall recovery safety   | 30-minute quiet-window evidence plus 24-hour stale-threshold ownership gate                                                                                                              | Keep `idd-resume-stall.instructions.md` aligned with `idd-overview` claim rules, and customize both files together if local policy changes quiet-window or takeover timing.                                                                                                                                                                                                                                                                                                                                                               |
 | Forced handoff contract | Disabled unless the repository explicitly records a human-gated policy                                                                                                                   | Keep forced handoff separate from trusted marker-author authority. Record the opt-in state, human approval authority, canonical consent text, and marker contract in the repository-local policy block here, then keep the always-loaded overview pointer aligned with those docs.                                                                                                                                                                                                                                                        |
-| CI commands             | Project-specific command rows in the overview file                                                                                                                                       | Set `fix-validate`, `pre-push-validate`, `post-fix-validate`, and `install-deps` in `.github/instructions/idd-overview.instructions.md` during onboarding.                                                                                                                                                                                                                                                                                                                                                                                |
-| Helper runtime          | `instructions-only` by default, with evidence-based helper support proposals that still require explicit operator confirmation during onboarding                                         | Use [IDD template onboarding](https://github.com/kurone-kito/idd-skill/blob/main/idd-template/ONBOARDING.md#step-1b--confirm-policy-decisions) together with [IDD helper script evaluation](idd-helper-scripts.md#import-time-selection-order). Auto-propose helper support only when repository evidence shows a real package-manager or Node.js helper path, keep operator confirmation explicit, prefer `package-manager` when supported package-manager evidence exists, and otherwise prefer `vendored-node` before `ephemeral-npx`. |
+| CI commands             | Project-specific command rows in the overview file                                                                                                                                       | Set `fix-validate`, `pre-push-validate`, `post-fix-validate`, and `install-deps` in `.github/instructions/idd-overview-core.instructions.md` during onboarding.                                                                                                                                                                                                                                                                                                                                                                                |
+| Helper runtime          | `instructions-only` by default, with evidence-based helper support proposals that still require explicit operator confirmation during onboarding                                         | Use [IDD template onboarding](https://github.com/kurone-kito/idd-skill/blob/5c2704a1b50901f29d87865002047b1eb491865e/idd-template/ONBOARDING.md#step-1b--confirm-policy-decisions) together with [IDD helper script evaluation](idd-helper-scripts.md#import-time-selection-order). Auto-propose helper support only when repository evidence shows a real package-manager or Node.js helper path, keep operator confirmation explicit, prefer `package-manager` when supported package-manager evidence exists, and otherwise prefer `vendored-node` before `ephemeral-npx`. |
 | Issue scope             | Roadmap-first discovery                                                                                                                                                                  | Keep `issue-scope` as `roadmap` for roadmap-scoped work, or deliberately choose `orphan-first` when the repository wants unblocked orphan issues to be considered before roadmap traversal.                                                                                                                                                                                                                                                                                                                                               |
 | Orphan-first approval   | No extra gate beyond orphan readiness checks                                                                                                                                             | Keep `orphan-first-policy` as `none`, or opt in to `maintainer-approved` or `public-disabled` when public or community-submitted issues need an explicit maintainer approval layer before A0-O can select them.                                                                                                                                                                                                                                                                                                                           |
 | Issue-author approval   | Secure-by-default target contract; unattended work needs a self-authorizing issue author or explicit approval unless the repository opts out                                             | Record the gate decision, approval actors, freshness rule, approval signals, and opt-out semantics in repository-local policy docs and onboarding. Keep this contract aligned with the discovery/claim behavior that already ships, and update both surfaces together if local policy changes later.                                                                                                                                                                                                                                      |
@@ -79,7 +79,7 @@ from the target repository root to get the concrete import surface for
 the chosen profile:
 
 ```sh
-npx --yes --package https://codeload.github.com/kurone-kito/idd-skill/tar.gz/refs/heads/main \
+npx --yes --package https://codeload.github.com/kurone-kito/idd-skill/tar.gz/5c2704a1b50901f29d87865002047b1eb491865e \
   idd-helper-bundle-manifest --profile package-manager
 ```
 
@@ -350,7 +350,7 @@ repository policy change, not a copy edit.
 ## CI and Command Placeholders
 
 The `Project commands` table in
-`.github/instructions/idd-overview.instructions.md` is the command
+`.github/instructions/idd-overview-core.instructions.md` is the command
 contract agents follow. During onboarding, replace the template
 placeholders with the target repository's commands:
 
@@ -374,7 +374,7 @@ same: repeated runs must stay safe and predictable.
 
 IDD workflow files are tooling-agnostic. The only tooling contract is
 the `Project commands` table in
-`.github/instructions/idd-overview.instructions.md`.
+`.github/instructions/idd-overview-core.instructions.md`.
 
 The following policy matrix defines the tooling requirements and
 fallback order for repositories adopting IDD:
@@ -1006,6 +1006,6 @@ For further details, see:
 
 - `idd-claim.instructions.md` for how `trusted-marker-logins` and
   `collaborator-authored-markers` affect claim validation and parsing.
-- `idd-overview.instructions.md` for the always-loaded pointer that
+- `idd-overview-core.instructions.md` for the always-loaded pointer that
   keeps the forced-handoff policy discoverable to agents.
 - `docs/policy-constants.md` for distributed policy defaults.

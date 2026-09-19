@@ -12,7 +12,7 @@ or [Core concepts](concepts.md) before using this reference.
 
 | Need                              | Phase  | Authoritative source                                                                        |
 | --------------------------------- | ------ | ------------------------------------------------------------------------------------------- |
-| Shared definitions and commands   | All    | [IDD overview](../.github/instructions/idd-overview.instructions.md)                        |
+| Shared definitions and commands   | All    | [IDD overview](../.github/instructions/idd-overview-core.instructions.md)                  |
 | Select the next issue             | A0-A4  | [Discover](../.github/instructions/idd-discover.instructions.md)                            |
 | Audit roadmap completion          | A1.5   | [Roadmap audit](../.github/instructions/idd-roadmap-audit.instructions.md)                  |
 | Evaluate issue suitability        | A4.5   | [Suitability triage](../.github/instructions/idd-suitability.instructions.md)               |
@@ -44,8 +44,9 @@ or [Core concepts](concepts.md) before using this reference.
 
 ## Maintainer Note
 
-If you maintain an IDD distribution source repository, keep exported
-template files and generated onboarding lists in sync when adding or
-removing reference pages. In the idd-skill source repository, that means
-updating `audit/sync-manifest.json`, `idd-template/ONBOARDING.md`, and
-`idd-template/README.md` in the same change.
+The portable source for this imported surface is the pinned
+`idd-skill` revision recorded in
+[`onboarding/project-tuning.md`](onboarding/project-tuning.md). When a
+future re-import adds or removes a reference page, update the local
+onboarding file list and the issue plan together; do not silently follow
+upstream `main`.

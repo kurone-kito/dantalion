@@ -188,6 +188,28 @@ Do not give routine IDD agents any of the following:
 - Billing, membership, team administration, SSO administration, or
   enterprise policy permissions.
 
+## Ask-First Shared-State Actions
+
+The list above is a hard credential-denial boundary. This section names
+actions an autonomous agent may technically perform after the normal phase
+gates pass, but that change shared state broadly enough to require explicit
+human confirmation first, even under `fully_autonomous_merge`:
+
+- **Adding or upgrading a dependency** — any manifest or lockfile change
+  that adds a dependency or bumps an existing one. New dependency code runs
+  in CI and on contributor machines, so a maintainer must confirm it first.
+- **Changing a CI workflow** — any change under `.github/workflows/**`.
+  Workflow files run with repository credentials and shape merge gates, so
+  an agent must not alter them without confirmation.
+- **Changing shared configuration packages** — any change to an
+  `@kurone-kito/*-config` package or its published contract. Keep the
+  repository-local override narrow and obtain maintainer confirmation before
+  changing the shared package itself.
+
+This is a confirmation gate, not a new autonomy authority. Claim ownership,
+review currency, advisory wait, CI, required reviews, and merge gates still
+apply unchanged.
+
 ## Threat Model
 
 The main risks are not unique to IDD, but IDD makes them worth spelling
