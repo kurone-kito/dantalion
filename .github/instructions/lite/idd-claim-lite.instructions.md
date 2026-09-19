@@ -372,9 +372,14 @@ check steps 1–5. Step 6 applies to both paths:
    tie-break.
 4. No trusted competing `claimed-by` with a different `{claim-id}`
    appears in a strictly later second than yours.
-5. If you posted an activation-nonce for this `{claim-id}`, recompute
-   its winner and confirm it is yours (no marker posted → treat as
-   passed).
+5. Every fresh activation performed by this run — fresh claim, takeover,
+   legacy migration, or forced-handoff adopt-verbatim — must have an
+   activation-nonce for this `{claim-id}`. Recompute its winner and
+   confirm it is yours; an absent or malformed nonce fails verification.
+   A plain already-owned continuation is outside checks 1–5 and posts no
+   new nonce. The only no-marker compatibility exception is an explicitly
+   recognized legacy claim that this run is merely resuming, never a fresh
+   activation or forced-handoff adoption.
 6. Re-fetch the authoring label and paginated owner log. A
    current/incomplete hold contests this claim; only exact
    anchor/set/session `release-complete` with verified snapshots

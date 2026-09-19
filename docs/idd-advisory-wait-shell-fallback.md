@@ -409,14 +409,51 @@ DISPOSITION_JSON=$(printf '%s' "${COMMENTS_JSON}" | jq -c --argjson agents "${ID
       | ($agents | map(ascii_downcase) | index($u)) != null)
   ))
 ')
-MISSING_REGULAR=$(printf '%s\n' "${COMMENTS_JSON}" "${DISPOSITION_JSON}" | jq -s --argjson agents "${IDD_AGENT_LOGIN_JSON}" '
+MISSING_REGULAR=$(printf '%s\n' "${COMMENTS_JSON}" "${DISPOSITION_JSON}" | jq -s \
+  --argjson agents "${IDD_AGENT_LOGIN_JSON}" \
+  --argjson advisory "${ADVISORY_BOT_LOGINS_JSON}" '
   .[0] as $comments | .[1] as $disp
-  | ($comments
+  | def login: ((.user.login // .author.login // "") | ascii_downcase);
+  def is_agent:
+    (login as $u
+      | ($agents | map(ascii_downcase) | index($u)) != null);
+  def is_advisory:
+    (login as $u
+      | (($advisory | map(ascii_downcase) | index($u)) != null
+        or $u == "copilot-pull-request-reviewer"
+        or $u == "copilot-pull-request-reviewer[bot]"));
+  def is_disposition:
+    (
+      ((.body // "") | startswith("**Accepted**"))
+      or ((.body // "") | startswith("**Rejected**"))
+    ) and is_agent;
+  def operational_prefix:
+    (.body // "") as $body
+    | ($body | startswith("<!-- review-watermark:")
+      or startswith("<!-- review-baseline:")
+      or startswith("<!-- zero-accepted-path-a-gate:")
+      or startswith("<!-- claimed-by:")
+      or startswith("<!-- unclaimed-by:")
+      or startswith("advisory-wait:")
+      or startswith("advisory-wait-recovery:")
+      or startswith("<!-- advisory-wait:")
+      or startswith("advisory-reroll:"));
+  def is_trusted_operational_marker:
+    (is_agent and operational_prefix);
+  def is_ordinary_agent_reply:
+    (is_agent and (is_disposition | not)
+      and (is_trusted_operational_marker | not));
+  def has_later_ordinary_agent_reply:
+    . as $comment
+    | any($comments[];
+        (.created_at > $comment.created_at)
+        and is_ordinary_agent_reply);
+  ($comments
      | map(select(
-         (((.user.login // "") | ascii_downcase) as $u
-           | ($agents | map(ascii_downcase) | index($u)) == null)
-         and (.body | startswith("**Accepted**") or startswith("**Rejected**") | not)
-         and (.body | startswith("<!--") | not)
+         (is_agent | not)
+         and (is_disposition | not)
+         and (is_trusted_operational_marker | not)
+         and (is_advisory or (has_later_ordinary_agent_reply | not))
        ))
      | sort_by(.created_at)) as $out
   | ($disp | sort_by(.created_at)) as $ds

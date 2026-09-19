@@ -446,9 +446,11 @@ override commands with project-appropriate checks.
 
 ## Issue Scope
 
-The default `issue-scope` is `roadmap`, which keeps discovery inside the
-selected roadmap's explicit task graph. This is the safest mode for
-large initiatives because agents do not silently widen the work queue.
+The default `issue-scope` is `roadmap-first`, which traverses the selected
+roadmap's explicit task graph before falling back to viable orphan issues
+when the roadmap path has no startable candidate. This keeps the planned
+queue first while still allowing unattended work to make progress when the
+roadmap is exhausted.
 
 `orphan-first` changes discovery so unblocked orphan issues are
 considered before roadmap traversal. Choose it only when the repository

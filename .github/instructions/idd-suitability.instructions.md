@@ -249,10 +249,12 @@ coordination-close procedure below:
 
 1. Post a no-worktree coordination claim on the candidate, structurally
    identical to A1.5's roadmap-audit claim
-   (`idd-roadmap-audit.instructions.md`) but with
-   `branch: suitability-close/<number>-<slug>` — outside the
-   `issue/*`/`roadmap-audit/*` scope the core cwd-vs-claim gate checks
-   (`idd-overview-core.instructions.md`), so no worktree is needed.
+   (`idd-roadmap-audit.instructions.md`) with the existing coordination
+   namespace and a suitability suffix:
+   `branch: roadmap-audit/<number>-suitability-close-<slug>`. This keeps
+   the no-worktree claim inside the `roadmap-audit/*` scope recognized by
+   the core cwd-vs-claim and resume gates (`idd-overview-core.instructions.md`)
+   while distinguishing it from a normal roadmap audit.
 2. Re-validate that claim, then run the profile-selected
    `suitability-close` helper (add `--apply` to mutate; omit it to dry-run
    first). Resolve the exact command from `docs/idd-helper-scripts.md` for
