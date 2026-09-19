@@ -141,6 +141,42 @@ describe('dantalion CLI smoke', () => {
     });
   });
 
+  describe('explicit language selection', () => {
+    it('--lang ja renders Japanese regardless of the host locale', async () => {
+      const { exitCode, stdout } = await runCli([
+        'personality',
+        '2000-01-07',
+        '--lang',
+        'ja',
+      ]);
+      expect(exitCode).toBe(0);
+      expect(stdout).toContain('誕生日');
+    });
+
+    it('--lang en renders English regardless of the host locale', async () => {
+      const { exitCode, stdout } = await runCli([
+        'personality',
+        '2000-01-07',
+        '--lang',
+        'en',
+      ]);
+      expect(exitCode).toBe(0);
+      expect(stdout).toContain('birthday');
+      expect(stdout).not.toMatch(/[぀-ゟ゠-ヿ一-鿿]/);
+    });
+
+    it('rejects unsupported language choices', async () => {
+      const { exitCode, stderr } = await runCli([
+        'personality',
+        '2000-01-07',
+        '--lang',
+        'fr',
+      ]);
+      expect(exitCode).not.toBe(0);
+      expect(stderr).toMatch(/invalid|allowed choices/i);
+    });
+  });
+
   describe('invalid input handling', () => {
     it('an invalid date returns a soft "undefined" payload (current behavior)', async () => {
       // The `personality.ts` command swallows out-of-range dates by

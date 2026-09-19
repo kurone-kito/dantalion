@@ -6,8 +6,11 @@ import {
 import type { Command } from './type.js';
 
 const command: Command = {
-  getDescriptionAsync: async (birthday) =>
-    getPersonalityMarkdown(await createAccessorsAsync(), birthday as string),
+  getDescriptionAsync: async (birthday, { lang } = {}) =>
+    getPersonalityMarkdown(
+      await createAccessorsAsync(lang),
+      birthday as string,
+    ),
   getObject: (birthday) => getPersonality(birthday as string),
   alias: 'ps',
   command: 'personality <birthday>',

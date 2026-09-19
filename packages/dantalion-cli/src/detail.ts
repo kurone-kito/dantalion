@@ -7,8 +7,8 @@ import {
 import type { Command } from './type.js';
 
 const command: Command = {
-  getDescriptionAsync: async (detail) =>
-    getDetailMarkdown(await createAccessorsAsync(), detail as Genius),
+  getDescriptionAsync: async (detail, { lang } = {}) =>
+    getDetailMarkdown(await createAccessorsAsync(lang), detail as Genius),
   getObject: (detail) => getDetail(detail as Genius) || types.genius,
   alias: 'dt',
   command: 'detail [genius]',
