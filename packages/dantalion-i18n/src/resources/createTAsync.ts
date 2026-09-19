@@ -9,11 +9,19 @@ import type {
 import i18next from 'i18next';
 import merge from 'lodash.merge';
 import getLocale from '../getLocale.js';
-import en from './en.json' with { type: 'json' };
-import ja from './ja.json' with { type: 'json' };
+import enDocument from './en.json' with { type: 'json' };
+import jaDocument from './ja.json' with { type: 'json' };
+import type { LocaleDocumentType } from './types.js';
 
 /** The language that uses as a fallback. */
 export const fallbackLng = 'en';
+
+const localeDocuments = {
+  en: enDocument,
+  ja: jaDocument,
+} satisfies Record<'en' | 'ja', LocaleDocumentType>;
+
+const { en, ja } = localeDocuments;
 
 /**
  * The locales table.
