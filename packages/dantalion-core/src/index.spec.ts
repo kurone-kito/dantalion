@@ -9,11 +9,27 @@ import {
 
 describe('integration testing', () => {
   describe('get the details', () => {
+    it('returns undefined for an out-of-union runtime key', () => {
+      const invalidKey: string = 'bogus';
+      expect(getDetail(invalidKey as Genius)).toBeUndefined();
+    });
+
+    it('returns undefined for inherited prototype keys', () => {
+      const prototypeKeys: string[] = ['__proto__', 'constructor'];
+      prototypeKeys.forEach((key) => {
+        expect(getDetail(key as Genius)).toBeUndefined();
+      });
+    });
+
     it.each(
       Object.entries(getDetailTestData()) as [Genius, DetailTestData][],
     )('Outputs the same value as the data source from all genius: %s', (genius, expected) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { affinity, ...actual } = getDetail(genius);
+      const result = getDetail(genius);
+      if (result === undefined) {
+        throw new Error(`Expected details for known Genius ${genius}`);
+      }
+      const { affinity, ...actual } = result;
       expect(actual).toStrictEqual(expected);
     });
   });

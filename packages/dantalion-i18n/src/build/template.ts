@@ -82,6 +82,9 @@ export const createPersonalityTemplate = (
   accessors: Accessors,
 ): string => {
   const details = getDetail(source.inner);
+  if (details === undefined) {
+    throw new Error(`No details found for Genius ${source.inner}`);
+  }
   const { cc, strategy } = accessors.getDescription();
   return line(
     detailsBase({ src: accessors.vector.getCategoryDetail() }),
