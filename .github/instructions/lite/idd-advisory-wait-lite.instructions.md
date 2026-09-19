@@ -80,8 +80,9 @@ Required fields (stop and ask if any are missing — matching
 `settledWindowMinutes`, `pollIntervalMinutes`, `capExhaustedRoute`,
 `elapsedMinutes`, `sameHeadMarkerPresent`, `sameHeadRequestMarkerPresent`,
 `earliestSameHeadAt`, `sameHeadMarkerCount`, `requestMarkerCount`,
-`trustedMarkerSummary`. The helper always emits every one of these — an
-empty/false value (e.g. `secondaryBotLogin: ""` unconfigured, or
+`trustedMarkerSummary`, `staleRequestRecovery`. The helper always emits every
+one of these — an empty/false value (e.g. `secondaryBotLogin: ""`
+unconfigured, or
 `f3Outcome` unused by E14) is still present, not missing. Validate presence,
 not truthiness.
 

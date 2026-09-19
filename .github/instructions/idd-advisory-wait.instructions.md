@@ -81,9 +81,9 @@ Required helper fields, matching
 `requestCap`, `pendingWindowMinutes`, `settledWindowMinutes`,
 `pollIntervalMinutes`, `capExhaustedRoute`, `elapsedMinutes`,
 `sameHeadMarkerPresent`, `sameHeadRequestMarkerPresent`,
-`earliestSameHeadAt`, `sameHeadMarkerCount`, `requestMarkerCount`, and
-`trustedMarkerSummary`. Empty or false values remain present and must not be
-treated as missing.
+`earliestSameHeadAt`, `sameHeadMarkerCount`, `requestMarkerCount`,
+`trustedMarkerSummary`, and `staleRequestRecovery`. Empty or false values
+remain present and must not be treated as missing.
 
 Allowed `outcome`/`f3Outcome` values: `SATISFIED`, `REQUEST_NEEDED`,
 `RECOVERY_NEEDED`, `CAP_EXHAUSTED`, `WAIT`. `HOLD` is a protocol-level
@@ -432,6 +432,10 @@ alone never proves `COPILOT_UNAVAILABLE` (see **State**).
   Copilot review (`lastCopilotCommit != PR_HEAD_SHA`). Any missing or
   ambiguous evidence fails closed to `NOT_TERMINAL` with a
   machine-readable reason.
+- Consumers must also verify on the same live snapshot that
+  `lastCopilotCommit != PR_HEAD_SHA`; the JSON Schema cannot express that
+  cross-field comparison. A `COPILOT_UNAVAILABLE` object that fails this
+  check is invalid and must not open the terminal waiver route.
 - **Non-bypass by construction**: `COPILOT_UNAVAILABLE` is structurally
   independent of every advisory-satisfied field (`outcome`, `f3Outcome`,
   future rollups) — neither derives from the other. Consumers may treat

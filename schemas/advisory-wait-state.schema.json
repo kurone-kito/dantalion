@@ -26,7 +26,8 @@
     "earliestSameHeadAt",
     "sameHeadMarkerCount",
     "requestMarkerCount",
-    "trustedMarkerSummary"
+    "trustedMarkerSummary",
+    "staleRequestRecovery"
   ],
   "properties": {
     "protocolVersion": {
@@ -341,6 +342,43 @@
         "properties": {
           "outcome": { "not": { "const": "SATISFIED" } },
           "f3Outcome": { "not": { "const": "SATISFIED" } }
+        }
+      }
+    },
+    {
+      "$comment": "JSON Schema cannot compare lastCopilotCommit with prHeadSha. Consumers must independently reject COPILOT_UNAVAILABLE unless lastCopilotCommit differs from prHeadSha on the same live snapshot.",
+      "if": {
+        "required": ["copilotRecovery"],
+        "properties": {
+          "copilotRecovery": {
+            "type": "object",
+            "required": ["state"],
+            "properties": {
+              "state": { "const": "COPILOT_UNAVAILABLE" }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "copilotRecovery": {
+            "type": "object",
+            "required": [
+              "activeClaimProvided",
+              "capExhausted",
+              "windowElapsed",
+              "clockAnchor"
+            ],
+            "properties": {
+              "activeClaimProvided": { "const": true },
+              "capExhausted": { "const": true },
+              "windowElapsed": { "const": true },
+              "clockAnchor": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
         }
       }
     }

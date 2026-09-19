@@ -329,7 +329,8 @@ merge policy profile:
   and review fixes; a trusted merge-capable session runs only the final
   merge phase.
 - `fully_autonomous_merge`: the autonomous profile. One agent session
-  can complete merge. Standard for production repositories.
+  can complete merge. Available to production repositories only when
+  explicitly selected.
 
 For `human_merge` and `separate_merge_agent`, keep merge-capable
 credentials out of normal worker sessions. The worker should hand off

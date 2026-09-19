@@ -189,7 +189,8 @@ other GitHub side effect, confirm all of the following:
    unreplied comments, or reviewer state `CHANGES_REQUESTED`: get
    explicit operator confirmation first — the merge commit will appear
    in the PR history.
-4. Run `git fetch origin main && git merge origin/main`. On
+4. Run `git fetch origin {development-branch} && git merge
+   origin/{development-branch}` using the branch resolved by B1. On
    non-interactive-hostile primary signing (GPG pinentry or
    hardware-touch) with a fallback wrapper, run the whole merge
    (including `--continue`) through that wrapper instead — see
@@ -302,11 +303,20 @@ other GitHub side effect, confirm all of the following:
    `pendingWindowMinutes`, `settledWindowMinutes`, `pollIntervalMinutes`,
    `capExhaustedRoute`, `elapsedMinutes`, `sameHeadMarkerPresent`,
    `sameHeadRequestMarkerPresent`, `earliestSameHeadAt`,
-   `sameHeadMarkerCount`, `requestMarkerCount`, `trustedMarkerSummary` — the
+   `sameHeadMarkerCount`, `requestMarkerCount`, `trustedMarkerSummary`,
+   `staleRequestRecovery` — the
    full contract in
    `docs/idd-helper-scripts.md#stable-helper-evidence-outputs` and
    `schemas/advisory-wait-state.schema.json`), stop and ask — do not
    fall back to a manual per-field fetch.
+
+Before taking any terminal transition to E15, including a `SATISFIED`
+transition, verify that the helper's `prHeadSha` equals `PR_HEAD_SHA`,
+then fetch the live PR head again and require it to equal `PR_HEAD_SHA` as
+well. If either comparison fails, discard the helper result and return to
+E1. Repeat this check when a polling cycle reaches a terminal outcome; the
+polling head guard below does not replace this fresh transition check.
+
 4. Read the helper's `outcome` field and apply this decision table, top
    to bottom, first match wins:
    - `SATISFIED`, `copilotPending` `false`, `copilotPendingCoversHead`
@@ -338,12 +348,9 @@ other GitHub side effect, confirm all of the following:
      independent of the cap-exhausted route. Then, if the helper's
      `capExhaustedRoute` is `hold`, post a hold comment and stop;
      otherwise (`phase-specific`, the default) continue to E15.
-   - `WAIT`: if `copilotPending` is true and elapsed time since
-     `earliestSameHeadAt` is at least the helper's
-     `pendingWindowMinutes`, apply step 10 below (the secondary-bot
-     check) first, then continue to E15; if `copilotPending` is false
-     and elapsed time is at least `settledWindowMinutes`, do the same;
-     otherwise go to the polling loop below.
+   - `WAIT`: go to the polling loop below. The helper's `outcome` is the
+     sole source of truth; do not re-derive an elapsed-window transition
+     from `earliestSameHeadAt` or the window fields.
 5. The default primary advisory bot is Copilot: use `copilot` for
    `{primary-advisory-bot}` (the add/remove-reviewer login) and
    `copilot-pull-request-reviewer[bot]` for
@@ -377,15 +384,13 @@ other GitHub side effect, confirm all of the following:
    to a manual per-field fetch. If `earliestSameHeadAt` is now empty,
    post a hold comment noting the advisory-wait marker for
    `PR_HEAD_SHA` disappeared during polling and stop. If `outcome` is
-   now `SATISFIED`, exit polling and continue to E15.
-9. Otherwise re-apply the elapsed-window check from step 4's `WAIT`
-   branch using the refreshed helper output: if the window is now
-   satisfied, apply step 10 below (the secondary-bot check) first, then
-   exit polling and continue to E15 — the primary bot never reviewed
-   this HEAD, which is exactly the stalled/rate-limited case step 10
-   exists for. Else keep polling. A stalled or silent advisory bot must
-   not cause unbounded polling — this elapsed-window re-check is what
-   times the loop out even when the bot never reviews the current HEAD.
+   now `SATISFIED`, run the terminal-transition check above, then exit
+   polling and continue to E15. Otherwise apply the refreshed helper
+   `outcome` through step 4; keep polling while it remains `WAIT`, and
+   preserve the step-10 secondary-bot route and configured hold route for
+   the other outcomes. Never derive a terminal transition from elapsed
+   fields locally; a stalled or silent advisory bot remains bounded only
+   by the helper's own outcome contract.
 10. **Optional secondary advisory bot (non-gating).** Use the most
     recent step-3/step-8 helper output's `secondaryRequestNeeded` and
     `secondaryBotLogin` fields directly — do not re-derive the

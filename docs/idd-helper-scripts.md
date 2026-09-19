@@ -704,8 +704,13 @@ Interpretation rules:
   `copilotPendingCoversHead`, `outcome`, `f3Outcome`,
   `earliestSameHeadAt`, `requestMarkerCount`, `requestCap`,
   `pendingWindowMinutes`, `settledWindowMinutes`,
-  `pollIntervalMinutes`, `capExhaustedRoute`, and
-  `trustedMarkerSummary`
+  `pollIntervalMinutes`, `capExhaustedRoute`, `trustedMarkerSummary`, and
+  `staleRequestRecovery`
+
+- Consumers of `copilotRecovery.state: "COPILOT_UNAVAILABLE"` must also
+  verify on the same live snapshot that `lastCopilotCommit` differs from
+  `prHeadSha`; the schema enforces the recovery flags but cannot compare
+  those two fields.
 
 ### CI wait policy resolution
 
