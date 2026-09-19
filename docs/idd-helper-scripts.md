@@ -950,8 +950,7 @@ Interpretation rules:
 - Optional parameters beyond that required clock anchor:
   `--quiet-window-ms <ms>`, `--claim-created-at <ISO8601>`, and
   `--policy <path>`, plus `--gh-token <token>` when the executor must
-  provide an explicit GitHub token override; `--token <token>` is only a
-  temporary compatibility alias
+  provide an explicit GitHub token override
 - Stable fields consumed by the instructions: `quiet_window_met`,
   `quiet_window_ms`, `window_start`, `now`, `latest_activity`,
   `latest_activity_type`, `reason`, and `evidence`

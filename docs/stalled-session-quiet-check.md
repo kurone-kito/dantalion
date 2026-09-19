@@ -80,8 +80,7 @@ node scripts/stalled-session-quiet-check.mjs \
 - `--policy <path>`: Alternate policy file used to resolve the default
   quiet window
 - `--gh-token <token>`: Canonical explicit GitHub token override used when
-  the default `gh` authentication is unavailable; `--token <token>` remains
-  a temporary compatibility alias
+  the default `gh` authentication is unavailable
 - `--help`: Show help text
 
 `--claim-created-at` should come from the trusted active-claim parse that

@@ -249,7 +249,10 @@ gh api "repos/{owner}/{repo}/git/matching-refs/heads/issue/<N>-" \
 Parse the NUL-delimited worktree records and match only the `branch
 refs/heads/issue/<N>-…` field; do not grep human-formatted worktree output,
 which can match a path instead of its branch and is not portable across
-platforms. For a detached worktree, resolve its `head-name` under
+platforms. Normalize local/remote matches by stripping the `refs/heads/`
+prefix before comparing against a claim `branch` field, or an inheritable
+branch can be misread as a collision. For a detached worktree, resolve its
+`head-name` under
 `git -C <worktree> rev-parse --git-path rebase-merge` or
 `git -C <worktree> rev-parse --git-path rebase-apply` before deciding whether
 the issue branch is present. Retain the scoped remote Refs API check below.
