@@ -3,6 +3,7 @@ import getMonthlyCoefficients from '../records/getMonthlyCoefficients.js';
 import lifeBaseCoefficients from '../records/lifeBaseCoefficients.js';
 import lifeBaseTable from '../records/lifeBaseTable.js';
 import potentialTable from '../records/potentialTable.js';
+import type { CalendarDate } from '../types/calendarDate.js';
 import type { Genius } from '../types/genius.js';
 import type { HeavenlyStem } from '../types/heavenlyStem.js';
 import type { LifeBase } from '../types/lifeBase.js';
@@ -10,6 +11,26 @@ import type { Potential } from '../types/potential.js';
 import assertDefined from './assertDefined.js';
 import getBirthdayDetails from './getBirthdayDetails.js';
 import getFactors from './getFactors.js';
+
+const DATE_ONLY_PATTERN = /^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})$/;
+
+/** Parse date-only strings into calendar components before native Date parsing. */
+const normalizeBirth = (
+  birth: ConstructorParameters<typeof Date>[0],
+): Date | CalendarDate => {
+  if (typeof birth !== 'string') {
+    return new Date(birth);
+  }
+  const match = DATE_ONLY_PATTERN.exec(birth);
+  if (!match) {
+    return new Date(birth);
+  }
+  const [, year, month, day] = match;
+  if (year === undefined || month === undefined || day === undefined) {
+    return new Date(birth);
+  }
+  return { date: Number(day), month: Number(month), year: Number(year) };
+};
 
 /** The details for Personality. */
 export interface Personality {
@@ -32,7 +53,9 @@ export interface Personality {
  * @param birth Specify a birthday within the range from February 1, 1873,
  * to December 31, 2050.
  *
- * Ignore the time information.
+ * Date-only strings in year-month-day form are interpreted as local calendar
+ * dates. Date and number inputs use the local calendar date of the resulting
+ * Date, and time information is ignored after the input is normalized.
  * @returns The object that the personality information.
  *
  * If the date is over the range, it will be `undefined`.
@@ -40,12 +63,12 @@ export interface Personality {
 export default (
   birth: ConstructorParameters<typeof Date>[0],
 ): Personality | undefined => {
-  const birthObj = new Date(birth);
+  const birthObj = normalizeBirth(birth);
   const monthlyCoefficients = getMonthlyCoefficients(birthObj);
   if (Number.isNaN(monthlyCoefficients)) {
     return undefined;
   }
-  const { month, ...details } = getBirthdayDetails(new Date(birthObj));
+  const { month, ...details } = getBirthdayDetails(birthObj);
   const { cycle, getXY, inner, lifeBase, outer, potentials, workStyle } =
     getFactors({
       ...details,

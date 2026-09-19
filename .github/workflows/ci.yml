@@ -55,6 +55,35 @@ jobs:
       - run: pnpm run build
       - run: pnpm run test
 
+  test-timezone:
+    name: test (${{ matrix.timezone }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - node-version: '22'
+            timezone: America/New_York
+          - node-version: '22'
+            timezone: Pacific/Apia
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+      - env:
+          HUSKY: 0
+        run: pnpm install --frozen-lockfile --prefer-offline
+      - run: pnpm run build
+      - run: pnpm run test
+        env:
+          TZ: ${{ matrix.timezone }}
+
   build:
     name: build
     runs-on: ubuntu-latest
