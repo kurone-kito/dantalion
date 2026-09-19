@@ -146,13 +146,16 @@ and no other `issue/<number>-*` branch. A mismatch, a second PR, or any
 missing evidence is an orphan collision and stops. This exception is not a
 general bypass for an existing branch or PR.
 
-**(e) Branch collision** — Compute the branch name using the IDD naming
-convention: `issue/<number>-<slug>`. Generate `<slug>` deterministically
+**(e) Branch collision** — For a fully revalidated claimless-PR
+recovery, use the exact `issue/<number>-<slug>` branch carried in the
+recovery context and verified against the live PR; do not recompute its
+slug from the current issue title. For a fresh claim, compute the branch
+name using the IDD naming convention and generate `<slug>` deterministically
 from the issue title so parallel sessions converge on the same branch
 name.
 
-When helper runtime is enabled, compute the slug with the branch-name
-helper instead of hand-tracing it:
+For fresh claims only, when helper runtime is enabled, compute the slug
+with the branch-name helper instead of hand-tracing it:
 
 ```sh
 # source repo / vendored-node
@@ -258,10 +261,10 @@ stale clock; then proceed to Claim verification.
 
 Determine `{branch-name}`:
 
-- **Re-claim / takeover / forced-handoff recovery**: use the exact
+- **Re-claim / takeover / forced-handoff / claimless-PR recovery**: use the exact
   branch name from the inheritable claim comment or trusted
-  forced-handoff evidence identified in pre-check (d). Do not compute a
-  new name.
+  forced-handoff evidence or validated recovery context identified in
+  pre-check (d). Do not compute a new name.
 - **Fresh claim**: compute a new name using the IDD naming convention:
   `issue/<number>-<slug>` where `<slug>` follows the deterministic title
   normalization algorithm from pre-check (e).

@@ -277,15 +277,30 @@ conclusion F2 names in prose: `route` is `proceed` only when
 `blockingCount == 0`, meaning both `missingRegularComments` (any
 outstanding non-thread regular PR comment from a non-agent author,
 including the PR author, lacking a fresh disposition marker) and
-`missingThreads` (any review thread, resolved or unresolved, still
-lacking one) are empty. A missing or malformed result is unmet. The
-ack-only override stays in the instruction file; do not re-derive it
-here.
+`missingThreads` are empty. A thread with no external feedback is
+ignored; a resolved thread is cleared; an unresolved human-authored
+thread with a later unmarked human reply is presence-only; and an
+unresolved Copilot/configured-advisory-bot thread still needs a fresh
+IDD disposition. A missing or malformed result is unmet. The ack-only
+override stays in the instruction file; do not re-derive it here.
 
 ```sh
 OWNER=$(gh repo view --json owner --jq '.owner.login')
 REPO=$(gh repo view --json name --jq '.name')
 PR_HEAD_SHA=$(gh pr view {pr-number} --json headRefOid --jq '.headRefOid')
+PR_METADATA=$(gh api "repos/${OWNER}/${REPO}/pulls/{pr-number}")
+PR_AUTHOR_LOGIN=$(printf '%s' "${PR_METADATA}" | jq -er '.user.login')
+PR_BASE_SHA=$(printf '%s' "${PR_METADATA}" | jq -er '.base.sha')
+BASE_CONFIG_CONTENT=$(gh api \
+  "repos/${OWNER}/${REPO}/contents/.github/idd/config.json?ref=${PR_BASE_SHA}" \
+  --jq '.content // empty' | tr -d '\n')
+if [ -z "${BASE_CONFIG_CONTENT}" ]; then
+  echo "hold: trusted base ref did not provide .github/idd/config.json" >&2
+  exit 2
+fi
+ADVISORY_BOT_LOGINS_JSON=$(printf '%s' "${BASE_CONFIG_CONTENT}" | base64 --decode | jq -c \
+  '((.advisoryBotLogins // []) + [(.advisoryWait.secondaryBotLogin // "")])
+   | map(select(type == "string" and length > 0) | ascii_downcase) | unique')
 
 # Latest primary-bot review (same login set as AW1).
 LATEST_REVIEW_JSON=$(
@@ -413,11 +428,21 @@ MISSING_REGULAR=$(printf '%s\n' "${COMMENTS_JSON}" "${DISPOSITION_JSON}" | jq -s
     )
   | .missing
 ')
-MISSING_THREADS=$(printf '%s' "${THREADS_JSON}" | jq -rs --argjson agents "${IDD_AGENT_LOGIN_JSON}" '
+MISSING_THREADS=$(printf '%s' "${THREADS_JSON}" | jq -rs \
+  --argjson agents "${IDD_AGENT_LOGIN_JSON}" \
+  --argjson advisory "${ADVISORY_BOT_LOGINS_JSON}" \
+  --arg pr_author "${PR_AUTHOR_LOGIN}" '
   def author_login: (.author.login // .user.login // "");
+  def normalized_login:
+    (author_login | ascii_downcase);
   def is_idd_agent:
     ((author_login | ascii_downcase) as $u
       | ($agents | map(ascii_downcase) | index($u)) != null);
+  def is_advisory_origin:
+    ((normalized_login) as $u
+      | ($advisory | index($u)) != null
+        or ($u == "copilot-pull-request-reviewer")
+        or ($u == "copilot-pull-request-reviewer[bot]"));
   def is_disp:
     ((.body | startswith("**Accepted**") or startswith("**Rejected**")))
     and is_idd_agent;
@@ -427,8 +452,33 @@ MISSING_THREADS=$(printf '%s' "${THREADS_JSON}" | jq -rs --argjson agents "${IDD
   def has_fresh_disp:
     latest_feedback as $fb
     | .comments.nodes | any(is_disp and ($fb == null or .createdAt > $fb));
+  def has_external_feedback:
+    .comments.nodes | any(
+      ((.author.login // "") | ascii_downcase) as $u
+      | ($u != "")
+        and (($agents | map(ascii_downcase) | index($u)) == null)
+        and ($u != ($pr_author | ascii_downcase))
+    );
+  def has_human_presence:
+    .comments.nodes[1:] | any(
+      ((.author.login // "") | ascii_downcase) as $u
+      | ($u != "")
+        and (($agents | map(ascii_downcase) | index($u)) == null)
+        and (($advisory | index($u)) == null)
+        and ($u != "copilot-pull-request-reviewer")
+        and ($u != "copilot-pull-request-reviewer[bot]")
+        and ((.body // "") | startswith("**Accepted**") or startswith("**Rejected**") | not)
+    );
   add
-  | map(select(.comments.pageInfo.hasNextPage or (has_fresh_disp | not)))
+  | map(select(
+      (.comments.pageInfo.hasNextPage)
+      or (
+        (has_external_feedback)
+        and (.isResolved | not)
+        and (has_fresh_disp | not)
+        and (is_advisory_origin or (has_human_presence | not))
+      )
+    ))
   | length
 ')
 
