@@ -431,7 +431,13 @@ turns an operator-visible failure into a silent stall.
   `git checkout`/`git reset --hard` if a resumed or external-push
   session left it stale) — D3.5 step 7's `git log` and D3.7's
   inherited `git diff` both read local git state, not the remote PR
-  directly. Then re-run `idd-pr-submit.instructions.md`'s D3.5 steps
+  directly. Before any checkout or reset, require a clean worktree
+  (`git status --porcelain` has no output) and no unpushed commits
+  (`git log @{u}..HEAD` has no output, treating a missing upstream as
+  unpushed). If either check fails, preserve local work and route to
+  Resume/hold; never discard it with `git reset --hard`. Only after both
+  checks pass may the session synchronize the worktree. Then re-run
+  `idd-pr-submit.instructions.md`'s D3.5 steps
   6-7 (the `closingIssuesReferences` set comparison and the
   commit-message closing-keyword scan) and D3.7 (the
   IDD-impact-checklist re-derivation) against that HEAD. Skip D3.5

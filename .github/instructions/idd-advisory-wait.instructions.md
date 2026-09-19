@@ -297,9 +297,12 @@ pattern as E14's **Primary advisory bot**):
    yet true is ordinary lag, not failure — do **not** redo steps 1-3;
    re-check alone after a brief pause (default: 3 attempts, a few
    seconds apart). Disposition after that budget depends on entry type:
-   - **Pending entry**: still unproven → abort without posting a
-     marker or counting a cycle, return to the polling loop (or E1)
-     next interval — never tight-loop on unresolved lag.
+   - **Pending entry**: if association becomes true, the re-registration
+     is proven — continue to step 5, post the bound recovery marker, and
+     count one completed recovery cycle. If association is still unproven,
+     abort without posting a marker or counting a cycle, return to the
+     polling loop (or E1) next interval — never tight-loop on unresolved
+     lag.
    - **Non-pending entry** (`#2327`): the event appearing proves this
      re-request actually registered — abort without counting (ordinary
      success, no cycle needed; the next pass's `COPILOT_PENDING_COVERS_HEAD`

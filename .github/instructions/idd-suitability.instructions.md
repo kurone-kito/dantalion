@@ -253,11 +253,15 @@ coordination-close procedure below:
    `branch: suitability-close/<number>-<slug>` — outside the
    `issue/*`/`roadmap-audit/*` scope the core cwd-vs-claim gate checks
    (`idd-overview-core.instructions.md`), so no worktree is needed.
-2. Re-validate that claim, then run (add `--apply` to mutate; omit it
-   to dry-run first):
+2. Re-validate that claim, then run the profile-selected
+   `suitability-close` helper (add `--apply` to mutate; omit it to dry-run
+   first). Resolve the exact command from `docs/idd-helper-scripts.md` for
+   `package-manager` and `ephemeral-npx` profiles. In
+   `instructions-only`, remain report-only and do not execute a local
+   `node scripts/...` close command:
 
    ```sh
-   node scripts/suitability-close-execute.mjs --issue <number> \
+   <profile-selected-suitability-close-command> --issue <number> \
      --claim-id <claim-id> --agent-id <agent-id> --apply
    ```
 

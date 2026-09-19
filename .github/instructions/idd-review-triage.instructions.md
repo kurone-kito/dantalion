@@ -479,9 +479,20 @@ update unless you intentionally return to E1 afterward.
 
 ## E8 — Accepted PATH A count check
 
-Zero Accepted PATH A → **E-phase branch-sync check** below (per the
-Skip condition note above); otherwise →
-`idd-review-fix.instructions.md`.
+Zero Accepted PATH A → first run the **scope-fenced PR-body sync** below
+when E4 recorded any scope-fenced known limitation, then run the
+**E-phase branch-sync check** below (per the Skip condition note above);
+otherwise → `idd-review-fix.instructions.md`.
+
+### E8 scope-fenced PR-body sync
+
+When E4 recorded a scope-fenced rejection, revalidate the active claim,
+fetch the complete current PR body, add the known limitation to its
+follow-up-issues content without changing unrelated prose, post the full
+body, and re-check `closingIssuesReferences`. If any revalidation or
+closing-set check fails, stop and route to the relevant hold/resume path.
+This is the E12 PR-body-sync safeguard made reachable from the zero-
+Accepted-PATH-A route; it does not run unrelated E9-E15 work.
 
 ## E-phase branch-sync check
 

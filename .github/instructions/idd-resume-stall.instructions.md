@@ -106,11 +106,14 @@ remote branch tip movement, no running CI activity (`queued` or
 `in_progress` checks/runs), and no new review/comment/CI completion
 activity.
 
-When helper runtime is enabled, use
+When helper runtime is enabled **and an active PR number is known**, use
 `idd-stalled-session-quiet-check` as the canonical read-only evidence
-collector for this step. Always pass `--now` with the server-anchored
-timestamp derived above ("Deriving a server-anchored `now`"), together
-with the active PR number and, when known, the latest valid trusted
+collector for this step. If `{pr-number}` is `none`, do not invoke the
+helper: use the written S2 procedure with remote branch-tip evidence for
+the claimed branch instead. Both paths still require the server-anchored
+timestamp derived above. For the PR path, always pass `--now` with that
+timestamp ("Deriving a server-anchored `now`"), together with the active PR
+number and, when known, the latest valid trusted
 `claimed-by` `created_at` from the active non-owned claim:
 
 ```bash

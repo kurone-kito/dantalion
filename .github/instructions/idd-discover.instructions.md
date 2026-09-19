@@ -176,11 +176,13 @@ A1 ↔ A0-O or A4 ↔ A0-O loop).
   or internal repositories, continue with A0-O.
 - For `none` and `maintainer-approved`, continue with A0-O.
 
-Search all open issues in the repository. Collect every issue that does
-NOT contain a `dantalion-roadmap-id` marker (not itself
-a roadmap) or a `dantalion-blocked-by` marker, AND
-otherwise passes A3's own readiness bullets (the same five criteria A3
-lists; do not re-derive them here).
+Search all open issues in the repository. Exclude every issue that is
+itself a roadmap, including an issue carrying the configured roadmap label
+(`labels.roadmapLabelName`, default `roadmap`) or a
+`dantalion-roadmap-id` identity marker. Also exclude every issue carrying a
+`dantalion-blocked-by` marker. Pass only the remaining issues that satisfy
+A3's own readiness bullets (the same five criteria A3 lists; do not
+re-derive them here).
 
 Apply the configured policy before passing A0-O candidates to A3.5:
 

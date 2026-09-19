@@ -86,7 +86,7 @@ following:
    `reacquired: true` both ends), else stop.
 6. If any check fails, stop.
 
-## D1 — Sync main before first push
+## D1 — Sync {development-branch} before first push
 
 This section's rebase only applies **before the branch's first push**.
 
@@ -94,7 +94,7 @@ This section's rebase only applies **before the branch's first push**.
    `git ls-remote --exit-code origin "refs/heads/{branch-name}"`
    (the `refs/heads/` prefix matters: a bare branch name also matches a
    same-named tag). Exit 2 means no matching branch — continue with
-   steps 2-8 below. Exit 0 means the branch already exists on the
+   steps 2-9 below. Exit 0 means the branch already exists on the
    remote; stop on any other nonzero exit status. When it already
    exists, do not rebase it — instead check for an open PR:
    `gh pr list --head {branch-name} --state open --json number --jq
@@ -135,17 +135,22 @@ This section's rebase only applies **before the branch's first push**.
        per the condition above — this needs either the merge-based
        resync or a closer live-state read this file's mechanical scope
        does not cover.
-2. Run `git fetch origin main`.
-3. If `git merge-base HEAD origin/main` equals `origin/main`, the branch
-   already contains every commit on `main` — skip the rebase and go to
+2. Resolve `{development-branch}` from the development-branch rule in
+   `idd-work.instructions.md` B1. Use that value for every command and
+   comparison in this section; this repository currently resolves it to
+   `main`.
+3. Run `git fetch origin {development-branch}`.
+4. If `git merge-base HEAD origin/{development-branch}` equals
+   `origin/{development-branch}`, the branch already contains every commit
+   on `{development-branch}` — skip the rebase and go to
    D2.
-4. **Before rebasing**: if primary commit signing is non-interactive-
+5. **Before rebasing**: if primary commit signing is non-interactive-
    hostile (GPG pinentry, or a hardware-touch path) and the repository
    provides **no** fallback wrapper for arbitrary git subcommands, stop
    and ask before running the rebase at all — replaying even one commit
    needs to re-sign it, and a hostile signing path with no wrapper has
    no safe non-interactive way to do that, conflict or not.
-5. Rebase onto it. On a signed-commit repo where primary signing **is**
+6. Rebase onto it. On a signed-commit repo where primary signing **is**
    non-interactive-hostile but the repository **does** provide a
    fallback wrapper for arbitrary git subcommands (for example `-c
    gpg.format=ssh -c user.signingkey=<abs-path> -c commit.gpgsign=true`
@@ -153,25 +158,25 @@ This section's rebase only applies **before the branch's first push**.
    subcommand — a commit-only alias will not run `rebase`), run the
    rebase **through that wrapper from the start**: `git -c
    gpg.format=ssh -c user.signingkey=<abs-path> -c commit.gpgsign=true
-   rebase origin/main` (or the repo's wrapper alias), not the plain
-   `git rebase origin/main`. Otherwise (signing is not hostile, or is
+   rebase origin/{development-branch}` (or the repo's wrapper alias), not
+   the plain `git rebase origin/{development-branch}`. Otherwise (signing is not hostile, or is
    hostile with a wrapper already covering it transparently), run the
-   plain `git rebase origin/main`.
-6. If the rebase hits a content conflict, resolve it and continue the
+   plain `git rebase origin/{development-branch}`.
+7. If the rebase hits a content conflict, resolve it and continue the
    rebase. On the signed-commit repo case in step 5, continue with the
    **wrapper's own** `--continue` form, not plain `git rebase
    --continue` — the plain form re-signs through the configured primary
    signing and stalls non-interactively right after the conflict is
    already resolved.
-7. After the **entire** rebase completes (not per-conflict, mid-rebase):
+8. After the **entire** rebase completes (not per-conflict, mid-rebase):
    if any file was hand-edited during conflict resolution, run
    **fix-validate** now, against the final rebased state, and commit
    any resulting changes before continuing. Then verify both:
    - `git branch --show-current` is non-empty (HEAD is not detached).
    - The expected local commit appears in `git log --oneline
-     origin/main..HEAD` (not local `main`, which this file never
+     origin/{development-branch}..HEAD` (not local `main`, which this file never
      fast-forwards and so can be stale).
-8. If HEAD is detached, re-attach once with `git checkout {branch-name}`,
+9. If HEAD is detached, re-attach once with `git checkout {branch-name}`,
    repeat this D1 rebase (through the same signing wrapper on a
    signed-commit repo), then re-verify both checks in step 7. If
    recovery still fails, stop and post a hold note naming the branch
