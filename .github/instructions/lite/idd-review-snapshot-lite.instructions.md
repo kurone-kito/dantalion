@@ -102,6 +102,7 @@ never lands. Only then continue to Step 1.
 
    - `<!-- review-watermark:`
    - `<!-- review-baseline:`
+   - `<!-- zero-accepted-path-a-gate:`
    - `<!-- claimed-by:`
    - `<!-- unclaimed-by:`
    - `advisory-wait:`
