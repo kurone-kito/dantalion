@@ -514,6 +514,14 @@ MISSING_REGULAR=$(printf '%s\n' "${COMMENTS_JSON}" "${DISPOSITION_JSON}" | jq -s
       | (($advisory | map(ascii_downcase) | index($u)) != null
         or $u == "copilot-pull-request-reviewer"
         or $u == "copilot-pull-request-reviewer[bot]"));
+  # Mirror the E1 periodic-notification exclusion without excluding a bot
+  # explicitly configured as an advisory reviewer for this repository.
+  def is_periodic_notification:
+    (login as $u
+      | $u == "renovate"
+        or $u == "renovate[bot]"
+        or $u == "dependabot"
+        or $u == "dependabot[bot]");
   def is_disposition:
     (
       ((.body // "") | startswith("**Accepted**"))
@@ -545,6 +553,7 @@ MISSING_REGULAR=$(printf '%s\n' "${COMMENTS_JSON}" "${DISPOSITION_JSON}" | jq -s
          (is_agent | not)
          and (is_disposition | not)
          and (is_trusted_operational_marker | not)
+         and ((is_periodic_notification and (is_advisory | not)) | not)
          and (is_advisory or (has_later_ordinary_agent_reply | not))
        ))
      | sort_by(.created_at)) as $out
@@ -797,7 +806,11 @@ if [ "$SECONDARY_STATUS" = "declined" ]; then
   ELAPSED_MINUTES=null
   REMAINING_MINUTES=0
 elif [ "$SECONDARY_STATUS" = "settled" ]; then
-  ANCHOR_AT="$SECONDARY_AT"
+  # A settled secondary timestamp must never rewind a newer activity anchor.
+  ANCHOR_AT=$(jq -nr \
+    --arg latest "$LATEST_ACTIVITY_AT" \
+    --arg secondary "$SECONDARY_AT" \
+    '[$latest, $secondary] | map(select(length > 0)) | max // empty')
   if [ "$WINDOW_MINUTES" -gt 5 ]; then WINDOW_MINUTES=5; fi
 fi
 
