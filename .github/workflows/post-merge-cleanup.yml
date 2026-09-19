@@ -1,0 +1,365 @@
+# cspell:ignore GHES
+# Trust model: this workflow triggers on `pull_request_target`, which runs
+# with base-repository permissions and secrets even for pull requests from
+# forks. That is safe here only because all of the following hold, and any
+# future edit to this file must preserve them:
+#   - No unreviewed PR-head content is ever checked out. On
+#     `pull_request_target`, the sole `actions/checkout` step below
+#     carries no `ref:` override for that trigger -- it resolves to
+#     `github.sha`, which for this trigger is the base branch's tip at
+#     event time. Because the job only proceeds when `merged == true`,
+#     that tip already includes this PR's own merge (this repository
+#     merges via merge commits, so it is typically that merge commit
+#     itself) -- it is never the PR's own head SHA, and never content
+#     that has not already passed through the merge decision. On
+#     `workflow_dispatch`, there is no equivalent trusted default -- the
+#     event resolves to whatever ref the dispatch was run against -- so
+#     that path pins `ref:` explicitly to
+#     `github.event.repository.default_branch` instead (#2979). This pin
+#     is defense-in-depth, not a full equivalent to the
+#     `pull_request_target` guarantee above: a `workflow_dispatch` run
+#     always executes this workflow's own YAML from whatever ref it was
+#     dispatched against, before the pinned checkout below even runs, so
+#     the pin only keeps the checked-out `scripts/` content trustworthy,
+#     not this file's own step definitions. Dispatching this workflow
+#     already requires the same repository write access that could edit
+#     this file directly, so the pin narrows the execution surface
+#     rather than adding a new trust boundary.
+#   - On `pull_request_target`, no PR-head code, workflow, or action is
+#     ever executed: helper code is selected only from this trusted checkout.
+#     The `vendored-node` path requires this repository's tracked
+#     `scripts/audit-pr-cleanup.mjs`; the `package-manager` path installs
+#     the frozen lockfile with lifecycle scripts disabled before invoking
+#     its pinned helper binary. Both paths receive the PR number as inert
+#     numeric data (`workflow_dispatch`'s own, narrower "no PR-head
+#     content" story is the defense-in-depth pin above, not this stronger
+#     guarantee). The `pr_number` value (a `workflow_dispatch` number input,
+#     not strictly enforced as numeric for direct API dispatches) is passed
+#     through `env:` and referenced as a quoted shell variable, never
+#     interpolated directly into a `run:` script.
+#   - The `cleanup` job only runs against an already-merged pull request.
+#     For `pull_request_target`, that guarantee comes from the job-level
+#     `if:` below (`github.event.pull_request.merged == true`). For
+#     `workflow_dispatch`, the job `if:` alone cannot express the same
+#     guarantee -- the dispatched `pr_number` is arbitrary operator
+#     input -- so a dedicated "Require a merged PR for workflow_dispatch"
+#     step looks the PR up via `gh pr view --json state` and fails the
+#     job, before the helper runs, when that PR does not exist or is not
+#     merged (#2979). This closes a defense-in-depth gap: the helper
+#     independently guards nearly every mutating check on its own
+#     `pr.merged` read, so an unmerged-PR dispatch was already a near-total
+#     no-op rather than an active exposure, but the job itself had no
+#     equivalent guarantee of its own.
+#   - `permissions:` stays least-privilege: `contents: read`,
+#     `issues: write`, `pull-requests: write` -- no `contents: write` and
+#     no elevated or secret-bearing scopes.
+# If a future change routes an untrusted ref through the checkout step,
+# drops the `workflow_dispatch` ref pin or its merged-PR guard step,
+# downloads or executes PR-head content, or widens `permissions:`,
+# re-review this trust model before merging that change.
+name: Post-merge cleanup
+
+on:
+  pull_request_target:
+    types:
+      - closed
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: PR number to clean up
+        required: true
+        type: number
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: post-merge-cleanup-${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    runs-on: ubuntu-slim
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # workflow_dispatch has no trustworthy default ref (see the
+          # trust-model comment above), so pin it explicitly to this
+          # repository's own default branch; pull_request_target keeps
+          # resolving to github.sha, its own already-trusted default.
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.event.repository.default_branch || github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Require a merged PR for workflow_dispatch
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # gh reads whichever of these two matches its resolved host
+          # (`gh help environment`), so setting both is inert on
+          # github.com and lets this same step authenticate on a
+          # self-hosted GHES host too.
+          GH_ENTERPRISE_TOKEN: ${{ github.token }}
+          # Same combined expression the "Run F4 cleanup" step below uses
+          # for PR_NUMBER, even though github.event.pull_request.number is
+          # always empty on this trigger -- kept identical so the two
+          # never drift apart.
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+        run: |
+          # workflow_dispatch's `pr_number` input is `type: number` in the
+          # UI, but that constraint is not strictly enforced for direct API
+          # dispatches, and `gh pr view` also accepts a full PR URL --
+          # reject anything that is not a bare decimal number before
+          # trusting it as this repository's own PR number (#2979).
+          case "$PR_NUMBER" in
+            ''|*[!0-9]*)
+              echo "::error::PR_NUMBER (\"$PR_NUMBER\") is not a plain decimal PR number; refusing to look it up."
+              exit 1
+              ;;
+          esac
+          # A `merged` field is not supported by `gh pr view --json` --
+          # `gh pr view --help` lists `mergedAt`/`state`, not `merged` --
+          # so querying it errors out before returning JSON, which would
+          # make this guard fail closed for every dispatch, including one
+          # for a genuinely merged PR. Query `state` instead, which is
+          # never null (#2979 review, Copilot/Codex). No `--repo`
+          # override here: `$PR_NUMBER` is already constrained to a bare
+          # decimal number by the check above, so `gh` safely resolves
+          # both the repository and the host from this step's own
+          # checked-out git context, matching every other `gh` call in
+          # this file and avoiding a GHES host-resolution mismatch an
+          # explicit `--repo` (without also pinning a matching host)
+          # would introduce (#2979 review, Copilot).
+          STATE=$(gh pr view "$PR_NUMBER" --json state --jq .state) || {
+            echo "::error::Failed to look up PR #$PR_NUMBER; refusing to run cleanup for it via workflow_dispatch."
+            exit 1
+          }
+          if [ "$STATE" != "MERGED" ]; then
+            echo "::error::PR #$PR_NUMBER is not merged (state=$STATE); this workflow only cleans up already-merged pull requests."
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          check-latest: true
+          node-version: 24.x
+
+      - name: Run F4 cleanup (server-side fallback)
+        id: cleanup
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # gh reads whichever of these two matches its resolved host
+          # (`gh help environment`), so setting both is inert on
+          # github.com and lets this same step authenticate on a
+          # self-hosted GHES host too.
+          GH_ENTERPRISE_TOKEN: ${{ github.token }}
+          # workflow_dispatch's `pr_number` input is `type: number` in the
+          # UI, but that constraint is not strictly enforced for direct API
+          # dispatches, so route it through env: and reference it as a
+          # quoted shell variable rather than interpolating the `${{ }}`
+          # expression directly into the `run:` script.
+          PR_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
+        run: |
+          set +e
+          if [ -z "$PR_NUMBER" ]; then
+            echo "::error::PR_NUMBER is empty"
+            exit 1
+          fi
+          case "$PR_NUMBER" in
+            ''|*[!0-9]*)
+              echo "::error::PR_NUMBER is not a plain decimal PR number; refusing to run cleanup."
+              exit 1
+              ;;
+          esac
+
+          PROFILE=$(jq -r '.helperRuntime.profile // "instructions-only"' .github/idd/config.json 2>profile-stderr.log)
+          PROFILE_EXIT=$?
+          JSON=""
+          HELPER_EXIT=0
+          if [ "$PROFILE_EXIT" -ne 0 ]; then
+            echo "::warning::Could not resolve helperRuntime.profile; cleanup remains fail-closed."
+            HELPER_EXIT=1
+          else
+            case "$PROFILE" in
+              package-manager)
+                corepack enable >corepack.log 2>&1
+                COREPACK_EXIT=$?
+                INSTALL_EXIT=1
+                if [ "$COREPACK_EXIT" -eq 0 ]; then
+                  pnpm install --frozen-lockfile --ignore-scripts >dependency-install.log 2>&1
+                  INSTALL_EXIT=$?
+                fi
+                if [ "$INSTALL_EXIT" -eq 0 ]; then
+                  JSON=$(pnpm exec idd-audit-pr-cleanup \
+                    --pr "$PR_NUMBER" \
+                    --apply \
+                    --skip-claim-check \
+                    --format json 2>cleanup-stderr.log)
+                  HELPER_EXIT=$?
+                else
+                  echo "::warning::The package-manager helper could not be installed from the frozen lockfile."
+                  HELPER_EXIT=1
+                fi
+                ;;
+              vendored-node)
+                if [ -f scripts/audit-pr-cleanup.mjs ]; then
+                  JSON=$(node scripts/audit-pr-cleanup.mjs \
+                    --pr "$PR_NUMBER" \
+                    --apply \
+                    --skip-claim-check \
+                    --format json 2>cleanup-stderr.log)
+                  HELPER_EXIT=$?
+                else
+                  echo "::warning::vendored-node profile is configured but scripts/audit-pr-cleanup.mjs is absent."
+                  HELPER_EXIT=127
+                fi
+                ;;
+              instructions-only|ephemeral-npx)
+                echo "::warning::helperRuntime.profile=$PROFILE has no executable helper runtime; cleanup remains fail-closed."
+                HELPER_EXIT=127
+                ;;
+              *)
+                echo "::warning::Unsupported helperRuntime.profile=$PROFILE; cleanup remains fail-closed."
+                HELPER_EXIT=1
+                ;;
+            esac
+          fi
+          set -e
+
+          # Prefer the helper's JSON report when it is parseable, even on
+          # non-zero exit (the helper writes the report then exits 1 when
+          # failed.length > 0, so the report is still authoritative).
+          PARSED_STATUS=""
+          if [ -n "$JSON" ]; then
+            PARSED_STATUS=$(printf '%s' "$JSON" | jq -r '.status // ""' 2>/dev/null || echo "")
+          fi
+          if [ -n "$PARSED_STATUS" ]; then
+            printf '%s\n' "$JSON" > cleanup-report.json
+            STATUS="$PARSED_STATUS"
+            APPLIED=$(printf '%s' "$JSON" | jq -r '(.applied // []) | length')
+            FAILED=$(printf '%s' "$JSON" | jq -r '(.failed // []) | length')
+            SKIPPED=$(printf '%s' "$JSON" | jq -r '(.skipped // []) | length')
+            BLOCKED=$(printf '%s' "$JSON" | jq -r '[(.skipped // [])[] | select(.isMinimized==false and .viewerCanMinimize==false)] | length')
+            RETRY_ATTEMPTS=$(printf '%s' "$JSON" | jq -r '.retryAttempts // 0')
+            RETRY_BOUND_EXHAUSTED=$(printf '%s' "$JSON" | jq -r '.retryBoundExhausted // false')
+            if [ "$HELPER_EXIT" -ne 0 ]; then
+              echo "::warning::audit-pr-cleanup exited $HELPER_EXIT but emitted a valid JSON report; using helper status \"$STATUS\""
+            fi
+          else
+            echo "::warning::audit-pr-cleanup exited $HELPER_EXIT with no parseable JSON; posting helper-error evidence"
+            STATUS="helper-error"
+            APPLIED=0
+            FAILED=0
+            SKIPPED=0
+            BLOCKED=0
+            RETRY_ATTEMPTS=0
+            RETRY_BOUND_EXHAUSTED=false
+          fi
+          {
+            echo "pr_number=$PR_NUMBER"
+            echo "status=$STATUS"
+            echo "applied=$APPLIED"
+            echo "failed=$FAILED"
+            echo "skipped=$SKIPPED"
+            echo "blocked=$BLOCKED"
+            echo "retry_attempts=$RETRY_ATTEMPTS"
+            echo "retry_bound_exhausted=$RETRY_BOUND_EXHAUSTED"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post cleanup evidence comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # gh reads whichever of these two matches its resolved host
+          # (`gh help environment`), so setting both is inert on
+          # github.com and lets this same step authenticate on a
+          # self-hosted GHES host too.
+          GH_ENTERPRISE_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.cleanup.outputs.pr_number }}
+          STATUS: ${{ steps.cleanup.outputs.status }}
+          APPLIED: ${{ steps.cleanup.outputs.applied }}
+          FAILED: ${{ steps.cleanup.outputs.failed }}
+          SKIPPED: ${{ steps.cleanup.outputs.skipped }}
+          BLOCKED: ${{ steps.cleanup.outputs.blocked }}
+          RETRY_ATTEMPTS: ${{ steps.cleanup.outputs.retry_attempts }}
+          RETRY_BOUND_EXHAUSTED: ${{ steps.cleanup.outputs.retry_bound_exhausted }}
+        run: |
+          # Avoid duplicate evidence comments, but only on a genuinely
+          # converged outcome. Workflow-level concurrency only serialises
+          # this workflow's own runs; an agent F4 (or a maintainer
+          # rerunning workflow_dispatch on the same PR) can still have
+          # posted an evidence comment outside this run. Skip only when
+          # BOTH the latest trusted <!-- idd-cleanup-evidence: {status}
+          # ... --> comment already records `applied`/`clean` AND this
+          # run's own outcome is also `applied`/`clean` (#2213) -- a
+          # prior success alone must never suppress this run's own
+          # non-success evidence (masking a later failure), and a prior
+          # non-success alone must never suppress this run's own success
+          # evidence (masking a later recovery). Only a run that is
+          # ALSO converged when the prior record was already converged
+          # gets skipped -- `applied` <-> `clean` between two already-
+          # converged runs stays silent, but any transition between a
+          # converged and a non-converged state always posts fresh
+          # evidence.
+          # "Trusted" scoping: this workflow's own posts are authored by
+          # `github-actions[bot]` (the GITHUB_TOKEN actor), and an agent's
+          # local F4 post is authored by a configured `trustedMarkerActors`
+          # login. An untrusted commenter pre-posting this marker prefix
+          # must never suppress the genuine evidence post or be treated as
+          # a completed cleanup record (this is the same trust-scoping
+          # every other IDD operational marker already applies).
+          TRUSTED_LOGINS=$(
+            {
+              jq -r '(.trustedMarkerActors // [])[]' .github/idd/config.json 2>/dev/null
+              echo 'github-actions[bot]'
+            } | tr '[:upper:]' '[:lower:]'
+          )
+          # Capture into a variable (not process substitution): a failure
+          # inside `< <(gh api ...)` does not reliably propagate to this
+          # shell's default `-e`/`pipefail`, which could leave EXISTING
+          # empty and post a duplicate evidence comment on a transient
+          # `gh api` failure (rate limit/network). A plain command
+          # substitution assignment does trip `-e` on failure.
+          #
+          # The API returns issue comments in creation-ascending order, so
+          # iterating every match without an early `break` and keeping the
+          # last assignment leaves EXISTING/EXISTING_STATUS holding the
+          # *latest* trusted comment, not merely the first one found.
+          COMMENTS_TSV=$(gh api --paginate \
+            "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+            --jq '.[] | select(.body | startswith("<!-- idd-cleanup-evidence:")) | [.id, .user.login, (.body | split("\n")[0])] | @tsv')
+          EXISTING=""
+          EXISTING_STATUS=""
+          while IFS=$'\t' read -r candidate_id candidate_login candidate_marker_line; do
+            [ -z "$candidate_id" ] && continue
+            lower_login=$(printf '%s' "$candidate_login" | tr '[:upper:]' '[:lower:]')
+            if printf '%s\n' "$TRUSTED_LOGINS" | grep -Fxq "$lower_login"; then
+              EXISTING="$candidate_id"
+              EXISTING_STATUS=$(printf '%s' "$candidate_marker_line" \
+                | sed -n 's/^<!-- idd-cleanup-evidence: \([^ ]*\) .*/\1/p')
+            fi
+          done <<< "$COMMENTS_TSV"
+          if [ -n "$EXISTING" ] \
+            && { [ "$EXISTING_STATUS" = "applied" ] || [ "$EXISTING_STATUS" = "clean" ]; } \
+            && { [ "$STATUS" = "applied" ] || [ "$STATUS" = "clean" ]; }; then
+            echo "::notice::PR #${PR_NUMBER} already has a trusted-author idd-cleanup-evidence comment recording '${EXISTING_STATUS}', and this run's own outcome '${STATUS}' is also converged (id: ${EXISTING}); skipping workflow post."
+            exit 0
+          fi
+          BODY=$(printf '%s\n\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
+            "<!-- idd-cleanup-evidence: ${STATUS} applied:${APPLIED} failed:${FAILED} skipped:${SKIPPED} viewer-cannot-minimize:${BLOCKED} retry-attempts:${RETRY_ATTEMPTS} retry-bound-exhausted:${RETRY_BOUND_EXHAUSTED} -->" \
+            "**F4 Cleanup Evidence** (server-side fallback via \`post-merge-cleanup.yml\`)" \
+            "| Field              | Value |" \
+            "| ------------------ | ----- |" \
+            "| Status             | ${STATUS} |" \
+            "| Applied            | ${APPLIED} |" \
+            "| Failed             | ${FAILED} |" \
+            "| Skipped            | ${SKIPPED} |" \
+            "| Permission-blocked | ${BLOCKED} |" \
+            "| Retry attempts (bound-exhausted) | ${RETRY_ATTEMPTS} (${RETRY_BOUND_EXHAUSTED}) |" \
+            "| Posted by          | post-merge-cleanup workflow |" \
+          )
+          printf '%s' "$BODY" | gh pr comment "$PR_NUMBER" --body-file -
