@@ -92,7 +92,7 @@ Create the concreted accessors collection from the i18next instance
 
 [`Accessors`](#accessors): The instance of the concreted accessors collection
 
-### `createAccessorsAsync(lng?: string, additions?: i18next.ResourceLanguage): Promise<Accessors & i18next.WithT>`
+### `createAccessorsAsync(lng?: string, additions?: i18next.Resource): Promise<Accessors & i18next.WithT>`
 
 Create the concreted accessors collection asynchronously
 
@@ -105,7 +105,7 @@ It is a synonym function that combines
 | Name        | Type                        | Defaults    | Description                                  |
 | :---------- | :-------------------------- | :---------- | :------------------------------------------- |
 | `lng`       | `string?`                   | (\*)        | The language to use                          |
-| `additions` | `i18next.ResourceLanguage?` | `undefined` | Specify the additional resources if you need |
+| `additions` | `i18next.Resource?` | `undefined` | Specify the additional language and namespace resources if you need |
 
 (\*: If omitted, the language used is detected from the current environment.
 See: [useLocale()](#getlocale-string--undefined))
@@ -247,23 +247,40 @@ The type definition that the options of the createTAsync function.
 
 ```ts
 interface CreateTAsyncOptions {
-  readonly additions?: i18next.ResourceLanguage;
+  readonly additions?: i18next.Resource;
   readonly lng?: string;
   readonly use?:
     | i18next.Module
     | i18next.Newable<i18next.Module>
-    | i18next.ThirdPartyModule[]
-    | i18next.Newable<i18next.ThirdPartyModule>[];
+    | i18next.ThirdPartyModule
+    | i18next.Newable<i18next.ThirdPartyModule>
+    | readonly (
+        | i18next.Module
+        | i18next.Newable<i18next.Module>
+        | i18next.ThirdPartyModule
+        | i18next.Newable<i18next.ThirdPartyModule>)[];
 }
 ```
 
 | Property    | Type                                    | Description                                                                                  |
 | :---------- | :-------------------------------------- | :------------------------------------------------------------------------------------------- |
-| `additions` | `i18next.ResourceLanguage \| undefined` | Specify the additional resources if you need                                                 |
+| `additions` | `i18next.Resource \| undefined` | Specify the additional language and namespace resources if you need                            |
 | `lng`       | `string \| undefined`                   | The language to use. If omitted, the language used is detected from the current environment. |
 | `use`       | _(\*)_                                  | The use function is there to load additional plugins to i18next.                             |
 
 (\*: See the type definition as it is long :/)
+
+Additional resources use i18next's language and namespace shape:
+
+```ts
+const additions: i18next.Resource = {
+  en: {
+    translation: {
+      descriptions: { detail: 'Custom details for {{type}}.' },
+    },
+  },
+};
+```
 
 ### `DescriptionsType`
 
