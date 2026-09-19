@@ -38,10 +38,92 @@
       "then": {
         "properties": {
           "blockers": { "maxItems": 0 },
+          "reviewCurrency": {
+            "required": ["comparisonRoute"],
+            "properties": {
+              "comparisonRoute": { "const": "proceed" }
+            }
+          },
           "secondaryQuietWindow": {
             "required": ["elapsed"],
             "properties": {
               "elapsed": { "const": true }
+            }
+          },
+          "threads": {
+            "required": ["actionableCount"],
+            "properties": {
+              "actionableCount": { "const": 0 }
+            }
+          },
+          "unrepliedComments": {
+            "required": ["count", "items"],
+            "properties": {
+              "count": { "const": 0 },
+              "items": { "maxItems": 0 }
+            }
+          },
+          "reviewerStates": {
+            "required": [
+              "requiredApprovalsSatisfied",
+              "codeownerApprovalSatisfied",
+              "codeownerSelfApproval",
+              "humanChangesRequestedCount",
+              "blockingChangesRequestedLogins"
+            ],
+            "properties": {
+              "requiredApprovalsSatisfied": { "const": true },
+              "humanChangesRequestedCount": { "const": 0 },
+              "blockingChangesRequestedLogins": { "maxItems": 0 }
+            },
+            "anyOf": [
+              {
+                "properties": {
+                  "codeownerApprovalSatisfied": { "const": true }
+                }
+              },
+              {
+                "properties": {
+                  "codeownerApprovalSatisfied": { "const": false },
+                  "codeownerSelfApproval": {
+                    "required": ["status"],
+                    "properties": {
+                      "status": { "const": "clear" }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "advisoryWait": {
+            "required": [
+              "f3Outcome",
+              "copilotUnavailable",
+              "copilotUnavailableWaived"
+            ],
+            "properties": {
+              "f3Outcome": { "const": "SATISFIED" }
+            },
+            "oneOf": [
+              {
+                "properties": {
+                  "copilotUnavailable": { "const": false },
+                  "copilotUnavailableWaived": { "const": false }
+                }
+              },
+              {
+                "properties": {
+                  "copilotUnavailable": { "const": true },
+                  "copilotUnavailableWaived": { "const": true }
+                }
+              }
+            ]
+          },
+          "claim": {
+            "required": ["matchesExpectedClaim", "claimLost"],
+            "properties": {
+              "matchesExpectedClaim": { "const": true },
+              "claimLost": { "const": false }
             }
           },
           "dispositionEvidence": {
@@ -67,9 +149,54 @@
               "missingRegularComments": { "maxItems": 0 },
               "missingThreads": { "maxItems": 0 }
             }
+          },
+          "staleSelfWaiver": {
+            "required": ["stale"],
+            "properties": {
+              "stale": { "const": false }
+            }
           }
         },
         "allOf": [
+          {
+            "$comment": "A ready report cannot claim readiness while an up-to-date-head requirement is unmet.",
+            "not": {
+              "required": ["branchCurrency"],
+              "properties": {
+                "branchCurrency": {
+                  "required": ["requiresUpToDateHead", "mergeStateStatus"],
+                  "properties": {
+                    "requiresUpToDateHead": { "const": true },
+                    "mergeStateStatus": { "const": "BEHIND" }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$comment": "A ready report cannot hide discarded non-passing required-check siblings behind a BLOCKED merge state.",
+            "if": {
+              "required": ["branchCurrency"],
+              "properties": {
+                "branchCurrency": {
+                  "required": ["mergeStateStatus"],
+                  "properties": {
+                    "mergeStateStatus": { "const": "BLOCKED" }
+                  }
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "ci": {
+                  "required": ["discardedNonPassingRequiredChecks"],
+                  "properties": {
+                    "discardedNonPassingRequiredChecks": { "maxItems": 0 }
+                  }
+                }
+              }
+            }
+          },
           {
             "$comment": "A ready report with no configured required checks is valid only when protection was readable and every present check run passed.",
             "if": {
