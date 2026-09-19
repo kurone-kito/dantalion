@@ -195,6 +195,18 @@ jobs:
 
           PROFILE=$(jq -r '.helperRuntime.profile // "instructions-only"' .github/idd/config.json 2>profile-stderr.log)
           PROFILE_EXIT=$?
+          MANUAL_COMMAND="Review the configured IDD helper runtime before retrying cleanup."
+          case "$PROFILE" in
+            package-manager)
+              MANUAL_COMMAND="corepack enable && pnpm install --frozen-lockfile --ignore-scripts && pnpm exec idd-audit-pr-cleanup --pr <N> --apply --skip-claim-check --format json"
+              ;;
+            vendored-node)
+              MANUAL_COMMAND="node scripts/audit-pr-cleanup.mjs --pr <N> --apply --skip-claim-check --format json"
+              ;;
+            instructions-only|ephemeral-npx)
+              MANUAL_COMMAND="No executable helper is configured for this profile; resolve cleanup according to the repository's IDD policy."
+              ;;
+          esac
           JSON=""
           HELPER_EXIT=0
           if [ "$PROFILE_EXIT" -ne 0 ]; then
@@ -422,8 +434,8 @@ jobs:
               "- Failed: ${FAILED} candidates" \
               "- Unapplied: ${SKIPPED} candidates" \
               "- Permission-blocked: ${BLOCKED} candidates (if any)" \
-              "This does not re-block the merge. A maintainer may run cleanup manually:" \
-              "node scripts/audit-pr-cleanup.mjs --pr <N> --apply --skip-claim-check" \
+              "This does not re-block the merge. Manual remediation for the configured profile is:" \
+              "$MANUAL_COMMAND" \
             )
           else
             BODY=$(printf '%s\n\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
