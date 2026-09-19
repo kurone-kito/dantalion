@@ -133,7 +133,8 @@ stable fields `quiet_window_met`, `quiet_window_ms`, `window_start`,
 `now`, `latest_activity`, `latest_activity_type`, `reason`, and
 `evidence` (`activity_count_in_window`, `blocking_activities`,
 `has_heartbeat_in_window`, `has_ci_running`,
-`has_branch_tip_movement`).
+`has_branch_tip_movement`, `branch_tip_evidence_source`,
+`branch_tip_evidence_head_sha`, `branch_tip_evidence_complete`).
 
 The helper's branch-tip signal must come from a GitHub-server PR timeline
 or ref-update event (`committed`, `head_ref_force_pushed`, `synchronize`,
@@ -147,6 +148,13 @@ report the evidence source, current PR head SHA binding, and completeness
 flag. A helper that reports only a commit author/committer date is
 non-conforming; keep the repository on `instructions-only` until that
 producer is updated.
+
+Before accepting `quiet_window_met: true`, validate the complete evidence
+tuple against the schema and the live PR: `branch_tip_evidence_complete`
+must be `true`, the source must be `pr-timeline`, `ref-update`, or
+`head-snapshot`, and `branch_tip_evidence_head_sha` must equal the current
+PR head SHA. A missing, `none`, null, or mismatched value is a hold even
+when the helper reports a quiet window.
 
 The helper gathers evidence only. It never decides trusted-marker
 validity, stale-age, advisory state, forced-handoff routing, or takeover
@@ -193,12 +201,15 @@ Immediately before posting takeover:
 4. Re-derive a **fresh** server-anchored `now` the same way as S2
    ("Deriving a server-anchored `now`") — do not reuse the S2 value,
    since time has passed — and re-check the latest externally visible
-   activity. When an active PR number is known, re-run
-   `idd-stalled-session-quiet-check` with that fresh `--now`. When no PR
-   exists, do not invent a PR number or invoke the PR-only helper; repeat
-   the written manual procedure using the claimed branch's remote-tip
-   evidence and the same fresh server-derived bound. If new progress
-   appeared after S2, stop and restart.
+   activity. Re-parse the latest valid trusted `claimed-by` `created_at`
+   at this point as well. When an active PR number is known and helpers are
+   enabled, re-run `idd-stalled-session-quiet-check` with that fresh
+   `--now` and pass the freshly re-read `--claim-created-at`. When no PR
+   exists, or when the profile is `instructions-only`, do not invent a PR
+   number or invoke a missing helper; repeat the written manual procedure
+   using the claimed branch's remote-tip evidence and the same fresh
+   server-derived bound. If new progress appeared after S2, stop and
+   restart.
 5. Re-check closed/merged guards. If the issue is now closed or the PR
    is now merged, stop and return to `idd-resume.instructions.md` Step 1
    cleanup behavior.

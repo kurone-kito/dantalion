@@ -200,5 +200,29 @@
       ]
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "quiet_window_met": { "const": true }
+        }
+      },
+      "then": {
+        "properties": {
+          "evidence": {
+            "properties": {
+              "branch_tip_evidence_source": {
+                "enum": ["pr-timeline", "ref-update", "head-snapshot"]
+              },
+              "branch_tip_evidence_head_sha": {
+                "type": "string"
+              },
+              "branch_tip_evidence_complete": { "const": true }
+            }
+          }
+        }
+      }
+    }
+  ],
   "additionalProperties": false
 }

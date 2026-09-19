@@ -33,7 +33,7 @@ NOW=$(node -e "console.log(new Date(process.argv[1]).toISOString().replace(/\.\d
 node scripts/stalled-session-quiet-check.mjs \
   --pr <pr-number> \
   --now "$NOW" \
-  --claim-created-at <latest-valid-claimed-by-created_at>  # vendored-node only
+  --claim-created-at <latest-valid-claimed-by-created_at>
 ```
 
 For `package-manager` and `ephemeral-npx`, resolve both commands from
@@ -79,7 +79,19 @@ the evidence source, current PR head SHA binding, and completeness flag. A
 helper that reports only a commit author/committer date is non-conforming;
 keep the repository on `instructions-only` until that producer is updated.
 
-Helper fields: `quiet_window_met`, `reason`, `latest_activity`.
+Helper fields: `quiet_window_met`, `quiet_window_ms`, `window_start`, `now`,
+`latest_activity`, `latest_activity_type`, `reason`, and `evidence`
+(`activity_count_in_window`, `blocking_activities`,
+`has_heartbeat_in_window`, `has_ci_running`,
+`has_branch_tip_movement`, `branch_tip_evidence_source`,
+`branch_tip_evidence_head_sha`, `branch_tip_evidence_complete`).
+
+Before accepting `quiet_window_met: true`, validate the complete evidence
+tuple against the schema and the live PR: `branch_tip_evidence_complete`
+must be `true`, the source must be `pr-timeline`, `ref-update`, or
+`head-snapshot`, and `branch_tip_evidence_head_sha` must equal the current
+PR head SHA. A missing, `none`, null, or mismatched value is a hold even
+when the helper reports a quiet window.
 
 | Result                                                         | Action                                                 |
 | -------------------------------------------------------------- | ------------------------------------------------------ |
@@ -113,8 +125,11 @@ gate.
    a helper that the repository has not installed.
 3. Active claim still the same non-owned `{claim-id}`.
 4. Still stale (≥ 24 h) now.
-5. Fresh server `NOW` + re-run quiet-check (no PR: written S2, not
-   helper); if new activity, STOP and restart from resume discovery.
+5. Fresh server `NOW` plus a freshly re-read latest valid trusted
+   `claimed-by` `created_at`; for helper-enabled profiles re-run the
+   quiet-check with both `--now "$NOW"` and that `--claim-created-at`.
+   For `instructions-only`, repeat the written S2 checks (no helper). If
+   new activity, STOP and restart from resume discovery.
 6. Issue still open; PR not merged.
 7. Plan A5 takeover with settle delay (`claim.verifySettleDelay`, default
    `PT5S`) and same-second claim-id tie-break.
