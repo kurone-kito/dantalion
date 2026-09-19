@@ -143,23 +143,19 @@ describe('dantalion CLI smoke', () => {
 
   describe('explicit language selection', () => {
     it('--lang ja renders Japanese regardless of the host locale', async () => {
-      const { exitCode, stdout } = await runCli([
-        'personality',
-        '2000-01-07',
-        '--lang',
-        'ja',
-      ]);
+      const { exitCode, stdout } = await runCli(
+        ['personality', '2000-01-07', '--lang', 'ja'],
+        { LANG: 'en_US.UTF-8' },
+      );
       expect(exitCode).toBe(0);
       expect(stdout).toContain('誕生日');
     });
 
     it('--lang en renders English regardless of the host locale', async () => {
-      const { exitCode, stdout } = await runCli([
-        'personality',
-        '2000-01-07',
-        '--lang',
-        'en',
-      ]);
+      const { exitCode, stdout } = await runCli(
+        ['personality', '2000-01-07', '--lang', 'en'],
+        { LANG: 'ja_JP.UTF-8' },
+      );
       expect(exitCode).toBe(0);
       expect(stdout).toContain('birthday');
       expect(stdout).not.toMatch(/[぀-ゟ゠-ヿ一-鿿]/);
@@ -173,6 +169,16 @@ describe('dantalion CLI smoke', () => {
       expect(exitCode).toBe(0);
       expect(stdout).toContain('詳細');
       expect(stdout).toMatch(/[぀-ゟ゠-ヿ一-鿿]/);
+    });
+
+    it('--lang en is propagated to detail on a Japanese host locale', async () => {
+      const { exitCode, stdout } = await runCli(
+        ['detail', '555', '--lang', 'en'],
+        { LANG: 'ja_JP.UTF-8', LC_ALL: '', LC_CTYPE: '' },
+      );
+      expect(exitCode).toBe(0);
+      expect(stdout).toContain('Details of people whose personality type');
+      expect(stdout).not.toMatch(/[぀-ゟ゠-ヿ一-鿿]/);
     });
 
     it('rejects unsupported language choices', async () => {
