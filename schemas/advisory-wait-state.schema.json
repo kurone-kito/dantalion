@@ -114,6 +114,7 @@
     },
     "elapsedMinutes": {
       "type": "number",
+      "minimum": 0,
       "description": "Minutes from the earliest trusted same-HEAD marker to now, or zero when no such marker exists."
     },
     "sameHeadMarkerPresent": {
