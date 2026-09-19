@@ -41,6 +41,7 @@ idd-stalled-session-quiet-check \
   --pr <number> \
   [--owner <owner>] \
   [--repo <repo>] \
+  [--token <token>] \
   --now <server-anchored-ISO8601> \
   [--quiet-window-ms <ms>] \
   [--claim-created-at <ISO8601>] \
@@ -54,6 +55,7 @@ node scripts/stalled-session-quiet-check.mjs \
   --pr <number> \
   [--owner <owner>] \
   [--repo <repo>] \
+  [--token <token>] \
   --now <server-anchored-ISO8601> \
   [--quiet-window-ms <ms>] \
   [--claim-created-at <ISO8601>] \
@@ -77,6 +79,8 @@ node scripts/stalled-session-quiet-check.mjs \
   evidence in Resume/S2
 - `--policy <path>`: Alternate policy file used to resolve the default
   quiet window
+- `--token <token>`: Explicit GitHub token override used when the default
+  `gh` authentication is unavailable
 - `--help`: Show help text
 
 `--claim-created-at` should come from the trusted active-claim parse that
