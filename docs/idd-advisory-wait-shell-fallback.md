@@ -34,28 +34,43 @@ the contract wins and these commands must be updated.
 ## AW1
 
 ```sh
+set -eu
+set -o pipefail
+
 OWNER=$(gh repo view --json owner --jq '.owner.login')
 REPO=$(gh repo view --json name --jq '.name')
 
-LAST_COPILOT_COMMIT=$(
-  gh api "repos/${OWNER}/${REPO}/pulls/{pr-number}/reviews" \
-    --paginate \
-    --jq '.[] | select(.user.login == "copilot-pull-request-reviewer" or .user.login == "copilot-pull-request-reviewer[bot]") |
-               {sa: .submitted_at, cid: .commit_id}' \
-  | jq -rs 'sort_by(.sa) | last | .cid // ""'
-)
+if ! REVIEWS_RAW=$(gh api "repos/${OWNER}/${REPO}/pulls/{pr-number}/reviews" --paginate); then
+  echo "hold: Copilot review fetch failed; AW1 evidence is unavailable" >&2
+  exit 2
+fi
+if ! LAST_COPILOT_COMMIT=$(printf '%s\n' "${REVIEWS_RAW}" | jq -rs '
+  (add // [])
+  | map(select(.user.login == "copilot-pull-request-reviewer"
+      or .user.login == "copilot-pull-request-reviewer[bot]")
+      | {sa: .submitted_at, cid: .commit_id})
+  | sort_by(.sa) | last | .cid // ""
+'); then
+  echo "hold: Copilot review response was not valid JSON" >&2
+  exit 2
+fi
 
-COPILOT_PENDING=$(gh api "repos/${OWNER}/${REPO}/pulls/{pr-number}/requested_reviewers" \
-  --jq '.users | any((.login // "" | ascii_downcase) as $l | $l == "copilot" or $l == "copilot-pull-request-reviewer" or $l == "copilot-pull-request-reviewer[bot]")')
+if ! COPILOT_PENDING=$(gh api "repos/${OWNER}/${REPO}/pulls/{pr-number}/requested_reviewers" \
+  --jq '.users | any((.login // "" | ascii_downcase) as $l | $l == "copilot" or $l == "copilot-pull-request-reviewer" or $l == "copilot-pull-request-reviewer[bot]")'); then
+  echo "hold: Copilot requested-reviewer fetch failed; AW1 evidence is unavailable" >&2
+  exit 2
+fi
 # Observed once: requested_reviewers can lag a successful re-request
 # or empty on submit, so false is not idle proof.
 # LAST_COPILOT_COMMIT == PR_HEAD_SHA remains the SATISFIED signal.
 
-COPILOT_PENDING_COVERS_HEAD=$(
-  gh api "repos/${OWNER}/${REPO}/issues/{pr-number}/timeline" \
-    -H "Accept: application/vnd.github+json" \
-    --paginate \
-    | jq -r -s --arg sha "${PR_HEAD_SHA}" '
+if ! TIMELINE_RAW=$(gh api "repos/${OWNER}/${REPO}/issues/{pr-number}/timeline" \
+  -H "Accept: application/vnd.github+json" \
+  --paginate); then
+  echo "hold: PR timeline fetch failed; AW1 evidence is unavailable" >&2
+  exit 2
+fi
+if ! COPILOT_PENDING_COVERS_HEAD=$(printf '%s\n' "${TIMELINE_RAW}" | jq -r -s --arg sha "${PR_HEAD_SHA}" '
         (add // [])
         | to_entries
         | (map(select(.value.event == "committed"
@@ -69,8 +84,10 @@ COPILOT_PENDING_COVERS_HEAD=$(
            | last | .key // null) as $request_index
         | ($head_index != null and $request_index != null and
            $request_index > $head_index)
-      '
-)
+      '); then
+  echo "hold: PR timeline response was not valid JSON" >&2
+  exit 2
+fi
 ```
 
 ## AW2
