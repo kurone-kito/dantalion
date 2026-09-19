@@ -48,6 +48,16 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         t: expect.any(Function),
         vector: expect.any(Object),
       }));
+
+    it('Keeps accessor instances isolated between calls', async () => {
+      const english = await createAccessorsAsync('en');
+      const japanese = await createAccessorsAsync('ja');
+
+      expect(english.getDescription('example').detail).toContain(
+        'Details of people',
+      );
+      expect(japanese.getDescription('example').detail).toContain('性格タイプ');
+    });
   });
   describe.each([
     [

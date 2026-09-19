@@ -10,7 +10,7 @@ import type {
   Response,
   Vector,
 } from '@kurone-kito/dantalion-core';
-import type { ResourceLanguage, TFunction, WithT } from 'i18next';
+import type { Resource, TFunction, WithT } from 'i18next';
 import type { DetailAccessor } from './createGenericAccessor.js';
 import createGenericAccessor from './createGenericAccessor.js';
 import createTAsync from './createTAsync.js';
@@ -138,13 +138,13 @@ export const createAccessors = (t: TFunction): Accessors => {
  * @param lng The language.
  *
  * If omitted, the language used is detected from the current environment.
- * @param additions The additional resources.
+ * @param additions The additional language and namespace resources.
  * @returns The instance of the concreted accessors collection asynchronously
  * @see useLocale()
  */
 export default async (
   lng?: string,
-  additions?: ResourceLanguage,
+  additions?: Resource,
 ): Promise<Accessors & WithT> => {
   const t = await createTAsync({ lng, additions });
   return { ...createAccessors(t), t };
