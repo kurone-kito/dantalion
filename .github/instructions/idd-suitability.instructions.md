@@ -347,7 +347,7 @@ exact match is not found, PASS the check and continue. Also covers the
 High-confidence tier's evidence collection (#1484).
 
 **Agent-specific limitations**: All seven checks should be agent-agnostic
-(work for Copilot, Claude, Codex, Antigravity CLI). If an agent cannot
+(work for Copilot, Claude, Codex, Gemini CLI). If an agent cannot
 reliably perform a check, document that limitation
 and treat as a PASS so work is not blocked by agent capability limits.
 **Exception**: Check 3

@@ -147,7 +147,7 @@ local customization).
   local interpretation.
 
 **What to do.** Author (or extend, via the normal reuse-first checks)
-a local issue through `.agents/skills/issue-authoring/` as usual, additionally
+a local issue through `.claude/skills/issue-authoring/` as usual, additionally
 carrying the GitHub label `status:upstream-candidate` (create it on
 first use) and the hidden marker
 `<!-- dantalion-upstream-candidate: true -->`.
@@ -161,14 +161,14 @@ this workflow.
 
 The Project commands table (named in full in
 `idd-overview-core.instructions.md`) and its override rules live in
-[`docs/customization.md` → Project commands reference](../../docs/customization.md#project-commands-reference).
+[`docs/customization.md` → CI and Command Placeholders](../../docs/customization.md#ci-and-command-placeholders).
 
 ## Critique pass
 
 A **critique pass** is an independent review of a plan or diff that
 produces a list of issues with severity, correctness, and coverage
 assessment. For the per-agent invocation table (Copilot / Claude Code /
-Codex CLI / Antigravity CLI) and the optional repository-configurable
+Codex CLI / Gemini CLI) and the optional repository-configurable
 `critiqueLoop.delegate` surface, see
 [`docs/idd-workflow.md` → Critique pass invocation](../../docs/idd-workflow.md#critique-pass-invocation).
 For **C1 and E10** (not E2), when helper runtime is enabled, resolve the

@@ -248,7 +248,7 @@ and the machine-readable policy in `.github/idd/config.json`.
 | `reviewPolicy`                | `copilot-advisory`                   |
 | `threadResolutionPolicy`      | `fast-agent-resolve`                 |
 | `helperRuntime.profile`       | `instructions-only`                  |
-| `issueScope`                  | `roadmap`                            |
+| `issueScope`                  | `roadmap-first`                      |
 | `trustedMarkerActors`         | `["kurone-kito"]`                    |
 
 To start an IDD-driven session, say:
