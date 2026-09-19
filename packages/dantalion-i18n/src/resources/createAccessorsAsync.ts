@@ -110,13 +110,16 @@ export interface Accessors {
 /**
  * Create the concreted accessors collection from the i18next instance
  * @param t Specify the i18next instance
+ * @param locale Specify the locale for localized output. If omitted, use the
+ * annotated translator locale or the runtime locale.
  * @returns The instance of the concreted accessors collection
  */
-export const createAccessors = (t: TFunction): Accessors => {
+export const createAccessors = (t: TFunction, locale?: string): Accessors => {
   const { tCategoryStringedDetail, tDetail, tObj, tStringedDetail } =
     createGenericAccessor(t);
   const potentialsDetail = tDetail<readonly string[]>('potentials');
-  const locale = (t as LocalizedTFunction).locale ?? getLocale();
+  const resolvedLocale =
+    locale ?? (t as LocalizedTFunction).locale ?? getLocale();
   return {
     brain: tDetail('brain'),
     communication: tDetail('communication'),
@@ -132,7 +135,7 @@ export const createAccessors = (t: TFunction): Accessors => {
     },
     response: tDetail('response'),
     vector: tDetail('vector'),
-    locale,
+    locale: resolvedLocale,
   };
 };
 

@@ -22,6 +22,10 @@ describe('`createTAsync()` function', () => {
     expect((await createTAsync({ lng: 'ja' })).locale).toBe('ja');
   });
 
+  it('Preserves a requested regional locale', async () => {
+    expect((await createTAsync({ lng: 'en-GB' })).locale).toBe('en-GB');
+  });
+
   it('Merges additions without mutating them', async () => {
     const additions: Resource = {
       en: {

@@ -38,6 +38,12 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       const accessors = createAccessors(t.bind(undefined));
       expect(accessors.locale).toBeTypeOf('string');
     });
+
+    it('uses an explicit locale for unannotated translators', async () => {
+      const t = await createTAsync({ lng });
+      const accessors = createAccessors(t.bind(undefined), 'en-GB');
+      expect(accessors.locale).toBe('en-GB');
+    });
   });
   describe('`createAccessorsAsync()` function', () => {
     it('Get the (Accessors & i18next.WithT) object', async () =>

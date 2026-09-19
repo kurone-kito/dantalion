@@ -78,7 +78,7 @@ Since it's a long sentence, it omitted some parts.
 
 ## API
 
-### `createAccessors(t: i18next.TFunction): Accessors`
+### `createAccessors(t: i18next.TFunction, locale?: string): Accessors`
 
 Create the concreted accessors collection from the i18next instance
 
@@ -87,6 +87,7 @@ Create the concreted accessors collection from the i18next instance
 | Name | Type                                                          | Defaults     | Description                  |
 | :--- | :------------------------------------------------------------ | :----------- | :--------------------------- |
 | `t`  | [`i18next.TFunction`](https://www.i18next.com/overview/api#t) | _(Required)_ | Specify the i18next instance |
+| `locale` | `string?`                                                  | _(Optional)_ | Specify the locale for localized output. If omitted, use the translator metadata or the runtime locale. |
 
 #### Returns
 
@@ -97,7 +98,8 @@ Create the concreted accessors collection from the i18next instance
 Create the concreted accessors collection asynchronously
 
 It is a synonym function that combines
-[`createAccessors()`](#createaccessorst-i18nexttfunction-accessors) and
+[`createAccessors()`](#createaccessorst-i18nexttfunction-locale-string-accessors)
+and
 [`createTAsync()`](#createtasyncoptions-createtasyncoptions-promisei18nexttfunction).
 
 #### Arguments

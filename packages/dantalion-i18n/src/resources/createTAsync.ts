@@ -73,7 +73,7 @@ export default async (
   Object.defineProperty(t, 'locale', {
     configurable: false,
     enumerable: false,
-    value: instance.resolvedLanguage ?? instance.language ?? lng,
+    value: instance.language,
     writable: false,
   });
   return t as LocalizedTFunction;
