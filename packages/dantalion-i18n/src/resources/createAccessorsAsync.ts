@@ -107,6 +107,15 @@ export interface Accessors {
   readonly vector: DetailAccessor<VectorType, Vector>;
 }
 
+/** Return a canonical locale or the runtime locale for invalid input. */
+const getValidLocale = (locale: string): string => {
+  try {
+    return Intl.getCanonicalLocales(locale)[0] ?? getLocale();
+  } catch {
+    return getLocale();
+  }
+};
+
 /**
  * Create the concreted accessors collection from the i18next instance
  * @param t Specify the i18next instance
@@ -119,8 +128,9 @@ export const createAccessors = (t: TFunction, locale?: string): Accessors => {
   const { tCategoryStringedDetail, tDetail, tObj, tStringedDetail } =
     createGenericAccessor(t);
   const potentialsDetail = tDetail<readonly string[]>('potentials');
-  const resolvedLocale =
+  const requestedLocale =
     locale ?? (t as LocalizedTFunction).locale ?? getLocale();
+  const resolvedLocale = getValidLocale(requestedLocale);
   return {
     brain: tDetail('brain'),
     communication: tDetail('communication'),

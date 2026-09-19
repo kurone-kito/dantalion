@@ -44,6 +44,14 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       const accessors = createAccessors(t.bind(undefined), 'en-GB');
       expect(accessors.locale).toBe('en-GB');
     });
+
+    it('canonicalizes invalid explicit locales to the runtime locale', async () => {
+      const t = await createTAsync({ lng });
+      const accessors = createAccessors(t, 'invalid_locale');
+      expect(accessors.locale).toBe(
+        Intl.DateTimeFormat().resolvedOptions().locale,
+      );
+    });
   });
   describe('`createAccessorsAsync()` function', () => {
     it('Get the (Accessors & i18next.WithT) object', async () =>
