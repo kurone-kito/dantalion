@@ -41,7 +41,6 @@ idd-stalled-session-quiet-check \
   --pr <number> \
   [--owner <owner>] \
   [--repo <repo>] \
-  [--gh-token <token>] \
   --now <server-anchored-ISO8601> \
   [--quiet-window-ms <ms>] \
   [--claim-created-at <ISO8601>] \
@@ -55,7 +54,6 @@ node scripts/stalled-session-quiet-check.mjs \
   --pr <number> \
   [--owner <owner>] \
   [--repo <repo>] \
-  [--gh-token <token>] \
   --now <server-anchored-ISO8601> \
   [--quiet-window-ms <ms>] \
   [--claim-created-at <ISO8601>] \
@@ -72,7 +70,6 @@ node scripts/stalled-session-quiet-check.mjs \
 
 - `--owner <owner>`: Repository owner; defaults to the current repository
 - `--repo <repo>`: Repository name; defaults to the current repository
-- `--gh-token <token>`: GitHub token override for `gh` API calls
 - `--quiet-window-ms <ms>`: Quiet-window duration in milliseconds;
   defaults to the policy value or `1800000`
 - `--claim-created-at <ISO8601>`: Latest valid trusted `claimed-by`

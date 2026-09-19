@@ -13,6 +13,12 @@ const readStdin = async () => {
 };
 
 const isNonNegativeInteger = (value) => Number.isInteger(value) && value >= 0;
+const isPositiveInteger = (value) => Number.isInteger(value) && value > 0;
+const isUtcIsoTimestamp = (value) =>
+  typeof value === 'string' &&
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/u.test(value) &&
+  Number.isFinite(Date.parse(value)) &&
+  new Date(value).toISOString().replace(/\.\d{3}Z$/u, 'Z') === value;
 
 const normalizePayload = (payload) => {
   if (
@@ -28,7 +34,6 @@ const normalizePayload = (payload) => {
     'round',
     'repo',
     'issue',
-    'pr',
     'findingsCount',
     'severityBreakdown',
     'acceptedCount',
@@ -39,29 +44,36 @@ const normalizePayload = (payload) => {
   if (required.some((key) => !(key in payload))) {
     throw new Error('telemetry payload is missing a required field');
   }
+  const pr = 'pr' in payload ? payload.pr : null;
+
   if (
     payload.phase !== 'C' ||
     !isNonNegativeInteger(payload.round) ||
     typeof payload.repo !== 'string' ||
-    !isNonNegativeInteger(payload.issue) ||
-    (payload.pr !== null && !isNonNegativeInteger(payload.pr)) ||
+    !isPositiveInteger(payload.issue) ||
+    (pr !== null && !isPositiveInteger(pr)) ||
     !isNonNegativeInteger(payload.findingsCount) ||
     !isNonNegativeInteger(payload.acceptedCount) ||
     !isNonNegativeInteger(payload.rejectedCount) ||
     typeof payload.delegateUsed !== 'boolean' ||
-    typeof payload.timestamp !== 'string'
+    !isUtcIsoTimestamp(payload.timestamp)
   ) {
     throw new Error('telemetry payload has an invalid field');
   }
 
   const severity = payload.severityBreakdown;
+  const normalizedSeverity = {
+    high: severity?.high ?? 0,
+    medium: severity?.medium ?? 0,
+    low: severity?.low ?? 0,
+  };
   if (
     severity === null ||
     typeof severity !== 'object' ||
     Array.isArray(severity) ||
-    !isNonNegativeInteger(severity.high) ||
-    !isNonNegativeInteger(severity.medium) ||
-    !isNonNegativeInteger(severity.low)
+    !isNonNegativeInteger(normalizedSeverity.high) ||
+    !isNonNegativeInteger(normalizedSeverity.medium) ||
+    !isNonNegativeInteger(normalizedSeverity.low)
   ) {
     throw new Error('telemetry severity breakdown is invalid');
   }
@@ -80,7 +92,12 @@ const normalizePayload = (payload) => {
 
   // Match upstream harvesting: a severity breakdown may be partial, but it
   // must never claim more findings than the round contains.
-  if (severity.high + severity.medium + severity.low > payload.findingsCount) {
+  if (
+    normalizedSeverity.high +
+      normalizedSeverity.medium +
+      normalizedSeverity.low >
+    payload.findingsCount
+  ) {
     throw new Error('severityBreakdown total must not exceed findingsCount');
   }
 
@@ -89,13 +106,9 @@ const normalizePayload = (payload) => {
     round: payload.round,
     repo: payload.repo,
     issue: payload.issue,
-    pr: payload.pr,
+    pr,
     findingsCount: payload.findingsCount,
-    severityBreakdown: {
-      high: severity.high,
-      medium: severity.medium,
-      low: severity.low,
-    },
+    severityBreakdown: normalizedSeverity,
     acceptedCount: payload.acceptedCount,
     rejectedCount: payload.rejectedCount,
     delegateUsed: payload.delegateUsed,
