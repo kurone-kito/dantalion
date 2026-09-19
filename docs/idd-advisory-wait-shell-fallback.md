@@ -875,12 +875,13 @@ REVIEW_COMMENTS_JSON=$(
     --paginate | jq -s 'add // []'
 )
 
-# A mutable PR `updated_at` is only a current-head observation. It must not
-# become the head-entry anchor after later reviews/comments advance it. Prefer
-# the earliest trusted same-head advisory marker (posted after the head was
+# A mutable PR `updated_at` is only a current-head observation. Prefer the
+# earliest trusted same-head advisory marker (posted after the head was
 # observed), then a timestamped timeline record explicitly bound to this
-# head. If neither exists, the current head cannot be safely associated with
-# secondary settlement comments, so hold instead of reusing PR creation time.
+# head. If the fast path has no advisory marker or timestamped movement,
+# retain the server-observed `head-snapshot` as a conservative fallback: it
+# can only delay settlement when later review/comment activity advanced the
+# mutable PR timestamp, never shorten the quiet window.
 TRUSTED_MARKER_LOGINS_JSON=$(jq -c \
   '(.trustedMarkerActors // [])
    | map(select(type == "string" and length > 0) | ascii_downcase)
@@ -900,7 +901,7 @@ HEAD_ENTRY_AT=$(printf '%s' "$ISSUE_COMMENTS_JSON" | jq -r \
   ')
 if [ -z "$HEAD_ENTRY_AT" ]; then
   HEAD_ENTRY_AT=$(printf '%s' "$BRANCH_TIP_MOVEMENTS_JSON" | jq -r '
-    map(select(.type != "head-snapshot")) | map(.at) | sort | .[0] // empty
+    map(.at) | sort | .[0] // empty
   ')
 fi
 if [ -z "$HEAD_ENTRY_AT" ]; then

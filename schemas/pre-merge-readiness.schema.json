@@ -26,6 +26,34 @@
     "blockers"
   ],
   "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "ready": { "const": true }
+        },
+        "required": ["ready"]
+      },
+      "then": {
+        "properties": {
+          "blockers": { "maxItems": 0 }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ready": { "const": false }
+        },
+        "required": ["ready"]
+      },
+      "then": {
+        "properties": {
+          "blockers": { "minItems": 1 }
+        }
+      }
+    }
+  ],
   "properties": {
     "protocolVersion": {
       "type": "string",
