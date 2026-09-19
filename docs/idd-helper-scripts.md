@@ -459,6 +459,25 @@ report its path. Write the record through a temporary file and atomic
 replacement while holding the guard; never overwrite a directory at the
 record path.
 
+### Clone-scoped lock
+
+The clone-scoped lock serializes `git fetch`, base-branch fast-forwards,
+and `git worktree add`/`remove` operations that share one primary clone.
+It is distinct from the worktree-local claim lock: it protects the clone
+topology, not issue ownership. Helper-enabled profiles should run the
+profile-selected `idd:clone-lock` wrapper around the complete command and
+release it even when that command fails. The wrapper must fail closed on
+timeout and must not auto-remove a lock merely because it looks old.
+
+For `instructions-only`, do not hand-roll a competing lock protocol. When
+parallel workers share a clone, give each worker a separate clone and keep
+the primary worktree operations serialized by the operator; otherwise use
+an existing platform-native exclusive lock such as `flock` only when its
+availability and timeout semantics are verified before the first command.
+Never run concurrent `fetch`, `merge --ff-only`, `worktree add`, or
+`worktree remove` calls against one clone without one of those two guarded
+arrangements.
+
 ### Operator forced-handoff helpers
 
 - Command: `node scripts/force-handoff.mjs`

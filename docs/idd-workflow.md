@@ -117,6 +117,19 @@ the per-agent pass only under the selected mode; a missing, timed-out, or
 unreadable delegate result is not a clean critique and must follow the
 phase's hold/fallback rule.
 
+## Orchestrator fan-out variant
+
+An orchestrator may select multiple independent issues, but each worker
+still owns exactly one verified issue claim and sibling worktree. Claims
+are the cross-machine coordination boundary; the clone-scoped lock in
+[`docs/idd-helper-scripts.md`](idd-helper-scripts.md#clone-scoped-lock)
+serializes shared-clone topology operations. In an instructions-only
+setup, prefer a separate clone per worker or a verified native lock rather
+than concurrent `fetch`, base-branch fast-forward, or worktree add/remove
+calls in one clone. Background waits are not completion evidence: the
+orchestrator must synchronously collect each worker result and re-check
+the live issue/PR state before routing the next phase.
+
 The distributed workflow remains an instruction template first. Native
 skills can sit beside it as optional helpers, but they do not replace
 these execution-layer files.

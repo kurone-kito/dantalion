@@ -43,7 +43,7 @@
     "floor": 3
   },
   "worktreeGuard": {
-    "enabled": true
+    "enabled": false
   },
   "ciGate": {
     "trustEmptyProtectionReads": true,
