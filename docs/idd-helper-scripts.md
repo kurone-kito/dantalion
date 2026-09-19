@@ -403,6 +403,62 @@ The adopted helper boundaries are intentionally narrow:
 
 ## Stable Helper Evidence Outputs
 
+### Worktree-local claim lock
+
+The worktree-local claim lock is a same-machine complement to the live
+GitHub claim. It is stored below the worktree's private Git admin
+directory, resolved with `git -C <worktree> rev-parse --absolute-git-dir`,
+and uses the shared filename `idd-claim.lock`. It has no local staleness
+judgment: a different or malformed holder is a collision and must not be
+overridden without a separately authorized GitHub takeover.
+
+Helper-enabled profiles use their profile-selected `claim-lock` command.
+For `instructions-only`, use this portable fallback before each
+mutation:
+
+1. Read `idd-claim.lock` before writing. A well-formed JSON object whose
+   `agentId` and `claimId` match the current session is a read-only
+   reacquisition. A different, malformed, or unreadable object is a
+   collision; stop and revalidate the GitHub claim rather than deleting it.
+2. If the lock is absent, write
+   `{ "agentId": "...", "claimId": "...", "acquiredAt": "..." }` to
+   a unique temporary file in the same admin directory, close it, and
+   publish it with an atomic no-overwrite operation (`link` plus temporary
+   unlink on POSIX, or the platform's equivalent exclusive move). Never
+   write the final path in two separate operations or use an overwriting
+   rename. If publication loses a race, remove only the temporary file and
+   re-read the final holder; a matching holder is a raced acquisition, not
+   evidence that the lock predated this call.
+3. Do not auto-remove an aged lock. A collision remains fail-closed until
+   the live claim transition authorizes takeover. `git worktree remove` at
+   F4 removes the lock with the worktree.
+
+The generated-tokens record is a separate, per-claim evidence file in the
+same admin directory. Its path is:
+
+```text
+idd-generated-tokens-<sanitized-claim-id>-<8-hex-char sha256 prefix>.json
+```
+
+Replace non-`[A-Za-z0-9._-]` characters with `_`, truncate that portion
+to 64 characters, and compute the eight-character SHA-256 prefix from the
+original claim ID. Store `{ "agentId": "...", "claimId": "...",
+"nonce": "...", "recordedAt": "..." }`; omit `nonce` until the
+activation nonce is generated. Record once in the primary worktree before
+the claim marker, again before the activation-nonce marker, and once more
+in the B1 worktree while preserving the same nonce. Before trusting a
+claim ID from context, read this exact path and require a well-formed
+record whose `claimId` matches; absent or malformed is fail-closed.
+
+For fallback writers, serialize updates to one record with an exclusive
+same-directory `<record>.writelock` guard. Retry only for the bounded
+five-second window, arm cleanup only after this invocation creates the
+guard, and remove it on exit only when its body still matches this
+invocation's unique guard token. If the guard cannot be acquired, stop and
+report its path. Write the record through a temporary file and atomic
+replacement while holding the guard; never overwrite a directory at the
+record path.
+
 ### Operator forced-handoff helpers
 
 - Command: `node scripts/force-handoff.mjs`

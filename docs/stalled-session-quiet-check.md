@@ -117,7 +117,7 @@ The CLI returns JSON shaped like:
     "number": 526,
     "title": "refactor(instructions): make resume-stall helper-first",
     "head_sha": "9bf7bd353fe09a0514fcf3e36b3a323cb6c936fe",
-    "html_url": "https://github.com/kurone-kito/dantalion/pull/229"
+    "html_url": "https://github.com/kurone-kito/dantalion/pull/526"
   },
   "policy": {
     "quiet_window_ms": 1800000,

@@ -169,8 +169,15 @@ A **critique pass** is an independent review of a plan or diff that
 produces a list of issues with severity, correctness, and coverage
 assessment. For the per-agent invocation table (Copilot / Claude Code /
 Codex CLI / Gemini CLI) and the optional repository-configurable
-`critiqueLoop.delegate` surface, see
-[`docs/idd-workflow.md` → Critique pass invocation](../../docs/idd-workflow.md#critique-pass-invocation).
+`critiqueLoop.delegate` surface, see the consumer's
+[`docs/idd-workflow.md` → Critique pass invocation](../../docs/idd-workflow.md#critique-pass-invocation)
+section. If that section is unavailable in a partial checkout, use the
+per-agent fallback table in this paragraph: Copilot launches an Agent-mode
+subagent, Claude Code uses a fresh general-purpose agent, Codex uses one
+bounded read-only native subagent when supported and otherwise performs a
+structured self-critique, and Gemini uses its native multi-step task
+mechanism when available. The calling phase's checklist remains the
+prompt and the result must be collected before advancing.
 For **C1 and E10** (not E2), when helper runtime is enabled, resolve the
 effective delegate with the `idd-critique-delegate` helper documented
 at

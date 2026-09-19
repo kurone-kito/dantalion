@@ -97,6 +97,26 @@ ownership boundaries explicit:
 Some older project text may still use "skill files" as shorthand, but
 these instruction files are not agent-native `SKILL.md` bundles.
 
+## Critique pass invocation
+
+A **critique pass** is an independent review of a plan or diff that
+produces a list of issues with severity, correctness, and coverage
+assessment. The calling phase supplies the checklist; the reviewer must
+return its findings before the workflow advances.
+
+| Agent | Invocation |
+| --- | --- |
+| GitHub Copilot | Launch an Agent-mode subagent with the calling phase's critique checklist. |
+| Claude Code | Launch a fresh general-purpose subagent with the calling phase's critique checklist. |
+| Codex CLI | Use one bounded read-only native subagent when supported; otherwise perform a structured self-critique. |
+| Gemini CLI | Use the native multi-step task mechanism when available; otherwise perform a structured self-critique. |
+
+When `critiqueLoop.delegate` is configured, apply its documented mode
+after resolving the delegate command. A successful delegate may suppress
+the per-agent pass only under the selected mode; a missing, timed-out, or
+unreadable delegate result is not a clean critique and must follow the
+phase's hold/fallback rule.
+
 The distributed workflow remains an instruction template first. Native
 skills can sit beside it as optional helpers, but they do not replace
 these execution-layer files.

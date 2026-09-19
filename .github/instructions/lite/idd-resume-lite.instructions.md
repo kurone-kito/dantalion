@@ -23,14 +23,26 @@ Never invent forced-handoff markers. Unattended sessions only
 
 ```sh
 # Claim state (required before any mutation)
-node scripts/resume-claim-routing.mjs --issue <N>
+node scripts/resume-claim-routing.mjs --issue <N>  # vendored-node only
+
+# package-manager / ephemeral-npx: use the profile-selected equivalent
+# from docs/idd-helper-scripts.md.
 
 # Fresh-claim gate immediately before any claim write
-node scripts/resume-claim-routing.mjs --issue <N> --fresh-claim-gate
+node scripts/resume-claim-routing.mjs --issue <N> --fresh-claim-gate  # vendored-node only
+
+# package-manager / ephemeral-npx: use the same profile-selected command
+# with --fresh-claim-gate.
 
 # PR / CI / review resume route (when a PR may exist)
-node scripts/resume-route-selection.mjs --issue <N>
+node scripts/resume-route-selection.mjs --issue <N>  # vendored-node only
+
+# package-manager / ephemeral-npx: use the profile-selected equivalent.
 ```
+
+For `instructions-only`, skip these helper commands and use the written
+Step 0/Step 1 tables below; a missing helper is not a reason to invent a
+different command.
 
 Map helper fields to actions below.
 

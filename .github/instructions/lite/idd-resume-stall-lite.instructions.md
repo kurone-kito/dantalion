@@ -21,7 +21,8 @@ takeover, return to resume lite Step 1.
 
 ```sh
 # Confirm non-owned claim
-node scripts/resume-claim-routing.mjs --issue <N>
+node scripts/resume-claim-routing.mjs --issue <N>  # vendored-node only
+# package-manager / ephemeral-npx: use the profile-selected equivalent.
 
 # Server-anchored now (required for quiet window)
 SERVER_NOW=$(gh api repos/<owner>/<repo>/issues/<N> --include \
@@ -32,8 +33,13 @@ NOW=$(node -e "console.log(new Date(process.argv[1]).toISOString().replace(/\.\d
 node scripts/stalled-session-quiet-check.mjs \
   --pr <pr-number> \
   --now "$NOW" \
-  --claim-created-at <latest-valid-claimed-by-created_at>
+  --claim-created-at <latest-valid-claimed-by-created_at>  # vendored-node only
 ```
+
+For `package-manager` and `ephemeral-npx`, resolve both commands from
+the profile wiring in `docs/idd-helper-scripts.md`. For
+`instructions-only`, skip the helpers and use the written S1-S5 rules
+below; when no PR exists, never invent a helper `--pr` argument.
 
 No PR: do not invent `--pr`. Skip the helper (not a helper
 failure). Decide S2 from the written bullets using the claim

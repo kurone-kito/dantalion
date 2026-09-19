@@ -83,13 +83,19 @@ stop and report.
       Report and stop rather than inventing an unsupported path (PR
       kurone-kito/idd-skill#3051 review).
    2. Otherwise, establish ownership of the issue number in that
-      branch name through `idd-claim.instructions.md` A5 — the same
-      no-claim recovery step 5 uses for `separate_merge_agent` — then
-      return to this handoff phase. `idd-merge.instructions.md`'s F3
-      step 1 requires an active claim regardless of policy, with no
-      `fully_autonomous_merge` exception; establishing one here before
-      routing to F3 is what keeps this no-active-claim continuation
-      from contradicting that check (kurone-kito/idd-skill#2977).
+      branch name through `idd-claim.instructions.md` A5's explicit
+      **claimless-PR recovery context**. Carry the validated PR number,
+      issue number, exact `issue/<number>-<slug>` branch, and the body
+      closing-keyword evidence into A5. A5 may accept that exact branch
+      as expected only for this narrowly revalidated context; it must
+      still repeat the issue, claim, branch, and PR checks immediately
+      before posting the claim. Any other issue-number branch remains an
+      orphan collision and stops. Then return to this handoff phase.
+      `idd-merge.instructions.md`'s F3 step 1 requires an active claim
+      regardless of policy, with no `fully_autonomous_merge` exception;
+      establishing one here before routing to F3 is what keeps this
+      no-active-claim continuation from contradicting that check
+      (kurone-kito/idd-skill#2977).
    3. If this session has not yet recorded F2 evidence for the
       `{claim-id}` now active (for example, step 6.2 just established a
       fresh claim), return to `idd-pre-merge.instructions.md` and run F2

@@ -135,6 +135,17 @@ an inheritable claim comment. An inheritable claim comment is either:
   legacy migration (see **Legacy claim migration** near the end of
   this file)
 
+**Claimless-PR recovery exception.** The fully autonomous merge-handoff
+path may pass an explicit recovery context containing the live PR number,
+issue number, exact issue branch, and a verified closing keyword. In that
+context only, the named PR may be treated as the inheritable branch for
+A5(d)/(e) long enough to establish the missing claim. Re-fetch the issue,
+PR, branch tip, and claim log immediately before the claim write; require
+no competing active claim, the same issue number in the branch and body,
+and no other `issue/<number>-*` branch. A mismatch, a second PR, or any
+missing evidence is an orphan collision and stops. This exception is not a
+general bypass for an existing branch or PR.
+
 **(e) Branch collision** — Compute the branch name using the IDD naming
 convention: `issue/<number>-<slug>`. Generate `<slug>` deterministically
 from the issue title so parallel sessions converge on the same branch
@@ -216,10 +227,11 @@ issue (different slug variants).
    - **If no local worktree or remote branch matches `issue/<number>-*`**:
      Proceed to claim posting (the safe, single-session path).
 
-   - **If a match is found and corresponds to an inheritable claim or
-     trusted forced-handoff evidence** (its `branch` matches one of the
-     branches allowed in (d) above): proceed to claim posting — the
-     branch is expected.
+   - **If a match is found and corresponds to an inheritable claim,
+     trusted forced-handoff evidence, or the fully revalidated
+     claimless-PR recovery context described in (d)** (its `branch`
+     matches the allowed branch): proceed to claim posting — the branch
+     is expected.
 
    - **If a match is found, does NOT correspond to an inheritable claim,
      AND an active non-stale claim on this issue references that branch**:
@@ -280,6 +292,12 @@ way as A5(a) above); then post the claim comment using the exact
 format and posting mechanics already defined in
 [Claim format](idd-overview-core.instructions.md#claim-format) — do not
 re-derive them here.
+
+When `helperRuntime.profile` is `instructions-only`, do not execute the
+placeholder command literally. Use the portable record procedure in
+[`docs/idd-helper-scripts.md`'s worktree-local claim lock contract](../../docs/idd-helper-scripts.md#worktree-local-claim-lock)
+against the current primary worktree, and stop unless the resulting
+record is present and well formed.
 
 **Nothing appended after the note.** A `claimed-by` / `unclaimed-by`
 marker body must be exactly the HTML comment token followed by, at
@@ -597,6 +615,12 @@ package-manager / ephemeral-npx forms and mechanical detail.
 **Generated-tokens record.** Re-check with `--read-tokens` alongside
 `--acquire`; absent/malformed recovers only via step 5
 (`idd-overview-core.instructions.md`).
+
+For `instructions-only`, perform the same read and acquire checks with
+the helper-free procedure in the linked contract. A matching lock and a
+matching generated-tokens record are required before every mutation;
+never replace a different holder or infer ownership from the GitHub
+claim alone.
 
 Then continue to `idd-work.instructions.md`.
 
