@@ -423,7 +423,13 @@ and uses the shared filename `idd-claim.lock`. It has no local staleness
 judgment: a different or malformed holder is a collision and must not be
 overridden without a separately authorized GitHub takeover.
 
-Helper-enabled profiles use their profile-selected `claim-lock` command.
+Helper-enabled profiles use their profile-selected `claim-lock` command:
+
+- Source repo / vendored-node command:
+  `node scripts/claim-lock.mjs`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  `claim-lock` command from the helper runtime manifest wiring above
+
 For `instructions-only`, use this portable fallback before each
 mutation:
 
@@ -651,6 +657,9 @@ Interpretation rules:
 
 - Claim routing command:
   `node scripts/resume-claim-routing.mjs --issue <issue-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  resume-claim-routing command from the helper runtime manifest wiring
+  above
 - Stable fields consumed by resume instructions: `state`, `action`,
   `reason`, `active_claim`, `claim_id_checked`, `stale_age_ms`, `now`,
   `warnings`, and `evidence`
@@ -661,14 +670,33 @@ Interpretation rules:
 
 - Step 3 route command:
   `node scripts/resume-route-selection.mjs --issue <issue-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  resume-route-selection command from the helper runtime manifest wiring
+  above
 - Stable fields consumed by resume instructions: `route`, `reason`,
   `state`, and `evidence`
 - Stable enum:
   - `route`: `D1|D4|E1|E15|Esync|F1|F2|stop`
 
+### Effective C1 critique delegate
+
+- Source repo / vendored-node command:
+  `node scripts/idd-critique-delegate.mjs`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  critique-delegate command from the helper runtime manifest wiring
+  above
+- Stable fields consumed by instructions: `usable`, `source`, `command`,
+  and `mode`
+- Read-only boundary: the helper resolves critique-loop delegate wiring
+  only; it does not run the delegate, mutate repository state, or post
+  any GitHub comment by itself
+
 ### Advisory-wait evidence
 
 - Command: `node scripts/advisory-wait-state.mjs --pr <pr-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  advisory-wait-state command from the helper runtime manifest wiring
+  above
 - Stable contract:
   [`advisory-wait-state.schema.json`][advisory-wait-state-schema]
 - Stable fields consumed by the instructions: `prHeadSha`,
@@ -696,6 +724,27 @@ Interpretation rules:
 - it remains read-only; the command does not poll CI, rerun workflows,
   or post any GitHub comment
 
+### CI wait state snapshot
+
+- Source repo / vendored-node command:
+  `node scripts/ci-wait-state.mjs --pr <pr-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  ci-wait-state command from the helper runtime manifest wiring above
+- Stable fields consumed by the instructions: `headRefOid`,
+  `requiredChecks`, and `checks`
+- Read-only boundary: the helper reports HEAD-pinned CI state only; it
+  does not rerun workflows or post any GitHub comment
+
+### Advisory-convergence rerun diagnosis
+
+- Source repo / vendored-node command:
+  `node scripts/rerun-advisory-convergence.mjs --pr <pr-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  rerun-advisory-convergence command from the helper runtime manifest
+  wiring above
+- Read-only boundary: without `--apply`, the helper only diagnoses the
+  rerun plan and does not rerun workflows by itself
+
 ### Merge-gate evidence
 
 - When helper runtime is enabled, these commands are the preferred
@@ -704,6 +753,9 @@ Interpretation rules:
 - Snapshot command: `node scripts/review-activity-snapshot.mjs`
   with `--pr <pr-number>` and
   `--trusted-marker-logins "<trusted-login-1>,<trusted-login-2>"`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  review-activity-snapshot command from the helper runtime manifest
+  wiring above
 - Stable E1/F2/F3 snapshot tuple: `headSha`,
   `maxActivityUpdatedAt`, `totalItemCount`,
   `latestPassingCiCompletedAt`, and `counts`
@@ -712,8 +764,11 @@ Interpretation rules:
   `latestPassingCiCompletedAt`
 - Readiness command: `node scripts/pre-merge-readiness.mjs`
   with `--pr <pr-number>`, `--claim-issue <issue-number>`,
-  `--expected-claim-id <claim-id>`, and
+  `--claim-id <claim-id>`, and
   `--trusted-marker-logins "<trusted-login-1>,<trusted-login-2>"`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  pre-merge-readiness command from the helper runtime manifest wiring
+  above
 - Stable contract:
   [`pre-merge-readiness.schema.json`][pre-merge-readiness-schema]
 - Stable sections consumed by the instructions: `reviewCurrency`,
@@ -787,6 +842,9 @@ Interpretation rules:
   `idd-branch-conflict-state --pr <pr-number>`
 - Source repository equivalent:
   `node scripts/branch-conflict-state.mjs --pr <pr-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  branch-conflict-state command from the helper runtime manifest wiring
+  above
 - Output schema (stable fields):
 
   ```json
@@ -829,6 +887,9 @@ Interpretation rules:
   profile-selected `idd-stalled-session-quiet-check --pr <pr-number>`
   command first. `node scripts/stalled-session-quiet-check.mjs --pr
   <pr-number>` is the vendored equivalent.
+- Package-manager / ephemeral-npx command: use the profile-selected
+  stalled-session-quiet-check command from the helper runtime manifest
+  wiring above
 - Optional parameters: `--now <ISO8601>`, `--quiet-window-ms <ms>`,
   `--claim-created-at <ISO8601>`, and `--policy <path>`
 - Stable fields consumed by the instructions: `quiet_window_met`,

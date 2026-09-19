@@ -50,10 +50,9 @@ GitHub side effect, confirm all of the following:
 5. Acquire the worktree-local claim lock with the profile-selected
    `claim-lock` helper (`node scripts/claim-lock.mjs --acquire
    --worktree <this-worktree-path> --agent-id <id> --claim-id <id>`, or
-   the package-manager-profile `idd:claim-lock` command with the same
-   arguments, or the ephemeral-npx equivalent (see
-   `docs/idd-helper-scripts.md`). A `collision` result is
-   fail-closed: stop rather than proceed. Then, separately, run
+   the profile-selected package-manager / ephemeral-npx equivalent from
+   `docs/idd-helper-scripts.md`). A `collision` result is fail-closed:
+   stop rather than proceed. Then, separately, run
    `--read-tokens --worktree <this-worktree-path> --claim-id <id>`
    and require `present: true` with no `malformed`; otherwise recover
    per `docs/idd-helper-scripts.md` (gated: each step succeeds,

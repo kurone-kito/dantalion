@@ -79,10 +79,9 @@ other GitHub side effect, confirm all of the following:
 5. Acquire the worktree-local claim lock with the profile-selected
    `claim-lock` helper (`node scripts/claim-lock.mjs --acquire
    --worktree <this-worktree-path> --agent-id <id> --claim-id <id>`, or
-   the package-manager-profile `idd:claim-lock` command with the same
-   arguments — resolve the exact command from
-   `docs/idd-helper-scripts.md` if unsure). A `collision` result is
-   fail-closed: stop rather than proceed. Then, separately, run
+   the profile-selected package-manager / ephemeral-npx equivalent from
+   `docs/idd-helper-scripts.md`). A `collision` result is fail-closed:
+   stop rather than proceed. Then, separately, run
    `--read-tokens --worktree <this-worktree-path> --claim-id <id>`
    and require `present: true` with no `malformed`; otherwise recover
    per `docs/idd-helper-scripts.md` (gated: each step succeeds,
@@ -118,8 +117,9 @@ other GitHub side effect, confirm all of the following:
 
 1. Resolve `critiqueLoop.delegate` the same way
    `idd-work-lite.instructions.md` C1 does: helper-first
-   `critique-delegate` (`node scripts/idd-critique-delegate.mjs` or
-   `idd:critique-delegate`). `usable: false` → per-agent only; only
+   `critique-delegate` (`node scripts/idd-critique-delegate.mjs` or the
+   profile-selected package-manager / ephemeral-npx equivalent from
+   `docs/idd-helper-scripts.md`). `usable: false` → per-agent only; only
    `usable: true` uses `command`/`mode`. Then run delegate and/or
    per-agent per `mode` (`fallback` default, `combined`, `on-success`,
    `never`) and union when both ran. Never assume they stack. Stop
@@ -176,9 +176,9 @@ other GitHub side effect, confirm all of the following:
 
 1. Check state with the profile-selected branch-conflict-state helper:
    `node scripts/branch-conflict-state.mjs --pr {pr-number}`, or the
-   package-manager-profile `idd:branch-conflict-state` command
-   (resolve the exact command from `docs/idd-helper-scripts.md` if
-   unsure) — reflects the last pushed head, not local unpushed fixes.
+   profile-selected package-manager / ephemeral-npx equivalent from
+   `docs/idd-helper-scripts.md` — reflects the last pushed head, not
+   local unpushed fixes.
    Missing, failing, or disagreeing? Stop and ask (Helper runtime
    contract above) — no non-helper fallback here.
 2. Not a confirmed conflict (clean, behind-no-conflict, computing,

@@ -76,10 +76,9 @@ following:
 5. Acquire the worktree-local claim lock with the profile-selected
    `claim-lock` helper (`node scripts/claim-lock.mjs --acquire
    --worktree <this-worktree-path> --agent-id <id> --claim-id <id>`, or
-   the package-manager-profile `idd:claim-lock` command with the same
-   arguments, or the ephemeral-npx equivalent — resolve the exact
-   command from `docs/idd-helper-scripts.md` if unsure). A `collision` result is
-   fail-closed: stop rather than proceed. Then, separately, run
+   the profile-selected package-manager / ephemeral-npx equivalent from
+   `docs/idd-helper-scripts.md`). A `collision` result is fail-closed:
+   stop rather than proceed. Then, separately, run
    `--read-tokens --worktree <this-worktree-path> --claim-id <id>`
    and require `present: true` with no `malformed`; otherwise recover
    per `docs/idd-helper-scripts.md` (gated: each step succeeds,
@@ -110,9 +109,8 @@ This section's rebase only applies **before the branch's first push**.
    - An open PR exists: read its `syncRecommendation` with the
      profile-selected branch-conflict-state helper —
      `node scripts/branch-conflict-state.mjs --pr <pr-number>`, or the
-     package-manager-profile `idd:branch-conflict-state` command
-     (resolve the exact command from `docs/idd-helper-scripts.md` if
-     unsure). This is the same helper `idd-review-triage.instructions.md`
+     profile-selected package-manager / ephemeral-npx equivalent from
+     `docs/idd-helper-scripts.md`. This is the same helper `idd-review-triage.instructions.md`
      uses for its own branch-sync check (the standard
      `idd-pr-submit.instructions.md` file does not reference it directly,
      since D1 there only covers the pre-first-push case), so it already
@@ -327,15 +325,15 @@ than the run it supersedes. Once both have completed, the later
 
 1. Use the profile-selected **ci-wait-policy** helper to resolve the
    running/generation timeouts and the rerun budget:
-   `node scripts/ci-wait-policy.mjs`, or the package-manager-profile
-   `idd:ci-wait-policy` command (resolve the exact command from
-   `docs/idd-helper-scripts.md` if unsure). This helper is read-only and
-   does not poll CI itself.
+   `node scripts/ci-wait-policy.mjs`, or the profile-selected
+   package-manager / ephemeral-npx equivalent from
+   `docs/idd-helper-scripts.md`. This helper is read-only and does not
+   poll CI itself.
 2. Use the profile-selected **ci-wait-state** helper for the actual
    required-check snapshot (poll it again on each wait iteration):
    `node scripts/ci-wait-state.mjs --pr <pr-number>`, or the
-   package-manager-profile `idd:ci-wait-state` command (same
-   `docs/idd-helper-scripts.md` resolution as above). Read its
+   profile-selected package-manager / ephemeral-npx equivalent from
+   `docs/idd-helper-scripts.md`. Read its
    `requiredChecks.status` field: `success`, `pending`, `failing`,
    `missing`, `no-required-checks`, or `source-pinned`. If either helper
    is unavailable, fails, or disagrees with live GitHub
