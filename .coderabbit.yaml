@@ -1,3 +1,9 @@
+# yaml-language-server: $schema=https://storage.googleapis.com/coderabbit_public_assets/schema.v2.json
+
+# IDD control labels are workflow state, not descriptive classifications.
+# CodeRabbit must not apply roadmap, status:authoring,
+# status:blocked-by-human, or status:needs-decision.
+
 chat:
   auto_reply: true
 early_access: true
@@ -5,6 +11,28 @@ language: en
 reviews:
   auto_review:
     enabled: true
+  auto_apply_labels: false
+  labeling_instructions:
+    - label: bug
+      instructions: Apply when the issue or pull request reports incorrect behavior or a failure.
+    - label: documentation
+      instructions: Apply when the issue or pull request requests documentation improvements or additions.
+    - label: enhancement
+      instructions: Apply when the issue or pull request requests a new user-facing capability.
+    - label: question
+      instructions: Apply when the issue or pull request requests further information or clarification.
   path_instructions:
     - instructions: When making a pull request to the main branch, please warn that the pre-release notation should be removed if the version is a pre-release.
       path: package.json
+issue_enrichment:
+  labeling:
+    auto_apply_labels: false
+    labeling_instructions:
+      - label: bug
+        instructions: Apply when the issue reports incorrect behavior or a failure.
+      - label: documentation
+        instructions: Apply when the issue requests documentation improvements or additions.
+      - label: enhancement
+        instructions: Apply when the issue requests a new user-facing capability.
+      - label: question
+        instructions: Apply when the issue requests further information or clarification.
