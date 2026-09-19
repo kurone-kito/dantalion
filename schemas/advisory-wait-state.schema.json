@@ -302,5 +302,24 @@
       "additionalProperties": false
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "secondaryRequestNeeded": { "const": true }
+        },
+        "required": ["secondaryRequestNeeded"]
+      },
+      "then": {
+        "properties": {
+          "secondaryBotLogin": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["secondaryBotLogin"]
+      }
+    }
+  ],
   "additionalProperties": false
 }
