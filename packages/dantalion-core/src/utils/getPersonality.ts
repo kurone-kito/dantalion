@@ -3,6 +3,7 @@ import getMonthlyCoefficients from '../records/getMonthlyCoefficients.js';
 import lifeBaseCoefficients from '../records/lifeBaseCoefficients.js';
 import lifeBaseTable from '../records/lifeBaseTable.js';
 import potentialTable from '../records/potentialTable.js';
+import type { CalendarDate } from '../types/calendarDate.js';
 import type { Genius } from '../types/genius.js';
 import type { HeavenlyStem } from '../types/heavenlyStem.js';
 import type { LifeBase } from '../types/lifeBase.js';
@@ -13,8 +14,10 @@ import getFactors from './getFactors.js';
 
 const DATE_ONLY_PATTERN = /^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})$/;
 
-/** Parse date-only strings as local calendar dates before native Date parsing. */
-const normalizeBirth = (birth: ConstructorParameters<typeof Date>[0]): Date => {
+/** Parse date-only strings into calendar components before native Date parsing. */
+const normalizeBirth = (
+  birth: ConstructorParameters<typeof Date>[0],
+): Date | CalendarDate => {
   if (typeof birth !== 'string') {
     return new Date(birth);
   }
@@ -26,10 +29,7 @@ const normalizeBirth = (birth: ConstructorParameters<typeof Date>[0]): Date => {
   if (year === undefined || month === undefined || day === undefined) {
     return new Date(birth);
   }
-  const date = new Date(0);
-  date.setFullYear(Number(year), Number(month) - 1, Number(day));
-  date.setHours(0, 0, 0, 0);
-  return date;
+  return { date: Number(day), month: Number(month), year: Number(year) };
 };
 
 /** The details for Personality. */
@@ -68,7 +68,7 @@ export default (
   if (Number.isNaN(monthlyCoefficients)) {
     return undefined;
   }
-  const { month, ...details } = getBirthdayDetails(new Date(birthObj));
+  const { month, ...details } = getBirthdayDetails(birthObj);
   const { cycle, getXY, inner, lifeBase, outer, potentials, workStyle } =
     getFactors({
       ...details,

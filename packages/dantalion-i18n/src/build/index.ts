@@ -11,24 +11,36 @@ import {
 type ParsableDate = ConstructorParameters<typeof Date>[0];
 
 const DATE_ONLY_PATTERN = /^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})$/;
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
-/** Parse date-only strings as local calendar dates before native Date parsing. */
-const normalizeBirth = (birth: ParsableDate): Date => {
-  if (typeof birth !== 'string') {
-    return new Date(birth);
-  }
+/** Format date-only strings without converting them through a local Date. */
+const getDescriptionType = (birth: ParsableDate): string => {
+  if (typeof birth !== 'string') return new Date(birth).toDateString();
   const match = DATE_ONLY_PATTERN.exec(birth);
-  if (!match) {
-    return new Date(birth);
-  }
+  if (!match) return new Date(birth).toDateString();
   const [, year, month, day] = match;
-  if (year === undefined || month === undefined || day === undefined) {
-    return new Date(birth);
-  }
+  if (year === undefined || month === undefined || day === undefined)
+    return new Date(birth).toDateString();
   const date = new Date(0);
-  date.setFullYear(Number(year), Number(month) - 1, Number(day));
-  date.setHours(0, 0, 0, 0);
-  return date;
+  date.setUTCFullYear(Number(year), Number(month) - 1, Number(day));
+  date.setUTCHours(0, 0, 0, 0);
+  return `${WEEKDAYS[date.getUTCDay()]} ${MONTHS[date.getUTCMonth()]} ${String(
+    date.getUTCDate(),
+  ).padStart(2, '0')} ${date.getUTCFullYear()}`;
 };
 
 /**
@@ -76,9 +88,8 @@ export const getPersonalityMarkdown = (
   accessors: Accessors,
   birth: ParsableDate,
 ): string => {
-  const normalizedBirth = normalizeBirth(birth);
-  const result = getPersonality(normalizedBirth);
-  const desc = accessors.getDescription(normalizedBirth.toDateString());
+  const result = getPersonality(birth);
+  const desc = accessors.getDescription(getDescriptionType(birth));
   return result
     ? article({
         body: createPersonalityTemplate(result, accessors),

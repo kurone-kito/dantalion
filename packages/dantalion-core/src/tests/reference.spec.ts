@@ -640,15 +640,11 @@ describe('reference: getPersonality matches external 60甲子 + 動物占い® m
 
     for (let timestamp = START; timestamp <= END; timestamp += DAY_MS) {
       const isoDate = new Date(timestamp).toISOString().slice(0, 10);
-      const [year, month, day] = isoDate.split('-').map(Number) as [
-        number,
-        number,
-        number,
-      ];
-      const date = new Date(year, month - 1, day);
       const elapsedDays = Math.floor((timestamp - ANCHOR) / DAY_MS);
       const expectedStem = (((elapsedDays % 10) + 10) % 10) + 1;
-      const personality = getPersonality(date);
+      // Use the date-only input so skipped local calendar dates remain
+      // representable in zones such as Pacific/Apia.
+      const personality = getPersonality(isoDate);
 
       expect(personality, `${isoDate} should resolve`).toBeDefined();
       if (!personality) continue;

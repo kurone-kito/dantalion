@@ -217,5 +217,11 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       const b = getPersonalityMarkdown(accessors, '1873-03-15');
       expect(a).not.toBe(b);
     });
+
+    it('keeps a skipped date-only calendar day in the description', async () => {
+      const accessors = createAccessors(await createTAsync({ lng }));
+      const actual = getPersonalityMarkdown(accessors, '2011-12-30');
+      expect(actual).toContain('Fri Dec 30 2011');
+    });
   });
 });

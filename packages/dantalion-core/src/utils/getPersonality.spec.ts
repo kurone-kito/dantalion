@@ -14,4 +14,10 @@ describe('getPersonality date normalization', () => {
       getPersonality(new Date(1993, 9, 9)),
     );
   });
+
+  it('keeps a date-only calendar day distinct across skipped local dates', () => {
+    expect(getPersonality('2011-12-30')).not.toStrictEqual(
+      getPersonality('2011-12-31'),
+    );
+  });
 });
