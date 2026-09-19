@@ -230,6 +230,11 @@
         "properties": {
           "evidence": {
             "properties": {
+              "activity_count_in_window": { "const": 0 },
+              "blocking_activities": { "maxItems": 0 },
+              "has_heartbeat_in_window": { "const": false },
+              "has_ci_running": { "const": false },
+              "has_branch_tip_movement": { "const": false },
               "branch_tip_evidence_source": {
                 "enum": ["pr-timeline", "ref-update", "head-snapshot"]
               },
