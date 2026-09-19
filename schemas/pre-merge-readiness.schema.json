@@ -43,7 +43,69 @@
               "elapsed": { "const": true }
             }
           }
-        }
+        },
+        "allOf": [
+          {
+            "$comment": "A ready report with no configured required checks is valid only when protection was readable and every present check run passed.",
+            "if": {
+              "properties": {
+                "ci": {
+                  "properties": {
+                    "noRequiredChecksConfigured": { "const": true }
+                  },
+                  "required": ["noRequiredChecksConfigured"]
+                }
+              },
+              "required": ["ci"]
+            },
+            "then": {
+              "properties": {
+                "ci": {
+                  "required": [
+                    "protectionReadsUnreadable",
+                    "presentRunConclusion"
+                  ],
+                  "properties": {
+                    "protectionReadsUnreadable": { "const": false },
+                    "presentRunConclusion": { "const": "all-passing" }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$comment": "A ready report with configured required checks is valid only when all required checks are generated and passing.",
+            "if": {
+              "properties": {
+                "ci": {
+                  "properties": {
+                    "noRequiredChecksConfigured": { "const": false }
+                  },
+                  "required": ["noRequiredChecksConfigured"]
+                }
+              },
+              "required": ["ci"]
+            },
+            "then": {
+              "properties": {
+                "ci": {
+                  "required": [
+                    "protectionReadsUnreadable",
+                    "status",
+                    "requiredChecksGenerated",
+                    "requiredChecksPassing"
+                  ],
+                  "properties": {
+                    "protectionReadsUnreadable": { "const": false },
+                    "status": { "const": "success" },
+                    "requiredChecksGenerated": { "const": true },
+                    "requiredChecksPassing": { "const": true }
+                  }
+                }
+              }
+            }
+          }
+        ]
       }
     },
     {
