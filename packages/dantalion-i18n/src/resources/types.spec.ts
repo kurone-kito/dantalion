@@ -28,4 +28,15 @@ describe('locale document types', () => {
     expect(en).toBeDefined();
     expect(ja).toBeDefined();
   });
+
+  it('keeps diagonal potential aliases array-resolving', () => {
+    expect(en.potentials.Ci.Ci).toBe('$t(potentials.Ci.detail)');
+    expect(en.potentials.Fi.Fi).toBe('$t(potentials.Fi.detail)');
+    expect(en.potentials.Ii.Ii).toBe('$t(potentials.Ii.detail)');
+    expect(en.potentials.Io.Io).toBe('$t(potentials.Io.detail)');
+    expect(ja.potentials.Ci.Ci).toBe('$t(potentials.Ci.detail)');
+    expect(ja.potentials.Fi.Fi).toBe('$t(potentials.Fi.detail)');
+    expect(ja.potentials.Ii.Ii).toBe('$t(potentials.Ii.detail)');
+    expect(ja.potentials.Io.Io).toBe('$t(potentials.Io.detail)');
+  });
 });
