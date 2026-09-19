@@ -65,13 +65,14 @@ node scripts/stalled-session-quiet-check.mjs \
 #### Required parameter
 
 - `--pr <number>`: Pull request number used to gather activity evidence
+- `--now <server-anchored-ISO8601>`: Server `Date` header timestamp used as
+  the reference clock for Resume/S2; do not use the executor's local clock
 
 #### Optional parameters
 
 - `--owner <owner>`: Repository owner; defaults to the current repository
 - `--repo <repo>`: Repository name; defaults to the current repository
 - `--gh-token <token>`: GitHub token override for `gh` API calls
-- `--now <ISO8601>`: Reference timestamp; defaults to current UTC time
 - `--quiet-window-ms <ms>`: Quiet-window duration in milliseconds;
   defaults to the policy value or `1800000`
 - `--claim-created-at <ISO8601>`: Latest valid trusted `claimed-by`

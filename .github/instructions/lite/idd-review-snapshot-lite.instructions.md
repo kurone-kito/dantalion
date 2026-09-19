@@ -64,23 +64,27 @@ GitHub side effect, confirm all of the following:
 
 ### CI-completion precondition (before Step 1)
 
-Before taking the Step 1 snapshot, confirm every CI run counting toward
-the merge gate has completed, including any opt-in or label-triggered
-job enabled at this quiescent point. If the primary advisory bot
-already reviewed an earlier head, an automatic same-head re-review is
-expected — run the advisory-wait-state helper and check only its
+Before taking the Step 1 snapshot, read the current PR head once with
+`gh pr view {pr-number} --json headRefOid --jq '.headRefOid'` and freeze it
+as `{E1-head-SHA}`. Confirm every CI run counting toward the merge gate has
+completed, including any opt-in or label-triggered job enabled at this
+quiescent point. If the primary advisory bot already reviewed an earlier
+head, use that same frozen value for the advisory fast-path check and the
+Step 1 snapshot; never re-read the head between those operations. An
+automatic same-head re-review is expected — run the advisory-wait-state helper
+and check only its
 `lastCopilotCommit == prHeadSha` fast-path fields (from
 `idd-advisory-wait-lite.instructions.md`; read fresh from the helper,
-not Step 1's `{head-SHA}` below, not yet captured here). If the fast
-path is already satisfied, continue to Step 1. Otherwise stop and ask
-for a stronger session or human to run the full advisory-wait flow
-before E1; this file must not enter that wait itself.
+not Step 1's `{head-SHA}` below). Require both the helper's `prHeadSha` and
+`lastCopilotCommit` to equal `{E1-head-SHA}`. If either value differs, or the
+fast path is not satisfied, stop and ask for a stronger session or human to
+run the full advisory-wait flow before E1; this file must not enter that wait
+itself.
 
 ### Step 1 — Snapshot the activity universe
 
-1. Read the current PR HEAD SHA once — `gh pr view {pr-number} --json
-   headRefOid --jq '.headRefOid'` — and store it as `{head-SHA}`. Never
-   re-read it elsewhere in E1 — reuse this value.
+1. Reuse the frozen `{E1-head-SHA}` as `{head-SHA}`. Never re-read the PR
+   head elsewhere in E1 — reuse this value.
 2. Run the profile-selected `review-activity-snapshot` helper to collect
    `{head-SHA}`, `{max-activity-updatedAt}`, `{total-item-count}`, and
    `{latest-ci-completed-at}`: `node scripts/review-activity-snapshot.mjs
