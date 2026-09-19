@@ -131,11 +131,13 @@
       "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
     },
     "sameHeadMarkerCount": {
-      "type": "number",
+      "type": "integer",
+      "minimum": 0,
       "description": "Count of trusted comments whose body matches the current HEAD's advisory-wait or advisory-wait-recovery marker shape."
     },
     "requestMarkerCount": {
-      "type": "number",
+      "type": "integer",
+      "minimum": 0,
       "description": "Count of trusted comments requesting the primary bot for any HEAD, compared against requestCap."
     },
     "trustedMarkerSummary": {
@@ -175,19 +177,23 @@
           }
         },
         "trustedSameHeadMarkerCount": {
-          "type": "number",
+          "type": "integer",
+          "minimum": 0,
           "description": "Same-HEAD markers authored by a trusted login."
         },
         "untrustedSameHeadMarkerCount": {
-          "type": "number",
+          "type": "integer",
+          "minimum": 0,
           "description": "Same-HEAD-shaped markers authored by an untrusted login; evidence they exist but do not count toward the gate."
         },
         "trustedRequestMarkerCount": {
-          "type": "number",
+          "type": "integer",
+          "minimum": 0,
           "description": "Request markers authored by a trusted login, for any HEAD."
         },
         "untrustedRequestMarkerCount": {
-          "type": "number",
+          "type": "integer",
+          "minimum": 0,
           "description": "Request-shaped markers authored by an untrusted login."
         }
       },
