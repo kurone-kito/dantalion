@@ -104,6 +104,7 @@
     },
     "latest_activity_type": {
       "type": ["string", "null"],
+      "minLength": 1,
       "description": "Activity type for latest_activity, or null when none were observed"
     },
     "reason": {

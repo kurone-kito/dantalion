@@ -394,10 +394,14 @@ CONVERGED=$([ "${CONJUNCT1}" = true ] && [ "${CONJUNCT2}" = true ] && [ "${CONJU
 
 # dispositionEvidence: later **Accepted** / **Rejected** markers, 1:1
 # by count (E6). Non-agent regular comments and every review thread.
-COMMENTS_JSON=$(
-  gh api "repos/${OWNER}/${REPO}/issues/{pr-number}/comments" --paginate \
-    | jq -s 'add // []'
-)
+if ! COMMENTS_RAW=$(gh api "repos/${OWNER}/${REPO}/issues/{pr-number}/comments" --paginate); then
+  echo "hold: regular PR-comment fetch failed; dispositionEvidence is unavailable" >&2
+  exit 2
+fi
+if ! COMMENTS_JSON=$(printf '%s\n' "${COMMENTS_RAW}" | jq -s 'add // []'); then
+  echo "hold: regular PR-comment response was not valid JSON" >&2
+  exit 2
+fi
 DISPOSITION_JSON=$(printf '%s' "${COMMENTS_JSON}" | jq -c --argjson agents "${IDD_AGENT_LOGIN_JSON}" '
   map(select(
     (.body | startswith("**Accepted**") or startswith("**Rejected**"))
@@ -405,12 +409,11 @@ DISPOSITION_JSON=$(printf '%s' "${COMMENTS_JSON}" | jq -c --argjson agents "${ID
       | ($agents | map(ascii_downcase) | index($u)) != null)
   ))
 ')
-MISSING_REGULAR=$(printf '%s\n' "${COMMENTS_JSON}" "${DISPOSITION_JSON}" | jq -s --argjson bots '["copilot-pull-request-reviewer","copilot-pull-request-reviewer[bot]","coderabbitai[bot]","coderabbitai","chatgpt-codex-connector","chatgpt-codex-connector[bot]"]' --argjson agents "${IDD_AGENT_LOGIN_JSON}" '
+MISSING_REGULAR=$(printf '%s\n' "${COMMENTS_JSON}" "${DISPOSITION_JSON}" | jq -s --argjson agents "${IDD_AGENT_LOGIN_JSON}" '
   .[0] as $comments | .[1] as $disp
   | ($comments
      | map(select(
-         (.user.login as $u | ($bots | index($u) | not))
-         and (((.user.login // "") | ascii_downcase) as $u
+         (((.user.login // "") | ascii_downcase) as $u
            | ($agents | map(ascii_downcase) | index($u)) == null)
          and (.body | startswith("**Accepted**") or startswith("**Rejected**") | not)
          and (.body | startswith("<!--") | not)

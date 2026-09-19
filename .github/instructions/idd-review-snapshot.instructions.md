@@ -16,6 +16,15 @@ E-phase branch-sync check in `idd-review-triage.instructions.md`.
 **If ReviewItems_snapshot is non-empty after E3**: proceed to
 `idd-review-triage.instructions.md` (E4).
 
+**Running-CI entry rule.** If this entry sees any merge-gate check in a
+queued, requested, waiting, expected, pending, or in-progress state, do
+not create `ReviewItems_snapshot` or post a watermark yet. Return to the
+calling CI phase (`idd-ci.instructions.md` D4), continue its bounded
+server-timestamped wait/rerun-or-hold procedure, and re-enter E1 only
+after the required checks reach a terminal state. This makes the
+overview route for "PR open, CI running, reviews exist" reachable without
+leaving E1 at a precondition dead end.
+
 ## E1 — Fetch review items into ReviewItems_snapshot
 
 **Step 1 — Snapshot the activity universe.** First, read the current PR

@@ -372,11 +372,17 @@ rules. Apply all race-safe checks below:
 4. Verify no trusted competing `claimed-by` with a different
    `{claim-id}` appears in a strictly later `created_at` second than
    your claim event.
-5. If you posted an [activation-nonce marker](#activation-nonce-format) for
-   this `{claim-id}`, recompute its winner and verify it equals yours. This
-   catches a second session that adopted the identical `{claim-id}` via
-   forced-handoff, where steps 1–4 see nothing to disagree about (both
-   `{claim-id}`s genuinely match). No marker posted: treat as passed.
+5. For every activation performed by this run — fresh claim, takeover,
+   legacy migration, or forced-handoff adoption — an
+   [activation-nonce marker](#activation-nonce-format) for this
+   `{claim-id}` is mandatory. Recompute its winner and verify it equals
+   yours. An absent or malformed nonce fails verification; this catches a
+   second session that adopted the identical `{claim-id}` via forced
+   handoff, where steps 1–4 see nothing to disagree about (both
+   `{claim-id}`s genuinely match). The only compatibility exception is an
+   explicitly recognized legacy claim that this run is merely resuming
+   without performing an activation; that exception must never apply to a
+   fresh claim, takeover, migration, or forced-handoff adoption.
 
 6. Re-fetch labels and the paginated owner-marker log. If an authoring
    hold is active on this issue, it contests this claim: when step 5

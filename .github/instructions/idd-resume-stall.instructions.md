@@ -179,11 +179,13 @@ Immediately before posting takeover:
 3. Confirm it is still stale at this moment.
 4. Re-derive a **fresh** server-anchored `now` the same way as S2
    ("Deriving a server-anchored `now`") — do not reuse the S2 value,
-   since time has passed — and re-run `idd-stalled-session-quiet-check`
-   with that fresh `--now` (or repeat the written manual procedure with
-   the same fresh server-derived bound when helper runtime is
-   unavailable) against the latest externally visible activity. If new
-   progress appeared after S2, stop and restart.
+   since time has passed — and re-check the latest externally visible
+   activity. When an active PR number is known, re-run
+   `idd-stalled-session-quiet-check` with that fresh `--now`. When no PR
+   exists, do not invent a PR number or invoke the PR-only helper; repeat
+   the written manual procedure using the claimed branch's remote-tip
+   evidence and the same fresh server-derived bound. If new progress
+   appeared after S2, stop and restart.
 5. Re-check closed/merged guards. If the issue is now closed or the PR
    is now merged, stop and return to `idd-resume.instructions.md` Step 1
    cleanup behavior.
