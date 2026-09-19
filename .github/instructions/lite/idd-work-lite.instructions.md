@@ -46,10 +46,9 @@ request, or other GitHub side effect, confirm all of the following:
 5. Acquire the worktree-local claim lock with the profile-selected
    `claim-lock` helper (`node scripts/claim-lock.mjs --acquire
    --worktree <this-worktree-path> --agent-id <id> --claim-id <id>`, or
-   the package-manager-profile `idd:claim-lock` command with the same
-   arguments, or the ephemeral-npx equivalent — resolve the exact
-   command from `docs/idd-helper-scripts.md` if unsure). A `collision` result is
-   fail-closed: stop rather than proceed. Then, separately, run
+   the profile-selected package-manager / ephemeral-npx equivalent from
+   `docs/idd-helper-scripts.md`). A `collision` result is fail-closed:
+   stop rather than proceed. Then, separately, run
    `--read-tokens --worktree <this-worktree-path> --claim-id <id>`
    and require `present: true` with no `malformed`; otherwise recover
    per `docs/idd-helper-scripts.md` (gated: each step succeeds,
@@ -270,9 +269,9 @@ problems exist. Every mechanism below answers those questions. They are what a
 pass asks, never a separate pass to run on top of the one that ran.
 
 1. Resolve the delegate verdict with the profile-selected
-   `critique-delegate` helper (`node scripts/idd-critique-delegate.mjs`, or
-   the package-manager-profile `idd:critique-delegate` command — resolve
-   the exact command from `docs/idd-helper-scripts.md` if unsure). Read its
+   `critique-delegate` helper (`node scripts/idd-critique-delegate.mjs`,
+   or the profile-selected package-manager / ephemeral-npx equivalent
+   from `docs/idd-helper-scripts.md`). Read its
    `usable` field as the step 2 verdict directly — never re-derive it — and,
    when `usable` is `true`, its `source`/`command`/`mode` fields as the
    delegate to run in step 4. This file is helper-enabled only — an
