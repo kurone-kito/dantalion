@@ -229,6 +229,8 @@
       },
       "then": {
         "properties": {
+          "latest_activity": { "const": null },
+          "latest_activity_type": { "const": null },
           "evidence": {
             "properties": {
               "activity_count_in_window": { "const": 0 },

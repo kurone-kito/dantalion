@@ -222,8 +222,8 @@ Out of scope and explicitly **not** blocked:
 - A1.5 roadmap-audit coordination operations (claims whose `branch:`
   starts with `roadmap-audit/`).
 - F4 post-merge cleanup (F4 itself removes the sibling worktree;
-  subsequent local `main` updates run from the primary worktree by
-  design).
+  subsequent local `{development-branch}` updates run from the primary
+  worktree by design).
 - [Operator-present release](idd-resume.instructions.md#operator-present-release)
   steps 1-2 (pre-claim for the resuming session; the issue's own
   active claim is untouched until step 2).
