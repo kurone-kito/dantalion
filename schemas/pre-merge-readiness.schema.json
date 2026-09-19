@@ -86,6 +86,7 @@
               "copilotUnavailableWaived"
             ],
             "properties": {
+              "outcome": { "const": "SATISFIED" },
               "f3Outcome": { "const": "SATISFIED" }
             },
             "oneOf": [
@@ -249,6 +250,48 @@
       "then": {
         "properties": {
           "blockers": { "minItems": 1 }
+        }
+      }
+    },
+    {
+      "$comment": "A report that claims the Copilot-unavailable waiver is active must carry a valid idd-advisory-convergence waiver and an open waiver precondition.",
+      "if": {
+        "properties": {
+          "advisoryWait": {
+            "properties": {
+              "copilotUnavailableWaived": { "const": true }
+            },
+            "required": ["copilotUnavailableWaived"]
+          }
+        },
+        "required": ["advisoryWait"]
+      },
+      "then": {
+        "properties": {
+          "waiverEvidence": {
+            "required": ["valid"],
+            "properties": {
+              "valid": {
+                "minItems": 1,
+                "contains": {
+                  "type": "object",
+                  "required": ["checkSelector"],
+                  "properties": {
+                    "checkSelector": {
+                      "const": "idd-advisory-convergence"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "advisoryConvergenceWaiverPrecondition": {
+            "required": ["checkSelector", "open"],
+            "properties": {
+              "checkSelector": { "const": "idd-advisory-convergence" },
+              "open": { "const": true }
+            }
+          }
         }
       }
     }
