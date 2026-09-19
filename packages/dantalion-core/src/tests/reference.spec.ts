@@ -31,7 +31,8 @@
  * (1924-02-05 historical anchor, 1984-02-04 立春 boundary,
  * 2024-02-29 modern leap day, 2024-12-31 / 2025-01-01 year
  * boundary). 2000-02-29 is already covered by the main sequence as
- * 60甲子 #54.
+ * 60甲子 #54. A separate full-range scan checks the day-stem
+ * component independently for every supported calendar date.
  */
 import { describe, expect, it } from 'vitest';
 import getPersonality from '../utils/getPersonality.js';
@@ -628,5 +629,33 @@ describe('reference: getPersonality matches external 60甲子 + 動物占い® m
     if (!p) return;
     expect(p.inner).toBe(expectedInnerGenius);
     expect(p.cycle).toBe(stem);
+  });
+
+  it('matches the independent day-stem sequence across the supported range', () => {
+    const DAY_MS = 86_400_000;
+    const ANCHOR = Date.UTC(2000, 0, 7);
+    const START = Date.UTC(1873, 1, 1);
+    const END = Date.UTC(2050, 11, 31);
+    let count = 0;
+
+    for (let timestamp = START; timestamp <= END; timestamp += DAY_MS) {
+      const isoDate = new Date(timestamp).toISOString().slice(0, 10);
+      const [year, month, day] = isoDate.split('-').map(Number) as [
+        number,
+        number,
+        number,
+      ];
+      const date = new Date(year, month - 1, day);
+      const elapsedDays = Math.floor((timestamp - ANCHOR) / DAY_MS);
+      const expectedStem = (((elapsedDays % 10) + 10) % 10) + 1;
+      const personality = getPersonality(date);
+
+      expect(personality, `${isoDate} should resolve`).toBeDefined();
+      if (!personality) continue;
+      expect(personality.cycle, isoDate).toBe(expectedStem);
+      count += 1;
+    }
+
+    expect(count).toBe(64_982);
   });
 });

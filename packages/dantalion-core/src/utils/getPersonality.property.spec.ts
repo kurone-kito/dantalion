@@ -36,6 +36,8 @@ const VALID_LIFEBASE = new Set([
   'selfReliance',
 ]);
 
+const PROPERTY_OPTIONS = { numRuns: 10_000 };
+
 const inRangeDate = fc
   .date({
     min: new Date(Date.UTC(1873, 1, 1)),
@@ -74,6 +76,7 @@ describe('getPersonality — algebraic invariants', () => {
         if (!p) return false; // in-range generator must not yield undefined
         return Number.isInteger(p.cycle) && p.cycle >= 1 && p.cycle <= 10;
       }),
+      PROPERTY_OPTIONS,
     );
   });
 
@@ -101,6 +104,7 @@ describe('getPersonality — algebraic invariants', () => {
         if (!a || !b) return false; // both dates in safe window must resolve
         return a.cycle === b.cycle;
       }),
+      PROPERTY_OPTIONS,
     );
   });
 
@@ -111,6 +115,7 @@ describe('getPersonality — algebraic invariants', () => {
         const b = JSON.stringify(getPersonality(date));
         return a === b;
       }),
+      PROPERTY_OPTIONS,
     );
   });
 
@@ -125,6 +130,7 @@ describe('getPersonality — algebraic invariants', () => {
           VALID_GENIUS.has(p.workStyle)
         );
       }),
+      PROPERTY_OPTIONS,
     );
   });
 
@@ -135,12 +141,14 @@ describe('getPersonality — algebraic invariants', () => {
         if (!p) return false; // in-range generator must not yield undefined
         return VALID_LIFEBASE.has(p.lifeBase);
       }),
+      PROPERTY_OPTIONS,
     );
   });
 
   it('F: out-of-range dates return undefined', () => {
     fc.assert(
       fc.property(outOfRangeDate, (date) => getPersonality(date) === undefined),
+      PROPERTY_OPTIONS,
     );
   });
 
@@ -149,6 +157,7 @@ describe('getPersonality — algebraic invariants', () => {
     // A/B/D/E are not silently failing on every shrunk input.
     fc.assert(
       fc.property(inRangeDate, (date) => getPersonality(date) !== undefined),
+      PROPERTY_OPTIONS,
     );
   });
 
