@@ -60,7 +60,16 @@ any bot but `advisoryWait.primaryBotLogin`.
 
 Run the Helper-first canonical path below. Once `lastCopilotCommit`
 equals `prHeadSha`, the gate is **SATISFIED** — take the caller's
-`SATISFIED` action; otherwise, continue.
+`SATISFIED` action; otherwise, continue. A stale non-empty
+`lastCopilotCommit` must never satisfy the gate on its own. If the helper
+reports `outcome: "SATISFIED"` while `lastCopilotCommit` differs from
+`prHeadSha`, accept that outcome only when it also reports
+`sameHeadMarkerPresent: true`, a non-empty `earliestSameHeadAt`, and an
+elapsed window that matches the pending state: `elapsedMinutes` is at
+least `pendingWindowMinutes` while `copilotPending` is true, or at least
+`settledWindowMinutes` while it is false. Otherwise stop and ask because
+the helper evidence is inconsistent and cannot prove current-HEAD
+coverage.
 
 ## Helper-first canonical path
 
@@ -90,6 +99,12 @@ The helper computes `outcome` directly from live evidence — never by
 hand from raw timestamps. Allowed values: `SATISFIED`,
 `REQUEST_NEEDED`, `RECOVERY_NEEDED`, `CAP_EXHAUSTED`, `WAIT`. `HOLD` is
 caller-derived, never emitted.
+
+Before consuming a `SATISFIED` outcome with a non-current
+`lastCopilotCommit`, perform the cross-field validation above using the
+helper's emitted fields. Do not accept a stale review plus a bare
+`SATISFIED` value, and do not reconstruct missing marker or elapsed
+evidence locally.
 
 The helper already resolves `advisoryWait.*` from
 `.github/idd/config.json`, emitting final values in `requestCap`,
