@@ -19,11 +19,12 @@ marker-posting and cleanup mutations.
 These commands only apply when helper-first cannot be trusted — see
 the "Fail-closed fallback trigger" section in the instruction file.
 
-**Prerequisite**: a standalone `jq` binary on `PATH`. `gh api --jq` is
-built into `gh` and needs nothing extra, but the commands below piping
-into `jq -r`/`jq -s` need the real binary, which neither `gh` nor Git
-for Windows installs (see the repository onboarding guide's execution-environment
-prerequisites).
+**Prerequisites**: standalone `jq` and `base64` binaries on `PATH`.
+`gh api --jq` is built into `gh` and needs nothing extra, but the commands
+below piping into `jq -r`/`jq -s` need the real binary. Each standalone
+shell snippet probes GNU `base64 --decode` and BSD/macOS `base64 -D`, then
+reuses the working form; if neither form is available, it stops with a
+hold instead of assuming a platform-specific flag.
 
 This consumer keeps the instruction file as the contract (decision rules, ordering,
 fail-closed handling, and what each step must produce); this document
@@ -302,7 +303,15 @@ if [ -z "${BASE_CONFIG_CONTENT}" ]; then
   echo "hold: trusted base ref did not provide .github/idd/config.json" >&2
   exit 2
 fi
-ADVISORY_BOT_LOGINS_JSON=$(printf '%s' "${BASE_CONFIG_CONTENT}" | base64 --decode | jq -c \
+BASE64_DECODE_ARGS="--decode"
+if ! printf '' | base64 "${BASE64_DECODE_ARGS}" >/dev/null 2>&1; then
+  BASE64_DECODE_ARGS="-D"
+  if ! printf '' | base64 "${BASE64_DECODE_ARGS}" >/dev/null 2>&1; then
+    echo "hold: base64 decoder does not support GNU --decode or BSD -D" >&2
+    exit 2
+  fi
+fi
+ADVISORY_BOT_LOGINS_JSON=$(printf '%s' "${BASE_CONFIG_CONTENT}" | base64 "${BASE64_DECODE_ARGS}" | jq -c \
   '((.advisoryBotLogins // []) + [(.advisoryWait.secondaryBotLogin // "")])
    | map(select(type == "string" and length > 0) | ascii_downcase) | unique')
 
@@ -410,7 +419,7 @@ IDD_AGENT_LOGIN_JSON=$(
     fi
   } | sed '/^[[:space:]]*$/d' | sort -fu | jq -Rsc 'split("\n") | map(select(length > 0))'
 )
-TRUSTED_REVIEW_ACK_LOGIN_JSON=$(printf '%s' "${BASE_CONFIG_CONTENT}" | base64 --decode | jq -c \
+TRUSTED_REVIEW_ACK_LOGIN_JSON=$(printf '%s' "${BASE_CONFIG_CONTENT}" | base64 "${BASE64_DECODE_ARGS}" | jq -c \
   --arg extra "${IDD_TRUSTED_MARKER_ACTORS:-}" '
   ((.trustedMarkerActors // []) + ($extra | split(",")))
   | map(select(type == "string" and length > 0) | ascii_downcase)
@@ -646,7 +655,15 @@ if [ -z "$BASE_CONFIG_CONTENT" ]; then
   echo "hold: trusted base ref did not provide .github/idd/config.json" >&2
   exit 2
 fi
-printf '%s' "$BASE_CONFIG_CONTENT" | base64 --decode > "$CONFIG"
+BASE64_DECODE_ARGS="--decode"
+if ! printf '' | base64 "${BASE64_DECODE_ARGS}" >/dev/null 2>&1; then
+  BASE64_DECODE_ARGS="-D"
+  if ! printf '' | base64 "${BASE64_DECODE_ARGS}" >/dev/null 2>&1; then
+    echo "hold: base64 decoder does not support GNU --decode or BSD -D" >&2
+    exit 2
+  fi
+fi
+printf '%s' "$BASE_CONFIG_CONTENT" | base64 "${BASE64_DECODE_ARGS}" > "$CONFIG"
 
 QUIET_SPEC=$(jq -r '.advisoryWait.secondaryQuietWindow // ""' "$CONFIG")
 SECONDARY_LOGIN=$(jq -r '.advisoryWait.secondaryBotLogin // ""' "$CONFIG")
