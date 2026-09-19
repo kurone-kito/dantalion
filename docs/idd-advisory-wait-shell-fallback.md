@@ -303,33 +303,63 @@ ADVISORY_BOT_LOGINS_JSON=$(printf '%s' "${BASE_CONFIG_CONTENT}" | base64 --decod
    | map(select(type == "string" and length > 0) | ascii_downcase) | unique')
 
 # Latest primary-bot review (same login set as AW1).
-LATEST_REVIEW_JSON=$(
-  gh api "repos/${OWNER}/${REPO}/pulls/{pr-number}/reviews" --paginate \
-    --jq '.[] | select(.user.login == "copilot-pull-request-reviewer"
-          or .user.login == "copilot-pull-request-reviewer[bot]") |
-          {sa: .submitted_at, cid: .commit_id, id: .id}' \
-  | jq -rs 'sort_by(.sa) | last // {}'
-)
+if ! REVIEWS_RAW=$(gh api "repos/${OWNER}/${REPO}/pulls/{pr-number}/reviews" --paginate); then
+  echo "hold: primary advisory review fetch failed" >&2
+  exit 2
+fi
+if ! LATEST_REVIEW_JSON=$(printf '%s\n' "${REVIEWS_RAW}" | jq -s '
+  map(.[]
+    | select(.user.login == "copilot-pull-request-reviewer"
+      or .user.login == "copilot-pull-request-reviewer[bot]")
+    | {sa: .submitted_at, cid: .commit_id, id: .id, body: (.body // "")})
+  | sort_by(.sa) | last // {}'); then
+  echo "hold: primary advisory review response was not valid JSON" >&2
+  exit 2
+fi
 LATEST_REVIEW_CID=$(printf '%s' "${LATEST_REVIEW_JSON}" | jq -r '.cid // ""')
 LATEST_REVIEW_ID=$(printf '%s' "${LATEST_REVIEW_JSON}" | jq -r '.id // empty')
+LATEST_REVIEW_SUBMITTED_AT=$(printf '%s' "${LATEST_REVIEW_JSON}" | jq -r '.sa // ""')
+
+# Copilot can fold findings into a <details> block without creating review
+# comments. Keep the parser aligned with the helper's structured heading and
+# ignore Markdown code examples so a quoted heading cannot create a false
+# blocker. A missing heading means zero suppressed comments.
+SUPPRESSED_COUNT=$(printf '%s' "${LATEST_REVIEW_JSON}" | jq -r '
+  def strip_code:
+    gsub("(?s)```.*?```"; "")
+    | gsub("`[^`]*`"; "");
+  try (
+    (.body // "")
+    | strip_code
+    | capture("(?i)<summary>\\s*suppressed comments \\((?<count>[0-9]+)\\)\\s*</summary>")
+    | .count
+    | tonumber
+  ) catch 0 // 0
+')
 
 # Actionable items = posted review comments on that review.
 if [ -n "${LATEST_REVIEW_ID}" ]; then
-  ACTIONABLE_ITEM_COUNT=$(
-    gh api "repos/${OWNER}/${REPO}/pulls/{pr-number}/reviews/${LATEST_REVIEW_ID}/comments" \
-      --paginate --jq 'length' | awk '{s+=$1} END {print s+0}'
-  )
+  if ! REVIEW_COMMENTS_RAW=$(gh api "repos/${OWNER}/${REPO}/pulls/{pr-number}/reviews/${LATEST_REVIEW_ID}/comments" --paginate); then
+    echo "hold: latest advisory review-comment fetch failed" >&2
+    exit 2
+  fi
+  if ! ACTIONABLE_ITEM_COUNT=$(printf '%s\n' "${REVIEW_COMMENTS_RAW}" | jq -s '
+    if any(type != "array") then error("review comments response was not an array")
+    else map(length) | add // 0
+    end'); then
+    echo "hold: latest advisory review-comment response was not valid JSON" >&2
+    exit 2
+  fi
 else
   ACTIONABLE_ITEM_COUNT=""
 fi
 
 CONJUNCT1=$([ "${LATEST_REVIEW_CID}" = "${PR_HEAD_SHA}" ] && echo true || echo false)
-CONJUNCT2=$([ "${ACTIONABLE_ITEM_COUNT}" = "0" ] && echo true || echo false)
 
 # Current-HEAD primary-bot threads: resolved OR a *fresh* **Accepted** /
 # **Rejected** reply (after the latest non-disposition comment).
 # Paginate until hasNextPage is false.
-THREADS_JSON=$(gh api graphql --paginate -f query='
+if ! THREADS_RAW=$(gh api graphql --paginate -f query='
   query($owner:String!, $repo:String!, $number:Int!, $endCursor:String) {
     repository(owner:$owner, name:$repo) {
       pullRequest(number:$number) {
@@ -345,8 +375,22 @@ THREADS_JSON=$(gh api graphql --paginate -f query='
         }
       }
     }
-  }' -F owner="${OWNER}" -F repo="${REPO}" -F number={pr-number} \
-  --jq '.data.repository.pullRequest.reviewThreads.nodes')
+  }' -F owner="${OWNER}" -F repo="${REPO}" -F number={pr-number}); then
+  echo "hold: review-thread fetch failed; partial pagination is unusable" >&2
+  exit 2
+fi
+if ! THREADS_JSON=$(printf '%s\n' "${THREADS_RAW}" | jq -s '
+  map(
+    if ((.errors // []) | length) > 0 then
+      error("review-thread GraphQL response contained errors")
+    else
+      (.data.repository.pullRequest.reviewThreads.nodes
+        // error("review-thread GraphQL response omitted nodes"))
+    end
+  ) | add // []'); then
+  echo "hold: review-thread response was incomplete or invalid JSON" >&2
+  exit 2
+fi
 
 # F2 accepts only IDD-agent / trusted-marker authors (same set the helper
 # reuses as iddAgentLogins). Empty set fails closed.
@@ -390,8 +434,6 @@ CONJUNCT3=$(printf '%s' "${THREADS_JSON}" | jq -rs --arg sha "${PR_HEAD_SHA}" --
       and (.isResolved or has_fresh_disp))
 ')
 
-CONVERGED=$([ "${CONJUNCT1}" = true ] && [ "${CONJUNCT2}" = true ] && [ "${CONJUNCT3}" = true ] && echo true || echo false)
-
 # dispositionEvidence: later **Accepted** / **Rejected** markers, 1:1
 # by count (E6). Non-agent regular comments and every review thread.
 if ! COMMENTS_RAW=$(gh api "repos/${OWNER}/${REPO}/issues/{pr-number}/comments" --paginate); then
@@ -402,6 +444,32 @@ if ! COMMENTS_JSON=$(printf '%s\n' "${COMMENTS_RAW}" | jq -s 'add // []'); then
   echo "hold: regular PR-comment response was not valid JSON" >&2
   exit 2
 fi
+REVIEW_ACK_VALID=$(printf '%s' "${COMMENTS_JSON}" | jq -r \
+  --arg head "${PR_HEAD_SHA}" \
+  --arg submitted "${LATEST_REVIEW_SUBMITTED_AT}" \
+  --argjson agents "${IDD_AGENT_LOGIN_JSON}" '
+  def marker:
+    try ((.body // "")
+      | capture("^review-ack: (?<agent>[^[:space:]]+) (?<head>[0-9A-Fa-f]{40}) (?<ackAt>[^[:space:]]+)$"))
+    catch null;
+  any(.[];
+    . as $comment
+    | ($comment | marker) as $ack
+    | (($comment.user.login // "") | ascii_downcase) as $login
+    | ($ack != null
+      and (($agents | map(ascii_downcase) | index($login)) != null)
+      and (($ack.head | ascii_downcase) == ($head | ascii_downcase))
+      and ($comment.created_at > $submitted))
+  )')
+CONJUNCT2=$(
+  if [ "${ACTIONABLE_ITEM_COUNT}" = "0" ] \
+    && { [ "${SUPPRESSED_COUNT}" = "0" ] || [ "${REVIEW_ACK_VALID}" = true ]; }; then
+    echo true
+  else
+    echo false
+  fi
+)
+CONVERGED=$([ "${CONJUNCT1}" = true ] && [ "${CONJUNCT2}" = true ] && [ "${CONJUNCT3}" = true ] && echo true || echo false)
 DISPOSITION_JSON=$(printf '%s' "${COMMENTS_JSON}" | jq -c --argjson agents "${IDD_AGENT_LOGIN_JSON}" '
   map(select(
     (.body | startswith("**Accepted**") or startswith("**Rejected**"))
@@ -523,6 +591,7 @@ MISSING_THREADS=$(printf '%s' "${THREADS_JSON}" | jq -rs \
 ')
 
 echo "converged=${CONVERGED} conjuncts=${CONJUNCT1},${CONJUNCT2},${CONJUNCT3}"
+echo "suppressedCount=${SUPPRESSED_COUNT} reviewAckValid=${REVIEW_ACK_VALID}"
 echo "missingRegularComments=${MISSING_REGULAR} missingThreads=${MISSING_THREADS}"
 # proceed iff CONVERGED is true AND both missing counts are 0.
 ```

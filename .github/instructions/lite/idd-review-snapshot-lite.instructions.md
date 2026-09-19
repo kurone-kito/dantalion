@@ -234,17 +234,20 @@ handoff). ReviewItems_snapshot is session-local — do not inherit a
 previous claim's critique findings unless already persisted as
 reviewer-visible comments.
 
-After the critique pass completes, re-read the current PR HEAD SHA —
-`gh pr view {pr-number} --json headRefOid --jq '.headRefOid'` — and
-store it as `{e2-head-SHA}` (it can differ from Step 1's `{head-SHA}` if
-the branch moved during E1/E2; the baseline must record what was
-actually reviewed). Post a new baseline with `{e2-head-SHA}`: `node
+Before the critique pass begins, capture the PR HEAD as
+`{critique-start-head-SHA}`. After the critique completes, re-read the
+current PR HEAD SHA — `gh pr view {pr-number} --json headRefOid --jq
+'.headRefOid'` — and store it as `{e2-head-SHA}`. If the two values differ,
+do not post a baseline for this pass: discard the local critique result,
+return to E1, and re-run the fresh snapshot/critique sequence against the
+new HEAD. A baseline may be posted only when the two values match. Post a
+new baseline with `{e2-head-SHA}`: `node
 scripts/post-idd-marker.mjs --type baseline --target pr {pr-number}
 --agent-id <id> --claim-id <id> --sha {e2-head-SHA} --apply`, or the
 package-manager equivalent. Rendered body:
 
 ```markdown
-<!-- review-baseline: {agent-id} {claim-id} {SHA} -->
+<!-- review-baseline: {agent-id} {claim-id} {e2-head-SHA} -->
 
 _{agent-id}: critique baseline — IDD automation marker. Do not edit._
 ```
