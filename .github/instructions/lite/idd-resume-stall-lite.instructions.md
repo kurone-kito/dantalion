@@ -25,8 +25,13 @@ node scripts/resume-claim-routing.mjs --issue <N>  # vendored-node only
 # package-manager / ephemeral-npx: use the profile-selected equivalent.
 
 # Server-anchored now (required for quiet window)
-SERVER_NOW=$(gh api repos/<owner>/<repo>/issues/<N> --include \
-  | grep -i '^date:' | head -1 | sed 's/^[Dd]ate: *//' | tr -d '\r')
+SERVER_NOW=$(gh api repos/<owner>/<repo>/issues/<N> --include | node -e '
+  const fs = require("node:fs");
+  const input = fs.readFileSync(0, "utf8");
+  const dateLine = input.split(/\r?\n/).find((line) => /^date:/i.test(line));
+  if (!dateLine) process.exit(1);
+  process.stdout.write(dateLine.replace(/^date:\s*/i, "").trim());
+')
 NOW=$(node -e "console.log(new Date(process.argv[1]).toISOString().replace(/\.\d{3}Z$/, 'Z'))" "$SERVER_NOW")
 
 # Quiet-window evidence (always pass --now). Requires --pr; skip if none.
@@ -34,6 +39,16 @@ node scripts/stalled-session-quiet-check.mjs \
   --pr <pr-number> \
   --now "$NOW" \
   --claim-created-at <latest-valid-claimed-by-created_at>
+```
+
+The Node parser selects the first `Date:` response header without relying
+on GNU/BSD-specific shell utilities. In PowerShell, use the same parser
+with the equivalent pipeline below, then pass the resulting `$now` value
+to `--now`:
+
+```powershell
+$serverNow = gh api repos/<owner>/<repo>/issues/<N> --include | Out-String | node -e "const fs = require('node:fs'); const input = fs.readFileSync(0, 'utf8'); const dateLine = input.split(/\r?\n/).find((line) => /^date:/i.test(line)); if (!dateLine) process.exit(1); process.stdout.write(dateLine.replace(/^date:\s*/i, '').trim());"
+$now = node -e "console.log(new Date(process.argv[1]).toISOString().replace(/\.\d{3}Z$/, 'Z'))" "$serverNow"
 ```
 
 For `package-manager` and `ephemeral-npx`, resolve both commands from

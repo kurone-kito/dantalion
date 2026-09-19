@@ -62,8 +62,10 @@ If stalled-session routing returns hold/inconclusive, stop.
   repository vends a force-handoff helper, hand the operator a
   concrete, runnable invocation resolved for its configured profile
   from `docs/idd-helper-scripts.md` (for example
-  `node scripts/force-handoff.mjs` under `vendored-node`, or
-  `npm run idd:force-handoff` under `package-manager`); under
+  `node scripts/force-handoff.mjs` under `vendored-node`, or the
+  repository's package-manager equivalent of `idd-force-handoff` under
+  `package-manager` (for example, `pnpm exec idd-force-handoff` here);
+  under
   `instructions-only` (no helper runtime vended), the operator instead
   posts the manual consent text and marker documented in
   `docs/customization.md` themselves.

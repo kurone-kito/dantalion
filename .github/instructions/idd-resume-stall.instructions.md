@@ -52,22 +52,28 @@ dates directly, so prefer it over shell `date` utilities (whose flags
 differ across GNU/BSD/Windows executors):
 
 ```bash
-SERVER_NOW=$(gh api repos/<owner>/<repo>/issues/<number> --include \
-  | grep -i '^date:' | head -1 | sed 's/^[Dd]ate: *//' | tr -d '\r')
+SERVER_NOW=$(gh api repos/<owner>/<repo>/issues/<number> --include | node -e '
+  const fs = require("node:fs");
+  const input = fs.readFileSync(0, "utf8");
+  const dateLine = input.split(/\r?\n/).find((line) => /^date:/i.test(line));
+  if (!dateLine) process.exit(1);
+  process.stdout.write(dateLine.replace(/^date:\s*/i, "").trim());
+')
 node -e "console.log(new Date(process.argv[1]).toISOString().replace(/\.\d{3}Z$/, 'Z'))" \
   "$SERVER_NOW"
 ```
 
-The `sed` step strips the `Date:` header label so only the RFC 7231
-timestamp value (e.g. `Wed, 15 Jul 2026 03:42:53 GMT`) reaches the
-`node` conversion; passing the labeled line as-is may happen to parse in
-some `Date` implementations but is not a guaranteed contract. The
-`head -1` step matters when the reused call was **paginated**
-(`--paginate`): `--include` then emits one `Date` header per page
-response, and without `head -1` the multi-line result breaks the `node`
-conversion (an invalid `Date`), leaving S2/S4 unable to derive `--now`.
-A single page's `Date` value is accurate enough for a 30-minute window
-regardless of how many pages the overall call fetched.
+The Node parser strips the `Date:` header label and selects the first
+response header, so only the RFC 7231 timestamp value (e.g. `Wed, 15 Jul
+2026 03:42:53 GMT`) reaches the conversion. This avoids shell-specific
+`grep`, `head`, `sed`, and `tr` flags and remains safe when a paginated
+call emits one `Date` header per page. On PowerShell, use the equivalent
+pipeline below:
+
+```powershell
+$serverNow = gh api repos/<owner>/<repo>/issues/<number> --include | Out-String | node -e "const fs = require('node:fs'); const input = fs.readFileSync(0, 'utf8'); const dateLine = input.split(/\r?\n/).find((line) => /^date:/i.test(line)); if (!dateLine) process.exit(1); process.stdout.write(dateLine.replace(/^date:\s*/i, '').trim());"
+$now = node -e "console.log(new Date(process.argv[1]).toISOString().replace(/\.\d{3}Z$/, 'Z'))" "$serverNow"
+```
 
 Pass the resulting value as `--now` to `idd-stalled-session-quiet-check`
 in S2 and again (freshly re-derived, not reused) in S4. **Hand-computing
