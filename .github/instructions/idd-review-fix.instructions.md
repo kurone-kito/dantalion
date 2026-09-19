@@ -1,35 +1,68 @@
 # IDD — Review Fix Phase (E9–E15)
 
 Read this file after `idd-review-triage.instructions.md` (E8) finds
-Accepted PATH A items. It covers implementing fixes, validating, pushing,
-replying to reviewers, and waiting for CI.
+Accepted PATH A items. Covers implementing fixes, validating, pushing,
+replying to reviewers, and waiting for CI — including E14's GitHub
+Copilot advisory-review step, which follows even when another local
+agent drives the workflow, since it depends on GitHub review state, not
+the local CLI. E14's timing defaults live in
+[IDD policy constants](../../docs/policy-constants.md).
 
-This phase also includes a repository-specific GitHub Copilot advisory
-review step. Even when another local agent is driving the workflow,
-follow it because the dependency is on GitHub review state, not on the
-local CLI.
-
-The advisory-review timing defaults used by E14 are named in
-[IDD policy constants](../../docs/policy-constants.md). Refer there when
-you need the values, but keep the phase logic here unchanged.
-
-Apply the shared claim revalidation gate before E9, before the E12 push,
-and before each E13/E14/E15 GitHub side effect (reply, resolve,
-reviewer request, hold comment, or digest update).
+Apply the
+[shared claim revalidation gate](idd-overview-core.instructions.md#claim-revalidation-gate)
+before E9, the E12 push, and each E13/E14/E15 GitHub side effect
+(reply, resolve, reviewer request, hold comment, or digest update).
 
 ## E9 — Fix accepted issues
 
-Fix all Accepted PATH A items from ReviewItems_snapshot. Run **fix-validate**.
+Fix all Accepted PATH A items from ReviewItems_snapshot (cold:
+`idd-review-snapshot.instructions.md`'s Cold-start section). Run
+**fix-validate**. Commit fixes atomically — one logical change per
+commit.
 
-Commit fixes atomically — one logical change per commit.
+**Within-round batching.** All of this round's Accepted PATH A fixes
+travel as their own atomic commits, but push together in a single push
+at E12 — do not push after each individual fix. See E12 for the push
+step and the bounded cross-round allowance.
+
+These fix-side rules cut the advisory-review round count (complementing
+E5's "Verify before accept" rule):
+
+- **Fix the whole class, not just the flagged line.** Sweep the current
+  diff (and adjacent sections) and fix every instance of a systemic
+  finding in one commit — this converges faster than waiting for each
+  instance to be re-flagged.
+- **Verify any claim a fix adds.** Check any new precision (a name,
+  value, path, or described behavior) against the actual implementation
+  before committing.
+- **Already fixed via batching.** A PATH A item Accepted (E4/E5) may
+  already be folded into a prior E12 push — confirm the commit
+  addresses it, applying the same file-path-touch check as
+  `idd-review-snapshot.instructions.md`'s Cold-start edge case 1, and
+  let E13 cite that SHA, without duplicating the fix.
 
 ## E10 — Validate fixes with critique pass
 
 Run a critique pass to verify that the fixes in E9 address the root
-causes and are correct (see `idd-overview.instructions.md` for per-agent
+causes and are correct (see `idd-overview-appendix.instructions.md` for per-agent
 implementation). The distributed defaults for the E10 guardrails are
 listed in `docs/policy-constants.md`. Keep an E10 pass count for the
 current E9 fix batch.
+
+A repository may also configure `critiqueLoop.delegate` to point this
+pass at a different reviewer instead of the per-agent mechanism, using
+the same resolution chain, `mode` semantics, and helper resolution
+(`idd-critique-delegate`) C1 (`idd-work.instructions.md`) already
+defines. `critiqueLoop.telemetryHook`
+remains C1-only and is never consulted here. Delegate findings enter
+this pass the way `mode`
+governs at C1 — see `docs/idd-workflow.md`'s "Critique pass invocation"
+section for the full table — replacing or joining the per-agent
+mechanism; never assume they are unconditionally added on top of it.
+Treat a delegate that, under `on-success` or `never`, leaves no
+readable findings list as a **hold**, not a clean "zero issues,
+proceed to E11" round: apply the shared Hold / suspend rules
+(`idd-overview-appendix.instructions.md`) instead of advancing.
 
 If the critique pass finds additional issues, fix them, commit
 atomically, and run E10 again while the findings are converging.
@@ -37,32 +70,115 @@ atomically, and run E10 again while the findings are converging.
 Convergence guardrails:
 
 - "Meaningful progress" means a pass removes at least one Accepted
-  finding, narrows a remaining finding's root cause or scope, or yields
-  a materially new fix direction. Reworded duplicate findings do not
-  count.
+  finding, narrows a remaining finding's root cause/scope, or yields a
+  materially new fix direction. Reworded duplicates do not count.
 - If the same Accepted findings recur for
-  `critiqueLoop.e10NoProgressHoldAfter` consecutive E10 passes
-  (distributed default: `3`) without meaningful progress, stop the
-  auto-loop. Post a hold comment on the PR summarizing the repeated
-  findings and attempted fixes, and wait for a maintainer decision
-  before more E10 iterations.
+  `critiqueLoop.e10NoProgressHoldAfter` consecutive E10 passes (default
+  `3`) without progress, stop the auto-loop: post a hold comment
+  summarizing the repeated findings and attempted fixes, and wait for a
+  maintainer decision.
 - Do not use this stop condition to bypass serious issues: unresolved
-  High or Medium findings remain blockers until fixed or explicitly
+  High/Medium findings remain blockers until fixed or explicitly
   redirected by a maintainer.
 - If the critique pass reports zero issues, proceed to E11.
 
-## E11 — Resolve conflicts with main
+**Round-count heuristic for genuinely-new findings.** The guard above
+covers a _repeating_ finding; a different pattern is each round
+surfacing a genuinely new, real finding — that is convergence, not
+stagnation, so the no-progress guard never fires. This is a heuristic,
+not a hard cap: after several consecutive rounds (roughly 3-4) each
+finding something new in the _same area_, treat it as a signal that a
+shared root cause may be producing each new instance, and check
+whether one structural fix (e.g., auditing every caller of a helper
+against its contract, instead of patching one caller per round) would
+converge the loop faster than another incremental patch. Worked
+example: five review rounds each flag a different call site missing a
+validation check that a shared helper added — the fix that ends the
+loop is auditing every caller against the helper's contract once, not
+a sixth per-call-site patch. Once fixes materially address the
+finding's root cause and further comments are speculative or
+non-blocking hardening, treat them as PATH B (disposition-only,
+E4-E7) rather than opening another E9-E10 round.
 
-Check for conflicts between the feature branch and `main`. If conflicts
-exist, merge `main` into the feature branch
-(`git fetch origin main && git merge origin/main`), resolve any
-conflicts, and complete the merge.
+**Second escalation tier (heuristic, not a hard rule): when the
+structural fix itself doesn't converge.** The heuristic above names
+one escalation (patch-by-patch → one structural fix); it does not say
+what to do when that structural fix keeps drawing new same-area
+findings for a further few rounds. The natural default — a second,
+more elaborate structural redesign — tends to cost more rounds, not
+fewer, since the same race or defect class often regenerates at each
+added layer of recovery machinery. Prefer removing or substantially
+simplifying the fragile mechanism instead — replacing an
+automatic-recovery path with a simpler fail-closed behavior plus
+actionable manual-recovery guidance, rather than a second redesign —
+**but only once confirmed safe**: before removing or simplifying away
+any part of the mechanism's behavior, check the issue's acceptance
+criteria and any established external contract for whether that
+behavior was actually required; if so, stop for a maintainer decision
+instead of dropping it to converge review. Worked example:
+kurone-kito/idd-skill#2223's clone-scoped lock
+(kurone-kito/idd-skill#2389) kept drawing new P1 concurrency findings
+across several rounds even after replacing mtime-based staleness with
+PID-liveness-based staleness; convergence only happened once automatic
+stale-lock takeover was removed entirely, replaced with a timeout that
+reports the lock path and the recorded holder's PID for manual
+recovery — the same shape
+`git`'s own `index.lock` uses on collision. Removal was safe there
+specifically because the issue's acceptance criteria only ever
+required an acquire/release interface, never automatic stale-lock
+recovery.
 
-**Active review gate**: if the PR has unresolved review threads,
-unreplied comments, or any reviewer's latest state is
-`CHANGES_REQUESTED`, get explicit operator confirmation before merging
-`main` into the feature branch, as the merge commit will appear in the
-PR history.
+**Third escalation tier (heuristic, not a hard rule): open-ended
+correctness-domain findings against an external spec.** A different
+shape from both tiers above: each new finding is a genuine, distinct
+gap in the feature's own coverage of an open-ended external
+correctness domain (a document/markup grammar, a protocol, a wire
+format), not a symptom of one internal mechanism -- so neither "one
+structural fix" (Tier 1) nor "simplify/remove the mechanism" (Tier 2)
+is available, because the mechanism's correctness against that domain
+**is** the acceptance criterion itself. Reaching "stop for a
+maintainer decision" here does not depend on Tier 2's
+mechanism-simplification precondition, since there is no mechanism
+safe to remove: once several rounds each keep surfacing a genuinely
+new, in-scope spec-coverage gap rather than repeating one, list each
+outstanding gap with its evidence, and the round count, in a hold
+comment and stop for a maintainer decision. Once a maintainer decision
+accepts the residual gaps as a known limitation, record the decision
+and close out the
+finding the same way this workflow already disposes of any review
+item or resolves any hold (`idd-review-triage.instructions.md`,
+`idd-overview-appendix.instructions.md`), and file any follow-up
+through `idd-review-triage.instructions.md`'s E6 follow-up-issue rule,
+rather than continuing rounds indefinitely. Worked example:
+kurone-kito/idd-skill#2767 (PR kurone-kito/idd-skill#2840) implemented
+a CommonMark-compliant structural-evidence parser
+(`triage-structural-evidence.mts` / `markdown-code.mts`); an
+adversarial automated reviewer kept surfacing genuine, distinct
+CommonMark spec-compliance gaps across 27 review rounds, each an
+in-scope correctness gap rather than a repeating symptom of one
+mechanism -- the loop ended only once the operator accepted 3
+remaining findings as a documented known limitation and filed
+kurone-kito/idd-skill#2865 as the scoped follow-up.
+
+## E11 — Resolve conflicts with {development-branch}
+
+Same read-only check as
+`idd-review-triage.instructions.md`'s E-phase branch-sync check and
+`idd-pre-merge.instructions.md`'s F1 (`idd-branch-conflict-state --pr
+{pr-number}` or `gh pr view {pr-number} --json
+mergeable,mergeStateStatus`) — reflects the last pushed head, not
+unpushed E9 fixes.
+
+- **`content-conflict`** (`mergeable` `CONFLICTING`): pass the active
+  review gate, merge `{development-branch}` into the feature branch
+  (`git fetch origin {development-branch} && git merge
+  origin/{development-branch}`), resolve, complete the merge.
+  Non-interactive-hostile signing: use the
+  [signed-commit merge wrapper](../../docs/idd-helper-scripts.md#signed-commit-merge-wrapper-shared-git-procedure)
+  instead.
+- Otherwise (clean, behind-no-conflict, computing, dirty,
+  force-push-exception, unknown): skip the merge, proceed to E12 —
+  the E-phase branch-sync check and F1 handle those downstream.
 
 ## E12 — Lint, test, push
 
@@ -70,6 +186,59 @@ Run **post-fix-validate**.
 
 Then push the feature branch normally (E11 uses merge commits, not
 rebase, so no force push is required).
+
+**Bounded cross-round batching allowance.** A small number of review
+comments can arrive before this push that fall outside this round's
+scope and haven't gone through triage yet. Fold them into this same
+pending push — each its own atomic commit — instead of starting a
+fresh round per arrival, but only when **all** hold:
+
+- Every comment since the last push is **bot-sourced**: the primary
+  advisory bot's login (default Copilot: `copilot` /
+  `copilot-pull-request-reviewer*`, matched via `isCopilotReviewerLogin`
+  in `scripts/protocol-helpers.mjs`) or an `advisoryBotLogins` login,
+  **regardless of PATH A/B** (Copilot's inline thread comments fall
+  through to PATH A under E4's ambiguous-default rule; a
+  `secondaryBotLogin` overlap still qualifies).
+- Each comment is a small, confirmable fix whose claim was checked
+  against live evidence (linter run, actual file/runtime behavior)
+  before folding it in — the same **verify-before-accept discipline** E5
+  codifies for PATH B (#814), applied to bot-sourced PATH A. Never fold
+  in a bot-asserted-only finding.
+- The resulting commit touches only files this round's pending fixes
+  already touch, and re-runs **post-fix-validate** first (E12's own run
+  already happened and misses a later fold-in).
+- No CI-wait poll (E15) is currently in flight for this branch.
+
+**Bound**: at most 3 additional commits, or 10 minutes since the first
+accumulated commit — whichever comes first.
+
+**Ends accumulation immediately** (push whatever has accumulated): a
+PATH A item from a **human or CODEOWNER** arrives (bot-sourced alone
+does not); any item requests a substantive code/logic change; any item
+falls outside the touched-file scope; or either bound is reached.
+
+**Non-goals**: never delays an in-flight CI wait (E15's mid-wait
+fold-in rule is unchanged); never changes PATH A/B routing or triage
+timing (still happens at the next E1 pass — only push timing changes);
+and relaxes nothing else — E14 still re-reviews every push, the
+per-HEAD `review-watermark` still invalidates on push, each E6 reply
+stays individual, and the
+[claim revalidation gate](idd-overview-core.instructions.md#claim-revalidation-gate)
+still runs immediately before push.
+
+**PR body sync.** If this round's fix changes a claim the PR body
+makes (round count, a documented residual limitation, a scope
+statement — wherever in the body it appears), re-run the claim
+revalidation gate immediately before this edit — it is a separate
+mutation after the already-gated push — then fetch the current full
+body, edit only that claim in the fetched copy, and post the full
+result back (`gh pr edit {pr-number} --body-file <path>` replaces the
+whole body, so never pass a partial file, which would drop the
+closing-keyword line and other sections). After posting, repeat
+D3.5's closing-set check (step 6) to confirm `closingIssuesReferences`
+still matches the deliberate set exactly — edited prose can introduce
+a stray keyword-adjacent reference.
 
 ## E13 — Reply to feedback
 
@@ -81,39 +250,78 @@ Start every reply with one of these prefixes so that disposition is
 unambiguous:
 
 - `**Accepted** — fixed in {commit-sha or comma-separated list}: {brief explanation}`
+  Citing a commit that did not fix this item in the current round (E9's
+  batching case, or a Cold-start edge case 1 citation) requires that
+  commit to have already passed the file-path-touch check
+  `idd-review-snapshot.instructions.md`'s Cold-start edge case 1
+  defines. After that visible prefix, include the
+  reply-identity stamp exactly as
+  `idd-review-triage.instructions.md`'s E6 defines it
+  (`<!-- {markerPrefix}-review-reply -->`) — same stamp mechanics and
+  constraints, applied here to the `**Accepted**`-only prefix this
+  phase posts.
 
 - **Review threads**: after posting your reply, **immediately resolve
-  the thread**. Resolution means "agent has responded and acted on the
-  feedback", not "reviewer has agreed". If the reviewer disagrees, they
-  can reopen the thread and add a new reply, which will re-surface it in
-  the next E1 pass.
+  the thread**, using the same resolve-review-thread mechanism as
+  `idd-review-triage.instructions.md`'s E6 (profile-selected helper
+  command, reply-before-resolve, manual REST + GraphQL
+  `resolveReviewThread` fallback — see
+  `idd-review-triage.instructions.md`'s E6 for the exact command and
+  flags). Resolution means "agent acted", not "reviewer agreed" — a
+  disagreeing reviewer can reopen the thread, re-surfacing it in the
+  next E1 pass.
 - **Regular comments**: reply only; do not resolve.
+- **Persistent non-review notices**: a non-review notice already
+  dispositioned `**Rejected** — {bot} did not review HEAD …` in a prior
+  pass **carries that rejection forward** across this push — do not
+  re-post it just because `updatedAt` bumped or the bot re-posted the
+  same summary (see the E6 non-review-notice rule). Only a notice the
+  bot replaces with an actual completed review needs a fresh
+  disposition.
+- **Advisory courtesy acks**: do not re-disposition a courtesy bot ack.
 
 After E13 replies and resolutions are complete, upsert the PR live
 status digest before E14 if the next route is still review-fix or CI
-wait. Set `Phase` to `E13 feedback replied`, `Open blockers` to any
-remaining reviewer, advisory, or CI wait, `Next action` to E14 or E15,
-and `Authoritative by` to the accepted feedback replies, resolved
-threads, current HEAD, and verified claim. Because E15 returns to E1
-after CI, this digest edit is safe activity; do not use it to bypass the
-next E1 snapshot.
+wait: `Phase` to `E13 feedback replied`, `Open blockers` to any
+remaining reviewer/advisory/CI wait, `Next action` to E14 or E15, and
+`Authoritative by` to the accepted replies, resolved threads, current
+HEAD, and verified claim. Since E15 returns to E1 after CI, this edit
+is safe and does not bypass the next E1 snapshot.
 
 ## E14 — Re-review request
 
-**Human reviewers**: for each reviewer whose latest state is
-`CHANGES_REQUESTED` and whose items have all been addressed, request a
-re-review:
+**Human reviewers**: request a re-review from each reviewer whose
+latest state is `CHANGES_REQUESTED` once their items are all addressed:
 
 ```sh
 gh pr edit {pr-number} --add-reviewer {reviewer-login}
 ```
 
-**Copilot**: after every push, regardless of any reviewer's state,
-request a Copilot re-review if Copilot has not yet reviewed the current
-HEAD SHA. Subject to the configured Copilot re-review request cap
-(`REQUEST_CAP` from helper output or `.github/idd/config.json`
-`advisoryWait.requestCap`; default 30). This is a process limit, not a
-GitHub-enforced constraint.
+For an **advisory bot**, try the add-reviewer command with the bot's
+**login** first — on some `gh` versions the GraphQL mutation fails a
+bot login outright (`Could not resolve user with login '{login}'
+(requestReviewsByLogin)`); on failure, fall back to REST
+`requested_reviewers` with the bot's real account login (REST also
+silently no-ops on a **display name**). See **Primary advisory bot**
+below for the exact login each path needs.
+
+**Primary advisory bot** (default Copilot; also invoked directly by
+`idd-review-triage.instructions.md`'s **Zero-Accepted-PATH-A advisory
+re-review gate**, reusing steps 1-4 and the polling loop below with its
+own on-success target instead of E15): after every push, regardless of
+reviewer state, request a re-review from the configured primary
+advisory bot (`advisoryWait.primaryBotLogin`, default Copilot) if it
+hasn't reviewed current HEAD SHA — subject to the re-review request
+cap (`REQUEST_CAP` / `advisoryWait.requestCap`, default 30; a process
+limit, not GitHub-enforced).
+
+Substitute `{primary-advisory-bot}` below with that bare login (default
+`copilot` → `@copilot`); the AW helpers keep `COPILOT_PENDING`/
+`LAST_COPILOT_COMMIT` field names regardless of the configured bot. The
+REST fallback needs `{primary-advisory-bot-rest-login}`:
+`copilot-pull-request-reviewer[bot]` for the default, or
+`{primary-advisory-bot}` itself for a non-default bot (already a real
+login).
 
 1. Fetch `PR_HEAD_SHA`:
 
@@ -121,109 +329,122 @@ GitHub-enforced constraint.
    PR_HEAD_SHA=$(gh pr view {pr-number} --json headRefOid --jq '.headRefOid')
    ```
 
-2. Run **AW1** (`idd-advisory-wait.instructions.md`). If **SATISFIED** →
-   E14 Copilot processing is done; proceed to E15.
+2. Run **AW1** (`idd-advisory-wait.instructions.md`). **SATISFIED** →
+   E14 advisory-bot processing is done; proceed to E15.
 3. Run **AW2** to fetch markers.
 4. Apply the **AW3** decision table:
-   - **SATISFIED** → proceed to E15.
+   - **SATISFIED**, `COPILOT_PENDING` `"false"`, `COPILOT_PENDING_COVERS_HEAD`
+     `"false"` (settled by elapsed time alone, never proven the request
+     reached Copilot — `#2327`): consult **`AW3-S`**'s `staleRequestRecovery`
+     first. `"attempt"` runs its bounded cycle (non-pending entry: skip
+     **Remove**, start at **Request**; a proven failure-to-register
+     completes the cycle per the entry's inverted step 4/5 disposition),
+     then proceed to E15 either way (accumulates recovery-cycle evidence
+     toward `COPILOT_UNAVAILABLE`; `outcome` itself is unaffected).
+     `"cap-exhausted"` honors `advisoryWait.capExhaustedRoute` exactly
+     like the ordinary `CAP_EXHAUSTED` row below — `hold` posts AW4's
+     **Cap exhausted** hold and stops; `phase-specific` (default)
+     proceeds to E15 unchanged (`#2327` follow-up: cycle exhaustion from
+     this entry must not silently bypass a configured hold policy).
+     `"not-applicable"` → proceed to E15 unchanged.
+   - **SATISFIED** (otherwise) → proceed to E15.
    - **HOLD** → post the hold comment from **AW4** and stop.
-   - **RECOVERY_NEEDED** (`COPILOT_PENDING` is `"true"`, no same-head
-     marker): post the recovery marker from **AW3-R**. Do not request
-     another Copilot review.
+   - **RECOVERY_NEEDED** (`COPILOT_PENDING` `"true"`, no same-head
+     marker): post the recovery marker from **AW3-R**; do not
+     re-request.
    - **CAP_EXHAUSTED** (`REQUEST_MARKER_COUNT` ≥ `REQUEST_CAP`, no
-     same-head marker) →
-     if `CAP_EXHAUSTED_ROUTE` is `hold`, post the hold comment from
-     **AW4** and stop. Otherwise (`phase-specific`, the default), skip
-     the advisory wait entirely and proceed directly to E15.
-   - **REQUEST_NEEDED** (`COPILOT_PENDING` is `"false"`, or
-     `COPILOT_PENDING` is `"true"` but current-head coverage is not
-     proven; request cap < `REQUEST_CAP`): request Copilot review and
-     immediately post a plain-text marker. If `COPILOT_PENDING` is
-     `"true"` in this branch, first remove the stale/unproven pending
-     reviewer request:
+     same-head marker): if `CAP_EXHAUSTED_ROUTE` is `hold`, post the
+     hold from **AW4** and stop; otherwise (`phase-specific`, default)
+     skip the wait and proceed to E15.
+   - **REQUEST_NEEDED**, `COPILOT_PENDING` `"false"` (cap not
+     exhausted): request the bot's review and immediately post:
 
      ```sh
-     gh pr edit {pr-number} --remove-reviewer "@copilot"
-     ```
-
-     If removal fails because Copilot is no longer pending, re-run
-     AW1–AW3. If removal fails for any other reason, post the AW4
-     pending-refresh-failed hold comment and stop. After removal
-     succeeds, request Copilot review:
-
-     ```sh
-     gh pr edit {pr-number} --add-reviewer "@copilot"
+     gh pr edit {pr-number} --add-reviewer "@{primary-advisory-bot}"
+     # on GraphQL login-resolution failure:
+     gh api repos/{owner}/{repo}/pulls/{pr-number}/requested_reviewers \
+       -X POST -f "reviewers[]={primary-advisory-bot-rest-login}"
      ```
 
      ```text
      advisory-wait: {agent-id} {head-SHA} {ISO8601-requested-at}
      ```
 
-     Use `PR_HEAD_SHA` as `{head-SHA}`. Post as plain text, not an HTML
-     comment block.
-   - **WAIT**, or after a **REQUEST_NEEDED** or **RECOVERY_NEEDED**
-     marker is posted: enter the active polling loop below.
+     Use `PR_HEAD_SHA` as `{head-SHA}`; post as plain text, not HTML.
+   - **REQUEST_NEEDED**, `COPILOT_PENDING` `"true"` (unproven coverage —
+     PR #1562): consult **`AW3-S`**'s `staleRequestRecovery` first —
+     `"attempt"` runs its bounded remove/re-request/verify/mark cycle
+     (independently capped, never the plain marker or `REQUEST_CAP`);
+     `"cap-exhausted"` handles like **CAP_EXHAUSTED** above (no
+     remove/re-request); `"not-applicable"` falls through to the
+     polling loop unchanged (a same-head marker already anchors HEAD).
+   - **WAIT**, or after a **REQUEST_NEEDED** / **RECOVERY_NEEDED** /
+     **AW3-S** marker posts: enter the active polling loop below.
+5. **Secondary advisory bot (optional, non-gating).** Request it once
+   per HEAD when the helper reports `secondaryRequestNeeded: true` (or,
+   in the shell fallback, AW3 yields **CAP_EXHAUSTED** or a
+   stalled/rate-limited **SATISFIED**) and `advisoryWait.secondaryBotLogin`
+   is configured and not yet requested for this HEAD — same
+   gh-then-REST fallback as the primary, no `advisory-wait:` marker, and
+   no change to the AW3 route. Its review is ordinary advisory input,
+   returned by the E1 snapshot if it lands before merge; skipped when
+   unconfigured. Never poll/wait for it here, E1, or E2; only F2's
+   `secondary-quiet-window` blocker (`idd-pre-merge.instructions.md`)
+   waits.
 
 Copilot and CI advisory bot comments are advisory; unanswered ones do
 not block merge.
 
-Whenever E14 posts a Copilot request marker, recovery marker, or hold
-comment, update the digest after that side effect with the current
-advisory state. Use the marker or hold comment as `Authoritative by`,
-set `Open blockers` to the advisory wait or hold reason, and set
-`Next action` to polling, E15, or maintainer action.
+Whenever E14 posts a request/recovery marker or hold comment, update
+the digest: the marker/hold as `Authoritative by`, the advisory
+wait/hold reason as `Open blockers`, and polling/E15/maintainer action
+as `Next action`.
 
-**Active polling loop** (applies when `COPILOT_PENDING` is `"true"`, or
-immediately after posting a marker in the **REQUEST_NEEDED** or
-**RECOVERY_NEEDED** path above):
+**Active polling loop** (when `COPILOT_PENDING` is `"true"`, or right
+after posting a **REQUEST_NEEDED**/**RECOVERY_NEEDED** marker above):
 
-Do **not** post a new marker if a same-head marker already exists; reuse
-it. If multiple same-head markers exist, always use the one with the
-**earliest** `createdAt` — the advisory clock starts at the first
-request, not the last.
+Do not post a new marker if a same-head one already exists — reuse the
+**earliest** `createdAt` among same-head markers (the clock starts at
+the first request, not the last).
 
-Take a fresh activity snapshot (same scope as E1 Step 1: all threads,
-review bodies, and regular comments, excluding trusted agent
-operational markers only). Record the highest `updatedAt` as the
-**temporary polling watermark** — do **not** post it as a
-`<!-- review-watermark -->` PR comment. If the snapshot is empty, use
-the `createdAt` of the latest
-`<!-- review-watermark: {agent-id} {claim-id} … -->` comment whose
-`{claim-id}` matches the current active claim and whose GitHub author is
-a trusted marker actor. If no trusted same-claim watermark exists, stop
-and return to E1 to create one.
+Take a fresh activity snapshot (E1 Step 1's scope, excluding only
+trusted operational markers) and record its highest `updatedAt` as the
+**temporary polling watermark** — never post it as a `review-watermark`
+comment. If empty, use the latest trusted same-claim `review-watermark`
+comment's `createdAt` instead, or stop and return to E1 if none exists.
 
 Poll every `POLL_INTERVAL_MINUTES` minutes:
 
-1. Re-fetch `PR_HEAD_SHA`:
+1. Re-fetch `PR_HEAD_SHA`
 
    ```sh
    CURRENT_HEAD=$(gh pr view {pr-number} --json headRefOid --jq '.headRefOid')
    ```
 
-   If `CURRENT_HEAD != PR_HEAD_SHA` → HEAD changed; return to E1.
+   — if it changed, return to E1.
+2. Re-read threads/bodies/comments (excluding trusted operational
+   markers only — untrusted marker-shaped comments remain activity). Any
+   `updatedAt` newer than the polling watermark → return to E1
+   immediately.
+3. Run **AW1**/**AW2** (refresh `COPILOT_PENDING`, `LAST_COPILOT_COMMIT`,
+   `EARLIEST_SAME_HEAD_AT`; apply **AW5** if the latter is empty), then
+   **AW3**: **SATISFIED** → apply step 4's same non-pending
+   `staleRequestRecovery` consultation before exiting, then proceed to E15;
+   **HOLD** → post **AW4**/**AW5** hold and stop; **WAIT** → keep polling.
 
-2. Re-read review threads, review bodies, and regular PR comments,
-   **excluding trusted agent operational marker comments only** (covers
-   advisory-wait, advisory-wait-recovery, review-watermark,
-   review-baseline, claim, hold notes, and other operational comments
-   from trusted marker actors). Marker-shaped comments from untrusted
-   authors remain activity. If any item has `updatedAt` strictly newer
-   than the polling watermark → return to E1 immediately.
-
-3. Run **AW1** and **AW2** (refresh `COPILOT_PENDING`, `LAST_COPILOT_COMMIT`,
-   and `EARLIEST_SAME_HEAD_AT`). Apply **AW5** if `EARLIEST_SAME_HEAD_AT`
-   is empty. Then apply **AW3**:
-   - **SATISFIED** → exit polling; proceed to E15.
-   - **HOLD** → post hold comment from **AW4** or **AW5**; stop.
-   - **WAIT** → continue polling.
-
-Note: "advisory" means the agent is not obligated to accept every
-suggestion — it does **not** mean the agent can skip waiting for a
-review it explicitly requested. Human `CHANGES_REQUESTED` reviewers are
-not advisory; they remain under the hold/escalation path above.
+Note: "advisory" means the agent need not accept every suggestion — not
+that it may skip a review it explicitly requested. Human
+`CHANGES_REQUESTED` reviewers are not advisory; they stay under the
+hold/escalation path above.
 
 ## E15 — Wait for CI
+
+Schedule a wake, or background this wait only if the
+topology-safety condition holds (confirmed to route completion back to
+this turn); otherwise wait synchronously — see
+[wake-up discipline](idd-ci.instructions.md#wake-up-discipline) for
+the blocking commands and caveats; do not `run_in_background` this
+wait absent the confirmed condition above.
 
 Use `idd-ci.instructions.md` for the polling mechanics and timing. E15
 reuses the same resolved `ciWait.runningTimeout`,
@@ -239,24 +460,33 @@ proceeding to F — do not skip triage.
 - **On success** → return to `idd-review-snapshot.instructions.md` (E1)
 - **On failure / code-caused**: fix, run **fix-validate**, commit
   atomically, then return to E11
-- **On failure / infra-flaky or pre-existing** (failure also present on
-  `main`, unrelated to this branch): apply `ciWait.rerunPolicy`
-  (default `rerun-once`). If it authorizes the current rerun, rerun
-  once and resume polling. If the failure persists after that rerun, or
-  if the policy is `hold`, post a hold comment on the PR documenting the
-  pre-existing failure and stop. A maintainer must resolve or bypass the
-  failing check; do not auto-continue or treat as passed without human
-  confirmation.
+- **On failure / infra-flaky or pre-existing** (also failing on
+  `{development-branch}`, unrelated to this branch): apply
+  `ciWait.rerunPolicy` (default `rerun-once`) — rerun once and resume
+  polling if it authorizes the current rerun; otherwise, or if the
+  failure persists after that
+  rerun, post a hold comment documenting it and stop. A maintainer must
+  resolve or bypass the failing check; never auto-continue or treat as
+  passed without human confirmation. Phrase the resume condition per
+  the invariant-first guidance in
+  `idd-overview-appendix.instructions.md` (Hold / suspend).
 - **On cancelled / timed_out / code-caused**: fix, run **fix-validate**,
   commit, return to E11
-- **On cancelled / timed_out / infra**: apply `ciWait.rerunPolicy`.
-  Re-push or rerun CI only when the policy authorizes the current rerun;
-  if the route recurs after that rerun, or if the policy is `hold`,
-  post a hold comment and stop (do not loop). On success after the
-  rerun, **return to E1**.
+- **On cancelled / timed_out / infra**: apply `ciWait.rerunPolicy` —
+  re-push/rerun only when it authorizes the current rerun; if the route
+  recurs after that rerun, or the policy is `hold`, post a hold comment
+  and stop (do not loop). On success after the rerun, **return to E1**.
+- **On failure / `idd-advisory-convergence` alone, `pending: false` with
+  outstanding review reasons** (see `idd-ci.instructions.md`
+  §Interpretation): return to E1, not E11 — neither code-caused nor
+  infra. **Unless** a maintainer has since posted a valid external-check
+  waiver for this HEAD, in which case apply `ciWait.rerunPolicy` instead
+  — the rerun is what makes the check reflect the waiver (see D4's
+  identical carve-out and `idd-pre-merge.instructions.md`'s External-check
+  waivers).
 
-When E15 stops on a CI hold, re-validate the claim and then update the
-digest with `Phase: E15 hold`, the failing or missing checks in
-`Open blockers`, and the maintainer or rerun expectation in
-`Next action`. On CI success, do not edit the digest before returning to
-E1; let the next E1/F pass refresh review currency first.
+When E15 stops on a CI hold, re-validate the claim, then update the
+digest with `Phase: E15 hold`, the failing/missing checks in
+`Open blockers`, and the maintainer/rerun expectation in `Next action`.
+On CI success, do not edit the digest before returning to E1 — let the
+next E1/F pass refresh review currency first.

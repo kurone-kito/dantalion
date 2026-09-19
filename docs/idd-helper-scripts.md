@@ -266,6 +266,17 @@ turning every adopter into a Node.js-first repository. The written
 decision tables remain the canonical protocol regardless of which helper
 profile is selected.
 
+Before switching from `instructions-only`, verify the pinned helper source
+and its output schema for the S2 branch-tip contract: server-observed
+timeline/ref-update or equivalent current-head snapshot evidence, the
+current PR head SHA bound to that evidence, and an explicit completeness
+flag. Also verify that malformed `--claim-created-at` values are rejected
+before output, rather than copied into a schema-invalid policy envelope. A
+helper that uses a commit object's author/committer date, omits those
+bindings, or emits unvalidated claim timestamps is not eligible for
+activation; keep the profile at `instructions-only` until the helper and
+schema are updated together.
+
 ## Profile Wiring Surface
 
 Use `idd-helper-bundle-manifest` as the canonical import helper for these
@@ -402,6 +413,87 @@ The adopted helper boundaries are intentionally narrow:
   confirming marker presence before triage exits
 
 ## Stable Helper Evidence Outputs
+
+### Worktree-local claim lock
+
+The worktree-local claim lock is a same-machine complement to the live
+GitHub claim. It is stored below the worktree's private Git admin
+directory, resolved with `git -C <worktree> rev-parse --absolute-git-dir`,
+and uses the shared filename `idd-claim.lock`. It has no local staleness
+judgment: a different or malformed holder is a collision and must not be
+overridden without a separately authorized GitHub takeover.
+
+Helper-enabled profiles use their profile-selected `claim-lock` command:
+
+- Source repo / vendored-node command:
+  `node scripts/claim-lock.mjs`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  `claim-lock` command from the helper runtime manifest wiring above
+
+For `instructions-only`, use this portable fallback before each
+mutation:
+
+1. Read `idd-claim.lock` before writing. A well-formed JSON object whose
+   `agentId` and `claimId` match the current session is a read-only
+   reacquisition. A different, malformed, or unreadable object is a
+   collision; stop and revalidate the GitHub claim rather than deleting it.
+2. If the lock is absent, write
+   `{ "agentId": "...", "claimId": "...", "acquiredAt": "..." }` to
+   a unique temporary file in the same admin directory, close it, and
+   publish it with an atomic no-overwrite operation (`link` plus temporary
+   unlink on POSIX, or the platform's equivalent exclusive move). Never
+   write the final path in two separate operations or use an overwriting
+   rename. If publication loses a race, remove only the temporary file and
+   re-read the final holder; a matching holder is a raced acquisition, not
+   evidence that the lock predated this call.
+3. Do not auto-remove an aged lock. A collision remains fail-closed until
+   the live claim transition authorizes takeover. `git worktree remove` at
+   F4 removes the lock with the worktree.
+
+The generated-tokens record is a separate, per-claim evidence file in the
+same admin directory. Its path is:
+
+```text
+idd-generated-tokens-<sanitized-claim-id>-<8-hex-char sha256 prefix>.json
+```
+
+Replace non-`[A-Za-z0-9._-]` characters with `_`, truncate that portion
+to 64 characters, and compute the eight-character SHA-256 prefix from the
+original claim ID. Store `{ "agentId": "...", "claimId": "...",
+"nonce": "...", "recordedAt": "..." }`; omit `nonce` until the
+activation nonce is generated. Record once in the primary worktree before
+the claim marker, again before the activation-nonce marker, and once more
+in the B1 worktree while preserving the same nonce. Before trusting a
+claim ID from context, read this exact path and require a well-formed
+record whose `claimId` matches; absent or malformed is fail-closed.
+
+For fallback writers, serialize updates to one record with an exclusive
+same-directory `<record>.writelock` guard. Retry only for the bounded
+five-second window, arm cleanup only after this invocation creates the
+guard, and remove it on exit only when its body still matches this
+invocation's unique guard token. If the guard cannot be acquired, stop and
+report its path. Write the record through a temporary file and atomic
+replacement while holding the guard; never overwrite a directory at the
+record path.
+
+### Clone-scoped lock
+
+The clone-scoped lock serializes `git fetch`, base-branch fast-forwards,
+and `git worktree add`/`remove` operations that share one primary clone.
+It is distinct from the worktree-local claim lock: it protects the clone
+topology, not issue ownership. Helper-enabled profiles should run the
+profile-selected `idd:clone-lock` wrapper around the complete command and
+release it even when that command fails. The wrapper must fail closed on
+timeout and must not auto-remove a lock merely because it looks old.
+
+For `instructions-only`, do not hand-roll a competing lock protocol. When
+parallel workers share a clone, give each worker a separate clone and keep
+the primary worktree operations serialized by the operator; otherwise use
+an existing platform-native exclusive lock such as `flock` only when its
+availability and timeout semantics are verified before the first command.
+Never run concurrent `fetch`, `merge --ff-only`, `worktree add`, or
+`worktree remove` calls against one clone without one of those two guarded
+arrangements.
 
 ### Operator forced-handoff helpers
 
@@ -565,6 +657,9 @@ Interpretation rules:
 
 - Claim routing command:
   `node scripts/resume-claim-routing.mjs --issue <issue-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  resume-claim-routing command from the helper runtime manifest wiring
+  above
 - Stable fields consumed by resume instructions: `state`, `action`,
   `reason`, `active_claim`, `claim_id_checked`, `stale_age_ms`, `now`,
   `warnings`, and `evidence`
@@ -575,14 +670,33 @@ Interpretation rules:
 
 - Step 3 route command:
   `node scripts/resume-route-selection.mjs --issue <issue-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  resume-route-selection command from the helper runtime manifest wiring
+  above
 - Stable fields consumed by resume instructions: `route`, `reason`,
   `state`, and `evidence`
 - Stable enum:
   - `route`: `D1|D4|E1|E15|Esync|F1|F2|stop`
 
+### Effective C1 critique delegate
+
+- Source repo / vendored-node command:
+  `node scripts/idd-critique-delegate.mjs`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  critique-delegate command from the helper runtime manifest wiring
+  above
+- Stable fields consumed by instructions: `usable`, `source`, `command`,
+  and `mode`
+- Read-only boundary: the helper resolves critique-loop delegate wiring
+  only; it does not run the delegate, mutate repository state, or post
+  any GitHub comment by itself
+
 ### Advisory-wait evidence
 
 - Command: `node scripts/advisory-wait-state.mjs --pr <pr-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  advisory-wait-state command from the helper runtime manifest wiring
+  above
 - Stable contract:
   [`advisory-wait-state.schema.json`][advisory-wait-state-schema]
 - Stable fields consumed by the instructions: `prHeadSha`,
@@ -590,8 +704,13 @@ Interpretation rules:
   `copilotPendingCoversHead`, `outcome`, `f3Outcome`,
   `earliestSameHeadAt`, `requestMarkerCount`, `requestCap`,
   `pendingWindowMinutes`, `settledWindowMinutes`,
-  `pollIntervalMinutes`, `capExhaustedRoute`, and
-  `trustedMarkerSummary`
+  `pollIntervalMinutes`, `capExhaustedRoute`, `trustedMarkerSummary`,
+  `copilotRecovery`, and `staleRequestRecovery`
+
+- Consumers of `copilotRecovery.state: "COPILOT_UNAVAILABLE"` must also
+  verify on the same live snapshot that `lastCopilotCommit` differs from
+  `prHeadSha`; the schema enforces the recovery flags but cannot compare
+  those two fields.
 
 ### CI wait policy resolution
 
@@ -610,6 +729,40 @@ Interpretation rules:
 - it remains read-only; the command does not poll CI, rerun workflows,
   or post any GitHub comment
 
+### CI wait state snapshot
+
+- Source repo / vendored-node command:
+  `node scripts/ci-wait-state.mjs --pr <pr-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  ci-wait-state command from the helper runtime manifest wiring above
+- Stable fields consumed by the instructions: `headRefOid`,
+  `requiredChecks`, and `checks`
+- Read-only boundary: the helper reports HEAD-pinned CI state only; it
+  does not rerun workflows or post any GitHub comment
+
+### Advisory-convergence rerun diagnosis
+
+- Source repo / vendored-node command:
+  `node scripts/rerun-advisory-convergence.mjs --pr <pr-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  rerun-advisory-convergence command from the helper runtime manifest
+  wiring above
+- Read-only boundary: without `--apply`, the helper only diagnoses the
+  rerun plan and does not rerun workflows by itself
+
+### Advisory convergence (F2)
+
+- F2's advisory-convergence gate consumes the profile-selected
+  advisory-convergence command for the current PR.
+- Source repo / vendored-node command:
+  `node scripts/advisory-convergence.mjs --pr <pr-number> --assert`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  advisory-convergence command from the helper runtime manifest wiring
+  above.
+- Read-only boundary: the command evaluates current PR review
+  disposition evidence only; it does not post replies, resolve threads,
+  request reviews, or rerun workflows by itself.
+
 ### Merge-gate evidence
 
 - When helper runtime is enabled, these commands are the preferred
@@ -618,22 +771,32 @@ Interpretation rules:
 - Snapshot command: `node scripts/review-activity-snapshot.mjs`
   with `--pr <pr-number>` and
   `--trusted-marker-logins "<trusted-login-1>,<trusted-login-2>"`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  review-activity-snapshot command from the helper runtime manifest
+  wiring above
 - Stable E1/F2/F3 snapshot tuple: `headSha`,
   `maxActivityUpdatedAt`, `totalItemCount`,
   `latestPassingCiCompletedAt`, and `counts`
+- When a caller already froze the PR head before invoking the helper,
+  the helper's `headSha` must match that frozen HEAD exactly; a mismatch
+  is mixed-head evidence and must be discarded rather than paired with a
+  raw activity snapshot from another HEAD.
 - Additional CI completion field: `latestCiCompletedAt` reports the
   latest terminal run of any state; watermark and merge-gate checks use
   `latestPassingCiCompletedAt`
 - Readiness command: `node scripts/pre-merge-readiness.mjs`
   with `--pr <pr-number>`, `--claim-issue <issue-number>`,
-  `--expected-claim-id <claim-id>`, and
+  `--claim-id <claim-id>`, and
   `--trusted-marker-logins "<trusted-login-1>,<trusted-login-2>"`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  pre-merge-readiness command from the helper runtime manifest wiring
+  above
 - Stable contract:
   [`pre-merge-readiness.schema.json`][pre-merge-readiness-schema]
 - Stable sections consumed by the instructions: `reviewCurrency`,
   `threads`, `unrepliedComments`, `reviewerStates`,
   `advisoryWait` (including the effective advisory policy fields), `ci`,
-  `claim`, and optional `dispositionEvidence`
+  `claim`, and `dispositionEvidence`
 - `reviewerStates.codeownerSelfApproval` diagnoses whether CODEOWNER
   approval can be satisfied by an eligible non-author owner or an
   applicable ruleset or classic pull-request bypass. `deadlock` and
@@ -653,6 +816,38 @@ Interpretation rules:
   required fields/sections are missing, or helper evidence conflicts with
   live GitHub state, discard helper output and use the portable manual
   fetch path.
+
+### Local-validation evidence helper
+
+- `pre-merge-readiness`'s `localValidationEvidence` section is
+  informational evidence for a CI-gate outage only.
+- It never makes an unavailable required check pass, and never acts as a
+  waiver.
+- When a repository documents a local-validation evidence helper, keep it
+  HEAD-pinned to the current PR or claim branch and surface its result
+  only through `pre-merge-readiness`.
+
+### Merge execution (F3)
+
+- Preferred command when helper runtime is enabled:
+  `node scripts/idd-merge-execute.mjs --pr <pr-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  merge-execution command from the helper runtime manifest wiring above.
+- Dry-run mode is read-only and returns the same merge-gate evidence the
+  F3 instructions inspect plus a `ready` flag and any `blockers[]`.
+- `--apply` is explicit. It revalidates the claim and current head, runs
+  the merge commit bound to the validated head SHA, and reports whether
+  an admin fallback was used.
+
+### Signed-commit merge wrapper (shared git procedure)
+
+- Some repositories use commit signing that is hostile to unattended
+  `git merge`, `git rebase`, or `--continue` flows.
+- When a repository blesses a fallback wrapper, use the same wrapper for
+  the initial mutating command and every follow-up `--continue` command.
+- The wrapper must preserve the underlying git subcommand, keep the
+  operation non-interactive, and add a conventional merge-commit subject
+  when the wrapped command creates a merge commit.
 
 ### E7 disposition verification
 
@@ -701,6 +896,9 @@ Interpretation rules:
   `idd-branch-conflict-state --pr <pr-number>`
 - Source repository equivalent:
   `node scripts/branch-conflict-state.mjs --pr <pr-number>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  branch-conflict-state command from the helper runtime manifest wiring
+  above
 - Output schema (stable fields):
 
   ```json
@@ -743,14 +941,29 @@ Interpretation rules:
   profile-selected `idd-stalled-session-quiet-check --pr <pr-number>`
   command first. `node scripts/stalled-session-quiet-check.mjs --pr
   <pr-number>` is the vendored equivalent.
-- Optional parameters: `--now <ISO8601>`, `--quiet-window-ms <ms>`,
-  `--claim-created-at <ISO8601>`, and `--policy <path>`
+- Package-manager / ephemeral-npx command: use the profile-selected
+  stalled-session-quiet-check command from the helper runtime manifest
+  wiring above
+- Resume/S2 and S4 must pass `--now <server-anchored-ISO8601>` from a
+  GitHub `Date` response header; omitting it falls back to the local
+  clock and is unsafe for the quiet-window contract.
+- Optional parameters beyond that required clock anchor:
+  `--quiet-window-ms <ms>`, `--claim-created-at <ISO8601>`, and
+  `--policy <path>`, plus `--gh-token <token>` when the executor must
+  provide an explicit GitHub token override
 - Stable fields consumed by the instructions: `quiet_window_met`,
   `quiet_window_ms`, `window_start`, `now`, `latest_activity`,
   `latest_activity_type`, `reason`, and `evidence`
   (`activity_count_in_window`, `blocking_activities`,
   `has_heartbeat_in_window`, `has_ci_running`,
-  `has_pr_head_movement`, `has_branch_tip_movement`)
+  `has_branch_tip_movement`, `branch_tip_evidence_source`,
+  `branch_tip_evidence_head_sha`, `branch_tip_evidence_complete`)
+- `has_branch_tip_movement` is valid only when the producer observed a
+  GitHub-server PR timeline/ref-update event (for example `committed`,
+  `head_ref_force_pushed`, or `synchronize`) or an equivalent current-head
+  snapshot, and binds that evidence to the current PR head. Commit
+  author/committer dates are not branch-movement evidence. Missing or
+  incomplete server ref-update data is a hold/inconclusive result.
 - `ci-running` activities always break the quiet window regardless
   of their timestamp; all other types are checked against
   `window_start = now - quiet_window_ms`
@@ -759,6 +972,28 @@ Interpretation rules:
   stale-threshold gating, closed/merged guards, and A5 race-safe claim
   verification. `quiet_window_met = true` alone is never sufficient.
 
+### Provider outage park helper
+
+- Use the profile-selected provider-outage park helper only when a known
+  provider outage is the sole blocker.
+- The helper records the outage hold, releases the claim immediately,
+  and reports the bounded parked-change decision so the session does not
+  keep opening unmergeable pull requests.
+- If the helper is unavailable or its evidence is ambiguous, fail closed
+  to the written hold path instead of inferring a provider outage.
+
+### Provider outage declaration helper
+
+- Repositories may optionally record a sustained provider-outage
+  declaration for a specific external-check selector.
+- When helper runtime is enabled, use the profile-selected
+  provider-outage declaration helper to read that declaration instead of
+  re-deriving it from comments.
+- The declaration never proves a pull request's terminal advisory state
+  by itself; it only substitutes for the per-PR waiver once the current
+  PR independently satisfies the documented terminal-unavailability
+  checks.
+
 ## Friction Inventory
 
 The workflow areas most likely to benefit from optional helpers are:
@@ -766,7 +1001,7 @@ The workflow areas most likely to benefit from optional helpers are:
 | Candidate                       | Status             | Helper level                       | Mutation risk | Canonical fallback path                                                | Drift risk                                                                               | Estimated payoff / byte reduction                                       |
 | ------------------------------- | ------------------ | ---------------------------------- | ------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | A4 viability gate               | Adopted helper     | Read-only evaluator                | Low           | A4 viability criteria table in `idd-discover.instructions.md`          | Low — criteria are deterministic pattern matches against issue body text                 | Low to medium — roughly 100 to 200 bytes of repeated A4 criterion prose |
-| Claim-state parsing             | Reserve candidate  | Read-only parser                   | Low           | Claim rules in `.github/instructions/idd-overview.instructions.md`     | High — claim parsing is subtle and any divergence would create false ownership decisions | Medium — roughly 200 to 400 bytes of repeated marker-parsing prose      |
+| Claim-state parsing             | Reserve candidate  | Read-only parser                   | Low           | Claim rules in `.github/instructions/idd-overview-core.instructions.md`     | High — claim parsing is subtle and any divergence would create false ownership decisions | Medium — roughly 200 to 400 bytes of repeated marker-parsing prose      |
 | Review activity snapshots       | Adopted helper     | Read-only evidence collector       | Low           | E1/F2/F3 activity-universe fetches via `gh` / GitHub API               | Medium — helper output must keep matching the review-currency rules exactly              | High — roughly 600 to 900 bytes of repeated multi-surface fetch prose   |
 | Live status digest edits        | Adopted helper     | Dry-run by default, explicit apply | Medium        | Phase-specific digest discovery and update flow                        | Medium — digest text must remain UI-only and never look authoritative                    | Medium — roughly 300 to 500 bytes of repeated digest-upsert prose       |
 | Advisory-wait state             | Adopted helper     | Read-only evidence collector       | Low           | `.github/instructions/idd-advisory-wait.instructions.md`               | Medium — helper must expose evidence without hiding the canonical decision table         | Very high — roughly 900 to 1400 bytes of repeated AW command prose      |

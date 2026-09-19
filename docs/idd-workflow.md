@@ -17,7 +17,7 @@ If you arrived here from your agent's entry file, pick up at step 2. If
 you are reading this guide first, start at step 1.
 
 1. Read the entry file for your agent or surface (see table below).
-2. Read `.github/instructions/idd-overview.instructions.md`.
+2. Read `.github/instructions/idd-overview-core.instructions.md`.
 3. Read the phase file that matches your current state.
 4. If you are editing package-specific code, also follow the matching
    scoped instruction file in `.github/instructions/`.
@@ -26,10 +26,10 @@ you are reading this guide first, start at step 1.
 
 | Agent / surface         | Read first                        | Automatically available IDD context                                                                                                                                | Open manually                                                                 |
 | ----------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
-| GitHub Copilot surfaces | `.github/copilot-instructions.md` | `.github/instructions/idd-overview.instructions.md` for execution surfaces; package-scoped `.instructions.md` files in VS Code Copilot when editing matching paths | The routed phase file when the current step changes                           |
-| Codex CLI               | `AGENTS.md`                       | None from `.github/instructions/`                                                                                                                                  | `.github/instructions/idd-overview.instructions.md` and the routed phase file |
-| Claude Code             | `CLAUDE.md`                       | None from `.github/instructions/` by default                                                                                                                       | `.github/instructions/idd-overview.instructions.md` and the routed phase file |
-| Gemini CLI              | `GEMINI.md`                       | None from `.github/instructions/`                                                                                                                                  | `.github/instructions/idd-overview.instructions.md` and the routed phase file |
+| GitHub Copilot surfaces | `.github/copilot-instructions.md` | `.github/instructions/idd-overview-core.instructions.md` for execution surfaces; package-scoped `.instructions.md` files in VS Code Copilot when editing matching paths | The routed phase file when the current step changes                           |
+| Codex CLI               | `AGENTS.md`                       | None from `.github/instructions/`                                                                                                                                  | `.github/instructions/idd-overview-core.instructions.md` and the routed phase file |
+| Claude Code             | `CLAUDE.md`                       | None from `.github/instructions/` by default                                                                                                                       | `.github/instructions/idd-overview-core.instructions.md` and the routed phase file |
+| Gemini CLI              | `GEMINI.md`                       | None from `.github/instructions/`                                                                                                                                  | `.github/instructions/idd-overview-core.instructions.md` and the routed phase file |
 
 During onboarding, create or update `CLAUDE.md`, `AGENTS.md`, and
 `GEMINI.md` so each non-Copilot agent listed above has a stable first
@@ -41,7 +41,7 @@ entry file should be an explicit operator choice, not the default.
 
 | File                                                       | Role                                                                                                            |
 | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `.github/instructions/idd-overview.instructions.md`        | Shared definitions, command sets, routing table, critique-pass mapping                                          |
+| `.github/instructions/idd-overview-core.instructions.md`        | Shared definitions, command sets, routing table, critique-pass mapping                                          |
 | `.github/instructions/idd-discover.instructions.md`        | A0-T–A4.5: find a viable issue, classify roadmap vs. leaf nodes during traversal, run suitability, and hand off |
 | `.github/instructions/idd-roadmap-audit.instructions.md`   | A1.5: audit roadmap completion, including bottom-up recursive roadmap closure, before A2                        |
 | `.github/instructions/idd-claim.instructions.md`           | A5: run claim pre-checks and claim verification                                                                 |
@@ -96,6 +96,62 @@ ownership boundaries explicit:
 
 Some older project text may still use "skill files" as shorthand, but
 these instruction files are not agent-native `SKILL.md` bundles.
+
+## Critique pass invocation
+
+A **critique pass** is an independent review of a plan or diff that
+produces a list of issues with severity, correctness, and coverage
+assessment. The calling phase supplies the checklist; the reviewer must
+return its findings before the workflow advances.
+
+| Agent | Invocation |
+| --- | --- |
+| GitHub Copilot | Launch an Agent-mode subagent with the calling phase's critique checklist. |
+| Claude Code | Launch a fresh general-purpose subagent with the calling phase's critique checklist. |
+| Codex CLI | Use one bounded read-only native subagent when supported; otherwise perform a structured self-critique. |
+| Gemini CLI | Use the native multi-step task mechanism when available; otherwise perform a structured self-critique. |
+
+When `critiqueLoop.delegate` is configured, apply its documented mode
+after resolving the delegate command. A successful delegate may suppress
+the per-agent pass only under the selected mode; a missing, timed-out, or
+unreadable delegate result is not a clean critique and must follow the
+phase's hold/fallback rule.
+
+### Mutation / write-side helper lens
+
+Apply this lens when a helper or script mutates GitHub state, mutates git
+state, or performs a merge. Check four things:
+
+- fail-closed handling for missing or malformed inputs;
+- parity between the helper's validation path and its apply path;
+- suppression of unsafe or stale helper output; and
+- schema or field strictness that is at least as strong as the written
+  instruction contract.
+
+### Gate-mirroring helper lens
+
+Apply this lens when a helper predicts, mirrors, or pre-checks another
+workflow gate. Check that it preserves:
+
+- the full set of required inputs;
+- whole-identity comparisons, not partial matches;
+- snapshot identity between the evidence it reads and the gate it claims
+  to mirror; and
+- point-in-time parity, so it does not silently evaluate a different
+  head, review set, or CI run than the written gate.
+
+## Orchestrator fan-out variant
+
+An orchestrator may select multiple independent issues, but each worker
+still owns exactly one verified issue claim and sibling worktree. Claims
+are the cross-machine coordination boundary; the clone-scoped lock in
+[`docs/idd-helper-scripts.md`](idd-helper-scripts.md#clone-scoped-lock)
+serializes shared-clone topology operations. In an instructions-only
+setup, prefer a separate clone per worker or a verified native lock rather
+than concurrent `fetch`, base-branch fast-forward, or worktree add/remove
+calls in one clone. Background waits are not completion evidence: the
+orchestrator must synchronously collect each worker result and re-check
+the live issue/PR state before routing the next phase.
 
 The distributed workflow remains an instruction template first. Native
 skills can sit beside it as optional helpers, but they do not replace
@@ -181,6 +237,20 @@ limited to the PR that just merged and the local cleanup for that child
 issue. F5 then loops back to Discover, where roadmap completion can be
 checked with the broader parent context.
 
+## Branch publication and synchronization
+
+IDD treats the first D-phase push as the publication boundary. Before
+that push, the branch may be rebased onto the development branch as part
+of unpublished history cleanup. After publication, synchronization stays
+reviewable:
+
+- branch-state probes remain read-only;
+- a `BEHIND` state is evidence only unless repository policy requires an
+  up-to-date head; and
+- when synchronization is required, merge the development branch into the
+  PR branch and route the resulting diff back through review, CI, and
+  freshness gates instead of hiding it behind a last-minute rebase.
+
 ## Resume routing model
 
 Resume now starts with a deterministic external-signal classifier before
@@ -246,6 +316,8 @@ roadmap issue itself is being mutated, then release them once that
 roadmap-side effect is complete. They are not a proxy lock for child
 claims.
 
+## Recursive roadmap hierarchies
+
 Recursive roadmap hierarchies still follow that rule. Leaf execution
 issues finish first, then the deepest completed nested roadmap is
 audited and closed under its own `roadmap-audit/*` claim, and only then
@@ -261,6 +333,15 @@ heartbeat, release, or take over rather than holding the claim open.
 The docs audit keeps this guidance synchronized with the exported
 template so unattended runs can spot drift.
 
+## Grooming pass for rejected and below-floor issues (optional)
+
+Repositories may optionally run a separate grooming pass over issues that
+were rejected by A4.5 or repeatedly ranked below the suitability floor.
+That pass is a backlog-maintenance aid only: it clarifies issue bodies,
+repairs metadata, or links duplicates so future A4.5 runs can evaluate
+them cleanly. It never bypasses the normal A4.5 or A5 gates in the
+execution loop.
+
 ## Copilot review instruction scope
 
 The heavy shared overview keeps `applyTo: "**"` so GitHub Copilot
@@ -274,7 +355,7 @@ keeping review coupled to the full overview, narrowing `applyTo` and
 risking execution-agent discoverability, or splitting a separate
 reviewer-only instruction file. Copilot code review may still use the
 lightweight repository-wide `.github/copilot-instructions.md`; only the
-heavier `idd-overview.instructions.md` is excluded from review.
+heavier `idd-overview-core.instructions.md` is excluded from review.
 
 ## F2 merge-readiness evidence checklist
 

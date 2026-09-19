@@ -3,6 +3,57 @@
 Read this file after A1 selects an open roadmap and before A2
 enumerates child issues.
 
+## Canonical A1.5 path (helper-first)
+
+When helper runtime is enabled, use the profile-selected roadmap-audit
+execution helper as the canonical A1.5 evidence collector and mutation
+path.
+
+```sh
+# source repo / vendored-node
+node scripts/idd-roadmap-audit-execute.mjs --roadmap <number>
+
+# package-manager / ephemeral-npx
+<profile-selected-roadmap-audit-execute-command> --roadmap <number>
+```
+
+Resolve `<profile-selected-roadmap-audit-execute-command>` from
+`docs/idd-helper-scripts.md`; do not hardcode `node scripts/...` for
+non-vendored profiles.
+
+Default (no `--apply`) dry-runs the roadmap-graph traversal and prints
+a JSON verdict — see the helper's own `--help` for the exact field
+contract, exit codes, and not-owned reason codes; treat that as
+authoritative over any paraphrase here. It gates only the MECHANICAL
+completion preconditions (all descendants closed/complete; no
+open/unresolved/inaccessible/linked-PR/nested-roadmap/childless/cycle/
+human-gate blocker) — it does **not** verify the roadmap's free-form
+success criteria or autonomy-gap items, and does **not** gate on a
+duplicate graph reference (only a cycle blocks `ready`, even though
+the written procedure below always treats a duplicate reference as
+unresolved). The caller must still confirm all of these separately
+before `--apply`, exactly as every other helper-first section in this
+repository already states for its own helper:
+
+```sh
+# source repo / vendored-node
+node scripts/idd-roadmap-audit-execute.mjs --roadmap <number> \
+  --claim-id <claim-id> --agent-id <agent-id> --apply
+
+# package-manager / ephemeral-npx
+<profile-selected-roadmap-audit-execute-command> --roadmap <number> \
+  --claim-id <claim-id> --agent-id <agent-id> --apply
+```
+
+`<claim-id>` must be the roadmap-audit-scoped claim (branch
+`roadmap-audit/<number>-<slug>`) posted per the written claim step
+below; an ordinary execution claim on the roadmap issue does not
+authorize closure.
+
+If the helper is unavailable, its output cannot be parsed, or its
+verdict disagrees with live state, fall back to the written A1.5
+procedure below.
+
 ## A1.5 — Audit completed roadmaps
 
 After A1 selects an open roadmap, inspect whether the roadmap appears
@@ -31,17 +82,39 @@ results only to link existing gap work or avoid creating a duplicate,
 not to widen A2 candidates.
 
 When the selected roadmap graph includes descendant issues that are
-themselves roadmap nodes, such as descendants carrying the `roadmap`
-label or a `dantalion-roadmap-id` marker, treat those
+themselves roadmap nodes, such as descendants carrying the configured
+roadmap label from `labels.roadmapLabelName` (default: `roadmap`) or a
+`dantalion-roadmap-id` marker, treat those
 descendants as **nested roadmaps** rather than as normal execution
 leaves. A nested roadmap is a coordination/audit node in the recursive
 hierarchy: it may remain open while its own leaf descendants are still
 executing, and its presence does not by itself widen A2 candidates
 outside the selected roadmap graph.
 
-- If the roadmap itself has `status:blocked-by-human` or
-  `status:needs-decision`, report the blocker and stop before A2. Do
-  not continue selecting child issues under a blocked roadmap.
+- If the roadmap itself carries the configured blocked-by-human label
+  from `labels.blockedByHumanLabelName` (default:
+  `status:blocked-by-human`) or configured needs-decision label from
+  `labels.needsDecisionLabelName` (default: `status:needs-decision`),
+  report the blocker and stop before A2. Do not continue selecting
+  child issues under a blocked roadmap. **Roadmap-first fallback
+  (trigger (d)):** when this A1.5 run was reached via the normal
+  `idd-discover.instructions.md` A1 roadmap-selection path — never
+  A0-T's own scoped A1.5 invocation, which already governs its own
+  outcome unconditionally and with no fallback (see A0-T step 2) —
+  **and** `issue-scope` is `roadmap-first`, fall back to A0-O instead
+  of stopping, excluding this roadmap's already-fetched descendant set
+  (an execution leaf carries no marker distinguishing it from a true
+  orphan) from the orphan candidate pool before A3.5. Freeze the set as
+  issue numbers before entering A0-O; the helper path must post-filter its
+  result against that set because `discover-orphan-filter` has no native
+  exclusion-set argument in this profile, and the manual path must apply
+  the same number filter before A3.5. If the set or a candidate number
+  cannot be parsed, fail closed and stop. This bullet's own
+  behavior needs no claim, so most runs reach A0-O with nothing to
+  release; only if this session already holds the roadmap-audit claim
+  (for example from an earlier bullet's side effect on this same run),
+  release it per the claim-release rule below first — never release a
+  claim this session does not itself hold.
 - If any referenced child or descendant issue is open, inaccessible, or
   unresolved, report the provenance path and reason, then continue to
   A2, unless the open descendant is a nested roadmap with at least one
@@ -52,12 +125,11 @@ outside the selected roadmap graph.
 - If any referenced child or descendant has an open linked or closing
   PR that is not merged or otherwise obsolete, treat that child work as
   unresolved, report the PR, and continue to A2.
-- If any open or unresolved child or descendant has
-  `status:blocked-by-human` or `status:needs-decision`, report the
-  blocker and continue to A2 or stop according to the normal
-  ready-to-start rules. Do not treat stale blocker labels on closed
-  children as audit blockers when their referenced descendants are
-  resolved.
+- If any open or unresolved child or descendant has the configured
+  blocked-by-human or needs-decision label, report the blocker and
+  continue to A2 or stop according to the normal ready-to-start
+  rules. Do not treat stale blocker labels on closed children as
+  audit blockers when their referenced descendants are resolved.
 - If an open leaf issue sits under an open nested roadmap, treat the
   nested roadmap and every ancestor roadmap on that provenance path as
   unresolved. Report the deepest blocking path and continue to A2.
@@ -79,7 +151,16 @@ outside the selected roadmap graph.
   inside the recursive roadmap graph, preserve that evidence and treat
   the affected path as unresolved until the graph can be interpreted
   safely. Do not guess at a closure order when the traversal graph is
-  ambiguous.
+  ambiguous. **Root-preserving exemption for cycles only** (duplicate
+  references are unaffected): define the cycle's **segment** as the
+  suffix of the recorded path starting at the first occurrence of the
+  back-edge target. When the segment excludes the roadmap under audit
+  AND every node in it is CLOSED, treat the cycle as informational
+  provenance instead of a blocker, regardless of relationship type —
+  such a loop has no closure order left to get wrong. A cycle whose
+  segment includes the audited roadmap, or holds any node that is open,
+  inaccessible, unresolved, or absent from the traversal's node set,
+  still blocks.
 - If all referenced child and descendant work is closed or otherwise
   complete, compare the roadmap success criteria against the closed
   child issues, linked merged PRs, task-list state, follow-up comments,
@@ -126,8 +207,8 @@ Treat `stale` and `non-stale` in this section using the
 - Re-validate that roadmap claim before every roadmap comment,
   follow-up issue creation, body edit, label change, or close action.
 - If the roadmap remains open and no PR branch will continue from the
-  audit, release the roadmap-audit claim before returning to A2 or
-  stopping.
+  audit, release the roadmap-audit claim before returning to A2,
+  stopping, or invoking A0-O (trigger (d)).
 - Example: when another agent holds a non-stale roadmap claim, do not
   mutate that roadmap in A1.5, but continue to A2/A3 and allow child
   issues that pass readiness and A5 to proceed.
@@ -160,8 +241,26 @@ Apply one outcome:
   issue link so the next audit can link it before considering
   duplicates.
 - **Non-autonomous gaps found**: comment with the decision or human
-  blocker, apply `status:needs-decision` or `status:blocked-by-human`
-  when those labels exist, and do not close the roadmap. Stop before A2
-  after reporting a non-autonomous gap, even if the repository does not
-  have the blocker labels, so the same unattended run cannot select
-  child work under a roadmap that needs human input.
+  blocker, apply the configured needs-decision or blocked-by-human
+  label when those labels exist, and do not close the roadmap. Stop
+  before A2 after reporting a non-autonomous gap, even if the
+  repository does not have the blocker labels, so the same unattended
+  run cannot select child work under a roadmap that needs human input.
+  **Roadmap-first fallback (trigger (d)):** the same fallback as the
+  blocked-label check above applies here too, under the same two
+  conditions (normal A1 path, never A0-T's own scoped invocation; and
+  `issue-scope: roadmap-first`) — release the roadmap-audit claim
+  (already held here, unlike the blocked-label check, since posting
+  this outcome's own comment/label already required it) per the
+  claim-release rule below, then fall back to A0-O instead of stopping,
+  excluding this roadmap's already-fetched descendant set from the
+  orphan candidate pool before A3.5, the same way the blocked-label
+  check does. This roadmap's own children still need human input
+  first, so the fallback still reaches only unrelated orphan issues,
+  never this roadmap's own children.
+
+**Child issue split.** A further roadmap-currency trigger, orthogonal to
+the three outcomes above: when a child issue is split into two or more
+issues, bring the roadmap task list and sequencing notes current in the
+same action, per the issue-authoring contract's same-action rule
+(`.claude/skills/issue-authoring/references/contract.md`).

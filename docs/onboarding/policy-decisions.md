@@ -19,18 +19,19 @@ Keep the operator-confirmation boundary explicit.
 
 Choose exactly one merge policy before unattended runs begin:
 
-- `fully_autonomous_merge` (distributed default): one trusted agent
-  session may execute merge phase F3 after the normal claim, freshness,
-  CI, advisory, and review gates pass
+- `fully_autonomous_merge`: one trusted agent session may execute merge
+  phase F3 after the normal claim, freshness, CI, advisory, and review
+  gates pass
 - `human_merge`: worker sessions stop at the merge-policy handoff gate
   and a human maintainer performs the merge
 - `separate_merge_agent`: worker sessions stop at the default handoff
   gate and a separately authorized merge-capable actor performs the
   final merge path
 
-Use `fully_autonomous_merge` as the proposed default unless the
-operator explicitly opts out. For public or OSS repositories, recommend
-`human_merge` before granting unattended credentials.
+Use `human_merge` as the proposed fail-safe default. The operator must
+explicitly opt into `fully_autonomous_merge` before unattended merge
+credentials are granted. For public or OSS repositories, retain
+`human_merge` unless that explicit decision is recorded.
 
 ### Credential scope
 
@@ -295,7 +296,7 @@ agents do not need to infer what changed.
 `.github/idd/config.json` is the machine-readable record of the same
 policy decisions. When present and valid, its `commands` object
 overrides the command table values in
-`idd-overview.instructions.md`. The non-command policy fields are a
+`idd-overview-core.instructions.md`. The non-command policy fields are a
 machine-readable mirror that should stay aligned with the owning
 instruction files and human-readable policy notes, including
 `claimTiming.*` and `ciWait.*` when the repository records those

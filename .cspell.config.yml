@@ -11,15 +11,20 @@ words:
   - coef
   - dantalion
   - dcoef
+  - dedup
+  - desync
+  - desynced
   - desctiptions
   - esync
   - febrary
   - ganzhi
   - generical
+  - gsub
   - goetia
   - isort
   - koshi
   - lemegeton
+  - nektos
   - ommited
   - pylint
   - pyproject
@@ -27,6 +32,11 @@ words:
   - saintist
   - unpushed
   - unreplied
+  - undispositioned
+  - unmigrated
   - unreviewable
+  - unscored
+  - unwaived
+  - toctou
   - waivable
   - ziweidoushu

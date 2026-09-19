@@ -114,7 +114,7 @@ The marker prefix is `dantalion` and the merge policy is
 `fully_autonomous_merge`. See
 [`docs/idd-workflow.md`](docs/idd-workflow.md) for the entry path
 and phase routing, or
-[`.github/instructions/idd-overview.instructions.md`](.github/instructions/idd-overview.instructions.md)
+[`.github/instructions/idd-overview-core.instructions.md`](.github/instructions/idd-overview-core.instructions.md)
 for shared definitions loaded at the start of every IDD session.
 
 For decomposing a large request into IDD-ready issues, invoke the
