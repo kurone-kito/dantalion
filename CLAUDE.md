@@ -118,7 +118,7 @@ and phase routing, or
 for shared definitions loaded at the start of every IDD session.
 
 For decomposing a large request into IDD-ready issues, invoke the
-issue-authoring skill at `.claude/skills/issue-authoring/SKILL.md`.
+issue-authoring skill at `.agents/skills/issue-authoring/SKILL.md`.
 
 ## Canonical reference
 
