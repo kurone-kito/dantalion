@@ -200,49 +200,62 @@ jobs:
             echo "::warning::Could not resolve helperRuntime.profile; cleanup remains fail-closed."
             HELPER_EXIT=1
           else
-            case "$PROFILE" in
-              package-manager)
-                corepack enable >corepack.log 2>&1
-                COREPACK_EXIT=$?
-                INSTALL_EXIT=1
-                if [ "$COREPACK_EXIT" -eq 0 ]; then
-                  pnpm install --frozen-lockfile --ignore-scripts >dependency-install.log 2>&1
-                  INSTALL_EXIT=$?
-                fi
-                if [ "$INSTALL_EXIT" -eq 0 ]; then
-                  JSON=$(pnpm exec idd-audit-pr-cleanup \
-                    --pr "$PR_NUMBER" \
-                    --apply \
-                    --skip-claim-check \
-                    --format json 2>cleanup-stderr.log)
-                  HELPER_EXIT=$?
-                else
-                  echo "::warning::The package-manager helper could not be installed from the frozen lockfile."
-                  HELPER_EXIT=1
-                fi
-                ;;
-              vendored-node)
-                if [ -f scripts/audit-pr-cleanup.mjs ]; then
-                  JSON=$(node scripts/audit-pr-cleanup.mjs \
-                    --pr "$PR_NUMBER" \
-                    --apply \
-                    --skip-claim-check \
-                    --format json 2>cleanup-stderr.log)
-                  HELPER_EXIT=$?
-                else
-                  echo "::warning::vendored-node profile is configured but scripts/audit-pr-cleanup.mjs is absent."
+            # Pass the configured actor list explicitly because helper
+            # runtimes resolve trusted-marker authors from this environment
+            # in addition to their policy file. Do not add
+            # github-actions[bot] here; the helper trusts its authenticated
+            # actor separately.
+            IDD_TRUSTED_MARKER_ACTORS=$(jq -r '(.trustedMarkerActors // []) | join(",")' .github/idd/config.json 2>trusted-actors-stderr.log)
+            TRUSTED_ACTORS_EXIT=$?
+            if [ "$TRUSTED_ACTORS_EXIT" -ne 0 ]; then
+              echo "::warning::Could not resolve trustedMarkerActors; cleanup remains fail-closed."
+              HELPER_EXIT=1
+            else
+              export IDD_TRUSTED_MARKER_ACTORS
+              case "$PROFILE" in
+                package-manager)
+                  corepack enable >corepack.log 2>&1
+                  COREPACK_EXIT=$?
+                  INSTALL_EXIT=1
+                  if [ "$COREPACK_EXIT" -eq 0 ]; then
+                    pnpm install --frozen-lockfile --ignore-scripts >dependency-install.log 2>&1
+                    INSTALL_EXIT=$?
+                  fi
+                  if [ "$INSTALL_EXIT" -eq 0 ]; then
+                    JSON=$(pnpm exec idd-audit-pr-cleanup \
+                      --pr "$PR_NUMBER" \
+                      --apply \
+                      --skip-claim-check \
+                      --format json 2>cleanup-stderr.log)
+                    HELPER_EXIT=$?
+                  else
+                    echo "::warning::The package-manager helper could not be installed from the frozen lockfile."
+                    HELPER_EXIT=1
+                  fi
+                  ;;
+                vendored-node)
+                  if [ -f scripts/audit-pr-cleanup.mjs ]; then
+                    JSON=$(node scripts/audit-pr-cleanup.mjs \
+                      --pr "$PR_NUMBER" \
+                      --apply \
+                      --skip-claim-check \
+                      --format json 2>cleanup-stderr.log)
+                    HELPER_EXIT=$?
+                  else
+                    echo "::warning::vendored-node profile is configured but scripts/audit-pr-cleanup.mjs is absent."
+                    HELPER_EXIT=127
+                  fi
+                  ;;
+                instructions-only|ephemeral-npx)
+                  echo "::warning::helperRuntime.profile=$PROFILE has no executable helper runtime; cleanup remains fail-closed."
                   HELPER_EXIT=127
-                fi
-                ;;
-              instructions-only|ephemeral-npx)
-                echo "::warning::helperRuntime.profile=$PROFILE has no executable helper runtime; cleanup remains fail-closed."
-                HELPER_EXIT=127
-                ;;
-              *)
-                echo "::warning::Unsupported helperRuntime.profile=$PROFILE; cleanup remains fail-closed."
-                HELPER_EXIT=1
-                ;;
-            esac
+                  ;;
+                *)
+                  echo "::warning::Unsupported helperRuntime.profile=$PROFILE; cleanup remains fail-closed."
+                  HELPER_EXIT=1
+                  ;;
+              esac
+            fi
           fi
           set -e
 
