@@ -1,8 +1,9 @@
 {
   "$schema": "https://kurone-kito.github.io/idd-skill/schemas/policy.schema.json",
-  "iddVersion": "0.1.0",
+  "iddVersion": "0.12.0",
   "markerPrefix": "dantalion",
   "mergePolicy": "fully_autonomous_merge",
+  "mergePolicyAck": "fully_autonomous_merge",
   "reviewPolicy": "copilot-advisory",
   "threadResolutionPolicy": "fast-agent-resolve",
   "claimTiming": {
@@ -10,6 +11,7 @@
     "heartbeatInterval": "PT12H"
   },
   "trustedMarkerActors": ["kurone-kito"],
+  "advisoryBotLogins": ["coderabbitai[bot]", "chatgpt-codex-connector[bot]"],
   "commands": {
     "install-deps": "corepack enable && pnpm install",
     "fix-validate": "pnpm run lint:fix && pnpm run lint",
@@ -19,6 +21,44 @@
   "helperRuntime": {
     "profile": "instructions-only"
   },
-  "issueScope": "roadmap",
-  "orphanFirstPolicy": "none"
+  "issueScope": "roadmap-first",
+  "orphanFirstPolicy": "none",
+  "advisoryWait": {
+    "convergenceScope": "idd-claimed",
+    "convergenceDeadline": "PT9H",
+    "secondaryBotLogin": "coderabbitai[bot]",
+    "secondaryQuietWindow": "PT1H"
+  },
+  "discover": {
+    "selectionDesync": "session-offset"
+  },
+  "critiqueLoop": {
+    "deferAfterRounds": 5,
+    "telemetryHook": {
+      "command": "idd-critique-telemetry"
+    }
+  },
+  "forcedHandoff": {
+    "mode": "human-gated",
+    "authorityPolicy": "owners-and-maintainers-only"
+  },
+  "autopilotSuitability": {
+    "floor": 3
+  },
+  "worktreeGuard": {
+    "enabled": true
+  },
+  "ciGate": {
+    "trustEmptyProtectionReads": true,
+    "externalChecks": {
+      "waivable": [
+        { "selector": "idd-advisory-convergence", "matchMode": "exact" }
+      ]
+    },
+    "externalCheckWaivers": {
+      "mode": "maintainer-authorized",
+      "authorityPolicy": "owners-and-maintainers-only",
+      "maxValidity": "PT24H"
+    }
+  }
 }

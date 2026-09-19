@@ -7,8 +7,9 @@ to merge execution or must stop and hand off.
 Before any mutating action in this phase, apply the claim revalidation
 gate. If an active claim exists, it must still use your current
 `{claim-id}`. If no active claim exists, continue only for the
-designated `separate_merge_agent` actor path (see Step 1); all other
-paths must stop and report.
+designated `separate_merge_agent` actor path or the
+`fully_autonomous_merge` policy path (see Step 1); all other paths must
+stop and report.
 
 ## F2.5 — Resolve merge policy route
 
@@ -17,10 +18,12 @@ paths must stop and report.
      `{claim-id}`. If it is held by a different `{claim-id}` (even under
      the same agent ID), the claim was lost — report this and stop.
    - If no active claim exists, continue only for the designated
-     `separate_merge_agent` actor path in step 5. Other paths must stop.
+     `separate_merge_agent` actor path in step 5, or the
+     `fully_autonomous_merge` policy path in step 6. Other paths must
+     stop.
 2. Read the repository's recorded merge policy from repository
    documentation that future IDD sessions read. If no policy is
-   recorded, treat it as `fully_autonomous_merge` (distributed default).
+   recorded, treat it as `human_merge` (distributed default).
 3. If the recorded value is not one of `fully_autonomous_merge`,
    `human_merge`, or `separate_merge_agent`, treat it as an unknown merge
    policy: stop, post a hold comment, and request maintainer decision.
@@ -61,5 +64,34 @@ paths must stop and report.
        then release the worker claim with `unclaimed-by` using the
        current `{claim-id}` and stop. If the claim was already lost, do
        not post release.
-6. When the policy is `fully_autonomous_merge`, continue directly to
-   `idd-merge.instructions.md`.
+6. When the policy is `fully_autonomous_merge`: a session whose own
+   verified active `{claim-id}` step 1 already confirmed continues
+   directly to `idd-merge.instructions.md` — the sub-steps below apply
+   only when step 1 found **no** active claim:
+   1. If the PR's head branch does not follow B1's
+      `issue/<number>-<slug>` naming convention
+      ([B1 Worktree creation](idd-work.instructions.md#worktree-creation)),
+      **or** the PR body does not also carry a closing keyword for that
+      same `<number>` (D3.5 step 3's regex, applied to the PR body text
+      — not GitHub's `closingIssuesReferences` field, which D3.5 already
+      documents as empty on a non-default `{development-branch}`
+      regardless of a real claim), this PR was never IDD-claimed — the
+      claimless case, for example an automated dependency-update PR or
+      a hand-named branch that happens to fall in the `issue/*`
+      namespace. `idd-claim.instructions.md`'s A5 is issue-scoped, and
+      the F3 merge-execution helper has no claimless mode either.
+      Report and stop rather than inventing an unsupported path (PR
+      kurone-kito/idd-skill#3051 review).
+   2. Otherwise, establish ownership of the issue number in that
+      branch name through `idd-claim.instructions.md` A5 — the same
+      no-claim recovery step 5 uses for `separate_merge_agent` — then
+      return to this handoff phase. `idd-merge.instructions.md`'s F3
+      step 1 requires an active claim regardless of policy, with no
+      `fully_autonomous_merge` exception; establishing one here before
+      routing to F3 is what keeps this no-active-claim continuation
+      from contradicting that check (kurone-kito/idd-skill#2977).
+   3. If this session has not yet recorded F2 evidence for the
+      `{claim-id}` now active (for example, step 6.2 just established a
+      fresh claim), return to `idd-pre-merge.instructions.md` and run F2
+      once to record a fresh snapshot for it, then return here.
+   4. Continue directly to `idd-merge.instructions.md`.

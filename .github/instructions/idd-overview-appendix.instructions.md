@@ -1,8 +1,3 @@
----
-applyTo: "**"
-excludeAgent: "code-review"
----
-
 # IDD — Reference and Implementation Appendix
 
 This appendix contains reference content, implementation details, and
@@ -12,47 +7,33 @@ are in `idd-overview-core.instructions.md`.
 ## Policy Constants
 
 The distributed claim, advisory, CI, and critique-loop defaults are
-named in `docs/policy-constants.md`. Read that page before changing any
-timing or loop constant, and record local deviations in onboarding or
-repository docs so future sessions can find the selected policy values
-without scanning every phase file.
+named in `docs/policy-constants.md`. Read it before changing any timing
+or loop constant, and record local deviations in onboarding or
+repository docs so later sessions need not scan every phase file.
 
 ## Live status digest
 
-The optional live status digest is a human-facing issue or pull request
-comment whose first line is `<!-- idd-live-status: current -->`. It may
-summarize phase, claim, branch, last checked time, blockers, and next
-action, but it is never an authority for IDD state transitions.
-
-Agents must continue to make claim, review, advisory, CI, merge, and
-roadmap decisions from trusted operational markers and GitHub state. If
-the digest is missing or stale, repair it only after claim revalidation
-and authoritative state collection. If multiple marked digests exist,
-preserve them, report the duplicate URLs, and do not choose one as
-authoritative during an unattended run. See
-`docs/idd-comment-minimization.md` for the full digest contract.
-When available, the optional helper
-`node scripts/live-status-digest.mjs` may perform the same discovery,
-dry-run, duplicate refusal, and claim-checked upsert; its output remains
-convenience context, not workflow authority.
+The optional live status digest is a human-facing issue or PR comment
+whose first line is `<!-- idd-live-status: current -->`. It summarizes
+phase, claim, branch, last-checked time, blockers, and next action. It
+is never an authority for IDD state transitions — decide from trusted
+operational markers and GitHub state. If multiple marked digests exist,
+preserve them, report the URLs, and choose none as authoritative in an
+unattended run. See
+`docs/idd-comment-minimization.md` for the contract and the optional
+`node scripts/live-status-digest.mjs` helper (convenience only).
 
 Treat every digest create or edit as a GitHub side effect: re-validate
-the active claim first, write fields from the authoritative state just
-collected by the current phase, and set `Authoritative by` to the
-specific claim, review, CI, advisory, PR, or issue evidence used. If the
-claim was lost, do not repair or update the digest. Every digest update
-refreshes `Last checked` to the server-observed or current UTC time of
-that authoritative re-read.
+the active claim first, write fields from that state, and set
+`Authoritative by` to the evidence used. If the claim was lost, do not
+repair or update the digest.
 
-On pull requests, a digest edit is still PR activity unless a future
-repository helper explicitly classifies it otherwise. Therefore do not
-edit a PR digest between a valid E1 review watermark and an intended F3
-merge pass. Edit it only when the flow leaves merge intent (for example,
-returning to E1, routing from F3 to F1/D4 as blocked, or posting a
-hold/stop), or after F3 has merged. The F3 awaiting-reviewer restart-F2
-path intentionally skips digest edits so that F2 can restart without
-self-invalidating review currency. This keeps digest text from satisfying
-or perturbing review-currency, advisory, CI, or merge gates.
+On pull requests, a digest edit is still PR activity: do not edit a PR
+digest between a valid E1 review watermark and an intended F3 merge
+(it would perturb review-currency). Edit it only when leaving merge
+intent (returning to E1, routing F3 to F1/D4 as blocked, or a hold/stop)
+or after F3 has merged; the F3 awaiting-reviewer restart-F2 path skips
+edits too.
 
 ## Abort
 
@@ -60,22 +41,50 @@ On abort, re-validate ownership first. If the active claim still uses
 your current `{claim-id}`, update the digest before posting
 `unclaimed-by` so it shows `Phase: aborted/released`, the planned
 release in `Next action`, and the verified claim plus abort reason in
-`Authoritative by`; then post an `unclaimed-by` comment with that same
-`{claim-id}`. If the active claim no longer uses your `{claim-id}`, do
-not update the digest and do not post a release comment because another
-session already took over. Open PR and remote branch left by a stale or
+`Authoritative by`; then post an `unclaimed-by` comment for that same
+`{claim-id}`. If the
+active claim no longer uses your `{claim-id}`, do not update the digest
+or post a release comment, since another session already took over.
+Open PR and remote branch left by a stale or
 unclaimed state are inheritable by the next agent (see
 `idd-resume.instructions.md`).
 
 ## Hold / suspend
 
-Keep the claim. Post the hold reason and resume condition to the PR or
-issue comment. After re-validating ownership, re-post the claim comment
-with the same `{claim-id}` every 12 h as heartbeat.
-After posting the hold reason, upsert the digest with the hold phase, the
-blocking condition in `Open blockers`, and the resume condition in
-`Next action`. Long holds still need claim heartbeats; the digest does
-not reset the claim stale clock.
+Keep the claim. Post the hold reason and resume condition. After
+re-validating ownership, re-post the claim comment with the same
+`{claim-id}` every 12 h as heartbeat. Then upsert the digest with the
+hold phase, the blocking condition in `Open blockers`, and the resume
+condition in `Next action`. The digest does not reset the stale clock.
+
+For an externally owned blocker (sibling PR/issue, maintainer-owned
+check, base-branch health), phrase the resume condition as a checkable
+invariant (e.g. a named check passing on main) rather than the sibling
+alone, since the proxy may resolve differently or never; this keeps the
+claim and 12 h heartbeat active.
+
+**Needs-decision claim release.** When no further session-side action
+is expected before a human responds, the holding session may apply the
+configured needs-decision label (`labels.needsDecisionLabelName`,
+default `status:needs-decision`) and release the claim. Any phase may
+do this, not only E6. After release, stop heartbeating. A qualifying
+human decision lets a later session drop the label and re-claim; a
+response leaving the decision open does not re-enter.
+
+**Hold consolidation.** When a hold traces to the same root file or
+dependency as an earlier hold from this session (even on a different
+issue), pause further per-issue escalation and audit the shared root
+cause's full scope once, bringing one consolidated decision to the
+human instead of re-escalating per newly discovered layer.
+
+**Provider-outage park**: release the claim immediately, no 12 h
+heartbeat -- see idd-ci.instructions.md's Hold-and-report failure shapes.
+
+**Parked-change bound** (conditional, only when responding to a known
+provider outage): before claiming a new issue, check
+`node scripts/provider-outage-park.mjs`'s `boundReached`. If `true`, do
+not claim -- route elsewhere or wait instead of manufacturing another
+unmergeable pull request.
 
 ## Roadmap markers
 
@@ -96,108 +105,89 @@ For A0-T, A0-O, A1, A1.5, A3, and A4.5 repo-query rules, see
 
 ## Commit signing
 
-In non-interactive agent or CI environments where GPG pinentry cannot be
-presented, add `--no-gpg-sign` to all `git commit` and `git merge`
-commands to prevent blocking.
+When it blocks, check `docs/idd-helper-scripts.md`'s Signed-Commit
+Merge Wrapper; never permanently rewrite signing config. `--no-gpg-sign`
+on `git commit`/`git merge` is the last resort.
 
 Record material progress, decisions, and hold reasons as issue or PR
-comments at the time they are made. This ensures that any agent resuming
-without session context can understand the current state and continue
-correctly. Do not rely on session memory alone for information that
-another agent may need.
+comments as they happen -- including any non-default signing outcome
+(e.g. `--no-gpg-sign`) -- so a resuming agent can continue without
+session memory.
 
 Operational restore markers (`review-watermark` and `review-baseline`)
 must include the current `{claim-id}` and must never be restored across
 a claim change. A takeover starts a new restore scope. These markers
-must also be authored by a trusted marker actor and include a visible
-human-readable note (see `idd-review-snapshot.instructions.md`).
+must be authored by a trusted marker actor with a visible note (see
+`idd-review-snapshot.instructions.md`).
 
 ## Review item classes
 
 For the full PATH A / PATH B classification of review items and their
 handling rules, see `idd-review-triage.instructions.md`.
 
+## Upstream-candidate escalation
+
+**Gating.** Applies only when `upstreamEscalation.enabled` is `true`
+in `.github/idd/config.json` (absent or `false`: skip silently).
+
+**Qualifying criteria** (high-confidence, mirroring A4.5's
+`invalid`/`out-of-scope` rigor in `idd-suitability.instructions.md`):
+the discovered problem's root cause must be that an
+imported IDD instruction/doc/helper's own stated logic is
+self-contradictory, or its steps as written cannot produce the outcome
+it claims. Never for a subjective "unclear wording" complaint, or when
+the root cause is local to this repository (its own code, config, or a
+local customization).
+
+- **Qualifying**: a step says "proceed to step N" from inside step N
+  itself, with no later step N — the control flow cannot be followed
+  as written.
+- **Non-qualifying**: an adopter finds a step confusing given their own
+  branch-naming convention — followable as written; the friction is
+  local interpretation.
+
+**What to do.** Author (or extend, via the normal reuse-first checks)
+a local issue through `.agents/skills/issue-authoring/` as usual, additionally
+carrying the GitHub label `status:upstream-candidate` (create it on
+first use) and the hidden marker
+`<!-- dantalion-upstream-candidate: true -->`.
+
+**What never to do.** Never write to `kurone-kito/idd-skill` or any
+other repository — no comment, no issue, no mutation of any kind.
+Whether to report the local issue upstream is a human decision outside
+this workflow.
+
 ## Project commands
 
-When a phase refers to a named command set, run the corresponding
-commands. **Adapt this section when applying this workflow to a
-different project.**
-
-If `.github/idd/config.json` exists and validates against the canonical
-schema at
-<https://kurone-kito.github.io/idd-skill/schemas/policy.schema.json>, its `commands`
-object overrides the table below. Policy fields such as
-`skipIssueAuthorApprovalGate` and `maintainerApprovalActorPolicy` are
-the recorded machine-readable policy. Absent values keep the gate
-enabled and default approval actors to
-`owners-and-maintainers-only`.
-
-| Name                    | Commands                                                                                                                                     |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **fix-validate**        | `npx dprint fmt "**/*.md" && npx markdownlint-cli2 --fix "**/*.md" && npx markdownlint-cli2 "**/*.md"`                                       |
-| **pre-push-validate**   | `npx dprint check "**/*.md" && npx markdownlint-cli2 "**/*.md" && npx cspell lint "**" --no-progress`                                        |
-| **post-fix-validate**   | `npx dprint fmt "**/*.md" && npx markdownlint-cli2 --fix "**/*.md" && npx markdownlint-cli2 "**/*.md" && npx cspell lint "**" --no-progress` |
-| **install-deps**        | `true`                                                                                                                                       |
-| **issue-scope**         | `roadmap`                                                                                                                                    |
-| **orphan-first-policy** | `none`                                                                                                                                       |
-
-Non-shell rows such as **issue-scope** and **orphan-first-policy** are
-workflow settings. Read them literally, not as commands.
-
-`pre-push-validate` omits auto-fix. If lint fails, run
-**fix-validate**, commit, then re-run **pre-push-validate**.
-
-If **fix-validate** or **post-fix-validate** changes files, stage and
-commit them before any push, rebase, or step that requires a clean
-tree.
-
-`install-deps` must be idempotent. Re-running it in fresh, reused, or
-recreated worktrees must not require manual cleanup and should not leave
-unexpected tracked changes.
-
-**Tool availability**: run commands only when tools exist. For Node.js:
-prefer project scripts; use `npx <tool>` only when `npx` is available
-and no relevant script exists; else use `true`. For other tools, use
-`true` when absent.
+The Project commands table (named in full in
+`idd-overview-core.instructions.md`) and its override rules live in
+[`docs/customization.md` → Project commands reference](../../docs/customization.md#project-commands-reference).
 
 ## Critique pass
 
 A **critique pass** is an independent review of a plan or diff that
 produces a list of issues with severity, correctness, and coverage
-assessment. The goal and expected output are the same regardless of
-agent; only the mechanism differs.
+assessment. For the per-agent invocation table (Copilot / Claude Code /
+Codex CLI / Antigravity CLI) and the optional repository-configurable
+`critiqueLoop.delegate` surface, see
+[`docs/idd-workflow.md` → Critique pass invocation](../../docs/idd-workflow.md#critique-pass-invocation).
+For **C1 and E10** (not E2), when helper runtime is enabled, resolve the
+effective delegate with the `idd-critique-delegate` helper documented
+at
+[`docs/idd-helper-scripts.md` → Effective C1 critique delegate](../../docs/idd-helper-scripts.md#effective-c1-critique-delegate).
 
-| Agent       | How to run a critique pass                                                                |
-| ----------- | ----------------------------------------------------------------------------------------- |
-| Copilot     | Launch a subagent in Agent mode; use the calling phase's critique checklist as the prompt |
-| Claude Code | `Agent(subagent_type="general-purpose")` with the calling phase's critique checklist      |
-| Codex CLI   | Self-critique: add a "review the above for issues" step in the next response              |
-| Gemini CLI  | Self-critique or use Gemini's native multi-step task mechanism if available               |
+### Critique lenses
 
-When a phase file says "run a critique pass", apply the row for your
-agent above. If no subagent mechanism is available, perform the critique
-as a structured self-review step within the same response.
+Two lenses in `docs/idd-workflow.md` apply atop the general critique,
+and compose when both fit. Apply
+[Mutation / write-side](../../docs/idd-workflow.md#mutation--write-side-helper-lens)
+to a helper that mutates GitHub or git state or merges, and
+[Gate-mirroring](../../docs/idd-workflow.md#gate-mirroring-helper-lens)
+to one that mirrors or pre-checks another gate's decision.
 
-## Template sync
+## Consumer source boundary
 
-This repository is the canonical source of the IDD template distributed
-via `idd-template/`. When modifying any `idd-*.instructions.md` file,
-`docs/idd-workflow.md`, or `docs/customization.md`, apply the equivalent
-change to the corresponding file in `idd-template/`, replacing resolved
-project-specific values with their `{{placeholder}}` forms:
-
-| Live value (`.github/instructions/`)                                | Template form (`idd-template/`)  |
-| ------------------------------------------------------------------- | -------------------------------- |
-| `idd-skill` in repo-name contexts                                   | `dantalion`                  |
-| `idd-skill` in marker-prefix contexts (e.g. `idd-skill-roadmap-id`) | `dantalion`      |
-| **fix-validate** command string                                     | `pnpm run lint:fix && pnpm run lint`      |
-| **pre-push-validate** command string                                | `pnpm run lint && pnpm run test && pnpm run build` |
-| **post-fix-validate** command string                                | `pnpm run lint && pnpm run test` |
-| **install-deps** command string                                     | `corepack enable && pnpm install`       |
-
-Match by the named command row in the Project commands table, not by
-command prefix, to avoid confusing commands that share the same
-executable.
-
-Commits that modify live instruction files without updating the template
-are incomplete; include both changes in the same atomic commit.
+dantalion consumes the pinned upstream instruction set directly and does
+not ship an `idd-template/` mirror. Edit the checked-in consumer files in
+their repository-local form, preserve intentional dantalion substitutions,
+and record any later upstream refresh as a newly pinned re-import issue.

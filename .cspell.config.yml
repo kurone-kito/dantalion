@@ -11,6 +11,9 @@ words:
   - coef
   - dantalion
   - dcoef
+  - dedup
+  - desync
+  - desynced
   - desctiptions
   - esync
   - febrary
@@ -20,6 +23,7 @@ words:
   - isort
   - koshi
   - lemegeton
+  - nektos
   - ommited
   - pylint
   - pyproject
@@ -27,6 +31,10 @@ words:
   - saintist
   - unpushed
   - unreplied
+  - undispositioned
   - unreviewable
+  - unscored
+  - unwaived
+  - toctou
   - waivable
   - ziweidoushu

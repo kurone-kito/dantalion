@@ -1,14 +1,14 @@
 # IDD — CI Polling (Shared Helper)
 
-Read this file when you need to wait for CI after a push. Callers must
+Read this file when you need to wait for CI after a push. Callers
 define their own **on-success** target before invoking this algorithm.
 
 The shared CI wait defaults are listed in
-[IDD policy constants](../../docs/policy-constants.md). When
-`.github/idd/config.json` is present and valid, resolve this helper
-through `ciWait.runningTimeout`, `ciWait.generationTimeout`, and
-`ciWait.rerunPolicy`; otherwise keep the distributed defaults
-(`PT30M`, `PT10M`, `rerun-once`).
+[IDD policy constants](../../docs/policy-constants.md). Resolve via
+`.github/idd/config.json` `ciWait.runningTimeout`,
+`ciWait.generationTimeout`, and `ciWait.rerunPolicy` when present and
+valid; otherwise keep the distributed defaults (`PT30M`, `PT10M`,
+`rerun-once`).
 
 When helper support is installed, use the profile-selected ci-wait
 policy helper command as the canonical read-only policy resolver.
@@ -21,26 +21,23 @@ node scripts/ci-wait-policy.mjs
 <profile-selected-ci-wait-policy-command>
 ```
 
-Append `--rerun-count <count>` when the caller needs the deterministic
-rerun-budget decision. Resolve
-`<profile-selected-ci-wait-policy-command>` from the helper runtime
-manifest wiring in `docs/idd-helper-scripts.md`. Do not hardcode
-`node scripts/ci-wait-policy.mjs` for profiles that do not vendor
+Prefer `--run-id <run-id>` (from run_attempt; mirrors
+`rerun-advisory-convergence.mts`) to `--rerun-count <count>`. Resolve
+`<profile-selected-ci-wait-policy-command>` from
+`docs/idd-helper-scripts.md`. Do not hardcode
+`node scripts/ci-wait-policy.mjs` for profiles that don't vendor
 `scripts/`.
 
 ## Shared policy keys
 
-- `ciWait.runningTimeout`: maximum time to keep polling required checks
-  in a running state before the stalled-run recovery route begins.
-  Default: `PT30M` (30 min).
-- `ciWait.generationTimeout`: maximum time to wait for required checks
-  to appear at all. Default: `PT10M` (10 min).
-- `ciWait.rerunPolicy`: rerun budget for infra or stalled CI recovery.
-  Default: `rerun-once`.
-  `rerun-once` means the first eligible infra or stalled route reruns
-  exactly once, and the next recurrence posts a hold and stops. `hold`
-  means do not auto-rerun; post a hold comment at the first eligible
-  infra or stalled route.
+- `ciWait.runningTimeout`: max time polling a running required check
+  before stalled-run recovery begins. Default: `PT30M` (30 min).
+- `ciWait.generationTimeout`: max time to wait for required checks to
+  appear at all. Default: `PT10M` (10 min).
+- `ciWait.rerunPolicy`: rerun budget for infra/stalled CI recovery.
+  Default: `rerun-once` — the first eligible infra/stalled route reruns
+  exactly once, the next recurrence holds. `hold` — never auto-rerun;
+  post a hold at the first eligible route.
 
 ## Inputs
 
@@ -80,12 +77,52 @@ interpreting `gh pr checks` output.
    gh api repos/{owner}/{repo}/branches/{url-encoded-base-branch}/protection
    ```
 
-4. Build the required-check set as the union of enforcing-ruleset checks
-   and branch-protection checks. Keep expected check source metadata
+4. **Distinguish a permission error from a genuine empty result** on
+   each of the three reads above. (Ruleset-**detail**, step 2, only
+   runs once per ruleset ID step 1 already returned, so an empty step-1
+   list means step 2 is skipped, not called with an empty result.) A
+   `403` on any of the three reads means the read itself failed — the
+   token lacks permission — not that no required checks exist; never
+   substitute an empty array/object for it. Record it as **unreadable**.
+
+   **Treat every `404` on these reads exactly like a `403` by
+   default.** None of the three endpoints documents `403` as a possible
+   response at all, so a `404` is _structurally_ ambiguous between
+   "genuinely nothing configured" and "the token cannot read this" —
+   see
+   [design rationale](../../docs/idd-design-rationale.md#404-vs-403-ambiguity-on-branch-protectionruleset-reads)
+   for the full GitHub-documentation citations behind this rule. A
+   repository may opt out and restore the pre-`#1377` trusting behavior
+   (a `404` on these reads is genuinely empty) by recording
+   `ciGate.trustEmptyProtectionReads: true` in `.github/idd/config.json`
+   — a git-committed, human-authorized policy decision, not a runtime
+   check of the caller's token scope. Absent or `false` keeps the
+   fail-closed default.
+
+   If any of the three reads is **unreadable** (a confirmed `403`, or
+   an untrusted `404` per above), **fail closed**: do not fall through
+   to step 6 below. Post a hold comment stating "cannot determine
+   required checks: protection/ruleset unreadable" and stop. This is
+   distinct from the genuine `noRequiredChecksConfigured` case in step
+   6, which requires every read to have returned a genuine, trusted
+   result — a `200`, or a `404` trusted under
+   `ciGate.trustEmptyProtectionReads` — never an unreadable one.
+
+5. Build the required-check set as the union of enforcing-ruleset checks
+   and branch-protection checks, using only the genuine (readable, not
+   unreadable) results from step 4. Keep expected check source metadata
    (GitHub App/integration) when configured.
 
-5. If neither source yields a required-check set, stop and post a hold
-   comment (missing merge-gate policy evidence).
+6. If neither source yields a required-check set, and step 4 found no
+   unreadable result: **not** automatically a hold — it's the same
+   `noRequiredChecksConfigured: true` state F2's CI gate already
+   interprets (`idd-pre-merge.instructions.md`). Reuse
+   `pre-merge-readiness`'s `ci.presentRunConclusion` when available;
+   otherwise derive the equivalent from actual runs at the head SHA:
+   `all-passing` may proceed; `pending` → wait/re-check; `some-failing`
+   or `none` (no runs) → **hold** — never treat an empty required-check
+   set as a vacuous pass. Full routing table:
+   [F2 — Pre-merge condition check](idd-pre-merge.instructions.md#f2--pre-merge-condition-check).
 
 When caller phases already provide a trusted required-check set, reuse
 that set instead of re-deriving it.
@@ -95,19 +132,60 @@ that set instead of re-deriving it.
 1. Fetch current checks for the PR:
 
    ```sh
-   gh pr checks {pr-number} --json name,state,bucket,completedAt,link
+   gh pr checks {pr-number} --json name,state,bucket,startedAt,completedAt,link
    ```
+
+   **Duplicate-name-safe, HEAD-pinned reads**: `gh pr checks` can collapse
+   same-named checks across workflows. When helper support is installed,
+   read the profile-selected `ci-wait-state` snapshot instead (keyed by
+   `(checkName, workflowName)`, live `headRefOid`); see
+   `docs/idd-helper-scripts.md`.
+
+   ```sh
+   # source repo / vendored-node profile
+   node scripts/ci-wait-state.mjs --pr {pr-number}
+
+   # package-manager / ephemeral-npx profile
+   <profile-selected-ci-wait-state-command> --pr {pr-number}
+   ```
+
+   **Label-gated or other opt-in gate surfacing as a job step, not a
+   check.** `gh pr checks` (and `ci-wait-state`) lists jobs/checks, not
+   the steps inside them. An opt-in heavy CI gate wired to run as a
+   step inside an already-present job — rather than its own discrete
+   check — never appears as a new entry there; only the parent job
+   does, and only once, regardless of whether the gated step ran. Do
+   not conclude such a gate is not-running or already-done solely
+   because `gh pr checks` shows no new check for it; confirm it
+   actually executed by inspecting the job's own steps instead:
+
+   ```sh
+   gh run view {run-id} --json jobs
+   ```
+
+   and read the target job's `steps[]` for the gate's step name and
+   conclusion.
 
 2. Normalize check states:
    - treat `skipped`, `neutral`, and `not_applicable` as pass-equivalent
-   - treat `pending`, `requested`, `waiting`, `queued`, and
-     `in_progress` as running
-   - keep `failure`, `cancelled`, and `timed_out` as non-pass
+   - treat `pending`, `requested`, `waiting`, `queued`,
+     `in_progress`, and the Commit-Status `expected` state as running
+   - keep `failure`, `cancelled`, `timed_out`, `action_required`,
+     `startup_failure`, and `stale` as non-pass
 3. Evaluate only checks in the required-check set, and match expected
    check source when the required definition includes an app/integration
    constraint.
 4. Repeat at a reasonable interval until a terminal route in the table
    below is reached.
+
+Measure each running check's `ciWait.runningTimeout` window from its
+server `startedAt`. When absent (a queued check not yet started), the
+running-timeout hasn't begun: keep polling, capped at
+`ciWait.generationTimeout`. Some running states (e.g. a Commit-Status
+`expected` context) never report `startedAt` — when
+`ciWait.generationTimeout` elapses with still none, post a hold and
+escalate rather than poll indefinitely. Never anchor the window to a
+client clock.
 
 Do not rely on `gh pr checks` command exit code as the gate decision.
 The decision must be based on normalized required-check states.
@@ -128,12 +206,233 @@ check name.
 If GH CLI cannot resolve a run ID, use Actions REST endpoints directly
 for the same run before posting a hold.
 
+**`idd-advisory-convergence`** (as a required check): `workflow_dispatch`
+does **not** reliably refresh the PR's required-check rollup for current
+HEAD — a manually dispatched run has no `pull_request` context to
+associate with the PR's HEAD SHA. The workflow is not yet present in
+dantalion's staged consumer surface; when it is imported, use the
+reviewed upstream source commit
+`5c2704a1b50901f29d87865002047b1eb491865e` as its provenance. For a
+stuck or stale rollup entry, rerun the _existing_
+PR-linked run (`gh run rerun <run-id>`) instead of `workflow_dispatch`.
+
+A second cause: GitHub gates bot-triggered runs to `action_required`
+(for example, the non-required
+`idd-advisory-convergence-comment.yml` companion run for Copilot's
+`pull_request_review`/`pull_request_review_comment` event), so the
+companion cannot refresh the required check. Rerun the existing non-bot
+required `pull_request`- or `pull_request_target`-triggered run for
+this HEAD (subject to `ciWait.rerunPolicy`), never the gated bot run
+itself (approve it via `POST
+/repos/{owner}/{repo}/actions/runs/{run_id}/approve` only if needed).
+The required check self-heals on a push or companion refresh from
+IDD-originated review-thread replies or qualifying PR comments. Ordinary
+comments are filtered, although `issue_comment` is subscribed.
+
+**If rerunning the passing non-bot instance alone does not clear the
+rollup (`#1745`)**: a HEAD can carry several
+`idd-advisory-convergence` check-run instances: required
+`pull_request`/`pull_request_target` runs can coexist with companion
+reruns of those instances. Review submissions use
+`--refresh-latest --apply`; comment paths use plain `--apply`.
+`cancel-in-progress` can pin the rollup to a non-gated `CANCELLED`
+instance (see `#1745`). If it leaves the block,
+rerun same-HEAD `CANCELLED` siblings marked `rerun-eligible` (`gh run
+rerun <run-id>`). For the ordinary plan, hold `action_required`,
+`pending`, `unresolved`, `awaiting-fresh-review`, and
+`rerun-budget-held` instances; the review exception
+`--refresh-latest --apply` may rerun a budget-held pull_request-family
+instance unless `ciWait.rerunPolicy` is `hold`.
+
+Note: this is a known Rulesets platform behavior, not an `idd-skill`
+dedup bug — GitHub can require every same-named instance non-failing,
+not just the dedup-selected latest.
+
+**Helper-first**: prints this diagnosis and ordered rerun plan, read-only
+by default; pass `--apply` to also execute it — the preferred recovery
+path when available. `--apply` reruns each
+rerun-eligible instance in order (recovery-refresh first when one
+applies), waits for each to reach a terminal state before starting the
+next, and stops early as soon as the rollup resolves — never a
+`bot-gated-skip` or rerun-budget-held instance.
+
+**Self-referential wait (`#2994`)**: exclude your sibling before
+zero-pending checks; see helper docs.
+
+```sh
+# source repo / vendored-node profile
+node scripts/rerun-advisory-convergence.mjs --pr <n> [--apply]
+
+# package-manager / ephemeral-npx profile
+<profile-selected-rerun-advisory-convergence-command> --pr <n> [--apply]
+```
+
+On `instructions-only` (no helper runtime), fall back to the manual
+sequence: run the diagnostic, then `gh run rerun <run-id>` on each plan
+entry, waiting for each to finish before the next.
+
+**Terminal-waiver recheck (`#1570`)**: once a maintainer waives a proven
+`COPILOT_UNAVAILABLE` state
+([Terminal routing](idd-advisory-wait.instructions.md#terminal-routing-1570)),
+rerun this SAME existing run via the mechanic above — never
+`workflow_dispatch`.
+
+**Automated self-referential-bootstrap-auto waiver (`#2657`)**: alongside
+the manual maintainer-authorized waiver flow above, a PR whose own diff
+touches `idd-advisory-convergence`'s committed trigger-file allowlist gets
+a scoped waiver posted automatically by a separate `issues: write` job in
+`idd-advisory-convergence.yml` itself — no manual waiver or rerun needed
+to unblock it, PROVIDED the adopting repository has also opted into the
+same `ciGate.externalCheckWaivers.mode: "maintainer-authorized"` policy
+and registered `idd-advisory-convergence` under
+`ciGate.externalChecks.waivable` (helper runtime must also be configured;
+the shipped template config leaves all of this unset, in which case the
+job is a documented no-op rather than a failure). See
+[Customizing IDD](../../docs/customization.md) for how to opt in, and
+[External-check waiver contract](../../docs/idd-helper-scripts.md#external-check-waiver-contract)
+for the marker shape, the seven acceptance conditions, and why this one
+waiver kind is evaluated independent of the deadline/terminal-unavailable
+gate. This does not replace the manual flow for any other reason token,
+actor, or check.
+
+**Stale workflow definition on the PR branch.** `gh run rerun`
+re-resolves the failing check against the workflow **definition
+file** as it exists on the PR branch, not on `main` — a sibling
+track's already-merged fix to a shared CI check's own `.yml` file is
+invisible to a rerun here until this branch pulls that fix in. If a
+required check keeps failing the same way after a rerun and its
+workflow file changed recently on `main`, diff the PR branch's copy
+against `main`'s; a mismatch means a branch-sync merge (merge `main`
+in, never rebase — see the E-phase branch-sync check in
+`idd-review-triage.instructions.md`) is the diagnostic recovery step.
+Treat this as reachable at D4/pre-review, not only after E8 — the
+ordering dependency a shared check-definition change creates is
+invisible to disjoint-file-set track planning.
+
+**Code-scanning-alerts lookup**: an unscoped call hides a PR-only
+alert, even one failing this PR's own check. Pass `pr=<n>` explicitly.
+
 ## Interpretation
 
-| State (required checks only, normalized)                            | Action                                                                                                                                                                                                                                                                                                                      |
-| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| All required checks are generated and pass-equivalent               | → **on-success** (caller-defined)                                                                                                                                                                                                                                                                                           |
-| Any required check is non-pass `failure`                            | Inspect the log. If infra/flaky: apply `ciWait.rerunPolicy` (default `rerun-once`). If it resolves to rerun, rerun the exact failed run once and resume polling. If it resolves to hold, post a hold comment and stop. If code-caused: fix, run **fix-validate**, commit atomically, then return to caller's pre-push step. |
-| Any required check is non-pass `cancelled` or `timed_out`           | Investigate cause. If code-caused: fix, run **fix-validate**, commit atomically, then return to caller's pre-push step. If infra-caused: apply `ciWait.rerunPolicy`; rerun or re-push only when the current rerun budget allows it, otherwise post a hold comment and stop.                                                 |
-| Any required check is running (`pending`/`requested`/`waiting`/...) | Continue waiting. After `ciWait.runningTimeout` elapses with no completion (default: 30 min), apply `ciWait.rerunPolicy`. If it resolves to rerun, rerun CI once and resume polling. If the same route recurs after that rerun, or if the policy is `hold`, post a hold comment and stop.                                   |
-| Required checks are not generated after `ciWait.generationTimeout`  | Treat as running. Default: 10 min. If the corresponding workflow run does not exist at all when that window elapses, post a hold comment and escalate to a maintainer, then stop.                                                                                                                                           |
+<!-- dprint-ignore-start -->
+| State (required checks only, normalized) | Action |
+| --- | --- |
+| All required checks are generated and pass-equivalent | → **on-success** (caller-defined) |
+| Any required check is non-pass `failure`, `action_required`, `startup_failure`, or `stale` | Inspect the log. Infra/flaky: apply `ciWait.rerunPolicy` (default `rerun-once`) — rerun the exact failed run once and resume polling, or hold and stop. Code-caused: fix, **fix-validate**, commit atomically, return to caller's pre-push step. `action_required`/`startup_failure`/`stale` rarely clear on a blind rerun — if it needs a maintainer action or fresh run, hold rather than loop reruns. Exception 1: `idd-advisory-convergence` stuck at `action_required` from a gated bot run recovers by rerunning the existing run per `ciWait.rerunPolicy` (see §Rerun mechanics). Exception 2: `idd-advisory-convergence` alone non-pass with `pending: false` and outstanding review reasons — D4/E15 exit to E1 (both carve out a just-posted maintainer waiver, which still needs the rerun — see D4); F2/F3 unaffected. Exception 3: `idd-advisory-convergence` alone non-pass with `pending: true` (the check evaluated before Copilot's review exists for this HEAD SHA, e.g. "Copilot has not reviewed this pull request yet") — the literal opposite boolean from Exception 2, and an expected, self-resolving timing race rather than infra/flaky or code-caused: apply D4's `pending: true` recovery check (`idd-skill#2622`). |
+| Any required check is non-pass `cancelled` or `timed_out` | Code-caused: fix, **fix-validate**, commit atomically, return to caller's pre-push step. Infra-caused: apply `ciWait.rerunPolicy`; rerun/re-push only within budget, otherwise hold and stop. |
+| Any required check is running (`pending`/`requested`/`waiting`/`expected`/...) | Continue waiting. After `ciWait.runningTimeout` (from server `startedAt`; default 30 min) with no completion, apply `ciWait.rerunPolicy` — rerun once and resume, or hold and stop if the route recurs or policy is `hold`. |
+| Required checks are not generated after `ciWait.generationTimeout` | Treat as running (default 10 min). If the workflow run doesn't exist at all when that window elapses, hold and escalate to a maintainer, then stop. |
+<!-- dprint-ignore-end -->
+
+## Hold-and-report failure shapes
+
+Recognize this shape in one pass; hold-and-report instead of the
+infra-vs-code triage above:
+
+- **Account-level Actions billing / spend-limit block**: every job in
+  every workflow fails near-instantly with an identical platform banner
+  (the run starts but no steps execute, unlike a normal step failure).
+  Non-transient — a rerun reproduces it, no code change fixes it. Skip
+  `ciWait.rerunPolicy`; post a hold comment naming the block and stop for
+  a maintainer.
+- **Sole blocker is an unavailable provider service** (`providerHealth`
+  `unavailable`): park, don't hold, then release the claim -- see
+  [Provider outage park helper](../../docs/idd-helper-scripts.md#provider-outage-park-helper)
+  for the `--park` command and its required flags.
+
+## Wake-up discipline
+
+This advisory, tool-agnostic note keeps the **wait itself cheap**: the
+dominant cost is each re-invocation's context re-read (worse past the
+prompt-cache TTL), not the idle time. It applies to a session pushing a
+commit and waiting on CI or bot review outside a formal IDD claim too
+(issue `#2464`) — nothing below depends on being mid-phase. The same
+discipline covers any long-running foreground command a phase
+requires — CI polling, bot/advisory review waits, and local
+build/test/lint runs alike (see the local-command guidance below,
+issue `#2798`).
+
+**Portability**: under supervisor/worker topologies, a background
+wait's completion notification often reaches only the supervisor, so
+the worker's turn stalls until re-prompted — the topology-safety
+condition below accounts for this.
+
+- **No interim polling turns** — schedule one wake at the **expected**
+  completion, or background only if the topology is confirmed to route
+  completion back to this turn; otherwise wait synchronously — block
+  with `gh pr checks <pr-number> --watch --required` (works on a
+  fine-grained PAT; `gh run watch <run-id> --exit-status` does not) —
+  **but only once** [Required-check discovery](#required-check-discovery)
+  has resolved `noRequiredChecksConfigured: false`. When Required-check
+  discovery has instead resolved `noRequiredChecksConfigured: true`,
+  `--watch --required` returns immediately, non-blocking, printing a
+  "no required checks
+  reported" message even while real CI is still running — block with
+  the bare `gh pr checks <pr-number> --watch` (no `--required`)
+  instead. That bare form still returns once every visible check
+  reaches a terminal GitHub state, which is not the same as "safe to
+  proceed" — a lone `CANCELLED` check with no same-producer successor
+  is one such terminal-but-`pending` case (#2714). None of the three
+  watch forms above decides anything by itself — required-only
+  scoping, duplicate-name collapse, the no-required-checks route, and
+  the `ciWait.runningTimeout`/`generationTimeout` bound are all
+  interpretation-time concerns that stay with the algorithm above
+  regardless of which form blocked the wait — track elapsed time and
+  apply its rerun-or-hold
+  decision if a watch outlasts it. Issue that blocking call with an
+  execution-timeout override set at or near the calling tool's own
+  execution-timeout ceiling, not the tool's default, which can
+  hard-kill the wait well short of `ciWait.runningTimeout`; a
+  tool-timeout kill of the watch call is not a CI verdict — re-issue
+  the same blocking watch, keep accumulating elapsed time against the
+  bound above, and do not fall back to `run_in_background` or another
+  detached/backgrounded mechanism just because of the kill. This
+  reissue-on-timeout guidance is scoped to an idempotent, read-only
+  remote poll like the watch call above. The same preventive override
+  applies before issuing a heavy local command (a full build, test,
+  lint, or doctor run) expected to run long: set an explicit
+  execution-timeout override at or near the calling tool's own
+  execution-timeout ceiling before the command starts, rather than
+  relying on the tool's default and discovering the auto-background
+  only after the fact — this has repeatedly stalled a session's turn
+  in practice (issue `#2933`). Never blindly re-issue a
+  heavy local command (a full build, test, or lint run) that
+  auto-backgrounds past the tool's default timeout — being idempotent
+  does not make it safe to run twice at once; two concurrent instances
+  can still collide on shared output (e.g. a `coverage/` directory).
+  Check whether the prior invocation is still running first (e.g. via
+  the calling tool's own background-task listing or equivalent), then
+  await/reap it or reuse its eventual result rather than starting a
+  second concurrent instance. No watch form above watches Copilot
+  review state either — see
+  `idd-advisory-wait.instructions.md`, whose Scope section also covers
+  why a non-primary bot's review must not gate a custom wait either. A
+  bare `sleep` may be sandboxed or blocked in some runtimes (preventive; no observed
+  incident yet); a `run_in_background` Bash task or other
+  detached/backgrounded mechanism must not be used for this wait
+  unless the topology-safety condition above is confirmed. Never
+  insert "is it done yet?" turns or end this turn assuming an
+  unconfirmed background/async notification resumes it — that stalls
+  silently under supervisor/worker topologies.
+- **Main-session turn-ending rule.** The Portability gap above assumes a
+  background wait was at least started; a main (non-delegated) session
+  can fail a different way: ending its turn on a future-tense promise
+  ("I will wait and then...", "I'll check back once...") with no wait
+  mechanism armed at all — not even an unconfirmed one. Pair every such
+  promise with one of the mechanisms in the bullet above (a scheduled
+  wakeup, a confirmed-topology background task, or a synchronous block)
+  before ending the turn. Issue #2221 recorded repeated stalls — one
+  lasting 3.6 hours — from exactly this gap; arming the wait mechanically
+  prevented recurrence once adopted.
+- **Batch post-wait actions** into one turn once the wait resolves
+  (disposition, replies, marker, next gate together).
+- **Scope post-fix re-validation** to the changed surface when provably
+  outside the full build/test suite, instead of re-running everything.
+
+This trims only wasteful dimensions (context re-read, CI minutes) —
+review rounds stay full. Same discipline applies to the advisory-wait
+and review-fix wait points.
+
+**Known residual risk**: workers can still stall here — expected and
+budgeted. Recovery: one message citing live state (PR number, check
+states, local worktree HEAD SHA).

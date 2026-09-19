@@ -23,41 +23,33 @@ Resolve `<profile-selected-claim-approval-command>` from
 `docs/idd-helper-scripts.md`; do not hardcode `node scripts/...` for
 non-vendored profiles.
 
-Contract: `docs/idd-helper-scripts.md#claim-approval-evidence`
-
-Required fields: `approved`, `reason`, `gateEnabled`,
-`policy.maintainerApprovalActorPolicy`, `policy.approvalSignals`, and
-`checks`.
+Contract: `docs/idd-helper-scripts.md#claim-approval-evidence` (required
+fields: `approved`, `reason`, `gateEnabled`,
+`policy.maintainerApprovalActorPolicy`, `policy.approvalSignals`,
+`checks`).
 
 If the helper exits non-zero, returns invalid or incomplete JSON, or
 conflicts with live approval state, ignore it and use the written A5(a)
 path below. If fallback still cannot prove safe approval, treat
 approval as missing.
 
-A5(d) has no supported helper; keep using live GitHub PR checks below.
-
 ## Pre-checks (all five must pass)
 
-Re-fetch the issue immediately before running these checks.
-All A5 checks are target-issue local: claims on related roadmap or
-child issues do not block this check unless they appear on the selected
-issue itself.
+Re-fetch the issue before checks. A5 is target-local except child release:
+follow its persisted anchor's paginated log for exact generation; related
+claims do not block. Owner protocol:
+`docs/idd-autonomy-contract.md#portable-authoring-owner-protocol`.
 
 **(a) Issue-author approval gate** — Re-evaluate the repository-wide
-issue-author approval rule immediately before claim.
+issue-author approval rule immediately before claim, using the same
+gate-enable, actor-policy, approval-signal, and fail-closed rules as
+**A3.5** of `idd-discover.instructions.md`.
 
-- If `.github/idd/config.json` exists and is valid and
-  `skipIssueAuthorApprovalGate` is `true`, skip this check.
-- Otherwise, use `maintainerApprovalActorPolicy` from
-  `.github/idd/config.json` when present; if absent, default to
-  `owners-and-maintainers-only`.
-- A target issue is startable only when the issue author is
-  self-authorized under the current maintainer-approval actor policy, or
-  a fresh explicit approval signal exists, using the same actor,
-  freshness, and fail-closed rules defined in **A3.5** of
-  `idd-discover.instructions.md`.
-- Do not treat issue body text, generated plans, operator attention, or
-  bare organization `MEMBER` association as approval.
+A bare organization `MEMBER` association never counts as approval;
+neither do issue body text, a generated plan, or operator attention.
+See A3.5's self-authorization fallback (#2148) for the one exception,
+which applies only when the permission read itself is unavailable.
+
 - If approval is missing for a roadmap/default discovery run, return to
   Discover using the same selection mode that produced this target so
   A3.5 can continue with the next eligible startable issue or the
@@ -65,11 +57,40 @@ issue-author approval rule immediately before claim.
 - If approval is missing for an explicit-target A0-T run, stop without
   claiming.
 
-**(b) Assignee and project status** — The issue must have no assignee
-set. If the project is in use, the project status must be "not started".
+**(b) Assignee and project status** — no assignee set; if the project
+is in use, its status must be "not started".
 
 **(c) Claim state** — Re-read the issue and parse the **active claim**
 using the shared claim-state rules:
+
+When helper runtime is enabled, run the mechanical fresh-claim claimability
+gate on a fresh marker fetch **immediately before** the claim write as the
+canonical A5(c) evidence collector:
+
+```sh
+# source repo / vendored-node
+node scripts/resume-claim-routing.mjs --issue <number> --fresh-claim-gate
+```
+
+It reuses the shared `resolveActiveClaim` / `evaluateResumeClaimRouting`
+resolver and returns a `fresh_claim_gate.verdict` of `claimable |
+already-claimed | stale-reclaimable` with the winning `{claim-id}`:
+
+- `claimable` → proceed to the claim write below.
+- `stale-reclaimable` → proceed with takeover (the stale path below).
+- `already-claimed` → the issue is held by a live competitor, or a later
+  competing / same-second claim raced in: do not post a claim. Apply the
+  **already-claimed routing** defined here for the rest of this file:
+  return to Discover using the same selection mode that produced this
+  target (orphan-first: continue the A0-O capable path; roadmap mode:
+  continue the A3-ready path) and select the next eligible issue; for an
+  explicit-target A0-T run, report that the issue is already claimed and
+  stop instead of falling back to Discover, per
+  `idd-discover.instructions.md`'s A0-T stop-don't-fallback rule.
+
+GitHub comments lack compare-and-swap, so this only narrows claim→write
+TOCTOU window; stale-takeover and same-second tie-break remain. If the helper
+is unavailable or malformed, use the authoritative rules below.
 
 Use the `claim-stale-age` policy default from `docs/policy-constants.md`
 for these stale checks (distributed default: `24 h`).
@@ -81,39 +102,26 @@ for these stale checks (distributed default: `24 h`).
   first learned by parsing the current issue comments is not enough.
 - Any other active claim whose latest valid `claimed-by` comment has
   GitHub `created_at` < 24 h → claimed by another live session, even
-  when the `agent-id` matches. Return to Discover using the same
-  selection mode that produced this target (orphan-first: continue the
-  A0-O capable path; roadmap mode: continue the A3-ready path).
+  when the `agent-id` matches — apply the **already-claimed routing**
+  above.
 - Any other active claim whose latest valid `claimed-by` comment has
   GitHub `created_at` ≥ 24 h → stale, proceed with takeover.
 
 Only the GitHub `created_at` of the latest **valid** `claimed-by`
 comment in the active claim counts toward the stale calculation.
 
-If the issue has no trusted new-format `claimed-by` comments but has legacy
-claim comments from trusted marker actors, first check whether the
-latest trusted legacy `claimed-by` comment is followed by a later
-trusted legacy `unclaimed-by` comment from the same agent. If so, treat
-the issue as **unclaimed** — proceed as if no claim exists.
-
-Otherwise, use the latest trusted legacy `claimed-by` comment as a
-**migration-only** decision input:
-
-- Latest trusted legacy claim has GitHub `created_at` < 24 h → claimed
-  by another live session, even when the `agent-id` matches. Return to
-  Discover using the same selection mode that produced this target
-  (orphan-first: continue the A0-O capable path; roadmap mode: continue
-  the A3-ready path).
-- Latest trusted legacy claim has GitHub `created_at` ≥ 24 h → stale,
-  proceed and replace it with a new-format claim.
-
-The migration claim uses a fresh `{claim-id}` and `supersedes: none`.
+If the issue has no trusted new-format `claimed-by` comments but has
+legacy claim comments from trusted marker actors, apply the **Legacy
+claim migration** rules near the end of this file instead of the
+bullets above — they resolve unclaimed-vs-stale status from the latest
+trusted legacy claim using this same 24 h threshold and the
+**already-claimed routing**.
 
 **(d) Open PR** — A5(d) has no supported helper. Re-check live GitHub
 PR state with the written rules below. No open PR may close or
-reference this issue, unless that PR's head branch matches the `branch`
-field in an inheritable claim comment. An inheritable claim comment is
-either:
+reference this issue (check both linked issues and closing keywords in
+PR bodies), unless that PR's head branch matches the `branch` field in
+an inheritable claim comment. An inheritable claim comment is either:
 
 - the already verified active claim for this current session, or
 - the currently active stale claim you are taking over, or
@@ -124,14 +132,30 @@ either:
   but only when its branch and linked PR fields match the live GitHub
   state, or
 - the latest trusted legacy `claimed-by` comment when performing a
-  legacy migration (see the migration-only decision input above)
-
-Check both linked issues and closing keywords in PR bodies.
+  legacy migration (see **Legacy claim migration** near the end of
+  this file)
 
 **(e) Branch collision** — Compute the branch name using the IDD naming
 convention: `issue/<number>-<slug>`. Generate `<slug>` deterministically
 from the issue title so parallel sessions converge on the same branch
-name:
+name.
+
+When helper runtime is enabled, compute the slug with the branch-name
+helper instead of hand-tracing it:
+
+```sh
+# source repo / vendored-node
+node scripts/branch-name.mjs --number <issue-number> --title <issue-title>
+
+# package-manager / ephemeral-npx
+<profile-selected-branch-name-command> --number <issue-number> --title <issue-title>
+```
+
+Resolve `<profile-selected-branch-name-command>` the same way as A5(a)
+above. It prints `issue/<number>-<slug>` and implements the algorithm
+below exactly. The written algorithm remains the canonical spec and
+fallback; use it when the helper is unavailable or its output is
+malformed:
 
 1. Convert the issue title to lowercase.
 2. Replace every character outside ASCII `a-z` and `0-9` with `-`.
@@ -145,30 +169,47 @@ name:
    keep the hard 40-character cut. Then strip any trailing `-`.
 6. If the result is empty, use `task`.
 
+**Worked examples** (shared verbatim with the helper's drift test in
+`tests/branch-name.test.mts`):
+
+- `Add the OAuth login flow` → `issue/42-add-oauth-login-flow`
+- `Add a helper that computes the canonical issue/<number>-<slug> branch name`
+  → `issue/901-add-helper-that-computes-canonical-issue`
+- `!!!` → `issue/7-task`
+- `日本語 calendar 機能` → `issue/99-calendar`
+
 No remote branch with that name may exist, unless it matches the
 `branch` field in an inheritable claim comment or trusted
-forced-handoff evidence as defined in (c) above.
+forced-handoff evidence as defined in (d) above.
 
-Before posting a claim, also perform a **scoped issue-wide branch pattern
-check** to detect concurrent sessions working on the same issue with
-different slug variants. This is the fast-path collision detection that
-catches parallel-session concurrency before a new claim comment is posted.
+Before posting a claim, also run this **scoped branch pattern check**
+— fast-path collision detection for parallel sessions on the same
+issue (different slug variants).
 
-1. **Local worktree scan**: Check whether any local worktree matches the
-   pattern `issue/<number>-*`:
+1. **Local worktree scan**: porcelain, not a name grep — detached has
+   none (#2225):
 
    ```sh
-   git worktree list | grep "issue/<number>-"
+   git worktree list --porcelain -z
    ```
+
+   Match `branch refs/heads/issue/<number>-…`; for `detached`, resolve
+   `head-name` under `git -C <worktree> rev-parse --git-path
+   rebase-merge`/`rebase-apply` first.
 
 2. **Remote branch scan** (scoped Refs API, not repo-wide):
    Query the Refs API with the issue-number prefix only, to stay within
-   the scope invariant defined in idd-overview.instructions.md:
+   the scope invariant defined in idd-overview-appendix.instructions.md:
 
    ```sh
    gh api "repos/{owner}/{repo}/git/matching-refs/heads/issue/<number>-" \
-     --jq '.[].ref'
+     --jq '.[].ref | sub("^refs/heads/"; "")'
    ```
+
+   The Refs API returns fully-qualified `refs/heads/issue/<number>-…`
+   refs; `sub("^refs/heads/"; "")` strips that prefix so results compare
+   directly against a claim's `branch` field — otherwise an inheritable
+   branch reads as non-corresponding and trips a false hold below.
 
 3. **Collision action tree**:
 
@@ -176,19 +217,16 @@ catches parallel-session concurrency before a new claim comment is posted.
      Proceed to claim posting (the safe, single-session path).
 
    - **If a match is found and corresponds to an inheritable claim or
-     trusted forced-handoff evidence** (i.e., its `branch` field matches
-     one of the branches allowed in (c) above):
-     Proceed to claim posting. The branch is expected.
+     trusted forced-handoff evidence** (its `branch` matches one of the
+     branches allowed in (d) above): proceed to claim posting — the
+     branch is expected.
 
    - **If a match is found, does NOT correspond to an inheritable claim,
      AND an active non-stale claim on this issue references that branch**:
-     Treat as **claimed by a concurrent session** running in parallel. Do
-     not post a new claim. Instead, **return to Discover** using the same
-     selection mode that produced this target (orphan-first: continue the
-     A0-O capable path; roadmap mode: continue the A3-ready path), and
-     select the **next eligible issue**. This is the scale-out path that
-     allows multiple sessions to work on different issues when one issue
-     has concurrent claims.
+     Treat as **claimed by a concurrent session** running in parallel —
+     apply the **already-claimed routing** above. This is the scale-out
+     path that lets multiple sessions work different issues when one has
+     concurrent claims.
 
    - **If a match is found, does NOT correspond to an inheritable claim,
      AND no active claim references that branch**:
@@ -200,90 +238,325 @@ catches parallel-session concurrency before a new claim comment is posted.
 
 ## Claim execution
 
-Skip this section if pre-check (c) classified the issue as already
-claimed by this current session. Keep the previously recorded `{claim-id}` and
-branch, then proceed directly to Claim verification without posting a new
-claim.
+Skip the claim-posting steps below if pre-check (c) classified the
+issue as already claimed by this current session: keep the previously
+recorded `{claim-id}` and branch, and post no new claim. The Heartbeat
+posting rules below still apply whenever you extend the active claim's
+stale clock; then proceed to Claim verification.
 
 Determine `{branch-name}`:
 
 - **Re-claim / takeover / forced-handoff recovery**: use the exact
   branch name from the inheritable claim comment or trusted
-  forced-handoff evidence (the `branch` field of the active stale claim, the
-  last-released trusted `claimed-by`, the forced-handoff evidence
-  approved in Resume Step 1, or the trusted legacy claim being
-  migrated). Do not compute a new name.
+  forced-handoff evidence identified in pre-check (d). Do not compute a
+  new name.
 - **Fresh claim**: compute a new name using the IDD naming convention:
   `issue/<number>-<slug>` where `<slug>` follows the deterministic title
   normalization algorithm from pre-check (e).
 
-Generate a fresh `{claim-id}`. Determine `{prior-claim-id}`:
+Generate a fresh `{claim-id}` — **except in forced-handoff recovery**, where
+the successor adopts the marker's pre-recorded `new-agent-id` / `new-claim-id`
+pair instead of minting a claim-id or keeping its own agent-id (see _Claim
+verification_ below). Determine `{prior-claim-id}`:
 
 - **Takeover of an active claim** (stale claim recovery) → the current
   active claim's `{claim-id}`
 - **Forced-handoff recovery** → `none` once the human-gated handoff has
-  already released or otherwise cleared the displaced claim in GitHub
-  state; if the displaced non-stale claim is still active, stop and wait
-  for the handoff mechanism instead of inventing a local superseding
-  claim
-- **Migration from a legacy claim** → `none`
-- **Fresh claim** or claim after a released / unclaimed state → `none`
+  released or cleared the displaced claim in GitHub state; if the
+  displaced non-stale claim is still active, stop and wait for the
+  handoff mechanism instead of inventing a local superseding claim
+- **Migration from a legacy claim**, **fresh claim**, or claim after a
+  released / unclaimed state → `none`
 
-Post the claim comment to the issue. Keep the HTML token at the start
-of the body, followed by the visible note:
+Immediately before claim POST, re-fetch labels and owner/claim logs. An
+incomplete/current authoring hold blocks; only exact anchor/set/session
+`release-complete` allows a completed generation.
+Route directly to already-claimed/Discover fallback (A0-T stops), never A5(c).
+
+First record `{agent-id}`/`{claim-id}` via
+`<profile-selected-claim-lock-command> --record-tokens --worktree
+<path> --agent-id {agent-id} --claim-id {claim-id}` (resolve the same
+way as A5(a) above); then post the claim comment using the exact
+format and posting mechanics already defined in
+[Claim format](idd-overview-core.instructions.md#claim-format) — do not
+re-derive them here.
+
+**Nothing appended after the note.** A `claimed-by` / `unclaimed-by`
+marker body must be exactly the HTML comment token followed by, at
+most, the single italic note from Claim format above — never more. Any
+deviation
+— trailing content, a missing note, or a note that fails the required
+grammar — fails the parser's whole-body anchor, so the comment is not
+recognized as a live claim event. Such a deviation is still
+**detectable** as a malformed marker
+(`detectMalformedOperationalMarker` in `marker-helpers.mts`) rather
+than reading as unremarkable "other" content, but detection is
+diagnostic only: never salvage a malformed post as valid — always
+re-post a clean marker with nothing appended. A marker merely quoted
+or embedded mid-prose (not the literal first bytes of the body) is
+never treated as live or flagged; anti-spoofing is unaffected.
+
+**Also post an [activation-nonce marker](#activation-nonce-format)** for
+every fresh `{claim-id}`.
+
+## Activation-nonce format
+
+Post this alongside every claim **activation** — fresh claim, takeover,
+legacy migration, or forced-handoff adopt-verbatim (see _Claim
+verification_ below); never skip it for any activation path:
 
 ```markdown
-<!-- claimed-by: {agent-id} {claim-id} supersedes: {prior-claim-id|none} {ISO8601-timestamp} branch: {branch-name} -->
+<!-- activation-nonce: {agent-id} {claim-id} {nonce} {ISO8601-timestamp} -->
 
-_{agent-id}: issue claim — IDD automation marker. Do not edit._
+_{agent-id}: claim activation nonce — IDD automation marker. Do not edit._
 ```
 
-### Heartbeat posting
+`{nonce}` is fresh; record it via the `--record-tokens` call above
+plus `--nonce {nonce}`. For
+multiple trusted markers sharing a claim, the lexicographically earliest
+nonce wins; no marker means no comparison. With helper runtime, post it
+using
+`post-idd-marker --type activation-nonce --target issue <number> --apply`
+with the four fields defined in `docs/idd-helper-scripts.md`.
 
-When posting a heartbeat (i.e., when the issue is already claimed by this current
-session and you are extending the active claim's stale clock), copy the
-`{branch}` field **verbatim** from the original `claimed-by` comment. Do not
-recompute or derive a new branch name. The heartbeat's `{claim-id}` and
-`{agent-id}` must match the original claim exactly. The branch field must also
-match exactly to satisfy the heartbeat branch invariant (rule 3.5 in
-this file's Claim-state parsing section).
+## Heartbeat posting
+
+When posting a heartbeat (the issue is already claimed by this current
+session and you are extending its stale clock), copy the `{branch}`
+field **verbatim** from the original `claimed-by` comment — do not
+recompute or derive a new name. The heartbeat's `{claim-id}` and
+`{agent-id}` must match the original claim exactly, and `{branch}` must
+match exactly too, to satisfy the heartbeat branch invariant (rule 3.5
+in this file's Claim-state parsing section).
 
 ## Claim verification
 
-After posting `claimed-by`, wait for the configured settle delay to let
-GitHub eventual consistency settle. Use `.github/idd/config.json`
-`claim.verifySettleDelay` (distributed default: `PT5S`), then re-read
-the full issue comment stream and parse the active claim in
-chronological order using the shared claim-state rules. Apply all
-race-safe checks below:
+After posting `claimed-by`, wait for the configured settle delay
+(`.github/idd/config.json` `claim.verifySettleDelay`, distributed
+default: `PT5S`), then re-read the full issue comment stream and parse
+the active claim in chronological order using the shared claim-state
+rules. Apply all race-safe checks below:
 
-1. Build the same-second contender set from trusted `claimed-by` markers
-   that share your claim event's `created_at` second and have different
-   `{claim-id}` values.
+1. Build the same-second contender set from **all** trusted `claimed-by`
+   markers (including your own) that share your claim event's `created_at`
+   second.
 2. If that set has two or more contenders, the winner is the
-   lexicographically earlier `{claim-id}` (case-sensitive ASCII compare).
-   This race-safe tie-break extends the shared parsing rules for this
-   verification step.
+   lexicographically earliest `{claim-id}` (case-sensitive ASCII compare)
+   among them. This race-safe tie-break extends the shared parsing rules
+   for this verification step, and a two-way same-second collision (your
+   marker plus one competitor) is resolved here rather than slipping past
+   as a single-element set.
 3. Verify that the active claim now uses **your** `{claim-id}` after the
    same-second tie-break is applied.
 4. Verify no trusted competing `claimed-by` with a different
    `{claim-id}` appears in a strictly later `created_at` second than
    your claim event.
+5. If you posted an [activation-nonce marker](#activation-nonce-format) for
+   this `{claim-id}`, recompute its winner and verify it equals yours. This
+   catches a second session that adopted the identical `{claim-id}` via
+   forced-handoff, where steps 1–4 see nothing to disagree about (both
+   `{claim-id}`s genuinely match). No marker posted: treat as passed.
 
-If any check fails, treat the claim as contested. Return to Discover
-using the same selection mode that produced this target and pick the
-next eligible issue (orphan-first: continue the A0-O capable path;
-roadmap mode: continue the A3-ready path). Do not retry the same issue.
-For explicit-target A0-T runs, report the contested claim and stop
-unless the operator has explicitly switched to normal discovery.
+6. Re-fetch labels and the paginated owner-marker log. If an authoring
+   hold is active on this issue, it contests this claim: when step 5
+   passed, post and verify `unclaimed-by`, then take the
+   already-claimed/Discover fallback (A0-T stops) — never A5(c); when
+   step 5 failed, keep the claim and never release on a nonce mismatch.
+
+If any check fails, treat the claim as contested.
+
+**Release before walking away when you provably own the active claim
+(step 4 failure only).** When steps 1–3 passed — the active claim
+genuinely uses your `{claim-id}` — and step 4 is the sole failing check
+(a trusted competing `claimed-by` with a different `{claim-id}` landed
+in a strictly later `created_at` second), post `unclaimed-by` for your
+own `{agent-id}` / `{claim-id}` (see
+[Unclaim format](idd-overview-core.instructions.md#unclaim-format))
+before returning to Discover. You provably hold the active claim, so
+releasing it is safe and restores the issue to unclaimed — without this
+release, the issue would stay locked against mechanical reclaim
+(including the 24 h stale-takeover) with no live owner, since the
+losing side of a different-second claim race never activates. Verify
+step 5 independently before releasing — do not infer "step 4 only"
+merely from a helper's single `reason` field, since a combined
+`later-competing-claim-and-activation-nonce-mismatch` verdict means
+step 5 also failed. Do **not** release whenever step 5
+(activation-nonce) fails, alone or together with step 4: a nonce
+mismatch means a second, independent activation shares your exact
+`{agent-id}` / `{claim-id}` pair, and releasing it would also evict
+that other session's legitimate claim.
+
+Return to Discover using the same selection mode that produced this
+target and pick the next eligible issue (orphan-first: continue the
+A0-O capable path; roadmap mode: continue the A3-ready path). Do not
+retry the same issue. For explicit-target A0-T runs, report the
+contested claim and stop unless the operator has explicitly switched to
+normal discovery.
 
 Once verified, record this `{claim-id}` as your current claim token for
 the rest of the workflow.
 
-When the new claim came from forced-handoff recovery, cite the trusted
-forced-handoff evidence in the issue digest or resume report's
-`Authoritative by` field. Do not invent ad hoc `claimed-by` fields and
-do not reuse the displaced `{claim-id}`.
+When the new claim came from forced-handoff recovery, the verified
+`forced-handoff` marker has already set the active claim to its
+pre-recorded `new-agent-id` / `new-claim-id` pair (Claim-state parsing
+rule 7). Adopt **both fields verbatim** as your own `{agent-id}` /
+`{claim-id}` for the rest of the run — including `--agent-id` and
+`--claim-id` at F2/F3's `pre-merge-readiness` — instead of minting a
+fresh claim-id or keeping your own native agent-id; no separate
+`claimed-by supersedes: none` post is required for the transfer itself.
+
+**Adopt-verbatim is still an activation**: immediately before this nonce,
+repeat the label/authoring-state guard above. Post your own
+[activation-nonce marker](#activation-nonce-format) for `new-claim-id`
+too (see the
+[rationale](../../docs/idd-design-rationale.md#activation-nonce-why-a-separate-marker-and-what-stays-deferred)).
+Verify it the same way step 5 above does: wait `claim.verifySettleDelay`,
+recompute the nonce winner for `new-claim-id`, and confirm it is yours —
+the only nonce check here (this path posts no `claimed-by`). After nonce
+verification, repeat that guard. On nonce mismatch or an incomplete or
+current authoring hold, re-resolve the adopted pair and nonce; if that
+pair still owns claim and nonce (or none competes), post/verify
+`unclaimed-by` for the adopted pair (this session cannot keep that
+activation); else leave the successor claim; then take the
+already-claimed/Discover fallback (A0-T stops).
+
+Always use the assigned pair verbatim: never invent `claimed-by` or reuse the
+displaced `{claim-id}`. A native agent-id that is not the assigned value fails
+later heartbeat or F2/F3 checks. Cite trusted forced-handoff evidence in the
+issue digest or resume report's `Authoritative by` field.
+
+**The successor claim is sticky**, not a one-shot unlock: forced-handoff
+re-derives the adopted pair as the active claim on every resolution
+pass, so a later `claimed-by supersedes: none` does not activate
+(Claim-state parsing rule 4 requires no active claim for it to take
+effect) and instead reads as contested. Reconcile via
+**adopt-verbatim** (keep using the recorded pair, as above) or
+**release-then-fresh** (post `unclaimed-by` for the sticky pair — and,
+to be safe, the displaced original pair too — using each pair's exact
+recorded `{agent-id}` / `{claim-id}`, then post a fresh `claimed-by
+supersedes: none` with a self-chosen pair).
+
+### Same-agent live-claim branch correction
+
+A different case from the sticky-successor escape above:
+**this session's own** live, non-stale claim recorded the wrong
+`branch`. Neither existing mechanism fixes it: **supersede**
+([Claim-state parsing](#claim-state-parsing) rule 4) only activates
+when the current claim is already stale, so a live claim's supersede
+post is silently invalid; **heartbeat** (rule 3.5) treats a
+different-`{branch}` re-post as anomalous and never updates the
+branch.
+
+Use **release-then-fresh** instead: post `unclaimed-by` for your own
+pair (safe — you provably hold it, [Claim verification](#claim-verification)),
+then a fresh `claimed-by supersedes: none` with a new `{claim-id}` and
+the corrected `branch`, then a fresh
+[activation-nonce](#activation-nonce-format), verified the same way.
+Propagate the new `{claim-id}` into every later call (disposition
+replies, watermarks, F2/F3, cleanup) — the old one is dead once
+released. On an open issue, re-verify no competing claim landed in the
+release-to-fresh gap before posting. If one exists, stop and wait;
+do not post the fresh claim or continue. This is not a risk on a
+closed issue.
+
+### Orchestrator delegation
+
+An orchestrating session that has posted and verified a claim's
+`{agent-id}` / `{claim-id}` pair may delegate it verbatim to an
+isolated subagent worker in the delegation brief. The worker adopts
+both fields verbatim as its own claim token — mirroring adopt-verbatim
+above — instead of minting a fresh claim or being treated as
+claim-less; see the ownership-proof exception in
+[Claim-state parsing](#claim-state-parsing). No separate `claimed-by`
+post is required for the delegation itself.
+
+**Carry the nonce, don't mint one — and still revalidate it.** The
+brief must also carry the orchestrator's current activation nonce
+verbatim; minting a new nonce for the same `{claim-id}` creates the
+exact two-nonce collision step 5 above exists to catch, flagging
+legitimate delegation as a second activation. The worker still
+performs the Claim revalidation gate's nonce check
+(`idd-overview-core.instructions.md`) using the carried value: before
+each mutation, recompute the nonce winner for the `{claim-id}` and
+confirm it still equals the carried nonce. A different winner (e.g. a
+later forced-handoff collision the orchestrator never saw) means the
+worker is no longer the winning activation — treat that the same as any
+other lost claim.
+
+**State the worker role explicitly when the delegate inherits full
+context.** Some delegation mechanisms give the worker the
+orchestrator's own complete conversation context instead of a clean
+slate limited to the brief. There, the worker can carry over the
+orchestrator's own framing — mistaking itself for the session that
+launched several workers and is waiting on their replies — instead of
+recognizing the brief reassigns it to a single-issue worker role. The
+delegation brief must state explicitly that the delegate is the sole
+worker for the named issue, that no peer workers exist for it to
+coordinate with or wait on, and that it must perform the implementation
+work itself rather than re-delegate or wait for a reply (#2179). Use a
+non-context-inheriting mechanism whenever the tool offers one — this
+is a strong preference, not a suggestion; a context-inheriting
+mechanism (e.g. forking the orchestrator's own conversation) is a
+fallback only when no non-context-inheriting option exists. See
+[docs/idd-workflow.md's Orchestrator fan-out
+variant](../../docs/idd-workflow.md#orchestrator-fan-out-variant).
+
+**Known limitation.** Neither this wording nor an added negative
+instruction reliably stops a context-inheriting delegate from
+misreading itself as a sub-orchestrator waiting on a nonexistent
+sub-worker (#2802) — an accepted residual risk of the fallback path;
+see
+[docs/idd-design-rationale.md](../../docs/idd-design-rationale.md#context-inheriting-delegation-residual-risk)
+for the field evidence.
+
+**Restate the CI/advisory-wait wake-up discipline.** Carry —
+verbatim or by reference — both mitigations from
+[idd-ci.instructions.md's Wake-up
+discipline](idd-ci.instructions.md#wake-up-discipline): the
+topology-safety condition (#2210; also in
+[docs/idd-workflow.md's Orchestrator fan-out
+variant](../../docs/idd-workflow.md#orchestrator-fan-out-variant))
+and the execution-timeout override for a heavy or long-running local
+command (#2933).
+
+**Restate the scratchpad file-naming requirement.** See
+[docs/idd-workflow.md's Orchestrator fan-out
+variant](../../docs/idd-workflow.md#orchestrator-fan-out-variant):
+each worker must prefix scratchpad filenames with the issue number,
+or use an issue-numbered subdirectory.
+
+### Hide displaced claim chain on takeover
+
+When the verified new claim used `supersedes: <prior-id>` (stale
+takeover or forced-handoff recovery — **not** legacy migration, which
+always uses `supersedes: none`), minimize the displaced claim's marker
+chain as `OUTDATED` once this session's own `{claim-id}` is verified.
+Find every trusted `claimed-by`/`unclaimed-by`/heartbeat comment whose
+`{claim-id}` equals `<prior-id>` and call:
+
+`--subject-ids` takes a GraphQL node id, not a REST numeric
+id — see the [conversion note](idd-review-snapshot.instructions.md).
+
+```sh
+node scripts/minimize-superseded-markers.mjs \
+  --subject-ids "<id1>,<id2>,..." \
+  --classifier OUTDATED \
+  --trusted-marker-logins "<trusted-login-1>,<trusted-login-2>" \
+  --apply
+```
+
+Skip this step entirely if:
+
+- `supersedes: none` (fresh claim, no displaced chain to hide);
+- the takeover claim was not yet verified (wait until the successor
+  is the observable active claim);
+- the candidate set is empty (no trusted markers carry `<prior-id>`);
+- the helper is unavailable (F4 cleanup catches missed candidates).
+
+**Do not** hide a same-`{claim-id}` heartbeat chain from a normal
+heartbeat post; heartbeats refresh the stale clock but do not
+supersede prior markers, and the visible heartbeat chain is the
+active-claim audit trail.
 
 After claim verification, upsert the issue live status digest when there
 is exactly one marked digest or none. Use the verified `claimed-by`
@@ -292,6 +565,38 @@ current `{agent-id}` / `{claim-id}`, `Branch` to the verified branch,
 `Open blockers` to `none`, and `Next action` to `B1 create branch and
 worktree`. If multiple marked digests exist, report their URLs and
 continue from the verified claim without editing a digest.
+
+The verified `branch:` field is also the input to the cwd-vs-claim
+check that every later mutation must satisfy — see the
+[Claim revalidation gate](idd-overview-core.instructions.md#claim-revalidation-gate)
+for the full algorithm.
+
+### Worktree-local lock file (same-machine collision)
+
+A same-machine fast path complementing the cross-machine claim check
+above. Acquire once the B1 worktree exists (before the first mutation;
+also re-run `--record-tokens` there (with `--nonce`)), then re-run
+alongside every later pre-mutation check:
+`<profile-selected-claim-lock-command> --acquire --worktree <path>
+--agent-id {agent-id} --claim-id {claim-id}`.
+
+A matching `{claim-id}` re-acquires as a read-only check; a different
+`{claim-id}` is always a collision, regardless of lock age. Run
+`resume-claim-routing.mjs --issue <n> --fresh-claim-gate`: `already-claimed`
+for a different active claim means the claim is lost (stop); if the
+active claim's `{claim-id}` is the current claim, retry the local lock
+with `--takeover`; `claimable`/`stale-reclaimable` also retries with
+`--takeover` after the claim transition completes. If the helper is
+unavailable or malformed, fall back to this file's Claim-state parsing
+rules below for the same verdict. No release step — `git worktree
+remove` at F4 deletes the lock with the worktree, so a crashed
+session's leftover lock resolves the same way. See
+`docs/idd-helper-scripts.md`'s Worktree-local claim lock entry for the
+package-manager / ephemeral-npx forms and mechanical detail.
+
+**Generated-tokens record.** Re-check with `--read-tokens` alongside
+`--acquire`; absent/malformed recovers only via step 5
+(`idd-overview-core.instructions.md`).
 
 Then continue to `idd-work.instructions.md`.
 
@@ -306,14 +611,14 @@ chronologically and apply these rules:
 3. A `claimed-by` whose `{agent-id}` AND `{claim-id}` both match the
    current active claim is a candidate **heartbeat**. Before recognizing
    it as a heartbeat, apply rule 3.5.
-   3.5. **Heartbeat branch invariant**: A heartbeat candidate is recognized
-   only when the `{branch}` field exactly matches the `{branch}` field of
-   the currently active claim. If `{branch}` differs, treat the comment as
-   **anomalous** — do not refresh the stale clock. The comment does not
-   update any claim state. When an anomalous heartbeat affects a routing
-   decision (e.g., in resume or worktree selection), surface it as a
-   warning. The **detecting session** continues with its own verified claim
-   unchanged; no corrective comment is required.
+   3.5. **Heartbeat branch invariant**: A heartbeat candidate is
+   recognized only when `{branch}` exactly matches the currently active
+   claim's `{branch}`; if it differs, treat the comment as
+   **anomalous** — it does not refresh the stale clock or update any
+   claim state. Surface an anomalous heartbeat as a warning when it
+   affects a routing decision (e.g., resume or worktree selection); the
+   **detecting session** continues with its own verified claim
+   unchanged, no corrective comment required.
 4. A `claimed-by` with a **new** `{claim-id}` becomes the active claim
    only if either:
    - there is no active claim AND its `supersedes:` value is `none`, or
@@ -327,17 +632,57 @@ chronologically and apply these rules:
    whose `{agent-id}` differs, or whose `{claim-id}` was already
    superseded, or whose `supersedes:` value does not match the current
    active claim when one exists, is ignored as a stale or invalid event.
+7. A `<!-- forced-handoff: { … } -->` marker (parsed by
+   `parseForcedHandoffComment` in `scripts/protocol-helpers.mjs`)
+   transfers the active claim to the named successor only when **all**
+   hold:
+   - the comment **author** is a trusted marker actor (rule 2);
+   - the author **equals** the marker's `forcedBy` (case-insensitive)
+     when the caller opts in to strict binding
+     (`requireAuthorMatchesForcedBy: true`; Resume routing opts in by
+     default to block the same-identity self-signed hijack path).
+     Callers accepting maintainer-authorized handoffs relayed by a
+     separate automation actor leave it off and rely on
+     `isAuthorizedForcedHandoff` alone;
+   - that author is an authorized maintainer under
+     `forcedHandoff.authorityPolicy` — `owners-and-maintainers-only`
+     accepts `role_name == admin / maintain` or `permission == admin`;
+     `all-write-permission-actors` additionally accepts
+     `role_name == write` or `permission == write` so custom write-base
+     roles still satisfy the loose policy;
+   - `forcedHandoff.mode` is `human-gated` (default `disabled`);
+   - `oldAgentId` / `oldClaimId` / `branch` all match the active claim;
+   - when an open PR backs the active claim: an `issue-plus-pr`
+     marker's `linkedPr` must name that PR; only an `issue-only` marker
+     may instead rely on a caller-supplied `prFirstCommitAt` (PR
+     context, not marker evidence), honored when the handoff predates
+     it — the Part B allowance from issue #1058, which the merge
+     write-gate opts into but Resume routing never does (see
+     [Forced-handoff strictness](../../docs/idd-design-rationale.md#forced-handoff-strictness-strict-resume-vs-lenient-relay-merge));
+     every other combination, including a mismatched `linkedPr`, leaves
+     the marker ignored.
+
+   When all hold, replace the active claim with the successor
+   (`newAgentId` / `newClaimId`, same `branch`, `supersedes =
+   oldClaimId`). On any failure — typically an unauthorized
+   `forcedBy`, an author/`forcedBy` mismatch, or `mode != human-gated`
+   — leave the active claim unchanged and warn if it affects a routing
+   decision.
 
 Same-agent restarts never silently inherit or supersede an active
-non-stale claim. If the current session already recorded and verified
-the active `{claim-id}` before this check, continue with that same token
-and use heartbeats; do not post a fresh takeover claim. If the session
-cannot prove ownership of the active `{claim-id}`, the active claim is
-treated as owned by another live session until it is released or stale,
-even when `{agent-id}` matches.
-If a successor posts a fresh claim after forced handoff, later
-heartbeats from the displaced old `{claim-id}` are ignored as stale
-events; they do not reclaim ownership or refresh the stale clock.
+non-stale claim: if the current session already recorded and verified
+the active `{claim-id}`, continue with that same token and use
+heartbeats — do not post a fresh takeover claim. If the session cannot
+prove ownership, the active claim is treated as owned by another live
+session until released or stale, even when `{agent-id}` matches.
+**Exception**: a worker that received the pair through a documented
+[orchestrator delegation](#orchestrator-delegation) is treated as
+having proven ownership through the orchestrator's own recorded
+verification. Self-signed forced-handoff markers from the same identity
+never transfer ownership: rule 7 rejects them unless the author is an
+authorized maintainer. After a successor posts a fresh claim,
+later heartbeats from the displaced old `{claim-id}` are ignored as
+stale — they do not reclaim ownership or refresh the stale clock.
 
 ## Legacy claim migration
 
@@ -360,12 +705,16 @@ Treat trusted legacy comments as **migration-only** inputs:
   followed by a later trusted legacy `unclaimed-by` comment from the
   same agent. If so, treat the issue as **unclaimed**; skip directly to
   posting a fresh new-format claim with `supersedes: none`.
-- Otherwise, use the latest trusted legacy claim to decide branch reuse
-  and staleness. A matching legacy agent ID is not enough to prove same
-  live-session ownership.
+- Otherwise, compare the latest trusted legacy `claimed-by` comment's
+  GitHub `created_at` against the `claim-stale-age` threshold
+  (distributed default: `24 h`): younger → claimed by another live
+  session, even when `{agent-id}` matches — apply the
+  **already-claimed routing** above; older → stale, proceed and replace
+  it with a new-format claim. A matching legacy agent ID is not enough
+  to prove same live-session ownership.
 - Then immediately post a new-format `claimed-by` comment with a fresh
-  `{claim-id}` and visible note before any further side effects.
-- Use `supersedes: none` for that one-time migration claim, because the
-  legacy format has no `{claim-id}` to reference.
+  `{claim-id}` and visible note before any further side effects, using
+  `supersedes: none` for that one-time migration claim (the legacy
+  format has no `{claim-id}` to reference).
 - After a new-format claim exists, ignore all legacy claim and unclaim
   comments for active-claim parsing and revalidation.
