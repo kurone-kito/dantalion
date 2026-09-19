@@ -1,3 +1,5 @@
+extends: '@kurone-kito/markdownlint-config'
+
 default: true
 # Allow non-aligned table columns. Tables with long cell content are
 # impractical to keep aligned without breaking readability.
