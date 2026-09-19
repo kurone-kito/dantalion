@@ -7,6 +7,7 @@
     ":separateMajorReleases",
     ":semanticCommitsDisabled"
   ],
+  "minimumReleaseAge": "7 days",
   "commitMessagePrefix": "chore(deps):",
   "commitMessageAction": "bump",
   "labels": ["dependencies"],
