@@ -170,7 +170,7 @@
         },
         "branch_tip_evidence_head_sha": {
           "type": ["string", "null"],
-          "pattern": "^[0-9a-fA-F]{7,64}$",
+          "pattern": "^[0-9a-f]{40}$",
           "description": "Current PR head SHA bound to the branch-tip evidence, or null when no head was observed"
         },
         "branch_tip_evidence_complete": {

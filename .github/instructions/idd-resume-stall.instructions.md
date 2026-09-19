@@ -49,7 +49,8 @@ call for this purpose (a single extra request, not one per check).
 Extract the header value, then convert it to ISO8601 UTC — Node is
 already a required dependency for helper runtime and parses RFC 7231
 dates directly, so prefer it over shell `date` utilities (whose flags
-differ across GNU/BSD/Windows executors):
+differ across GNU/BSD/Windows executors). Use a Node-only extraction
+that works in both POSIX shells and PowerShell:
 
 ```bash
 SERVER_NOW=$(gh api repos/<owner>/<repo>/issues/<number> --include | node -e '
