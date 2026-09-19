@@ -109,9 +109,13 @@ type DetailCategoryType<K extends string> = {
   readonly detail: DetailsBaseType;
 } & Record<K, DetailsType>;
 
-type PotentialEntryType<Keys extends Potential> = {
+type PotentialEntryType<
+  ArrayKeys extends Potential,
+  StringKey extends Potential = never,
+> = {
   readonly detail: string | readonly string[];
-} & Record<Keys, string | readonly string[]>;
+} & Record<ArrayKeys, readonly string[]> &
+  Record<StringKey, string>;
 
 /** The type definition of a complete locale document. */
 export interface LocaleDocumentType {
@@ -142,21 +146,24 @@ export interface LocaleDocumentType {
   /** The resources related to potential combinations. */
   readonly potentials: {
     readonly detail: DetailsBaseType;
-    readonly Ci: PotentialEntryType<Potential>;
+    readonly Ci: PotentialEntryType<Exclude<Potential, 'Ci'>, 'Ci'>;
     readonly Co: PotentialEntryType<Exclude<Potential, 'Ci'>>;
     readonly Ei: PotentialEntryType<Exclude<Potential, 'Ci' | 'Co'>>;
     readonly Eo: PotentialEntryType<Exclude<Potential, 'Ci' | 'Co' | 'Ei'>>;
     readonly Fi: PotentialEntryType<
-      Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo'>
+      Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo' | 'Fi'>,
+      'Fi'
     >;
     readonly Fo: PotentialEntryType<
       Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo' | 'Fi'>
     >;
     readonly Ii: PotentialEntryType<
-      Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo' | 'Fi' | 'Fo'>
+      Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo' | 'Fi' | 'Fo' | 'Ii'>,
+      'Ii'
     >;
     readonly Io: PotentialEntryType<
-      Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo' | 'Fi' | 'Fo' | 'Ii'>
+      Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo' | 'Fi' | 'Fo' | 'Ii' | 'Io'>,
+      'Io'
     >;
     readonly Ni: PotentialEntryType<
       Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo' | 'Fi' | 'Fo' | 'Ii' | 'Io'>
