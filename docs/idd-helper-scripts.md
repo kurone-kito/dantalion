@@ -704,8 +704,8 @@ Interpretation rules:
   `copilotPendingCoversHead`, `outcome`, `f3Outcome`,
   `earliestSameHeadAt`, `requestMarkerCount`, `requestCap`,
   `pendingWindowMinutes`, `settledWindowMinutes`,
-  `pollIntervalMinutes`, `capExhaustedRoute`, `trustedMarkerSummary`, and
-  `staleRequestRecovery`
+  `pollIntervalMinutes`, `capExhaustedRoute`, `trustedMarkerSummary`,
+  `copilotRecovery`, and `staleRequestRecovery`
 
 - Consumers of `copilotRecovery.state: "COPILOT_UNAVAILABLE"` must also
   verify on the same live snapshot that `lastCopilotCommit` differs from

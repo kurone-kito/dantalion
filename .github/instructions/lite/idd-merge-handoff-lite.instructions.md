@@ -8,8 +8,10 @@ evaluates whether autonomous merge should proceed, never reads or
 branches on the repository's recorded merge policy
 (`fully_autonomous_merge` included), and never continues to
 `idd-merge.instructions.md` (F3-F5) — those stay fully out of scope for
-this profile regardless of policy. If the repository is
-`instructions-only`, use `idd-merge-handoff.instructions.md` instead.
+this profile regardless of policy. This is a lite-profile routing
+constraint only and does not change the standard profile's merge-policy
+semantics. If the repository is `instructions-only`, use
+`idd-merge-handoff.instructions.md` instead.
 
 ## Stop-and-ask conditions
 
