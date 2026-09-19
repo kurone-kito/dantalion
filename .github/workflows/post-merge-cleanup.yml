@@ -1,4 +1,5 @@
 # cspell:ignore GHES
+# Imported from github:kurone-kito/idd-skill@5c2704a1b50901f29d87865002047b1eb491865e.
 # Trust model: this workflow triggers on `pull_request_target`, which runs
 # with base-repository permissions and secrets even for pull requests from
 # forks. That is safe here only because all of the following hold, and any
@@ -125,7 +126,7 @@ jobs:
           # trusting it as this repository's own PR number (#2979).
           case "$PR_NUMBER" in
             ''|*[!0-9]*)
-              echo "::error::PR_NUMBER (\"$PR_NUMBER\") is not a plain decimal PR number; refusing to look it up."
+              echo "::error::PR_NUMBER is not a plain decimal PR number; refusing to look it up."
               exit 1
               ;;
           esac
@@ -234,7 +235,8 @@ jobs:
                   fi
                   ;;
                 vendored-node)
-                  if [ -f scripts/audit-pr-cleanup.mjs ]; then
+                  if [ -f scripts/audit-pr-cleanup.mjs ] \
+                    && git ls-files --error-unmatch -- scripts/audit-pr-cleanup.mjs >/dev/null 2>tracked-helper-stderr.log; then
                     JSON=$(node scripts/audit-pr-cleanup.mjs \
                       --pr "$PR_NUMBER" \
                       --apply \
@@ -242,7 +244,7 @@ jobs:
                       --format json 2>cleanup-stderr.log)
                     HELPER_EXIT=$?
                   else
-                    echo "::warning::vendored-node profile is configured but scripts/audit-pr-cleanup.mjs is absent."
+                    echo "::warning::vendored-node profile requires a tracked scripts/audit-pr-cleanup.mjs; cleanup remains fail-closed."
                     HELPER_EXIT=127
                   fi
                   ;;
@@ -405,6 +407,23 @@ jobs:
               "| Retry attempts (bound-exhausted) | ${RETRY_ATTEMPTS} (${RETRY_BOUND_EXHAUSTED}) |" \
               "| Notes                 | re-check gh api fetch failure (auth / rate-limit / network) |" \
               "| Posted by             | post-merge-cleanup workflow |" \
+            )
+          elif [ "$STATUS" = "failed" ] || [ "$STATUS" = "incomplete" ] || [ "$STATUS" = "rescan-failed" ]; then
+            if [ "$STATUS" = "rescan-failed" ]; then
+              FAILURE_NOTE="The confirming rescan after mutation failed; already-applied work is preserved, but convergence was not confirmed. Re-run cleanup."
+            else
+              FAILURE_NOTE="Cleanup candidates were detected but not all could be applied."
+            fi
+            BODY=$(printf '%s\n\n%s\n\n%s\n\n%s\n%s\n%s\n%s\n\n%s\n%s\n' \
+              "<!-- idd-cleanup-evidence: ${STATUS} applied:${APPLIED} failed:${FAILED} skipped:${SKIPPED} viewer-cannot-minimize:${BLOCKED} retry-attempts:${RETRY_ATTEMPTS} retry-bound-exhausted:${RETRY_BOUND_EXHAUSTED} -->" \
+              "**F4 Cleanup Failure**" \
+              "$FAILURE_NOTE" \
+              "- Status: ${STATUS}" \
+              "- Failed: ${FAILED} candidates" \
+              "- Unapplied: ${SKIPPED} candidates" \
+              "- Permission-blocked: ${BLOCKED} candidates (if any)" \
+              "This does not re-block the merge. A maintainer may run cleanup manually:" \
+              "node scripts/audit-pr-cleanup.mjs --pr <N> --apply --skip-claim-check" \
             )
           else
             BODY=$(printf '%s\n\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' \
