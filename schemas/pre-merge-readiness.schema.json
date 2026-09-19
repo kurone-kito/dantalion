@@ -74,27 +74,10 @@
             ],
             "properties": {
               "requiredApprovalsSatisfied": { "const": true },
+              "codeownerApprovalSatisfied": { "const": true },
               "humanChangesRequestedCount": { "const": 0 },
               "blockingChangesRequestedLogins": { "maxItems": 0 }
-            },
-            "anyOf": [
-              {
-                "properties": {
-                  "codeownerApprovalSatisfied": { "const": true }
-                }
-              },
-              {
-                "properties": {
-                  "codeownerApprovalSatisfied": { "const": false },
-                  "codeownerSelfApproval": {
-                    "required": ["status"],
-                    "properties": {
-                      "status": { "const": "clear" }
-                    }
-                  }
-                }
-              }
-            ]
+            }
           },
           "advisoryWait": {
             "required": [

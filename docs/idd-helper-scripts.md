@@ -949,8 +949,9 @@ Interpretation rules:
   clock and is unsafe for the quiet-window contract.
 - Optional parameters beyond that required clock anchor:
   `--quiet-window-ms <ms>`, `--claim-created-at <ISO8601>`, and
-  `--policy <path>`, plus `--token <token>` when the executor must
-  provide an explicit GitHub token override
+  `--policy <path>`, plus `--gh-token <token>` when the executor must
+  provide an explicit GitHub token override; `--token <token>` is only a
+  temporary compatibility alias
 - Stable fields consumed by the instructions: `quiet_window_met`,
   `quiet_window_ms`, `window_start`, `now`, `latest_activity`,
   `latest_activity_type`, `reason`, and `evidence`
