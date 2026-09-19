@@ -1,3 +1,16 @@
+import type {
+  Brain,
+  Communication,
+  Genius,
+  LifeBase,
+  Management,
+  Motivation,
+  Position,
+  Potential,
+  Response,
+  Vector,
+} from '@kurone-kito/dantalion-core';
+
 /** The type definition that the resources of description. */
 export interface DescriptionsType {
   /** The title of personality code. */
@@ -90,4 +103,50 @@ export interface VectorType extends DetailsBaseType<readonly string[]> {
    * It stores in an array format with elements divided for each paragraph.
    */
   readonly strategy: readonly string[];
+}
+
+type DetailCategoryType<K extends string> = {
+  readonly detail: DetailsBaseType;
+} & Record<K, DetailsType>;
+
+type PotentialEntryType = {
+  readonly detail: string | readonly string[];
+} & Partial<Record<Potential, string | readonly string[]>>;
+
+/** The type definition of a complete locale document. */
+export interface LocaleDocumentType {
+  /** The resources related to thought methods. */
+  readonly brain: DetailCategoryType<Brain>;
+  /** The resources related to dialogue policies. */
+  readonly communication: DetailCategoryType<Communication>;
+  /** The resources for headings and descriptions. */
+  readonly descriptions: DescriptionsType;
+  /** The resources related to natural personality types. */
+  readonly genius: {
+    readonly detail: PersonalityDetailType;
+  } & Record<Genius, PersonalityType>;
+  /** The resources related to the base of ego types. */
+  readonly lifeBase: {
+    readonly detail: string;
+  } & Record<LifeBase, DetailsBaseType<readonly string[]>>;
+  /** The resources related to risk management types. */
+  readonly management: DetailCategoryType<Management>;
+  /** The resources related to motivational environments. */
+  readonly motivation: {
+    readonly detail: string;
+  } & Record<Motivation, string>;
+  /** The localized language name. */
+  readonly name: string;
+  /** The resources related to suitable roles. */
+  readonly position: DetailCategoryType<Position>;
+  /** The resources related to potential combinations. */
+  readonly potentials: {
+    readonly detail: DetailsBaseType;
+  } & Record<Potential, PotentialEntryType>;
+  /** The resources related to work responses. */
+  readonly response: DetailCategoryType<Response>;
+  /** The resources related to major personality categories. */
+  readonly vector: {
+    readonly detail: DetailsBaseType;
+  } & Record<Vector, VectorType>;
 }

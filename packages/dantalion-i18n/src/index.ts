@@ -16,6 +16,7 @@ export type {
   DescriptionsType,
   DetailsBaseType,
   DetailsType,
+  LocaleDocumentType,
   PersonalityDetailBaseType,
   PersonalityDetailType,
   PersonalityType,
