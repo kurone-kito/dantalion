@@ -22,6 +22,18 @@ const isUtcIsoTimestamp = (value) =>
     const canonical = new Date(value).toISOString();
     return canonical === value || canonical.replace(/\.000Z$/u, 'Z') === value;
   })();
+const readSeverityCount = (severity, key) => {
+  if (!Object.hasOwn(severity, key)) {
+    return 0;
+  }
+
+  const value = severity[key];
+  if (!isNonNegativeInteger(value)) {
+    throw new Error('telemetry severity breakdown is invalid');
+  }
+
+  return value;
+};
 
 const normalizePayload = (payload) => {
   if (
@@ -65,23 +77,23 @@ const normalizePayload = (payload) => {
 
   const severity =
     'severityBreakdown' in payload ? payload.severityBreakdown : undefined;
-  const normalizedSeverity = {
-    high: severity?.high ?? 0,
-    medium: severity?.medium ?? 0,
-    low: severity?.low ?? 0,
-  };
   if (
-    (severity === undefined
+    severity === undefined
       ? payload.findingsCount !== 0
       : severity === null ||
         typeof severity !== 'object' ||
-        Array.isArray(severity)) ||
-    !isNonNegativeInteger(normalizedSeverity.high) ||
-    !isNonNegativeInteger(normalizedSeverity.medium) ||
-    !isNonNegativeInteger(normalizedSeverity.low)
+        Array.isArray(severity)
   ) {
     throw new Error('telemetry severity breakdown is invalid');
   }
+  const normalizedSeverity =
+    severity === undefined
+      ? { high: 0, medium: 0, low: 0 }
+      : {
+          high: readSeverityCount(severity, 'high'),
+          medium: readSeverityCount(severity, 'medium'),
+          low: readSeverityCount(severity, 'low'),
+        };
 
   if (
     payload.delegateUsed &&
