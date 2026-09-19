@@ -510,7 +510,7 @@ Add a "Human-dependency isolation examples" section to
 
 ## Candidate files
 
-- `skills/issue-authoring/references/draft-patterns.md`
+- `.agents/skills/issue-authoring/references/draft-patterns.md`
 ```
 
 The website publication decision stays separate. It is not in the
