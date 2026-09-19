@@ -78,6 +78,8 @@ const normalizePayload = (payload) => {
     throw new Error('acceptedCount + rejectedCount must equal findingsCount');
   }
 
+  // Match upstream harvesting: a severity breakdown may be partial, but it
+  // must never claim more findings than the round contains.
   if (severity.high + severity.medium + severity.low > payload.findingsCount) {
     throw new Error('severityBreakdown total must not exceed findingsCount');
   }

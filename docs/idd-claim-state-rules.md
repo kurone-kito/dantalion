@@ -25,11 +25,15 @@ they do not reclaim ownership or refresh the stale clock.
 
 Older issues may still contain the legacy claim format:
 
+```text
 <!-- claimed-by: agent-id ISO8601-timestamp branch: branch-name -->
+```
 
 and the matching legacy release format:
 
+```text
 <!-- unclaimed-by: agent-id ISO8601-timestamp -->
+```
 
 Treat trusted legacy comments as migration-only inputs:
 
