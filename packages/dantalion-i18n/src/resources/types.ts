@@ -109,9 +109,9 @@ type DetailCategoryType<K extends string> = {
   readonly detail: DetailsBaseType;
 } & Record<K, DetailsType>;
 
-type PotentialEntryType = {
+type PotentialEntryType<Keys extends Potential> = {
   readonly detail: string | readonly string[];
-} & Partial<Record<Potential, string | readonly string[]>>;
+} & Record<Keys, string | readonly string[]>;
 
 /** The type definition of a complete locale document. */
 export interface LocaleDocumentType {
@@ -142,7 +142,27 @@ export interface LocaleDocumentType {
   /** The resources related to potential combinations. */
   readonly potentials: {
     readonly detail: DetailsBaseType;
-  } & Record<Potential, PotentialEntryType>;
+    readonly Ci: PotentialEntryType<Potential>;
+    readonly Co: PotentialEntryType<Exclude<Potential, 'Ci'>>;
+    readonly Ei: PotentialEntryType<Exclude<Potential, 'Ci' | 'Co'>>;
+    readonly Eo: PotentialEntryType<Exclude<Potential, 'Ci' | 'Co' | 'Ei'>>;
+    readonly Fi: PotentialEntryType<
+      Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo'>
+    >;
+    readonly Fo: PotentialEntryType<
+      Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo' | 'Fi'>
+    >;
+    readonly Ii: PotentialEntryType<
+      Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo' | 'Fi' | 'Fo'>
+    >;
+    readonly Io: PotentialEntryType<
+      Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo' | 'Fi' | 'Fo' | 'Ii'>
+    >;
+    readonly Ni: PotentialEntryType<
+      Exclude<Potential, 'Ci' | 'Co' | 'Ei' | 'Eo' | 'Fi' | 'Fo' | 'Ii' | 'Io'>
+    >;
+    readonly No: PotentialEntryType<'No'>;
+  };
   /** The resources related to work responses. */
   readonly response: DetailCategoryType<Response>;
   /** The resources related to major personality categories. */
