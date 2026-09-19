@@ -201,6 +201,12 @@ Apply the configured policy before passing A0-O candidates to A3.5:
 reach A3.5). No helper: apply A4 Step 2's floor rule verbatim,
 including `enabled: false`, to each footer.
 
+When A0-O is the `roadmap-first` fallback, also receive the frozen
+`roadmap-descendant-exclusion-set` from A1/A1.5 and remove every matching
+issue number from the helper output or manual query before A3.5. Do not
+classify a filtered roadmap descendant as an orphan; if the exclusion set
+or a candidate number cannot be parsed, fail closed.
+
 At least one orphan issue remains after the policy is applied: pass the
 remaining set directly to **A3.5**, skipping A1–A3.
 

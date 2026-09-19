@@ -32,13 +32,17 @@ routing, advisory constraints, and A5 race-safe takeover checks.
 
 Preferred helper-runtime command:
 
+For Resume/S2, derive a server-anchored timestamp from GitHub's `Date`
+header and pass it explicitly; do not use the executor's local-clock
+default when evaluating the quiet window.
+
 ```bash
 idd-stalled-session-quiet-check \
   --pr <number> \
   [--owner <owner>] \
   [--repo <repo>] \
   [--token <token>] \
-  [--now <ISO8601>] \
+  --now <server-anchored-ISO8601> \
   [--quiet-window-ms <ms>] \
   [--claim-created-at <ISO8601>] \
   [--policy <path>]
@@ -52,7 +56,7 @@ node scripts/stalled-session-quiet-check.mjs \
   [--owner <owner>] \
   [--repo <repo>] \
   [--token <token>] \
-  [--now <ISO8601>] \
+  --now <server-anchored-ISO8601> \
   [--quiet-window-ms <ms>] \
   [--claim-created-at <ISO8601>] \
   [--policy <path>]

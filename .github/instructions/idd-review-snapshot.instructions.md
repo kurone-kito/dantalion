@@ -256,13 +256,19 @@ the active `{claim-id}` changed (restart, takeover, forced handoff).
 ReviewItems_snapshot is session-local; don't inherit a previous claim's
 critique findings unless persisted as reviewer-visible comments.
 
-Before starting the critique pass, capture the PR HEAD as
-`{critique-start-head-SHA}`. After the critique completes, re-read the
-current PR HEAD as `{e2-head-SHA}`. If the two values differ, do not post
-a baseline for this pass: discard its local critique result, return to E1,
+E1 froze `{head-SHA}` before fetching the review snapshot. Before starting
+the critique pass, verify that the live PR HEAD and the review worktree's
+`git rev-parse HEAD` both still equal that frozen `{head-SHA}`. If either
+check differs, discard the snapshot and return to E1; do not critique or
+post a baseline against a mixed snapshot. Once both checks pass, set
+`{critique-start-head-SHA}` to that verified frozen value. After the
+critique completes, re-read the current PR HEAD as `{e2-head-SHA}`. If
+`{e2-head-SHA}` differs from `{critique-start-head-SHA}`, do not post a
+baseline for this pass: discard its local critique result, return to E1,
 and re-run the fresh snapshot/critique sequence against the new HEAD. A
-baseline may be posted only when `{e2-head-SHA}` still equals
-`{critique-start-head-SHA}` (helper-first: profile-selected
+baseline may be posted only when all three values remain equal
+(`{head-SHA}` = `{critique-start-head-SHA}` = `{e2-head-SHA}`)
+(helper-first: profile-selected
 post-idd-marker `--type baseline --target pr <pr-number> --agent-id <id>
 --claim-id <id> --sha <e2-head-SHA> --apply`; `emit-marker
 --type review-baseline` is emit-only; see `docs/idd-helper-scripts.md`):

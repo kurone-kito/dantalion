@@ -104,7 +104,12 @@ outside the selected roadmap graph.
   **and** `issue-scope` is `roadmap-first`, fall back to A0-O instead
   of stopping, excluding this roadmap's already-fetched descendant set
   (an execution leaf carries no marker distinguishing it from a true
-  orphan) from the orphan candidate pool before A3.5. This bullet's own
+  orphan) from the orphan candidate pool before A3.5. Freeze the set as
+  issue numbers before entering A0-O; the helper path must post-filter its
+  result against that set because `discover-orphan-filter` has no native
+  exclusion-set argument in this profile, and the manual path must apply
+  the same number filter before A3.5. If the set or a candidate number
+  cannot be parsed, fail closed and stop. This bullet's own
   behavior needs no claim, so most runs reach A0-O with nothing to
   release; only if this session already holds the roadmap-audit claim
   (for example from an earlier bullet's side effect on this same run),

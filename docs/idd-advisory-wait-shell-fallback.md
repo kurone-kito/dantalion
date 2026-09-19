@@ -452,6 +452,9 @@ REVIEW_ACK_VALID=$(printf '%s' "${COMMENTS_JSON}" | jq -r \
     try ((.body // "")
       | capture("^review-ack: (?<agent>[^[:space:]]+) (?<head>[0-9A-Fa-f]{40}) (?<ackAt>[^[:space:]]+)$"))
     catch null;
+  def valid_iso_timestamp:
+    test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")
+    and (try (fromdateiso8601 | true) catch false);
   any(.[];
     . as $comment
     | ($comment | marker) as $ack
@@ -459,6 +462,7 @@ REVIEW_ACK_VALID=$(printf '%s' "${COMMENTS_JSON}" | jq -r \
     | ($ack != null
       and (($agents | map(ascii_downcase) | index($login)) != null)
       and (($ack.head | ascii_downcase) == ($head | ascii_downcase))
+      and ($ack.ackAt | valid_iso_timestamp)
       and ($comment.created_at > $submitted))
   )')
 CONJUNCT2=$(

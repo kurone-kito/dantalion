@@ -102,9 +102,9 @@ On helper-enabled profiles, run `resume-claim-routing.mjs --issue <N>`
 
 | Helper `state` / `action`  | Action                                                                                 |
 | -------------------------- | -------------------------------------------------------------------------------------- |
-| `already_owned` / `keep`   | Keep same `{claim-id}` → Step 2 (if branch is `roadmap-audit/*`, A1.5 only → STOP)     |
+| `already_owned` / `keep`   | Keep same `{claim-id}` → Step 2 (if branch is `roadmap-audit/*`, A1.5 only → STOP; if `suitability-close/*`, coordination-close only → STOP) |
 | `unclaimed` / `re_claim`   | Fresh A5 claim → Step 2                                                                |
-| `stale` / `takeover`       | Forced-handoff: retry below; else A5 takeover (if `roadmap-audit/*`, A1.5 only → STOP) |
+| `stale` / `takeover`       | Forced-handoff: retry below; else A5 takeover (if `roadmap-audit/*`, A1.5 only → STOP; if `suitability-close/*`, coordination-close only → STOP) |
 | `non_inheritable` / `stop` | Forced-handoff: retry below; else STOP — live competitor claim                         |
 | `disputed` / `stop`        | STOP — contested claim                                                                 |
 
@@ -118,7 +118,10 @@ Else adopt the pair; post an activation-nonce if missing; wait
 settle; confirm the nonce winner; then Step 2.
 
 After any helper map, `roadmap-audit/*` is still A1.5-only (no
-worktree; child issues are not locked).
+worktree; child issues are not locked). `suitability-close/*` is likewise
+coordination-only: re-run the high-confidence suitability close procedure,
+skip worktree creation and implementation routing, then stop after the
+helper/report and claim release.
 
 Written table (`instructions-only` profile only): first matching row.
 
@@ -126,12 +129,14 @@ Written table (`instructions-only` profile only): first matching row.
 | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
 | Closed / PR merged                                                                          | Remove local worktree/branch → STOP                           |
 | Active claim = this session's verified `{claim-id}` and branch starts with `roadmap-audit/` | Re-run A1.5 only → STOP                                       |
+| Active claim = this session's verified `{claim-id}` and branch starts with `suitability-close/` | Re-run suitability coordination-close only → STOP              |
 | Active claim = this session's verified `{claim-id}`                                         | → Step 2                                                      |
 | Forced-handoff names this session's verified `{claim-id}` as displaced                      | STOP — displaced; no push/comment/resolve/merge               |
 | Forced-handoff recovery confirmed for this session                                          | A5 re-claim after GitHub shows handoff → Step 2               |
 | No active claim                                                                             | A5 re-claim → Step 2                                          |
 | Active non-stale claim (other session, < 24 h)                                              | STOP                                                          |
 | Active stale claim (other session, ≥ 24 h) and branch starts with `roadmap-audit/`          | A5 takeover `supersedes: <prior-id>`; re-run A1.5 only → STOP |
+| Active stale claim (other session, ≥ 24 h) and branch starts with `suitability-close/`     | A5 takeover `supersedes: <prior-id>`; re-run suitability coordination-close only → STOP |
 | Active stale claim (other session, ≥ 24 h)                                                  | A5 takeover `supersedes: <prior-id>` → Step 2                 |
 
 All claim writes use A5 post-and-verify (`post-idd-marker` / claim helper

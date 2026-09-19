@@ -139,6 +139,14 @@ authoritative replacement:
   (`cold-recovery-activation-nonce-collision`: no local nonce and 2+
   trusted activation-nonce markers — #1529).
 
+When the active claim branch starts with `suitability-close/`, map
+`already_owned`/`keep` and a verified recovery of that claim to the
+high-confidence suitability coordination-close procedure. Re-run the
+profile-selected `suitability-close` helper (or the instructions-only
+report-only path), skip worktree creation and implementation routing, and
+stop after the helper/report and claim release. It is a coordination-only
+claim, not an implementation claim.
+
 A `non_inheritable`/`stop` verdict whose `evidence.forced_handoff` is
 non-null (#2178) means a valid successor pair already exists — retry
 with `--claim-id <evidence.forced_handoff.new_claim_id>` before
@@ -155,6 +163,7 @@ Evaluate in order; take the first matching row.
 | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | Issue closed or PR merged                                                                       | Clean up local worktree and branch; STOP                                                                                      |
 | Active claim = this session's verified `{claim-id}` + branch field starts with `roadmap-audit/` | Re-run A1.5; skip worktree creation; STOP after roadmap-side effects. Coordination-only: does not lock child-issue execution. |
+| Active claim = this session's verified `{claim-id}` + branch field starts with `suitability-close/` | Re-run high-confidence suitability coordination-close; skip worktree creation; STOP after the helper/report and claim release. Coordination-only: never enter implementation flow. |
 | Active claim = this session's verified `{claim-id}`                                             | Continue with same `{claim-id}`; ignore stale FH evidence citing a different displaced `{claim-id}`; → Step 2                 |
 | FH evidence names this session's already-verified `{claim-id}`                                  | STOP — current session is displaced; do not push, comment, resolve, request reviewers, or merge                               |
 | Forced-handoff recovery confirmed (§FH)                                                         | Re-claim via A5 after GitHub reflects handoff; cite evidence in digest `Authoritative by`; → Step 2                           |
@@ -164,6 +173,7 @@ Evaluate in order; take the first matching row.
 | No active claim                                                                                 | Re-claim via A5; → Step 2                                                                                                     |
 | Active non-stale claim (< 24 h, other session)                                                  | STOP — not inheritable even if agent-id matches                                                                               |
 | Active stale claim (≥ 24 h, other session) + branch field starts with `roadmap-audit/`          | Takeover via A5 with `supersedes: <prior-id>`; then re-run A1.5; STOP after roadmap-side effects                              |
+| Active stale claim (≥ 24 h, other session) + branch field starts with `suitability-close/`      | Takeover via A5 with `supersedes: <prior-id>`; re-run high-confidence suitability coordination-close; STOP after helper/report and claim release |
 | Active stale claim (≥ 24 h, other session)                                                      | Takeover via A5 with `supersedes: <prior-id>`; → Step 2                                                                       |
 
 All re-claims, migrations, and takeovers must use A5 race-safe verification

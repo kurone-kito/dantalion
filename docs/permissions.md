@@ -40,14 +40,13 @@ granting unattended agent credentials:
 | `separate_merge_agent`   | A trusted merge-capable session performs only the final merge phase.     | Worker sessions stop at the default F2.5/F3 gates; repository guidance names the merge-capable actor and resume condition.   |
 | `fully_autonomous_merge` | One trusted agent session may complete the merge and cleanup phases too. | Worker and merge-capable authority are combined when the repository keeps this distributed default or records it explicitly. |
 
-The distributed default is `fully_autonomous_merge` when merge policy is
-missing from repository docs. Public or OSS repositories that do not
-want unattended merges should explicitly opt out to `human_merge` before
-granting worker credentials. `separate_merge_agent` remains a distinct
-non-default split-authority profile for repositories that want a
-dedicated merge-capable session. If a recorded merge policy value is
-unknown, the merge phase must stop with a maintainer hold until the
-policy is corrected.
+The distributed default is `human_merge` when merge policy is missing
+from repository docs. A repository that wants unattended merges must
+explicitly opt into `fully_autonomous_merge` before granting merge-capable
+worker credentials. `separate_merge_agent` remains a distinct
+split-authority profile for repositories that want a dedicated
+merge-capable session. If a recorded merge policy value is unknown, the
+merge phase must stop with a maintainer hold until the policy is corrected.
 
 ## Merge Topology Requirements
 

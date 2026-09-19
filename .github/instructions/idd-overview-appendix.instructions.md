@@ -81,9 +81,14 @@ human instead of re-escalating per newly discovered layer.
 heartbeat -- see idd-ci.instructions.md's Hold-and-report failure shapes.
 
 **Parked-change bound** (conditional, only when responding to a known
-provider outage): before claiming a new issue, check
-`node scripts/provider-outage-park.mjs`'s `boundReached`. If `true`, do
-not claim -- route elsewhere or wait instead of manufacturing another
+provider outage): before claiming a new issue, check the
+profile-selected provider-outage park helper's `boundReached`. In
+helper-enabled profiles, run that helper and fail closed on an execution
+or parsing error. In `instructions-only`, no provider-outage helper is
+shipped; treat the bound as reached whenever the outage is known and do
+not claim another issue until the provider is healthy or a maintainer
+supplies equivalent bounded evidence. If `boundReached` is true, do not
+claim -- route elsewhere or wait instead of manufacturing another
 unmergeable pull request.
 
 ## Roadmap markers
