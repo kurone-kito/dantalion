@@ -27,6 +27,7 @@
     "sameHeadMarkerCount",
     "requestMarkerCount",
     "trustedMarkerSummary",
+    "copilotRecovery",
     "staleRequestRecovery"
   ],
   "properties": {

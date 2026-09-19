@@ -86,12 +86,12 @@
               "copilotUnavailableWaived"
             ],
             "properties": {
-              "outcome": { "const": "SATISFIED" },
               "f3Outcome": { "const": "SATISFIED" }
             },
             "oneOf": [
               {
                 "properties": {
+                  "outcome": { "const": "SATISFIED" },
                   "copilotUnavailable": { "const": false },
                   "copilotUnavailableWaived": { "const": false }
                 }
@@ -289,8 +289,23 @@
             "required": ["checkSelector", "open"],
             "properties": {
               "checkSelector": { "const": "idd-advisory-convergence" },
-              "open": { "const": true }
-            }
+              "open": { "const": true },
+              "terminalUnavailable": { "const": true }
+            },
+            "anyOf": [
+              {
+                "required": ["deadlinePassed"],
+                "properties": {
+                  "deadlinePassed": { "const": true }
+                }
+              },
+              {
+                "required": ["terminalUnavailable"],
+                "properties": {
+                  "terminalUnavailable": { "const": true }
+                }
+              }
+            ]
           }
         }
       }
