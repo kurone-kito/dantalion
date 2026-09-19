@@ -143,8 +143,9 @@ The `main` ruleset (id `16537258`, name `main`) carries:
 - `deletion` — branch cannot be deleted
 - `non_fast_forward` — no force-push that rewrites history
 - `copilot_code_review` — Copilot reviews every PR (advisory)
-- `required_status_checks` — will be added by issue #82 after #86
-  emits the matching workflow job names (`lint`, `test`, `build`)
+- `required_status_checks` — currently requires `lint`, `test (22)`,
+  `test (24)`, and `build`; verify the live GitHub policy before
+  relying on those checks
 
 ## Coding Standards
 
