@@ -68,12 +68,13 @@ Before taking the Step 1 snapshot, confirm every CI run counting toward
 the merge gate has completed, including any opt-in or label-triggered
 job enabled at this quiescent point. If the primary advisory bot
 already reviewed an earlier head, an automatic same-head re-review is
-expected — run the advisory-wait-state helper and check its
+expected — run the advisory-wait-state helper and check only its
 `lastCopilotCommit == prHeadSha` fast-path fields (from
 `idd-advisory-wait-lite.instructions.md`; read fresh from the helper,
-not Step 1's `{head-SHA}` below, not yet captured here), and wait for
-that re-review, bounded by that file's advisory-wait windows if it
-never lands. Only then continue to Step 1.
+not Step 1's `{head-SHA}` below, not yet captured here). If the fast
+path is already satisfied, continue to Step 1. Otherwise stop and ask
+for a stronger session or human to run the full advisory-wait flow
+before E1; this file must not enter that wait itself.
 
 ### Step 1 — Snapshot the activity universe
 
