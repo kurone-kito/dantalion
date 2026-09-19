@@ -148,6 +148,22 @@
                 "description": "Activity timestamp, or null for timestamp-less ci-running inputs"
               }
             },
+            "oneOf": [
+              {
+                "properties": {
+                  "type": { "const": "ci-running" }
+                }
+              },
+              {
+                "properties": {
+                  "type": { "not": { "const": "ci-running" } },
+                  "timestamp": {
+                    "type": "string",
+                    "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+                  }
+                }
+              }
+            ],
             "additionalProperties": false
           }
         },

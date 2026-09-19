@@ -186,8 +186,10 @@ Before takeover, Resume/S4 must still:
    the meantime.
 5. Use A5 race-safe claim verification after posting takeover.
 
-If helper output is missing, contradictory, or no longer quiet, stop and
-restart Resume routing instead of taking over.
+If the helper is unavailable, fails, or returns missing/contradictory
+output, repeat the written manual procedure above with fresh live signals.
+Stop and restart Resume routing only when that manual recheck is itself
+incomplete, contradictory, or no longer quiet.
 
 ## Return code
 
@@ -206,10 +208,10 @@ The helper throws an error if:
 ## Timestamp handling
 
 - Activity timestamps come from GitHub API responses (server time)
-- The `now` reference defaults to the executor's local clock
-  (`new Date()`), **not** a server timestamp; pass `--now <ISO8601>` to
-  pin it to a server-derived time when exact server-relative evaluation
-  matters
+- The helper implementation may expose a local-clock default (`new Date()`),
+  but Resume/S2 and Resume/S4 must always pass `--now <ISO8601>` derived from
+  a GitHub server `Date` header; local-clock evaluation is not valid for
+  takeover evidence
 - Branch-tip movement must use a GitHub-server-observed PR timeline or
   ref-update timestamp (`committed`, `head_ref_force_pushed`,
   `synchronize`, or an equivalent server-side head snapshot), never a
