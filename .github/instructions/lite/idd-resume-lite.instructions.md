@@ -160,7 +160,7 @@ agent-id alone.
 Primary worktree must stay on `main`. Never `git switch` the primary onto
 the issue branch.
 
-## Step 3 — PR / CI / review route (helper-first)
+## Step 3 — PR / CI / review route (helper-first, helper-enabled only)
 
 On helper-enabled profiles, run `resume-route-selection.mjs --issue <N>`
 (and stop-and-ask on failure — do not use the written table). Map
@@ -183,6 +183,14 @@ On helper-enabled profiles, run `resume-route-selection.mjs --issue <N>`
 
 Before any mutation after routing: re-validate claim ownership, PR HEAD,
 and CI live state.
+
+The route map above is not used by `instructions-only` repositories. In that
+profile, load the corresponding standard phase file instead: D1/D4 uses
+`idd-pr-submit.instructions.md`, E1 uses `idd-review-snapshot.instructions.md`,
+E15 uses `idd-review-fix.instructions.md` plus the standard CI instructions,
+F1/F2 uses `idd-pre-merge.instructions.md`, and Esync uses
+`idd-review-triage.instructions.md`. These standard files provide the written
+fallback required when no helper runtime is shipped.
 
 Written table (`instructions-only` profile only):
 

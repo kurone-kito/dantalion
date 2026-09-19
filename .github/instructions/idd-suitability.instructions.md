@@ -244,8 +244,11 @@ A0-O orphan-first; never an A0-T explicit target, which keeps its
 report-and-stop path unchanged):
 
 With `instructions-only`, report evidence, remove candidate from Candidates,
-skip claim/close/release; continue A4.5. A0-T reports/stops; otherwise use the
-coordination-close procedure below:
+skip claim/close/release, and continue A4.5. A0-T reports/stops. Do not enter
+the numbered coordination-close procedure below under `instructions-only`;
+those steps are helper-enabled only (`package-manager`, `ephemeral-npx`, or
+`vendored-node`). For a helper-enabled profile, use the coordination-close
+procedure below:
 
 1. Post a no-worktree coordination claim on the candidate, structurally
    identical to A1.5's roadmap-audit claim
@@ -258,9 +261,7 @@ coordination-close procedure below:
 2. Re-validate that claim, then run the profile-selected
    `suitability-close` helper (add `--apply` to mutate; omit it to dry-run
    first). Resolve the exact command from `docs/idd-helper-scripts.md` for
-   `package-manager` and `ephemeral-npx` profiles. In
-   `instructions-only`, remain report-only and do not execute a local
-   `node scripts/...` close command:
+   `package-manager`, `ephemeral-npx`, or `vendored-node` profiles:
 
    ```sh
    <profile-selected-suitability-close-command> --issue <number> \
