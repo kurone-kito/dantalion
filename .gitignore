@@ -271,6 +271,13 @@ $RECYCLE.BIN/
 # pnpm
 pnpm-lock.yaml.*
 
+### Local credentials ###
+# Sublime SFTP configuration may contain server credentials
+sftp-config.json
+
+# Sublime GitHub package settings may contain a GitHub token
+GitHub.sublime-settings
+
 ### dantalion ###
 # Lerna
 *.lerna_backup
