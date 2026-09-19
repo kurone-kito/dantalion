@@ -83,9 +83,8 @@ export const getDetailMarkdown = (
  *
  * Date-only strings in year-month-day form are interpreted as calendar dates
  * and formatted with UTC to prevent timezone shifts. Date and number inputs
- * use the local timezone of the resulting Date, and time information is
- * ignored after the input is normalized. The active accessor locale controls
- * the formatted date text.
+ * use the local timezone of the resulting Date; their time components are not
+ * rendered. The active accessor locale controls the formatted date text.
  * @returns The string that the personality information
  * as the Markdown format.
  *

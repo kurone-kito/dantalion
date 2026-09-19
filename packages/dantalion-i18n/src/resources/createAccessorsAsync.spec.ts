@@ -36,7 +36,9 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
     it('falls back to the runtime locale for unannotated translators', async () => {
       const t = await createTAsync({ lng });
       const accessors = createAccessors(t.bind(undefined));
-      expect(accessors.locale).toBeTypeOf('string');
+      expect(accessors.locale).toBe(
+        Intl.DateTimeFormat().resolvedOptions().locale,
+      );
     });
 
     it('uses an explicit locale for unannotated translators', async () => {

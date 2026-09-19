@@ -100,7 +100,7 @@ Create the concreted accessors collection asynchronously
 It is a synonym function that combines
 [`createAccessors()`](#createaccessorst-i18nexttfunction-locale-string-accessors)
 and
-[`createTAsync()`](#createtasyncoptions-createtasyncoptions-promisei18nexttfunction).
+[`createTAsync()`](#createtasyncoptions-createtasyncoptions).
 
 #### Arguments
 
@@ -117,7 +117,7 @@ See: [useLocale()](#getlocale-string--undefined))
 [`Promise<Accessors & i18next.WithT>`](#accessors):
 The instance of the concreted accessors collection
 
-### `createTAsync(options?: CreateTAsyncOptions): Promise<i18next.TFunction>`
+### `createTAsync(options?: CreateTAsyncOptions)`
 
 Create and initialize the i18next instance asynchronously
 
@@ -129,7 +129,7 @@ Create and initialize the i18next instance asynchronously
 
 #### Returns
 
-[`Promise<i18next.TFunction>`](https://www.i18next.com/overview/api#t):
+[`Promise<i18next.TFunction & { readonly locale: string }>`](https://www.i18next.com/overview/api#t):
 The i18next instance which already initialized the resources.
 The returned translation function also exposes the initialized locale as its
 read-only `locale` property.
@@ -178,7 +178,7 @@ Get the personality information corresponding to the specified birthday.
 | Name     | Type                       | Defaults     | Description                                                                                                     |
 | :------- | :------------------------- | :----------- | :-------------------------------------------------------------------------------------------------------------- |
 | `genius` | [`Accessors`](#accessors)  | _(Required)_ | The accessors instance for resources.                                                                           |
-| `birth`  | `string \| number \| Date` | _(Required)_ | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Ignore the _time_ information. Date-only strings are treated as calendar dates and formatted with the accessors locale; other inputs use the local timezone. |
+| `birth`  | `string \| number \| Date` | _(Required)_ | Specify a birthday within the range from February 1, 1873, to December 31, 2050. Time components are not rendered. Date-only strings are treated as calendar dates and formatted with the accessors locale; other inputs use the local timezone. |
 
 #### Returns
 
