@@ -1,17 +1,44 @@
 {
-  "eslint.workingDirectories": [
-    {
-      "changeProcessCWD": true,
-      "directory": "./packages/dantalion-cli"
-    },
-    {
-      "changeProcessCWD": true,
-      "directory": "./packages/dantalion-core"
-    },
-    {
-      "changeProcessCWD": true,
-      "directory": "./packages/dantalion-i18n"
-    }
-  ],
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "editor.defaultFormatter": "biomejs.biome",
+  "[markdown]": {
+    "editor.defaultFormatter": "davidanson.vscode-markdownlint"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.md": "${capture}.*.md",
+    ".gitattributes": ".gitignore, .gitmessage",
+    ".markdownlint.*": ".markdownlint-cli2.*",
+    ".tool-versions": ".node-version, .nvmrc",
+    "AGENTS.md": "CLAUDE.md, GEMINI.md",
+    "package.json": ".npmrc, pnpm-lock.yaml, pnpm-workspace.yaml",
+    "tsconfig.json": "*.tsbuildinfo"
+  },
+  "files.associations": {
+    ".gitmessage": "git-commit",
+    "LICENSE": "plaintext"
+  },
+  "files.readonlyInclude": {
+    "**/node_modules/**/*": true
+  },
+  "files.watcherExclude": {
+    "**/*.tgz": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/.husky/_/**": true,
+    "**/node_modules/**": true,
+    "**/pnpm-lock.yaml.*": true
+  },
+  "git.branchProtection": ["main"],
+  "search.exclude": {
+    "**/node_modules/**": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "yaml.schemas": {
+    "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/packages/cspell-types/cspell.schema.json": ".cspell.config.yml",
+    "https://storage.googleapis.com/coderabbit_public_assets/schema.v2.json": ".coderabbit.yaml"
+  }
 }
