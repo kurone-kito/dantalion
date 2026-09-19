@@ -455,7 +455,22 @@ set -eu
 set -o pipefail
 
 PR_NUMBER={pr-number}
-CONFIG=.github/idd/config.json
+REPOSITORY=$(gh repo view --json nameWithOwner --jq '.nameWithOwner')
+OWNER=${REPOSITORY%%/*}
+REPO=${REPOSITORY#*/}
+PR_METADATA=$(gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}")
+PR_HEAD_SHA=$(printf '%s' "$PR_METADATA" | jq -er '.head.sha')
+PR_BASE_SHA=$(printf '%s' "$PR_METADATA" | jq -er '.base.sha')
+CONFIG=$(mktemp)
+trap 'rm -f "$CONFIG"' EXIT
+BASE_CONFIG_CONTENT=$(gh api \
+  "repos/${REPOSITORY}/contents/.github/idd/config.json?ref=${PR_BASE_SHA}" \
+  --jq '.content // empty' | tr -d '\n')
+if [ -z "$BASE_CONFIG_CONTENT" ]; then
+  echo "hold: trusted base ref did not provide .github/idd/config.json" >&2
+  exit 2
+fi
+printf '%s' "$BASE_CONFIG_CONTENT" | base64 --decode > "$CONFIG"
 
 QUIET_SPEC=$(jq -r '.advisoryWait.secondaryQuietWindow // ""' "$CONFIG")
 SECONDARY_LOGIN=$(jq -r '.advisoryWait.secondaryBotLogin // ""' "$CONFIG")
