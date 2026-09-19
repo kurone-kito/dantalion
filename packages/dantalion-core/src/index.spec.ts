@@ -13,6 +13,11 @@ describe('integration testing', () => {
       expect(getDetail('bogus' as Genius)).toBeUndefined();
     });
 
+    it('returns undefined for inherited prototype keys', () => {
+      expect(getDetail('__proto__' as Genius)).toBeUndefined();
+      expect(getDetail('constructor' as Genius)).toBeUndefined();
+    });
+
     it.each(
       Object.entries(getDetailTestData()) as [Genius, DetailTestData][],
     )('Outputs the same value as the data source from all genius: %s', (genius, expected) => {

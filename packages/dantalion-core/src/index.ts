@@ -22,4 +22,4 @@ export { default as getPersonality } from './utils/getPersonality.js';
 export { default as toCC } from './utils/toCC.js';
 
 export const getDetail = (genius: Genius): Detail | undefined =>
-  details[genius];
+  Object.hasOwn(details, genius) ? details[genius] : undefined;
