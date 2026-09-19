@@ -94,7 +94,10 @@ itself.
    both `latestCiCompletedAt` and `latestPassingCiCompletedAt`;
    `{latest-ci-completed-at}` is always the latter — the latest
    _passing_ (or treated-as-passed) completion, never the latest
-   completion regardless of outcome.
+   completion regardless of outcome. If the helper's own `headSha`
+   differs from the frozen `{head-SHA}`, discard its output and return
+   to the CI-completion precondition above instead of mixing tuple data
+   from one HEAD with raw review activity from another.
 3. Independently fetch, in one pass before filtering: every review
    thread (resolved or not — paginate until `hasNextPage` is `false`,
    never stop at a fixed page size), every review body submission, and

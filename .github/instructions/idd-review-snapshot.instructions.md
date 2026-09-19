@@ -66,8 +66,10 @@ completion timestamps. Pass trusted marker actors with
 Helpers remain evidence collectors only: if helper execution fails,
 returns invalid JSON, omits required fields, or conflicts with live
 GitHub state in this phase, discard helper output and run the portable
-gh/jq/API procedure below. The written instruction rules remain the
-authoritative decision path.
+gh/jq/API procedure below. If the helper's own `headSha` differs from
+the frozen `{head-SHA}`, discard its output and restart E1 instead of
+mixing tuple data from one HEAD with raw review activity from another.
+The written instruction rules remain the authoritative decision path.
 
 Additionally, fetch the **current CI state** for `{head-SHA}`:
 `gh pr checks {pr-number} --json name,state,completedAt`. Record the

@@ -777,6 +777,10 @@ Interpretation rules:
 - Stable E1/F2/F3 snapshot tuple: `headSha`,
   `maxActivityUpdatedAt`, `totalItemCount`,
   `latestPassingCiCompletedAt`, and `counts`
+- When a caller already froze the PR head before invoking the helper,
+  the helper's `headSha` must match that frozen HEAD exactly; a mismatch
+  is mixed-head evidence and must be discarded rather than paired with a
+  raw activity snapshot from another HEAD.
 - Additional CI completion field: `latestCiCompletedAt` reports the
   latest terminal run of any state; watermark and merge-gate checks use
   `latestPassingCiCompletedAt`
@@ -940,8 +944,12 @@ Interpretation rules:
 - Package-manager / ephemeral-npx command: use the profile-selected
   stalled-session-quiet-check command from the helper runtime manifest
   wiring above
-- Optional parameters: `--now <ISO8601>`, `--quiet-window-ms <ms>`,
-  `--claim-created-at <ISO8601>`, and `--policy <path>`
+- Resume/S2 and S4 must pass `--now <server-anchored-ISO8601>` from a
+  GitHub `Date` response header; omitting it falls back to the local
+  clock and is unsafe for the quiet-window contract.
+- Optional parameters beyond that required clock anchor:
+  `--quiet-window-ms <ms>`, `--claim-created-at <ISO8601>`, and
+  `--policy <path>`
 - Stable fields consumed by the instructions: `quiet_window_met`,
   `quiet_window_ms`, `window_start`, `now`, `latest_activity`,
   `latest_activity_type`, `reason`, and `evidence`

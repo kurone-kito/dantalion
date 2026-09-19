@@ -35,7 +35,6 @@ const normalizePayload = (payload) => {
     'repo',
     'issue',
     'findingsCount',
-    'severityBreakdown',
     'acceptedCount',
     'rejectedCount',
     'delegateUsed',
@@ -61,16 +60,19 @@ const normalizePayload = (payload) => {
     throw new Error('telemetry payload has an invalid field');
   }
 
-  const severity = payload.severityBreakdown;
+  const severity =
+    'severityBreakdown' in payload ? payload.severityBreakdown : undefined;
   const normalizedSeverity = {
     high: severity?.high ?? 0,
     medium: severity?.medium ?? 0,
     low: severity?.low ?? 0,
   };
   if (
-    severity === null ||
-    typeof severity !== 'object' ||
-    Array.isArray(severity) ||
+    (severity === undefined
+      ? payload.findingsCount !== 0
+      : severity === null ||
+        typeof severity !== 'object' ||
+        Array.isArray(severity)) ||
     !isNonNegativeInteger(normalizedSeverity.high) ||
     !isNonNegativeInteger(normalizedSeverity.medium) ||
     !isNonNegativeInteger(normalizedSeverity.low)
