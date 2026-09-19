@@ -787,6 +787,43 @@ REVIEW_COMMENTS_JSON=$(
     --paginate | jq -s 'add // []'
 )
 
+# A mutable PR `updated_at` is only a current-head observation. It must not
+# become the head-entry anchor after later reviews/comments advance it. Prefer
+# the earliest trusted same-head advisory marker (posted after the head was
+# observed), then a timestamped timeline record explicitly bound to this
+# head. If neither exists, the current head cannot be safely associated with
+# secondary settlement comments, so hold instead of reusing PR creation time.
+TRUSTED_MARKER_LOGINS_JSON=$(jq -c \
+  '(.trustedMarkerActors // [])
+   | map(select(type == "string" and length > 0) | ascii_downcase)
+   | unique' "$CONFIG")
+HEAD_ENTRY_AT=$(printf '%s' "$ISSUE_COMMENTS_JSON" | jq -r \
+  --arg head "$PR_HEAD_SHA" \
+  --argjson trusted "$TRUSTED_MARKER_LOGINS_JSON" '
+    map(select(
+      (((.user.login // .author.login // "") | ascii_downcase)
+        as $login | ($trusted | index($login)) != null)
+      and ((.body // "")
+        | test("^(advisory-wait|advisory-wait-recovery): [^ ]+ "
+               + $head + "(?: |$)"))
+      and ((.created_at // "") != "")
+    ))
+    | map(.created_at) | sort | .[0] // empty
+  ')
+if [ -z "$HEAD_ENTRY_AT" ]; then
+  HEAD_ENTRY_AT=$(printf '%s' "$BRANCH_TIP_MOVEMENTS_JSON" | jq -r '
+    map(select(.type != "head-snapshot")) | map(.at) | sort | .[0] // empty
+  ')
+fi
+if [ -z "$HEAD_ENTRY_AT" ]; then
+  echo "hold: current PR head has no stable server-anchored entry timestamp" >&2
+  exit 2
+fi
+if ! jq -nr --arg timestamp "$HEAD_ENTRY_AT" '$timestamp | fromdateiso8601' >/dev/null; then
+  echo "hold: current PR head entry timestamp was invalid" >&2
+  exit 2
+fi
+
 # This is a fail-closed, conservative approximation of the helper's
 # effective.maxActivityUpdatedAt. Keep all three review surfaces, the
 # server-observed branch movement events, and all readable timestamps;
@@ -812,7 +849,7 @@ LATEST_ACTIVITY_AT=$(printf '%s' "$ACTIVITY_JSON" | jq -r '.[-1].at // empty')
 # short five-minute confirmation buffer, capped by the configured window.
 SECONDARY_LATEST_JSON=$(
   printf '%s' "$ISSUE_COMMENTS_JSON" \
-    | jq -c --arg login "$SECONDARY_LOGIN" --arg head "$HEAD_ACTIVITY_AT" '
+    | jq -c --arg login "$SECONDARY_LOGIN" --arg head "$HEAD_ENTRY_AT" '
         map(select(((.user.login // .author.login // "") | ascii_downcase)
                    == ($login | ascii_downcase)))
         | map({at: (.updated_at // .created_at // ""), body: (.body // "")})

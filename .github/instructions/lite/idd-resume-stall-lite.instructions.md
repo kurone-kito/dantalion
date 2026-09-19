@@ -105,7 +105,12 @@ gate.
 
 1. Run `idd-claim-lite.instructions.md` pre-checks (d)/(e); either
    failing → STOP.
-2. Re-run `resume-claim-routing.mjs --issue <N>`.
+2. For helper-enabled profiles, re-run the profile-selected
+   `resume-claim-routing` command (the vendored form is
+   `node scripts/resume-claim-routing.mjs --issue <N>`). For
+   `instructions-only`, re-parse the live active claim with the written
+   trusted-marker rules in `idd-claim-lite.instructions.md`; do not invoke
+   a helper that the repository has not installed.
 3. Active claim still the same non-owned `{claim-id}`.
 4. Still stale (≥ 24 h) now.
 5. Fresh server `NOW` + re-run quiet-check (no PR: written S2, not
