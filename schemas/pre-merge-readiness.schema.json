@@ -17,6 +17,7 @@
     "advisoryWait",
     "ci",
     "claim",
+    "dispositionEvidence",
     "waiverEvidence",
     "advisoryConvergenceWaiverPrecondition",
     "claimIdentityInstalledAt",
@@ -41,6 +42,30 @@
             "required": ["elapsed"],
             "properties": {
               "elapsed": { "const": true }
+            }
+          },
+          "dispositionEvidence": {
+            "required": [
+              "route",
+              "reason",
+              "blockingCount",
+              "missingRegularCommentCount",
+              "missingThreadCount",
+              "soleCauseAckOnlyPostDisposition",
+              "soleCauseInPlaceEditOnly",
+              "missingRegularComments",
+              "missingThreads"
+            ],
+            "properties": {
+              "route": { "const": "proceed" },
+              "reason": { "const": "complete" },
+              "blockingCount": { "const": 0 },
+              "missingRegularCommentCount": { "const": 0 },
+              "missingThreadCount": { "const": 0 },
+              "soleCauseAckOnlyPostDisposition": { "const": false },
+              "soleCauseInPlaceEditOnly": { "const": false },
+              "missingRegularComments": { "maxItems": 0 },
+              "missingThreads": { "maxItems": 0 }
             }
           }
         },

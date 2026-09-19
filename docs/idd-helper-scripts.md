@@ -792,7 +792,7 @@ Interpretation rules:
 - Stable sections consumed by the instructions: `reviewCurrency`,
   `threads`, `unrepliedComments`, `reviewerStates`,
   `advisoryWait` (including the effective advisory policy fields), `ci`,
-  `claim`, and optional `dispositionEvidence`
+  `claim`, and `dispositionEvidence`
 - `reviewerStates.codeownerSelfApproval` diagnoses whether CODEOWNER
   approval can be satisfied by an eligible non-author owner or an
   applicable ruleset or classic pull-request bypass. `deadlock` and

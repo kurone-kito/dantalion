@@ -89,7 +89,8 @@ This check never rebases, merges, or pushes.
    this lite file deliberately excludes.
    A `ready: true` report is valid only when its `ci` object also satisfies
    the schema's cross-field success conditions; an empty `blockers` array by
-   itself is never sufficient.
+   itself is never sufficient. The required `dispositionEvidence` object
+   must also report the non-overridden complete state defined by that schema.
 3. Otherwise, record the verdict exactly as the helper reports it:
    `prHeadSha` (F2.5 needs this exact value for its merge command
    candidate — never re-derive it locally), `ready`, and, if `ready` is
