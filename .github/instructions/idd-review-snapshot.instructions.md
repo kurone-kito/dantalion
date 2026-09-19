@@ -83,10 +83,17 @@ post-idd-marker watermark path — `--type watermark --from-pr <pr-number>
 --apply` — which derives the other fields from a fresh
 `review-activity-snapshot` and posts in one step; forward
 `--trusted-marker-logins` too). **Always pass `--expected-head-sha`
-with the exact `{head-SHA}` from Step 1** — the helper fails closed
-(posts nothing) if it disagrees with the fresh snapshot's live HEAD,
-rather than silently keying the watermark to a moved HEAD; on that
-failure, return to Step 1 and re-snapshot, do not retry Step 2 as-is.
+with the exact `{head-SHA}` from Step 1** — the helper must preserve the
+complete Step 1 tuple (`{head-SHA}`, `{max-activity-updatedAt}`,
+`{total-item-count}`, and `{latest-ci-completed-at}`) while it builds
+the marker. It must fail closed (post nothing) if a consistency check
+against the live activity universe finds a changed HEAD, activity
+timestamp, item count, or CI completion. It must not replace the frozen
+E1 tuple with a later snapshot that includes feedback absent from
+`ReviewItems_snapshot`; on any such mismatch, return to Step 1 and
+re-snapshot rather than retrying Step 2 as-is. If the selected helper
+cannot preserve or compare that tuple atomically, use the manual
+six-field form below with the original E1 values.
 The manual six-field form (`--type watermark --target pr <pr-number>
 <watermark-fields> --apply`, same six `--agent-id`/`--claim-id`/
 `--head-sha`/`--max-activity-at`/`--total-item-count`/

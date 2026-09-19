@@ -124,9 +124,17 @@ scripts/post-idd-marker.mjs --type watermark --from-pr {pr-number}
 --expected-head-sha {head-SHA} --agent-id <id> --claim-id <id>
 --trusted-marker-logins "<trusted-login-1>,<trusted-login-2>" --apply`
 (or the package-manager equivalent). Always pass `--expected-head-sha`
-with the exact Step 1 `{head-SHA}`; the helper fails closed (posts
-nothing) when the branch moved since Step 1 — on that failure, return
-to Step 1 and re-snapshot the moved branch, not a Step 2 retry.
+with the exact Step 1 `{head-SHA}`. The one-command path must preserve
+the complete Step 1 tuple (`{head-SHA}`, `{max-activity-updatedAt}`,
+`{total-item-count}`, and `{latest-ci-completed-at}`) while it builds
+the marker, and fail closed (post nothing) when a consistency check
+finds any changed HEAD, activity timestamp, item count, or CI
+completion. It must not replace the frozen E1 tuple with a later
+snapshot that contains feedback absent from `ReviewItems_snapshot` —
+on any mismatch, return to Step 1 and re-snapshot the branch, not a
+Step 2 retry. If the selected helper cannot preserve or compare that
+tuple atomically, use the manual six-field form below with the
+original E1 values.
 
 The manual six-field fallback — `--type watermark --target pr
 {pr-number} --agent-id <id> --claim-id <id> --head-sha {head-SHA}
