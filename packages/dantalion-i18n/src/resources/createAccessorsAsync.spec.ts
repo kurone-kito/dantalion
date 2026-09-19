@@ -24,6 +24,7 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         genius: expect.any(Object),
         getDescription: expect.any(Function),
         lifeBase: expect.any(Object),
+        locale: lng,
         management: expect.any(Object),
         motivation: expect.any(Object),
         position: expect.any(Object),
@@ -31,6 +32,12 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         response: expect.any(Object),
         vector: expect.any(Object),
       }));
+
+    it('falls back to the runtime locale for unannotated translators', async () => {
+      const t = await createTAsync({ lng });
+      const accessors = createAccessors(t.bind(undefined));
+      expect(accessors.locale).toBeTypeOf('string');
+    });
   });
   describe('`createAccessorsAsync()` function', () => {
     it('Get the (Accessors & i18next.WithT) object', async () =>
@@ -40,6 +47,7 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         genius: expect.any(Object),
         getDescription: expect.any(Function),
         lifeBase: expect.any(Object),
+        locale: lng,
         management: expect.any(Object),
         motivation: expect.any(Object),
         position: expect.any(Object),

@@ -9,14 +9,18 @@ export interface Options {
   /**
    * The heading level.
    *
-   * This argument can use only natural numbers.
+   * Positive safe integers are used as-is. Zero, negative, fractional,
+   * non-finite, and other invalid values use level 1.
    */
   readonly level?: number | undefined;
 }
+
+const normalizeLevel = (level: number): number =>
+  Number.isSafeInteger(level) && level > 0 ? level : 1;
 
 /**
  * Create the Markdown from the heading and body pair.
  * @param options The options.
  */
 export default ({ body = '', head, level = 1 }: Options): string =>
-  line(`${'#'.repeat(level)} ${head}`.trim(), '', body.trim());
+  line(`${'#'.repeat(normalizeLevel(level))} ${head}`.trim(), '', body.trim());

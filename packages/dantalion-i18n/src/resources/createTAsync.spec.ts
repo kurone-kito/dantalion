@@ -18,6 +18,10 @@ describe('`createTAsync()` function', () => {
     );
   });
 
+  it('Exposes the initialized locale', async () => {
+    expect((await createTAsync({ lng: 'ja' })).locale).toBe('ja');
+  });
+
   it('Merges additions without mutating them', async () => {
     const additions: Resource = {
       en: {

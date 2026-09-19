@@ -11,9 +11,10 @@ import type {
   Vector,
 } from '@kurone-kito/dantalion-core';
 import type { Resource, TFunction, WithT } from 'i18next';
+import getLocale from '../getLocale.js';
 import type { DetailAccessor } from './createGenericAccessor.js';
 import createGenericAccessor from './createGenericAccessor.js';
-import createTAsync from './createTAsync.js';
+import createTAsync, { type LocalizedTFunction } from './createTAsync.js';
 import type {
   DescriptionsType,
   DetailsBaseType,
@@ -25,6 +26,9 @@ import type {
 
 /** The type definition of the concreted accessors collection */
 export interface Accessors {
+  /** The locale used to format localized output. */
+  readonly locale: string;
+
   /**
    * The instance provides a set of functions that retrieve
    * human-readable resources related to the thought method.
@@ -112,6 +116,7 @@ export const createAccessors = (t: TFunction): Accessors => {
   const { tCategoryStringedDetail, tDetail, tObj, tStringedDetail } =
     createGenericAccessor(t);
   const potentialsDetail = tDetail<readonly string[]>('potentials');
+  const locale = (t as LocalizedTFunction).locale ?? getLocale();
   return {
     brain: tDetail('brain'),
     communication: tDetail('communication'),
@@ -127,6 +132,7 @@ export const createAccessors = (t: TFunction): Accessors => {
     },
     response: tDetail('response'),
     vector: tDetail('vector'),
+    locale,
   };
 };
 

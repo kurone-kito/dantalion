@@ -221,7 +221,27 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
     it('keeps a skipped date-only calendar day in the description', async () => {
       const accessors = createAccessors(await createTAsync({ lng }));
       const actual = getPersonalityMarkdown(accessors, '2011-12-30');
-      expect(actual).toContain('Fri Dec 30 2011');
+      const expected = new Intl.DateTimeFormat(lng, {
+        day: '2-digit',
+        month: 'short',
+        timeZone: 'UTC',
+        weekday: 'short',
+        year: 'numeric',
+      }).format(new Date('2011-12-30T00:00:00Z'));
+      expect(actual).toContain(expected);
+    });
+
+    it('formats Date inputs with the active locale', async () => {
+      const accessors = createAccessors(await createTAsync({ lng }));
+      const birth = new Date('1873-02-01T00:00:00Z');
+      const actual = getPersonalityMarkdown(accessors, birth);
+      const expected = new Intl.DateTimeFormat(lng, {
+        day: '2-digit',
+        month: 'short',
+        weekday: 'short',
+        year: 'numeric',
+      }).format(birth);
+      expect(actual).toContain(expected);
     });
   });
 });

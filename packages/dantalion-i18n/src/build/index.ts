@@ -11,36 +11,31 @@ import {
 type ParsableDate = ConstructorParameters<typeof Date>[0];
 
 const DATE_ONLY_PATTERN = /^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})$/;
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
+const DATE_FORMAT_OPTIONS = {
+  day: '2-digit',
+  month: 'short',
+  weekday: 'short',
+  year: 'numeric',
+} satisfies Intl.DateTimeFormatOptions;
 
 /** Format date-only strings without converting them through a local Date. */
-const getDescriptionType = (birth: ParsableDate): string => {
-  if (typeof birth !== 'string') return new Date(birth).toDateString();
-  const match = DATE_ONLY_PATTERN.exec(birth);
-  if (!match) return new Date(birth).toDateString();
-  const [, year, month, day] = match;
-  if (year === undefined || month === undefined || day === undefined)
-    return new Date(birth).toDateString();
-  const date = new Date(0);
-  date.setUTCFullYear(Number(year), Number(month) - 1, Number(day));
-  date.setUTCHours(0, 0, 0, 0);
-  return `${WEEKDAYS[date.getUTCDay()]} ${MONTHS[date.getUTCMonth()]} ${String(
-    date.getUTCDate(),
-  ).padStart(2, '0')} ${date.getUTCFullYear()}`;
+const getDescriptionType = (birth: ParsableDate, locale: string): string => {
+  if (typeof birth === 'string') {
+    const match = DATE_ONLY_PATTERN.exec(birth);
+    const [, year, month, day] = match ?? [];
+    if (year !== undefined && month !== undefined && day !== undefined) {
+      const date = new Date(0);
+      date.setUTCFullYear(Number(year), Number(month) - 1, Number(day));
+      date.setUTCHours(0, 0, 0, 0);
+      return new Intl.DateTimeFormat(locale, {
+        ...DATE_FORMAT_OPTIONS,
+        timeZone: 'UTC',
+      }).format(date);
+    }
+  }
+  const date = new Date(birth);
+  if (Number.isNaN(date.getTime())) return date.toDateString();
+  return new Intl.DateTimeFormat(locale, DATE_FORMAT_OPTIONS).format(date);
 };
 
 /**
@@ -76,9 +71,11 @@ export const getDetailMarkdown = (
  * @param birth Specify a birthday within the range from February 1, 1873,
  * to December 31, 2050.
  *
- * Date-only strings in year-month-day form are interpreted as local calendar
- * dates. Date and number inputs use the local calendar date of the resulting
- * Date, and time information is ignored after the input is normalized.
+ * Date-only strings in year-month-day form are interpreted as calendar dates
+ * and formatted with UTC to prevent timezone shifts. Date and number inputs
+ * use the local timezone of the resulting Date, and time information is
+ * ignored after the input is normalized. The active accessor locale controls
+ * the formatted date text.
  * @returns The string that the personality information
  * as the Markdown format.
  *
@@ -89,7 +86,9 @@ export const getPersonalityMarkdown = (
   birth: ParsableDate,
 ): string => {
   const result = getPersonality(birth);
-  const desc = accessors.getDescription(getDescriptionType(birth));
+  const desc = accessors.getDescription(
+    getDescriptionType(birth, accessors.locale),
+  );
   return result
     ? article({
         body: createPersonalityTemplate(result, accessors),
