@@ -3,6 +3,7 @@
   "$id": "https://kurone-kito.github.io/idd-skill/schemas/stalled-session-quiet-check.schema.json",
   "title": "Stalled Session Quiet Check",
   "description": "CLI contract for quiet-window evidence collection (Resume/S2 stalled-session recovery)",
+  "$comment": "JSON Schema draft 2020-12 cannot express equality between policy.quiet_window_ms and quiet_window_ms or timestamp arithmetic. Every consumer must reject reports unless those values agree and window_start equals now minus quiet_window_ms.",
   "type": "object",
   "required": [
     "repository",
@@ -86,12 +87,12 @@
     "quiet_window_ms": {
       "type": "integer",
       "minimum": 1,
-      "description": "Quiet-window duration used for the evaluation"
+      "description": "Quiet-window duration used for the evaluation; consumers must require equality with policy.quiet_window_ms"
     },
     "window_start": {
       "type": "string",
       "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
-      "description": "Inclusive lower bound for timestamped activity checks"
+      "description": "Inclusive lower bound for timestamped activity checks; consumers must require window_start = now - quiet_window_ms"
     },
     "now": {
       "type": "string",

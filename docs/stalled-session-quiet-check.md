@@ -114,6 +114,14 @@ Resume/S2 treats these fields as the stable contract:
 - `evidence.branch_tip_evidence_head_sha`
 - `evidence.branch_tip_evidence_complete`
 
+The schema validates the shape of this output, while consumers must also
+enforce its cross-field invariants: `policy.quiet_window_ms` must equal
+the top-level `quiet_window_ms`, and `window_start` must equal
+`now - quiet_window_ms` using UTC timestamp arithmetic. Any mismatch or
+arithmetic failure is contradictory evidence and must be treated as a
+hold; a helper must not satisfy the configured quiet window with a shorter
+duplicated duration.
+
 The CLI also includes `repository`, `pr`, and `policy` envelopes for
 operator context. Those fields are useful for logging and diagnostics but
 are not the gating fields Resume/S2 relies on.

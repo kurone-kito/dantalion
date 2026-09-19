@@ -16,9 +16,12 @@ const isNonNegativeInteger = (value) => Number.isInteger(value) && value >= 0;
 const isPositiveInteger = (value) => Number.isInteger(value) && value > 0;
 const isUtcIsoTimestamp = (value) =>
   typeof value === 'string' &&
-  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/u.test(value) &&
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/u.test(value) &&
   Number.isFinite(Date.parse(value)) &&
-  new Date(value).toISOString().replace(/\.\d{3}Z$/u, 'Z') === value;
+  (() => {
+    const canonical = new Date(value).toISOString();
+    return canonical === value || canonical.replace(/\.000Z$/u, 'Z') === value;
+  })();
 
 const normalizePayload = (payload) => {
   if (

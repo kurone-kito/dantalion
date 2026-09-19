@@ -94,6 +94,11 @@ This check never rebases, merges, or pushes.
    the same `ready: true` branch requires clear review currency, actionable
    thread and unreplied-comment counts, required-review/CODEOWNER state,
    advisory state, claim ownership, and other mechanically blocking evidence.
+   The same `ready: true` branch must include `developmentBranchTarget` with
+   `status` `configured` or `default`, a non-empty resolved `branch`, and
+   the live `baseRefName`; reject `invalid` or `unavailable` statuses, and
+   compare `branch` with `baseRefName` before accepting the helper's
+   `ready` value.
 3. Otherwise, record the verdict exactly as the helper reports it:
    `prHeadSha` (F2.5 needs this exact value for its merge command
    candidate — never re-derive it locally), `ready`, and, if `ready` is

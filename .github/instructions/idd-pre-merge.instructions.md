@@ -292,6 +292,12 @@ turns an operator-visible failure into a silent stall.
   same resolved `ciWait.runningTimeout`, `ciWait.generationTimeout`, and
   `ciWait.rerunPolicy` values; on-success → re-evaluate F2).
 
+- **Development branch target**: a `ready: true` readiness report must
+  include `developmentBranchTarget` with status `configured` or `default`,
+  a non-empty resolved `branch`, and the live `baseRefName`. Reject
+  `invalid` or `unavailable` statuses, and compare `branch` with
+  `baseRefName` in the consumer; JSON Schema cannot express that equality.
+
   `pre-merge-readiness` reads `.github/idd/config.json` from the PR's
   trusted **base** ref, not the PR head. When this PR introduces a
   `ciGate.*` key its own F2 evaluation needs, follow

@@ -104,6 +104,15 @@ Helper fields: `quiet_window_met`, `quiet_window_ms`, `window_start`, `now`,
 `has_branch_tip_movement`, `branch_tip_evidence_source`,
 `branch_tip_evidence_head_sha`, `branch_tip_evidence_complete`).
 
+Before accepting any helper result, perform the cross-field checks that
+JSON Schema cannot express: `policy.quiet_window_ms` must equal the
+top-level `quiet_window_ms`, and `window_start` must equal
+`now - quiet_window_ms` after parsing all three timestamps as UTC. A
+mismatch, a non-integral duration, or a timestamp arithmetic failure is
+contradictory evidence and routes to **Hold and stop**. This prevents a
+helper from evaluating a shorter duplicated window while reporting the
+configured policy duration.
+
 Before accepting `quiet_window_met: true`, validate the complete evidence
 tuple against the schema and the live PR: `branch_tip_evidence_complete`
 must be `true`, the source must be `pr-timeline`, `ref-update`, or

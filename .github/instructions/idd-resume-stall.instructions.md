@@ -147,6 +147,15 @@ tree. Consume the helper's stable fields `quiet_window_met`,
 `has_branch_tip_movement`, `branch_tip_evidence_source`,
 `branch_tip_evidence_head_sha`, `branch_tip_evidence_complete`).
 
+Before accepting any helper result, perform the cross-field checks that
+JSON Schema cannot express: `policy.quiet_window_ms` must equal the
+top-level `quiet_window_ms`, and `window_start` must equal
+`now - quiet_window_ms` after parsing all three timestamps as UTC. A
+mismatch, a non-integral duration, or a timestamp arithmetic failure is
+contradictory evidence and routes to hold. This prevents a helper from
+evaluating a shorter duplicated window while reporting the configured
+policy duration.
+
 The helper's branch-tip signal must come from a GitHub-server PR timeline
 or ref-update event (`committed`, `head_ref_force_pushed`, `synchronize`,
 or an equivalent server-side head snapshot). A commit object's author or

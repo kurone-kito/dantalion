@@ -36,6 +36,7 @@
         "required": ["ready"]
       },
       "then": {
+        "required": ["developmentBranchTarget"],
         "properties": {
           "blockers": { "maxItems": 0 },
           "reviewCurrency": {
@@ -151,6 +152,14 @@
                 }
               }
             ]
+          },
+          "developmentBranchTarget": {
+            "required": ["status", "branch", "baseRefName"],
+            "properties": {
+              "status": { "enum": ["configured", "default"] },
+              "branch": { "type": "string", "minLength": 1 },
+              "baseRefName": { "type": "string", "minLength": 1 }
+            }
           },
           "dispositionEvidence": {
             "required": [
