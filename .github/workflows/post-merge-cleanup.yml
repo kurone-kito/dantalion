@@ -311,6 +311,7 @@ jobs:
             echo "blocked=$BLOCKED"
             echo "retry_attempts=$RETRY_ATTEMPTS"
             echo "retry_bound_exhausted=$RETRY_BOUND_EXHAUSTED"
+            echo "manual_command=$MANUAL_COMMAND"
           } >> "$GITHUB_OUTPUT"
 
       - name: Post cleanup evidence comment
@@ -329,6 +330,7 @@ jobs:
           BLOCKED: ${{ steps.cleanup.outputs.blocked }}
           RETRY_ATTEMPTS: ${{ steps.cleanup.outputs.retry_attempts }}
           RETRY_BOUND_EXHAUSTED: ${{ steps.cleanup.outputs.retry_bound_exhausted }}
+          MANUAL_COMMAND: ${{ steps.cleanup.outputs.manual_command }}
         run: |
           # Keep both the duplicate-record lookup and the evidence post on
           # the server that triggered this run; GH_HOST is required for gh
