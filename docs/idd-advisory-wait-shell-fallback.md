@@ -670,7 +670,7 @@ OWNER=${REPOSITORY%%/*}
 REPO=${REPOSITORY#*/}
 PR_METADATA=$(gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}")
 PR_HEAD_SHA=$(printf '%s' "$PR_METADATA" | jq -er '.head.sha')
-PR_CREATED_AT=$(printf '%s' "$PR_METADATA" | jq -er '.created_at')
+PR_UPDATED_AT=$(printf '%s' "$PR_METADATA" | jq -er '.updated_at')
 PR_BASE_SHA=$(printf '%s' "$PR_METADATA" | jq -er '.base.sha')
 CONFIG=$(mktemp)
 trap 'rm -f "$CONFIG"' EXIT
@@ -736,22 +736,44 @@ if ! TIMELINE_JSON=$(printf '%s\n' "$TIMELINE_RAW" | jq -s 'add // []'); then
   echo "hold: PR timeline response was not valid JSON" >&2
   exit 2
 fi
-if ! BRANCH_TIP_MOVEMENTS_JSON=$(printf '%s' "$TIMELINE_JSON" | jq -c '
+if ! BRANCH_TIP_MOVEMENTS_JSON=$(printf '%s' "$TIMELINE_JSON" | jq -c --arg head "$PR_HEAD_SHA" '
   map(select(
     ((.event == "committed"
       or .event == "head_ref_force_pushed"
       or .event == "head_ref_deleted"
       or .event == "synchronize")
-      and ((.created_at // .updated_at // "") != ""))
-  ) | {at: (.created_at // .updated_at), type: (.event // "branch-tip-movement")})
+      and ((.created_at // .updated_at // "") != "")
+      and (((.sha // .commit_id // .head_sha // "") == "")
+           or ((.sha // .commit_id // .head_sha) == $head)))
+  ) | {at: (.created_at // .updated_at),
+       type: (.event // "branch-tip-movement"),
+       head_sha: (.sha // .commit_id // .head_sha // $head)})
   | sort_by(.at)
 '); then
   echo "hold: PR timeline branch-movement records were not valid JSON" >&2
   exit 2
 fi
-HEAD_ACTIVITY_AT=$(printf '%s' "$BRANCH_TIP_MOVEMENTS_JSON" | jq -r --arg created "$PR_CREATED_AT" '
-  (.[-1].at // $created)
-')
+if ! jq -nr --arg timestamp "$PR_UPDATED_AT" '$timestamp | fromdateiso8601' >/dev/null; then
+  echo "hold: GitHub PR updated_at was not a valid server timestamp" >&2
+  exit 2
+fi
+if ! BRANCH_TIP_MOVEMENTS_JSON=$(printf '%s' "$BRANCH_TIP_MOVEMENTS_JSON" | jq -c \
+  --arg at "$PR_UPDATED_AT" \
+  --arg head "$PR_HEAD_SHA" \
+  '. + [{at: $at, type: "head-snapshot", head_sha: $head}] | sort_by(.at)'); then
+  echo "hold: current PR head snapshot could not be bound to server metadata" >&2
+  exit 2
+fi
+# Ordinary pushes appear as timestamp-less `committed` timeline records.
+# The successful PR response above binds its server-managed updated_at to
+# the current head.sha. Keep that conservative snapshot alongside any
+# timestamped timeline evidence; never fall back to PR creation or a commit
+# object's author/committer date.
+HEAD_ACTIVITY_AT=$(printf '%s' "$BRANCH_TIP_MOVEMENTS_JSON" | jq -r '.[-1].at // empty')
+if [ -z "$HEAD_ACTIVITY_AT" ]; then
+  echo "hold: current PR head has no server-anchored activity timestamp" >&2
+  exit 2
+fi
 
 ISSUE_COMMENTS_JSON=$(
   gh api "repos/${OWNER}/${REPO}/issues/${PR_NUMBER}/comments?per_page=100" \

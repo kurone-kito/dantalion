@@ -142,6 +142,12 @@ committer date is not a server-side movement timestamp. If that evidence is
 missing, pagination is incomplete, or the source is ambiguous, treat the
 quiet check as hold/inconclusive and do not take over.
 
+Do not enable a helper profile until its pinned producer and schema also
+report the evidence source, current PR head SHA binding, and completeness
+flag. A helper that reports only a commit author/committer date is
+non-conforming; keep the repository on `instructions-only` until that
+producer is updated.
+
 The helper gathers evidence only. It never decides trusted-marker
 validity, stale-age, advisory state, forced-handoff routing, or takeover
 eligibility by itself. If helper runtime is unavailable, the command

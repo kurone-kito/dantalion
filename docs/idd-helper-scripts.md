@@ -266,6 +266,14 @@ turning every adopter into a Node.js-first repository. The written
 decision tables remain the canonical protocol regardless of which helper
 profile is selected.
 
+Before switching from `instructions-only`, verify the pinned helper source
+and its output schema for the S2 branch-tip contract: server-observed
+timeline/ref-update or equivalent current-head snapshot evidence, the
+current PR head SHA bound to that evidence, and an explicit completeness
+flag. A helper that uses a commit object's author/committer date, or omits
+those bindings, is not eligible for activation; keep the profile at
+`instructions-only` until the helper and schema are updated together.
+
 ## Profile Wiring Surface
 
 Use `idd-helper-bundle-manifest` as the canonical import helper for these
@@ -825,12 +833,14 @@ Interpretation rules:
   `latest_activity_type`, `reason`, and `evidence`
   (`activity_count_in_window`, `blocking_activities`,
   `has_heartbeat_in_window`, `has_ci_running`,
-  `has_branch_tip_movement`)
+  `has_branch_tip_movement`, `branch_tip_evidence_source`,
+  `branch_tip_evidence_head_sha`, `branch_tip_evidence_complete`)
 - `has_branch_tip_movement` is valid only when the producer observed a
   GitHub-server PR timeline/ref-update event (for example `committed`,
-  `head_ref_force_pushed`, or `synchronize`); commit author/committer
-  dates are not branch-movement evidence. Missing or incomplete server
-  ref-update data is a hold/inconclusive result.
+  `head_ref_force_pushed`, or `synchronize`) or an equivalent current-head
+  snapshot, and binds that evidence to the current PR head. Commit
+  author/committer dates are not branch-movement evidence. Missing or
+  incomplete server ref-update data is a hold/inconclusive result.
 - `ci-running` activities always break the quiet window regardless
   of their timestamp; all other types are checked against
   `window_start = now - quiet_window_ms`

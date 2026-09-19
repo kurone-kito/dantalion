@@ -102,6 +102,9 @@ Resume/S2 treats these fields as the stable contract:
 - `evidence.has_heartbeat_in_window`
 - `evidence.has_ci_running`
 - `evidence.has_branch_tip_movement`
+- `evidence.branch_tip_evidence_source`
+- `evidence.branch_tip_evidence_head_sha`
+- `evidence.branch_tip_evidence_complete`
 
 The CLI also includes `repository`, `pr`, and `policy` envelopes for
 operator context. Those fields are useful for logging and diagnostics but
@@ -148,7 +151,10 @@ The CLI returns JSON shaped like:
     ],
     "has_heartbeat_in_window": false,
     "has_ci_running": false,
-    "has_branch_tip_movement": false
+    "has_branch_tip_movement": false,
+    "branch_tip_evidence_source": "pr-timeline",
+    "branch_tip_evidence_head_sha": "9bf7bd353fe09a0514fcf3e36b3a323cb6c936fe",
+    "branch_tip_evidence_complete": true
   }
 }
 ```
@@ -202,6 +208,11 @@ The helper throws an error if:
   commit object's author or committer date. If that server-side signal is
   unavailable or the timeline is incomplete, return hold/inconclusive
   evidence instead of treating the quiet window as satisfied.
+- A helper profile may be enabled only after its pinned producer and schema
+  expose the evidence source, current-head SHA binding, and completeness
+  flag above. A producer that derives movement from a commit object's
+  author/committer date does not satisfy this contract; keep the repository
+  on `instructions-only` until the producer is updated.
 - Normalizes timestamps to ISO8601 UTC with a `Z` suffix
 - Treats `ci-running` as blocking even if its timestamp would otherwise
   fall outside the window

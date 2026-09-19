@@ -74,6 +74,11 @@ GitHub-server PR timeline or ref-update event (`committed`,
 snapshot). Never use a commit object's author/committer date as movement
 evidence. Missing, partial, or ambiguous ref-update evidence is a hold.
 
+Do not enable a helper profile until its pinned producer and schema report
+the evidence source, current PR head SHA binding, and completeness flag. A
+helper that reports only a commit author/committer date is non-conforming;
+keep the repository on `instructions-only` until that producer is updated.
+
 Helper fields: `quiet_window_met`, `reason`, `latest_activity`.
 
 | Result                                                         | Action                                                 |
