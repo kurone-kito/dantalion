@@ -140,6 +140,7 @@ export interface AllTypes {
   readonly brain: readonly Brain[];
   readonly communication: readonly Communication[];
   readonly genius: readonly Genius[];
+  readonly heavenlyStem: readonly HeavenlyStem[];
   readonly lifeBase: readonly LifeBase[];
   readonly lifeBaseCC: Record<LifeBase, string>;
   readonly management: readonly Management[];
@@ -157,6 +158,7 @@ export interface AllTypes {
 | `brain`         | `readonly Brain[]`         | The list that the types of thought methods.                   |
 | `communication` | `readonly Communication[]` | The list that the types of dialogue policy.                   |
 | `genius`        | `readonly Genius[]`        | The list of personality types.                                |
+| `heavenlyStem`  | `readonly HeavenlyStem[]`  | The values of the ten-phase sub-personality cycle.             |
 | `lifeBase`      | `readonly LifeBase[]`      | The list that the base of ego type.                           |
 | `lifeBaseCC`    | `Record<LifeBase, string>` | The list that the base of ego type.                           |
 | `management`    | `readonly Management[]`    | The list of the types that the risk management method.        |
@@ -339,6 +341,27 @@ type Genius =
 | `888` | This type of person value the spirit of challenge and are interested in various things. |
 | `919` | This type of person has the quick situational judgment and also is good at bargaining.  |
 
+### `HeavenlyStem`
+
+The heavenly stem (天干, Tian Gan) — the ten-phase sub-personality cycle.
+
+```ts
+type HeavenlyStem = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+```
+
+| Value | Stem |
+| :---: | :--: |
+|   1   |  甲  |
+|   2   |  乙  |
+|   3   |  丙  |
+|   4   |  丁  |
+|   5   |  戊  |
+|   6   |  己  |
+|   7   |  庚  |
+|   8   |  辛  |
+|   9   |  壬  |
+|  10   |  癸  |
+
 ### `LifeBase`
 
 The types that the base of ego.
@@ -412,7 +435,7 @@ The details for Personality.
 
 ```ts
 interface Personality {
-  cycle: number;
+  cycle: HeavenlyStem;
   inner: Genius;
   lifeBase: LifeBase;
   outer: Genius;
@@ -423,7 +446,7 @@ interface Personality {
 
 | Property     | Type                     | Description                  |
 | :----------- | :----------------------- | :--------------------------- |
-| `cycle`      | `number`                 | The sub-personality (cycle). |
+| `cycle`      | `HeavenlyStem`           | The sub-personality (cycle). |
 | `inner`      | `Genius`                 | The inner personality.       |
 | `lifeBase`   | `LifeBase`               | The life base.               |
 | `outer`      | `Genius`                 | The outer personality.       |

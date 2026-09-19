@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Genius } from './index.js';
-import { getDetail, getPersonality, toCC } from './index.js';
+import { getDetail, getPersonality, toCC, types } from './index.js';
 import {
   type DetailTestData,
   getDetailTestData,
@@ -8,6 +8,13 @@ import {
 } from './tests/index.js';
 
 describe('integration testing', () => {
+  describe('get all types', () => {
+    it('exposes the frozen HeavenlyStem values', () => {
+      expect(types.heavenlyStem).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      expect(Object.isFrozen(types.heavenlyStem)).toBe(true);
+    });
+  });
+
   describe('get the details', () => {
     it('returns undefined for an out-of-union runtime key', () => {
       const invalidKey: string = 'bogus';
