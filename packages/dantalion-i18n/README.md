@@ -87,7 +87,7 @@ Create the concreted accessors collection from the i18next instance
 | Name | Type                                                          | Defaults     | Description                  |
 | :--- | :------------------------------------------------------------ | :----------- | :--------------------------- |
 | `t`  | [`i18next.TFunction`](https://www.i18next.com/overview/api#t) | _(Required)_ | Specify the i18next instance |
-| `locale` | `string?`                                                  | _(Optional)_ | Specify the locale for localized output. If omitted, use the translator metadata or the runtime locale. |
+| `locale` | `string?`                                                  | _(Optional)_ | Specify the locale for localized output. If omitted, use translator metadata or runtime locale; invalid tags use runtime locale. |
 
 #### Returns
 

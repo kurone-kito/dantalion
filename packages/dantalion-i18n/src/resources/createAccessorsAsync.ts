@@ -111,7 +111,8 @@ export interface Accessors {
  * Create the concreted accessors collection from the i18next instance
  * @param t Specify the i18next instance
  * @param locale Specify the locale for localized output. If omitted, use the
- * annotated translator locale or the runtime locale.
+ * annotated translator locale or the runtime locale. Invalid locale tags use
+ * the runtime locale during date formatting.
  * @returns The instance of the concreted accessors collection
  */
 export const createAccessors = (t: TFunction, locale?: string): Accessors => {

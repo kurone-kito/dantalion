@@ -243,5 +243,18 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       }).format(birth);
       expect(actual).toContain(expected);
     });
+
+    it('falls back to the runtime locale for invalid locale tags', async () => {
+      const t = await createTAsync({ lng });
+      const actual = getPersonalityMarkdown(
+        createAccessors(t, 'invalid_locale'),
+        TRIPWIRE_BIRTHDAY,
+      );
+      const expected = getPersonalityMarkdown(
+        createAccessors(t, Intl.DateTimeFormat().resolvedOptions().locale),
+        TRIPWIRE_BIRTHDAY,
+      );
+      expect(actual).toBe(expected);
+    });
   });
 });

@@ -18,8 +18,18 @@ const DATE_FORMAT_OPTIONS = {
   year: 'numeric',
 } satisfies Intl.DateTimeFormatOptions;
 
+/** Return a canonical locale or let Intl use the runtime default. */
+const getValidLocale = (locale: string): string | undefined => {
+  try {
+    return Intl.getCanonicalLocales(locale)[0];
+  } catch {
+    return undefined;
+  }
+};
+
 /** Format date-only strings without converting them through a local Date. */
 const getDescriptionType = (birth: ParsableDate, locale: string): string => {
+  const validLocale = getValidLocale(locale);
   if (typeof birth === 'string') {
     const match = DATE_ONLY_PATTERN.exec(birth);
     const [, year, month, day] = match ?? [];
@@ -27,7 +37,7 @@ const getDescriptionType = (birth: ParsableDate, locale: string): string => {
       const date = new Date(0);
       date.setUTCFullYear(Number(year), Number(month) - 1, Number(day));
       date.setUTCHours(0, 0, 0, 0);
-      return new Intl.DateTimeFormat(locale, {
+      return new Intl.DateTimeFormat(validLocale, {
         ...DATE_FORMAT_OPTIONS,
         timeZone: 'UTC',
       }).format(date);
@@ -35,7 +45,7 @@ const getDescriptionType = (birth: ParsableDate, locale: string): string => {
   }
   const date = new Date(birth);
   if (Number.isNaN(date.getTime())) return date.toDateString();
-  return new Intl.DateTimeFormat(locale, DATE_FORMAT_OPTIONS).format(date);
+  return new Intl.DateTimeFormat(validLocale, DATE_FORMAT_OPTIONS).format(date);
 };
 
 /**
