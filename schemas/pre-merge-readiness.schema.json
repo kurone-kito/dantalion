@@ -126,6 +126,32 @@
               "claimLost": { "const": false }
             }
           },
+          "branchCurrency": {
+            "required": [
+              "mergeStateStatus",
+              "mergeable",
+              "requiresUpToDateHead"
+            ],
+            "properties": {
+              "mergeStateStatus": {
+                "enum": ["CLEAN", "BEHIND"]
+              },
+              "mergeable": { "const": "MERGEABLE" }
+            },
+            "anyOf": [
+              {
+                "properties": {
+                  "mergeStateStatus": { "const": "CLEAN" }
+                }
+              },
+              {
+                "properties": {
+                  "mergeStateStatus": { "const": "BEHIND" },
+                  "requiresUpToDateHead": { "const": false }
+                }
+              }
+            ]
+          },
           "dispositionEvidence": {
             "required": [
               "route",
@@ -158,45 +184,6 @@
           }
         },
         "allOf": [
-          {
-            "$comment": "A ready report cannot claim readiness while an up-to-date-head requirement is unmet.",
-            "not": {
-              "required": ["branchCurrency"],
-              "properties": {
-                "branchCurrency": {
-                  "required": ["requiresUpToDateHead", "mergeStateStatus"],
-                  "properties": {
-                    "requiresUpToDateHead": { "const": true },
-                    "mergeStateStatus": { "const": "BEHIND" }
-                  }
-                }
-              }
-            }
-          },
-          {
-            "$comment": "A ready report cannot hide discarded non-passing required-check siblings behind a BLOCKED merge state.",
-            "if": {
-              "required": ["branchCurrency"],
-              "properties": {
-                "branchCurrency": {
-                  "required": ["mergeStateStatus"],
-                  "properties": {
-                    "mergeStateStatus": { "const": "BLOCKED" }
-                  }
-                }
-              }
-            },
-            "then": {
-              "properties": {
-                "ci": {
-                  "required": ["discardedNonPassingRequiredChecks"],
-                  "properties": {
-                    "discardedNonPassingRequiredChecks": { "maxItems": 0 }
-                  }
-                }
-              }
-            }
-          },
           {
             "$comment": "A ready report with no configured required checks is valid only when protection was readable and every present check run passed.",
             "if": {

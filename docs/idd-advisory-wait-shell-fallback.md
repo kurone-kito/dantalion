@@ -933,16 +933,22 @@ ACTIVITY_JSON=$(
 )
 LATEST_ACTIVITY_AT=$(printf '%s' "$ACTIVITY_JSON" | jq -r '.[-1].at // empty')
 
-# Only issue-level comments participate in the secondary settlement signal.
-# The latest matching notice is definitive decline; a genuine comment uses a
-# short five-minute confirmation buffer, capped by the configured window.
+# Only pull-request review objects with an explicit current-head commit
+# binding participate in the secondary settlement signal. Issue-level bot
+# comments have no commit_id, so they cannot prove which HEAD they describe;
+# never use them to shorten or skip the quiet window. A current-head review
+# uses a short five-minute confirmation buffer, capped by the configured
+# window. An unbound notice remains pending and keeps the full window.
 SECONDARY_LATEST_JSON=$(
-  printf '%s' "$ISSUE_COMMENTS_JSON" \
-    | jq -c --arg login "$SECONDARY_LOGIN" --arg head "$HEAD_ENTRY_AT" '
+  printf '%s' "$REVIEWS_JSON" \
+    | jq -c --arg login "$SECONDARY_LOGIN" --arg head "$PR_HEAD_SHA" '
         map(select(((.user.login // .author.login // "") | ascii_downcase)
-                   == ($login | ascii_downcase)))
-        | map({at: (.updated_at // .created_at // ""), body: (.body // "")})
-        | map(select(.at != "" and .at >= $head))
+                   == ($login | ascii_downcase)
+                   and ((.commit_id // "") | ascii_downcase)
+                     == ($head | ascii_downcase)))
+        | map({at: (.submitted_at // .updated_at // .created_at // ""),
+               body: (.body // "")})
+        | map(select(.at != ""))
         | sort_by(.at) | .[-1] // {}
       '
 )
