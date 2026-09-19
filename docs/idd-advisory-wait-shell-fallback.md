@@ -436,3 +436,177 @@ echo "converged=${CONVERGED} conjuncts=${CONJUNCT1},${CONJUNCT2},${CONJUNCT3}"
 echo "missingRegularComments=${MISSING_REGULAR} missingThreads=${MISSING_THREADS}"
 # proceed iff CONVERGED is true AND both missing counts are 0.
 ```
+
+## F2 secondary advisory quiet window
+
+When `advisoryWait.secondaryQuietWindow` is configured and the repository
+uses `helperRuntime.profile: instructions-only`, the readiness helper's
+`secondaryQuietWindow` field must be reproduced before F2 can proceed. Run
+the following after the other E-phase convergence conditions are satisfied.
+It is deliberately conservative: the no-secondary-review path anchors on
+the latest activity from all fetched PR review surfaces, so an activity that
+the helper would classify as an ack-only event can only delay the merge, never
+shorten the safety window. The current dantalion dogfooding policy uses
+CodeRabbit as the secondary bot; the notice patterns below are the same
+rate-limit and skip-review markers used by the upstream classifier.
+
+```sh
+set -eu
+set -o pipefail
+
+PR_NUMBER={pr-number}
+CONFIG=.github/idd/config.json
+
+QUIET_SPEC=$(jq -r '.advisoryWait.secondaryQuietWindow // ""' "$CONFIG")
+SECONDARY_LOGIN=$(jq -r '.advisoryWait.secondaryBotLogin // ""' "$CONFIG")
+
+# Omitted secondaryQuietWindow is the explicit off/default path.
+if [ -z "$QUIET_SPEC" ]; then
+  jq -n '{minutes: 0, anchorAt: "none", elapsedMinutes: null,
+          elapsed: true, remainingMinutes: 0, declined: false}'
+  exit 0
+fi
+
+# Accept the policy's positive whole-minute ISO-8601 duration forms.
+QUIET_MINUTES=$(
+  jq -nr --arg spec "$QUIET_SPEC" '
+    ($spec | capture("^P(?:(?<days>[0-9]+)D)?(?:T(?:(?<hours>[0-9]+)H)?(?:(?<minutes>[0-9]+)M)?)?$") ) as $p
+    | ((($p.days // "0") | tonumber) * 1440
+       + (($p.hours // "0") | tonumber) * 60
+       + (($p.minutes // "0") | tonumber))
+  '
+)
+if [ "$QUIET_MINUTES" -le 0 ]; then
+  echo "hold: invalid positive advisoryWait.secondaryQuietWindow" >&2
+  exit 2
+fi
+
+PR_HEAD_COMMITTED_AT=$(
+  gh api "repos/${OWNER}/${REPO}/commits/${PR_HEAD_SHA}" \
+    | jq -er '.commit.committer.date // .commit.author.date'
+)
+
+# Use GitHub's Date header, not the executor's local wall clock.
+SERVER_NOW=$(
+  gh api "repos/${OWNER}/${REPO}/issues/${PR_NUMBER}" --include \
+    | awk 'tolower($0) ~ /^date:/ {
+        sub(/\r$/, ""); sub(/^[^:]*:[[:space:]]*/, ""); print; exit
+      }'
+)
+if [ -z "$SERVER_NOW" ]; then
+  echo "hold: GitHub server Date header was unavailable" >&2
+  exit 2
+fi
+NOW_EPOCH=$(date -u -d "$SERVER_NOW" +%s)
+
+ISSUE_COMMENTS_JSON=$(
+  gh api "repos/${OWNER}/${REPO}/issues/${PR_NUMBER}/comments?per_page=100" \
+    --paginate | jq -s 'add // []'
+)
+REVIEWS_JSON=$(
+  gh api "repos/${OWNER}/${REPO}/pulls/${PR_NUMBER}/reviews?per_page=100" \
+    --paginate | jq -s 'add // []'
+)
+REVIEW_COMMENTS_JSON=$(
+  gh api "repos/${OWNER}/${REPO}/pulls/${PR_NUMBER}/comments?per_page=100" \
+    --paginate | jq -s 'add // []'
+)
+
+# This is a fail-closed, conservative approximation of the helper's
+# effective.maxActivityUpdatedAt. Keep all three review surfaces and all
+# readable activity timestamps; filtering can only make the wait shorter.
+ACTIVITY_JSON=$(
+  jq -n \
+    --argjson issue_comments "$ISSUE_COMMENTS_JSON" \
+    --argjson reviews "$REVIEWS_JSON" \
+    --argjson review_comments "$REVIEW_COMMENTS_JSON" '
+      ($issue_comments + $reviews + $review_comments)
+      | map({at: (.updated_at // .submitted_at // .created_at // ""),
+             body: (.body // ""),
+             login: (.user.login // .author.login // "")})
+      | map(select(.at != ""))
+      | sort_by(.at)
+    '
+)
+LATEST_ACTIVITY_AT=$(printf '%s' "$ACTIVITY_JSON" | jq -r '.[-1].at // empty')
+
+# Only issue-level comments participate in the secondary settlement signal.
+# The latest matching notice is definitive decline; a genuine comment uses a
+# short five-minute confirmation buffer, capped by the configured window.
+SECONDARY_LATEST_JSON=$(
+  printf '%s' "$ISSUE_COMMENTS_JSON" \
+    | jq -c --arg login "$SECONDARY_LOGIN" --arg head "$PR_HEAD_COMMITTED_AT" '
+        map(select(((.user.login // .author.login // "") | ascii_downcase)
+                   == ($login | ascii_downcase)))
+        | map({at: (.updated_at // .created_at // ""), body: (.body // "")})
+        | map(select(.at != "" and .at >= $head))
+        | sort_by(.at) | .[-1] // {}
+      '
+)
+SECONDARY_STATUS=$(
+  printf '%s' "$SECONDARY_LATEST_JSON" | jq -r '
+    def non_review_notice:
+      ((.body // "") | ascii_downcase) as $body
+      | ($body | contains("<!-- this is an auto-generated comment: rate limited by coderabbit.ai -->")
+          or contains("<!-- this is an auto-generated comment: skip review by coderabbit.ai -->")
+          or test("^[>\\s]*#{1,6}\\s*review limit reached\\b"; "m"));
+    if (.at // "") == "" then "pending"
+    elif non_review_notice then "declined"
+    else "settled"
+    end
+  '
+)
+SECONDARY_AT=$(printf '%s' "$SECONDARY_LATEST_JSON" | jq -r '.at // empty')
+
+WINDOW_MINUTES="$QUIET_MINUTES"
+ANCHOR_AT="$LATEST_ACTIVITY_AT"
+DECLINED=false
+if [ "$SECONDARY_STATUS" = "declined" ]; then
+  DECLINED=true
+  ELAPSED=true
+  ELAPSED_MINUTES=null
+  REMAINING_MINUTES=0
+elif [ "$SECONDARY_STATUS" = "settled" ]; then
+  ANCHOR_AT="$SECONDARY_AT"
+  if [ "$WINDOW_MINUTES" -gt 5 ]; then WINDOW_MINUTES=5; fi
+fi
+
+if [ "$SECONDARY_STATUS" != "declined" ]; then
+  if [ -z "$ANCHOR_AT" ]; then
+    ELAPSED=true
+    ELAPSED_MINUTES=null
+    REMAINING_MINUTES=0
+  else
+    ANCHOR_EPOCH=$(date -u -d "$ANCHOR_AT" +%s)
+    ELAPSED_SECONDS=$((NOW_EPOCH - ANCHOR_EPOCH))
+    if [ "$ELAPSED_SECONDS" -lt 0 ]; then ELAPSED_SECONDS=0; fi
+    ELAPSED_MINUTES=$((ELAPSED_SECONDS / 60))
+    if [ "$ELAPSED_MINUTES" -ge "$WINDOW_MINUTES" ]; then
+      ELAPSED=true
+      REMAINING_MINUTES=0
+    else
+      ELAPSED=false
+      REMAINING_MINUTES=$((WINDOW_MINUTES - ELAPSED_MINUTES))
+    fi
+  fi
+fi
+
+jq -n \
+  --arg anchor "$ANCHOR_AT" \
+  --argjson minutes "$WINDOW_MINUTES" \
+  --argjson elapsed_minutes "${ELAPSED_MINUTES:-null}" \
+  --argjson elapsed "$ELAPSED" \
+  --argjson remaining "$REMAINING_MINUTES" \
+  --argjson declined "$DECLINED" \
+  '{minutes: $minutes, anchorAt: $anchor,
+    elapsedMinutes: $elapsed_minutes, elapsed: $elapsed,
+    remainingMinutes: $remaining, declined: $declined}'
+
+# `elapsed: false` is the F2 secondary-quiet-window blocker: wait the
+# reported remaining minutes, then repeat the complete F2 evidence read.
+```
+
+`date -u -d` is the GNU form; use the host's equivalent UTC-only parser on
+BSD/macOS. If that parser, any `gh api` call, `jq`, or the server `Date`
+header is unavailable, stop with a hold. Do not substitute the local clock or
+assume `elapsed: true` from a partial read.

@@ -281,7 +281,12 @@ turns an operator-visible failure into a silent stall.
   is satisfied — a `secondary-quiet-window` entry in `blockers[]` means the
   window has not yet elapsed since the last substantive review activity;
   wait (poll per `advisoryWait.pollInterval`), then re-evaluate F2. Unset
-  (the off default) never adds this blocker.
+  (the off default) never adds this blocker. When
+  `helperRuntime.profile` is `instructions-only`, use the written
+  [secondary quiet-window fallback](../../docs/idd-advisory-wait-shell-fallback.md#f2-secondary-advisory-quiet-window)
+  to compute the same evidence. If any API read, config parse, or UTC
+  timestamp conversion is unavailable, hold rather than treating the window
+  as elapsed.
 - **CI**: Current PR head SHA has all required CI checks generated and
   all passing (→ run CI wait per `idd-ci.instructions.md` using the
   same resolved `ciWait.runningTimeout`, `ciWait.generationTimeout`, and
