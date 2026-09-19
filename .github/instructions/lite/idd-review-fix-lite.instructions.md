@@ -294,7 +294,7 @@ other GitHub side effect, confirm all of the following:
    `idd-advisory-wait-lite.instructions.md`'s helper-first path (`node
    scripts/advisory-wait-state.mjs --pr {pr-number}
    --trusted-marker-logins "<trusted-login-1>,<trusted-login-2>"` in
-   the source/vendored profile; resolve the package-manager /
+   the source-repo / vendored-node command form; resolve the package-manager /
    ephemeral-npx equivalent from `docs/idd-helper-scripts.md`). If it
    fails, returns invalid JSON, or is missing required fields
    (`protocolVersion`, `prHeadSha`, `lastCopilotCommit`, `copilotPending`,
@@ -304,7 +304,7 @@ other GitHub side effect, confirm all of the following:
    `capExhaustedRoute`, `elapsedMinutes`, `sameHeadMarkerPresent`,
    `sameHeadRequestMarkerPresent`, `earliestSameHeadAt`,
    `sameHeadMarkerCount`, `requestMarkerCount`, `trustedMarkerSummary`,
-   `staleRequestRecovery` — the
+   `copilotRecovery`, `staleRequestRecovery` — the
    full contract in
    `docs/idd-helper-scripts.md#stable-helper-evidence-outputs` and
    `schemas/advisory-wait-state.schema.json`), stop and ask — do not

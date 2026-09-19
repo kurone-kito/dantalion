@@ -35,7 +35,7 @@ SERVER_NOW=$(gh api repos/<owner>/<repo>/issues/<N> --include | node -e '
 NOW=$(node -e "console.log(new Date(process.argv[1]).toISOString().replace(/\.\d{3}Z$/, 'Z'))" "$SERVER_NOW")
 
 # Quiet-window evidence (always pass --now). Requires --pr; skip if none.
-# source repo / vendored-node:
+# source-repo / vendored-node command form:
 node scripts/stalled-session-quiet-check.mjs \
   --pr <pr-number> \
   --now "$NOW" \

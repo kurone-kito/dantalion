@@ -650,6 +650,21 @@ supports these keys:
   `reviewEscalation.changesRequestedSecondEscalation`
   (default `PT24H` / `PT48H`)
 
+When `critiqueLoop.telemetryHook.command` is configured, C2 and C4 pipe one
+JSON object per round to that command on stdin. The payload shape is:
+
+- required fields: `phase`, `round`, `repo`, `issue`, `findingsCount`,
+  `acceptedCount`, `rejectedCount`, `delegateUsed`, and `timestamp`
+- optional field: `pr` (omit it before the branch has a PR)
+- `severityBreakdown`: omit only when `findingsCount` is `0`; otherwise send
+  an object whose `high`, `medium`, and `low` entries are non-negative
+  integers when present
+- `delegateCommand`: required exactly when `delegateUsed` is `true`
+- `timestamp`: UTC ISO 8601 with or without millisecond precision
+
+The hook is observational only: it may record or forward telemetry, but it
+must not block or redirect the critique loop.
+
 ## Suitability Outcomes and Label Mapping
 
 Use this mapping when A4.5 rejects a candidate. The goal is to preserve

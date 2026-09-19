@@ -82,8 +82,8 @@ Required helper fields, matching
 `pollIntervalMinutes`, `capExhaustedRoute`, `elapsedMinutes`,
 `sameHeadMarkerPresent`, `sameHeadRequestMarkerPresent`,
 `earliestSameHeadAt`, `sameHeadMarkerCount`, `requestMarkerCount`,
-`trustedMarkerSummary`, and `staleRequestRecovery`. Empty or false values
-remain present and must not be treated as missing.
+`trustedMarkerSummary`, `copilotRecovery`, and `staleRequestRecovery`. Empty
+or false values remain present and must not be treated as missing.
 
 Allowed `outcome`/`f3Outcome` values: `SATISFIED`, `REQUEST_NEEDED`,
 `RECOVERY_NEEDED`, `CAP_EXHAUSTED`, `WAIT`. `HOLD` is a protocol-level
