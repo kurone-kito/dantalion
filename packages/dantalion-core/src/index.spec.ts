@@ -10,12 +10,15 @@ import {
 describe('integration testing', () => {
   describe('get the details', () => {
     it('returns undefined for an out-of-union runtime key', () => {
-      expect(getDetail('bogus' as Genius)).toBeUndefined();
+      const invalidKey: string = 'bogus';
+      expect(getDetail(invalidKey as Genius)).toBeUndefined();
     });
 
     it('returns undefined for inherited prototype keys', () => {
-      expect(getDetail('__proto__' as Genius)).toBeUndefined();
-      expect(getDetail('constructor' as Genius)).toBeUndefined();
+      const prototypeKeys: string[] = ['__proto__', 'constructor'];
+      prototypeKeys.forEach((key) => {
+        expect(getDetail(key as Genius)).toBeUndefined();
+      });
     });
 
     it.each(
