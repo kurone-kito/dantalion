@@ -74,6 +74,14 @@ const normalizePayload = (payload) => {
     throw new Error('telemetry delegate command is required');
   }
 
+  if (payload.acceptedCount + payload.rejectedCount !== payload.findingsCount) {
+    throw new Error('acceptedCount + rejectedCount must equal findingsCount');
+  }
+
+  if (severity.high + severity.medium + severity.low > payload.findingsCount) {
+    throw new Error('severityBreakdown total must not exceed findingsCount');
+  }
+
   const normalized = {
     phase: payload.phase,
     round: payload.round,
