@@ -21,6 +21,7 @@ export default defineConfig({
           functions: 98,
           lines: 98,
         },
+        // Baseline measured 2026-05-20 after #152 landed.
         // The entry-point guard and version fallback run only in a subprocess.
         '**/dantalion-cli/src/**': {
           statements: 80,
