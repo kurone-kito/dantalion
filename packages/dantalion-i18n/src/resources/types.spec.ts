@@ -47,6 +47,14 @@ const interpolationReferencesByPath = (value: unknown): Map<string, string[]> =>
     ]),
   );
 
+const translationReferencesByPath = (value: unknown): Map<string, string[]> =>
+  new Map(
+    flattenLeaves(value).map(({ path, value: leaf }) => [
+      path,
+      extractTranslationReferences(leaf).sort(),
+    ]),
+  );
+
 const resourcePaths = (value: unknown): Set<string> =>
   new Set(flattenLeaves(value).map(({ path }) => path));
 
@@ -55,9 +63,9 @@ const sortedLeafPaths = (value: unknown): string[] =>
     .map(({ path }) => path)
     .sort();
 
-const potentialMembers = Object.keys(en.potentials).filter(
-  (key) => key !== 'detail',
-);
+const potentialMembers = Object.keys(en.potentials)
+  .filter((key) => key !== 'detail')
+  .sort();
 
 const potentialPairValue = (
   locale: typeof en,
@@ -65,6 +73,10 @@ const potentialPairValue = (
   second: string,
 ): unknown => {
   const firstEntry = (locale.potentials as Record<string, unknown>)[first];
+  if (firstEntry === null || typeof firstEntry !== 'object') {
+    return undefined;
+  }
+
   return (firstEntry as Record<string, unknown>)[second];
 };
 
@@ -135,6 +147,15 @@ describe('locale document parity', () => {
     }
   });
 
+  it('keeps genius.100 strategy aliases in sync', () => {
+    const english = translationReferencesByPath(en);
+    const japanese = translationReferencesByPath(ja);
+
+    for (const path of ['genius.100.strategy.1', 'genius.100.strategy.2']) {
+      expect(english.get(path), path).toStrictEqual(japanese.get(path));
+    }
+  });
+
   it.each([
     en,
     ja,
@@ -148,9 +169,11 @@ describe('locale document parity', () => {
     potentialMembers.forEach((first, firstIndex) => {
       potentialMembers.slice(firstIndex).forEach((second) => {
         const members = new Set([first, second]);
-        const references = flattenLeaves(
-          potentialPairValue(locale, first, second),
-        ).flatMap(({ value }) => extractReferences(value));
+        const pairValue = potentialPairValue(locale, first, second);
+        expect(pairValue, `${first}.${second}`).toBeDefined();
+        const references = flattenLeaves(pairValue).flatMap(({ value }) =>
+          extractReferences(value),
+        );
         const unexpected = references.filter((reference) => {
           const [namespace, member] = reference.split('.');
           return (
