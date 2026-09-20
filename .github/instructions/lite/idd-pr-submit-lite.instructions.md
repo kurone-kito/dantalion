@@ -156,9 +156,10 @@ This section's rebase only applies **before the branch's first push**.
    subcommand — a commit-only alias will not run `rebase`), run the
    rebase **through that wrapper from the start**: `git -c
    gpg.format=ssh -c user.signingkey=<abs-path> -c commit.gpgsign=true
-   rebase origin/{development-branch}` (or the repo's wrapper alias), not
-   the plain `git rebase origin/{development-branch}`. Otherwise (signing is not hostile, or is
-   hostile with a wrapper already covering it transparently), run the
+   rebase origin/{development-branch}` (or the repo's wrapper alias),
+   not the plain `git rebase origin/{development-branch}`. Otherwise
+   (signing is not hostile, or is hostile with a wrapper already
+   covering it transparently), run the
    plain `git rebase origin/{development-branch}`.
 7. If the rebase hits a content conflict, resolve it and continue the
    rebase. On the signed-commit repo case in step 5, continue with the
