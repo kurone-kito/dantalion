@@ -28,6 +28,9 @@ const mergeResourceObjects = (
       }
       const value = source[key];
       const existing = result[key];
+      if (value === undefined && existing !== undefined) {
+        continue;
+      }
       result[key] =
         isResourceObject(existing) && isResourceObject(value)
           ? mergeResourceObjects(existing, value)

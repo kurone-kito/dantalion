@@ -56,6 +56,17 @@ describe('`mergeResources()` function', () => {
     expect(additions).toStrictEqual(additionsBefore);
   });
 
+  it('preserves existing values when additions are undefined', () => {
+    const base: Resource = {
+      en: { translation: { value: 'built-in' } },
+    };
+    const additions = {
+      en: { translation: { value: undefined } },
+    } as unknown as Resource;
+
+    expect(mergeResources(base, additions)).toStrictEqual(base);
+  });
+
   it('ignores recursive prototype-pollution keys', () => {
     const additions = JSON.parse(
       '{"en":{"translation":{"safe":"kept","__proto__":{"polluted":"yes"},"constructor":{"prototype":{"polluted":"yes"}}}}}',
