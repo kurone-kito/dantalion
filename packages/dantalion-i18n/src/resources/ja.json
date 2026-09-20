@@ -541,11 +541,7 @@
         "$t(potentials.Fi.detail.0)",
         "$t(potentials.Fi.detail.1)"
       ],
-      "Fo": [
-        "$t(potentials.Eo.detail)",
-        "$t(potentials.Fi.detail.0)",
-        "$t(potentials.Fi.detail.1)"
-      ],
+      "Fo": ["$t(potentials.Ei.detail)", "$t(potentials.Fo.detail)"],
       "Ii": [
         "$t(potentials.Ei.detail)",
         "$t(potentials.Ii.detail.0)",
@@ -559,8 +555,8 @@
       ],
       "No": [
         "$t(potentials.Ei.detail)",
-        "$t(potentials.Io.detail.0)",
-        "$t(potentials.Io.detail.1)"
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
       ]
     },
     "Eo": {
@@ -571,11 +567,7 @@
         "$t(potentials.Fi.detail.0)",
         "$t(potentials.Fi.detail.1)"
       ],
-      "Fo": [
-        "$t(potentials.Eo.detail)",
-        "$t(potentials.Fi.detail.0)",
-        "$t(potentials.Fi.detail.1)"
-      ],
+      "Fo": ["$t(potentials.Eo.detail)", "$t(potentials.Fo.detail)"],
       "Ii": [
         "$t(potentials.Eo.detail)",
         "$t(potentials.Ii.detail.0)",
@@ -589,8 +581,8 @@
       ],
       "No": [
         "$t(potentials.Eo.detail)",
-        "$t(potentials.Io.detail.0)",
-        "$t(potentials.Io.detail.1)"
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
       ]
     },
     "Fi": {
@@ -607,12 +599,12 @@
       "Ii": [
         "$t(potentials.Fi.detail.0)",
         "$t(potentials.Fi.detail.1)",
-        "$t(potentials.Io.detail.0)"
+        "$t(potentials.Ii.detail.0)"
       ],
       "Io": [
         "$t(potentials.Fi.detail.0)",
         "$t(potentials.Fi.detail.1)",
-        "$t(potentials.Fo.detail)"
+        "$t(potentials.Io.detail.0)"
       ],
       "Ni": [
         "$t(potentials.Fi.detail.0)",
@@ -641,8 +633,8 @@
       ],
       "No": [
         "$t(potentials.Fo.detail)",
-        "$t(potentials.Io.detail.0)",
-        "$t(potentials.Io.detail.1)"
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
       ]
     },
     "Ii": {

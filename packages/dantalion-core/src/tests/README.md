@@ -10,8 +10,8 @@ considering changes to the underlying algorithm.
 ### `personality.json` (regression baseline)
 
 A pre-computed snapshot of `getPersonality(date)` output for every
-calendar date from `1873-02-01` to `2050-12-31` (around 64,617
-entries). It is consumed by `../index.spec.ts` and asserts strict
+calendar date from `1873-02-01` to `2050-12-31` (64,982 entries). It is
+consumed by `../index.spec.ts` and asserts strict
 equality against the current code output for every entry.
 
 **Provenance.** Committed on 2020-03-15 by @kurone-kito as
@@ -35,6 +35,44 @@ the fixture must be regenerated, the PR description must call out
 the behavioral change, and the regeneration procedure (commit, tool,
 verification steps) should be documented in this README at the same
 time.
+
+**Regeneration.** From the repository root, build the core package and
+run the following generator with `TZ=UTC`. It constructs local calendar
+dates explicitly, writes compact JSON without a trailing newline, and
+preserves the fixture's field order:
+
+```sh
+pnpm --filter @kurone-kito/dantalion-core build
+TZ=UTC node --input-type=module <<'NODE'
+import { writeFileSync } from 'node:fs';
+import { getPersonality } from './packages/dantalion-core/dist/index.js';
+
+const DAY_MS = 86_400_000;
+const rows = [];
+for (
+  let timestamp = Date.UTC(1873, 1, 1);
+  timestamp <= Date.UTC(2050, 11, 31);
+  timestamp += DAY_MS
+) {
+  const date = new Date(timestamp).toISOString().slice(0, 10);
+  const [year, month, day] = date.split('-').map(Number);
+  const personality = getPersonality(new Date(year, month - 1, day));
+  if (!personality?.lifeBase) throw new Error(`Missing lifeBase for ${date}`);
+  const { cycle, inner, lifeBase, outer, potentials, workStyle } = personality;
+  rows.push({ cycle, lifeBase, potentials, workStyle, inner, date, outer });
+}
+if (rows.length !== 64_982) throw new Error(`Unexpected row count: ${rows.length}`);
+writeFileSync(
+  'packages/dantalion-core/src/tests/personality.json',
+  JSON.stringify(rows),
+);
+NODE
+```
+
+After generation, verify that the first and last dates are
+`1873-02-01` and `2050-12-31`, respectively, and that every row has a
+`lifeBase` field before running the integration and independent
+reference specs.
 
 ### `details.json` (regression baseline)
 

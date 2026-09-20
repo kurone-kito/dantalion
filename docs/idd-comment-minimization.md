@@ -385,6 +385,16 @@ This does not re-block the merge. A maintainer with minimize permission
 may run cleanup manually: `node scripts/audit-pr-cleanup.mjs --pr <N> --apply --skip-claim-check`
 ```
 
+## Re-check fetch failure comment
+
+When the duplicate-success-record re-check fails because the fresh
+comment fetch itself could not be completed, post a distinct
+`recheck-failed` evidence comment instead of silently skipping the
+record or relabeling the cleanup result. The comment should identify the
+cleanup run status that was being recorded and state that the duplicate
+record re-check could not verify whether a trusted prior success record
+already existed.
+
 ## Fallback GraphQL
 
 If the helper is unavailable, use the direct GraphQL capability checks

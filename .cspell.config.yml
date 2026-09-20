@@ -36,6 +36,7 @@ words:
   - generical
   - GHEC
   - GHES
+  - gsub
   - goetia
   - idd
   - includ
@@ -43,6 +44,7 @@ words:
   - koshi
   - Kiro
   - lemegeton
+  - nektos
   - ommited
   - ONNX
   - pylint
@@ -50,6 +52,7 @@ words:
   - pytest
   - saintist
   - TOCTOU
+  - toctou
   - undispositioned
   - unioned
   - unmigrated

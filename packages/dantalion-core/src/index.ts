@@ -21,4 +21,5 @@ export type { Personality } from './utils/getPersonality.js';
 export { default as getPersonality } from './utils/getPersonality.js';
 export { default as toCC } from './utils/toCC.js';
 
-export const getDetail = (genius: Genius): Detail => details[genius];
+export const getDetail = (genius: Genius): Detail | undefined =>
+  Object.hasOwn(details, genius) ? details[genius] : undefined;

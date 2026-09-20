@@ -244,7 +244,7 @@ and the machine-readable policy in `.github/idd/config.json`.
 | `reviewPolicy`                | `copilot-advisory`                   |
 | `threadResolutionPolicy`      | `fast-agent-resolve`                 |
 | `helperRuntime.profile`       | `instructions-only`                  |
-| `issueScope`                  | `roadmap`                            |
+| `issueScope`                  | `roadmap-first`                      |
 | `trustedMarkerActors`         | `["kurone-kito"]`                    |
 
 To start an IDD-driven session, say:
@@ -263,9 +263,9 @@ merge.
 | File                                                                              | Purpose                                       |
 | --------------------------------------------------------------------------------- | --------------------------------------------- |
 | [`docs/idd-workflow.md`](../docs/idd-workflow.md)                                 | Full entry path, file map, phase routing      |
-| [`.github/instructions/idd-overview.instructions.md`](instructions/idd-overview.instructions.md) | Shared definitions, claim format, gates       |
+| [`.github/instructions/idd-overview-core.instructions.md`](instructions/idd-overview-core.instructions.md) | Shared definitions, claim format, gates       |
 | [`.github/idd/config.json`](idd/config.json)                                      | Machine-readable policy                       |
-| [`.claude/skills/issue-authoring/SKILL.md`](../.claude/skills/issue-authoring/SKILL.md) | Issue drafting skill for new requests         |
+| [`.agents/skills/issue-authoring/SKILL.md`](../.agents/skills/issue-authoring/SKILL.md) | Issue drafting skill for new requests         |
 
 ## Security
 

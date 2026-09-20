@@ -1,6 +1,8 @@
 import type { Genius } from '@kurone-kito/dantalion-core';
 import { describe, expect, it } from 'vitest';
-import { createAccessors } from '../resources/createAccessorsAsync.js';
+import createAccessorsAsync, {
+  createAccessors,
+} from '../resources/createAccessorsAsync.js';
 import createTAsync from '../resources/createTAsync.js';
 import { getDetailMarkdown, getPersonalityMarkdown } from './index.js';
 
@@ -216,6 +218,55 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
       const a = getPersonalityMarkdown(accessors, '1873-02-01');
       const b = getPersonalityMarkdown(accessors, '1873-03-15');
       expect(a).not.toBe(b);
+    });
+
+    it('keeps a skipped date-only calendar day in the description', async () => {
+      const accessors = createAccessors(await createTAsync({ lng }));
+      const actual = getPersonalityMarkdown(accessors, '2011-12-30');
+      const expected = new Intl.DateTimeFormat(lng, {
+        day: '2-digit',
+        month: 'short',
+        timeZone: 'UTC',
+        weekday: 'short',
+        year: 'numeric',
+      }).format(new Date('2011-12-30T00:00:00Z'));
+      expect(actual).toContain(expected);
+    });
+
+    it('formats Date inputs with the active locale', async () => {
+      const accessors = createAccessors(await createTAsync({ lng }));
+      const birth = new Date('1873-02-01T00:00:00Z');
+      const actual = getPersonalityMarkdown(accessors, birth);
+      const expected = new Intl.DateTimeFormat(lng, {
+        day: '2-digit',
+        month: 'short',
+        weekday: 'short',
+        year: 'numeric',
+      }).format(birth);
+      expect(actual).toContain(expected);
+    });
+
+    it('falls back to the runtime locale for invalid locale tags', async () => {
+      const t = await createTAsync({ lng });
+      const actual = getPersonalityMarkdown(
+        createAccessors(t, 'invalid_locale'),
+        TRIPWIRE_BIRTHDAY,
+      );
+      const expected = getPersonalityMarkdown(
+        createAccessors(t, Intl.DateTimeFormat().resolvedOptions().locale),
+        TRIPWIRE_BIRTHDAY,
+      );
+      expect(actual).toBe(expected);
+    });
+
+    it('falls back to English for unsupported regional locales', async () => {
+      const accessors = await createAccessorsAsync('fr-FR');
+      const actual = getPersonalityMarkdown(accessors, '2000-01-07');
+
+      expect(actual).toMatch(/^#/m);
+      expect(actual).toContain(
+        'The personality of the person whose birthday is',
+      );
     });
   });
 });

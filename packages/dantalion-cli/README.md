@@ -47,6 +47,15 @@ pnpm add -g @kurone-kito/dantalion-cli
 
 ### Get the personality
 
+#### Select the output language
+
+Use the global `--lang` option to select `en` or `ja`. If omitted, the
+language is detected from the host locale.
+
+```sh
+dantalion personality 2000-01-07 --lang ja
+```
+
 #### If you want the **human-readable** result (Markdown)
 
 NOTE: It omits some minor information.

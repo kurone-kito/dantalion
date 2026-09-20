@@ -24,6 +24,7 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         genius: expect.any(Object),
         getDescription: expect.any(Function),
         lifeBase: expect.any(Object),
+        locale: lng,
         management: expect.any(Object),
         motivation: expect.any(Object),
         position: expect.any(Object),
@@ -31,6 +32,28 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         response: expect.any(Object),
         vector: expect.any(Object),
       }));
+
+    it('falls back to the runtime locale for unannotated translators', async () => {
+      const t = await createTAsync({ lng });
+      const accessors = createAccessors(t.bind(undefined));
+      expect(accessors.locale).toBe(
+        Intl.DateTimeFormat().resolvedOptions().locale,
+      );
+    });
+
+    it('uses an explicit locale for unannotated translators', async () => {
+      const t = await createTAsync({ lng });
+      const accessors = createAccessors(t.bind(undefined), 'en-GB');
+      expect(accessors.locale).toBe('en-GB');
+    });
+
+    it('canonicalizes invalid explicit locales to the runtime locale', async () => {
+      const t = await createTAsync({ lng });
+      const accessors = createAccessors(t, 'invalid_locale');
+      expect(accessors.locale).toBe(
+        Intl.DateTimeFormat().resolvedOptions().locale,
+      );
+    });
   });
   describe('`createAccessorsAsync()` function', () => {
     it('Get the (Accessors & i18next.WithT) object', async () =>
@@ -40,6 +63,7 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         genius: expect.any(Object),
         getDescription: expect.any(Function),
         lifeBase: expect.any(Object),
+        locale: lng,
         management: expect.any(Object),
         motivation: expect.any(Object),
         position: expect.any(Object),
@@ -48,6 +72,16 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         t: expect.any(Function),
         vector: expect.any(Object),
       }));
+
+    it('Keeps accessor instances isolated between calls', async () => {
+      const english = await createAccessorsAsync('en');
+      const japanese = await createAccessorsAsync('ja');
+
+      expect(english.getDescription('example').detail).toContain(
+        'Details of people',
+      );
+      expect(japanese.getDescription('example').detail).toContain('性格タイプ');
+    });
   });
   describe.each([
     [

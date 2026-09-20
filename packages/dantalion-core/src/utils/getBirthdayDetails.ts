@@ -1,3 +1,5 @@
+import type { CalendarDate } from '../types/calendarDate.js';
+
 /** Details for a month. */
 export interface MonthDetails {
   /**
@@ -40,13 +42,14 @@ export interface BirthdayDetails {
  * Calculate the details of the birthday.
  * @param date Birthday.
  */
-export default (date: Date): BirthdayDetails => {
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
+export default (date: Date | CalendarDate): BirthdayDetails => {
+  const day = date instanceof Date ? date.getDate() : date.date;
+  const month = date instanceof Date ? date.getMonth() + 1 : date.month;
+  const year = date instanceof Date ? date.getFullYear() : date.year;
   const early: MonthDetails['early'] = (containFebrary = true) =>
     month === 1 || (month === 2 && containFebrary) ? 1 : 0;
   return {
-    date: date.getDate(),
+    date: day,
     month: { early, month, shifted: month + early() * 12 },
     year: { full: year, hi: Math.floor(year * 0.01), lo: year % 100 },
   };

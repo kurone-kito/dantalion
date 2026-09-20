@@ -4,6 +4,8 @@ import type { Communication } from './communication.js';
 import communication from './communication.js';
 import type { Genius } from './genius.js';
 import genius from './genius.js';
+import type { HeavenlyStem } from './heavenlyStem.js';
+import heavenlyStem from './heavenlyStem.js';
 import type { LifeBase } from './lifeBase.js';
 import lifeBase, { cc as lifeBaseCC } from './lifeBase.js';
 import type { Management } from './management.js';
@@ -26,6 +28,8 @@ export interface AllTypes {
   readonly communication: readonly Communication[];
   /** The list of personality types. */
   readonly genius: readonly Genius[];
+  /** The values of the ten-phase sub-personality cycle. */
+  readonly heavenlyStem: readonly HeavenlyStem[];
   /** The list that the base of ego type. */
   readonly lifeBase: readonly LifeBase[];
   /** The list that the base of ego type. */
@@ -51,6 +55,7 @@ export default Object.freeze<AllTypes>({
   brain,
   communication,
   genius,
+  heavenlyStem,
   lifeBase,
   lifeBaseCC,
   management,

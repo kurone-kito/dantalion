@@ -1,0 +1,1954 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kurone-kito.github.io/idd-skill/schemas/pre-merge-readiness.schema.json",
+  "title": "Pre-Merge Readiness",
+  "description": "Read-only pre-merge readiness evidence snapshot for a PR head.",
+  "type": "object",
+  "required": [
+    "protocolVersion",
+    "decisionAuthority",
+    "prHeadSha",
+    "now",
+    "reviewCurrency",
+    "secondaryQuietWindow",
+    "threads",
+    "unrepliedComments",
+    "reviewerStates",
+    "advisoryWait",
+    "ci",
+    "claim",
+    "dispositionEvidence",
+    "waiverEvidence",
+    "advisoryConvergenceWaiverPrecondition",
+    "claimIdentityInstalledAt",
+    "staleSelfWaiver",
+    "branchCurrency",
+    "ready",
+    "blockers"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "ready": { "const": true }
+        },
+        "required": ["ready"]
+      },
+      "then": {
+        "required": ["developmentBranchTarget"],
+        "properties": {
+          "blockers": { "maxItems": 0 },
+          "reviewCurrency": {
+            "required": ["comparisonRoute"],
+            "properties": {
+              "comparisonRoute": { "const": "proceed" }
+            }
+          },
+          "secondaryQuietWindow": {
+            "required": ["elapsed"],
+            "properties": {
+              "elapsed": { "const": true }
+            }
+          },
+          "threads": {
+            "required": ["actionableCount"],
+            "properties": {
+              "actionableCount": { "const": 0 }
+            }
+          },
+          "unrepliedComments": {
+            "required": ["count", "items"],
+            "properties": {
+              "count": { "const": 0 },
+              "items": { "maxItems": 0 }
+            }
+          },
+          "reviewerStates": {
+            "required": [
+              "requiredApprovalsSatisfied",
+              "codeownerApprovalSatisfied",
+              "codeownerSelfApproval",
+              "humanChangesRequestedCount",
+              "blockingChangesRequestedLogins"
+            ],
+            "properties": {
+              "requiredApprovalsSatisfied": { "const": true },
+              "codeownerApprovalSatisfied": { "const": true },
+              "humanChangesRequestedCount": { "const": 0 },
+              "blockingChangesRequestedLogins": { "maxItems": 0 }
+            }
+          },
+          "advisoryWait": {
+            "required": [
+              "f3Outcome",
+              "copilotUnavailable",
+              "copilotUnavailableWaived"
+            ],
+            "properties": {
+              "f3Outcome": { "const": "SATISFIED" }
+            },
+            "oneOf": [
+              {
+                "properties": {
+                  "outcome": { "const": "SATISFIED" },
+                  "copilotUnavailable": { "const": false },
+                  "copilotUnavailableWaived": { "const": false }
+                }
+              },
+              {
+                "properties": {
+                  "copilotUnavailable": { "const": true },
+                  "copilotUnavailableWaived": { "const": true }
+                }
+              }
+            ]
+          },
+          "claim": {
+            "required": ["matchesExpectedClaim", "claimLost"],
+            "properties": {
+              "matchesExpectedClaim": { "const": true },
+              "claimLost": { "const": false }
+            }
+          },
+          "branchCurrency": {
+            "required": [
+              "mergeStateStatus",
+              "mergeable",
+              "requiresUpToDateHead"
+            ],
+            "properties": {
+              "mergeStateStatus": {
+                "enum": ["CLEAN", "BEHIND"]
+              },
+              "mergeable": { "const": "MERGEABLE" }
+            },
+            "anyOf": [
+              {
+                "properties": {
+                  "mergeStateStatus": { "const": "CLEAN" }
+                }
+              },
+              {
+                "properties": {
+                  "mergeStateStatus": { "const": "BEHIND" },
+                  "requiresUpToDateHead": { "const": false }
+                }
+              }
+            ]
+          },
+          "developmentBranchTarget": {
+            "required": ["status", "branch", "baseRefName"],
+            "properties": {
+              "status": { "enum": ["configured", "default"] },
+              "branch": { "type": "string", "minLength": 1 },
+              "baseRefName": { "type": "string", "minLength": 1 }
+            }
+          },
+          "dispositionEvidence": {
+            "required": [
+              "route",
+              "reason",
+              "blockingCount",
+              "missingRegularCommentCount",
+              "missingThreadCount",
+              "soleCauseAckOnlyPostDisposition",
+              "soleCauseInPlaceEditOnly",
+              "missingRegularComments",
+              "missingThreads"
+            ],
+            "properties": {
+              "route": { "const": "proceed" },
+              "reason": { "const": "complete" },
+              "blockingCount": { "const": 0 },
+              "missingRegularCommentCount": { "const": 0 },
+              "missingThreadCount": { "const": 0 },
+              "soleCauseAckOnlyPostDisposition": { "const": false },
+              "soleCauseInPlaceEditOnly": { "const": false },
+              "missingRegularComments": { "maxItems": 0 },
+              "missingThreads": { "maxItems": 0 }
+            }
+          },
+          "staleSelfWaiver": {
+            "required": ["stale"],
+            "properties": {
+              "stale": { "const": false }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "$comment": "A ready report with no configured required checks is valid only when protection was readable and every present check run passed.",
+            "if": {
+              "properties": {
+                "ci": {
+                  "properties": {
+                    "noRequiredChecksConfigured": { "const": true }
+                  },
+                  "required": ["noRequiredChecksConfigured"]
+                }
+              },
+              "required": ["ci"]
+            },
+            "then": {
+              "properties": {
+                "ci": {
+                  "required": [
+                    "protectionReadsUnreadable",
+                    "presentRunConclusion"
+                  ],
+                  "properties": {
+                    "protectionReadsUnreadable": { "const": false },
+                    "presentRunConclusion": { "const": "all-passing" }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "$comment": "A ready report with configured required checks is valid only when all required checks are generated and passing.",
+            "if": {
+              "properties": {
+                "ci": {
+                  "properties": {
+                    "noRequiredChecksConfigured": { "const": false }
+                  },
+                  "required": ["noRequiredChecksConfigured"]
+                }
+              },
+              "required": ["ci"]
+            },
+            "then": {
+              "properties": {
+                "ci": {
+                  "required": [
+                    "protectionReadsUnreadable",
+                    "status",
+                    "requiredChecksGenerated",
+                    "requiredChecksPassing"
+                  ],
+                  "properties": {
+                    "protectionReadsUnreadable": { "const": false },
+                    "status": { "const": "success" },
+                    "requiredChecksGenerated": { "const": true },
+                    "requiredChecksPassing": { "const": true }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ready": { "const": false }
+        },
+        "required": ["ready"]
+      },
+      "then": {
+        "properties": {
+          "blockers": { "minItems": 1 }
+        }
+      }
+    },
+    {
+      "$comment": "A report that claims the Copilot-unavailable waiver is active must carry a valid idd-advisory-convergence waiver and an open waiver precondition.",
+      "if": {
+        "properties": {
+          "advisoryWait": {
+            "properties": {
+              "copilotUnavailableWaived": { "const": true }
+            },
+            "required": ["copilotUnavailableWaived"]
+          }
+        },
+        "required": ["advisoryWait"]
+      },
+      "then": {
+        "properties": {
+          "waiverEvidence": {
+            "required": ["valid"],
+            "properties": {
+              "valid": {
+                "minItems": 1,
+                "contains": {
+                  "type": "object",
+                  "required": ["checkSelector"],
+                  "properties": {
+                    "checkSelector": {
+                      "const": "idd-advisory-convergence"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "advisoryConvergenceWaiverPrecondition": {
+            "required": ["checkSelector", "open"],
+            "properties": {
+              "checkSelector": { "const": "idd-advisory-convergence" },
+              "open": { "const": true },
+              "terminalUnavailable": { "const": true }
+            },
+            "anyOf": [
+              {
+                "required": ["deadlinePassed"],
+                "properties": {
+                  "deadlinePassed": { "const": true }
+                }
+              },
+              {
+                "required": ["terminalUnavailable"],
+                "properties": {
+                  "terminalUnavailable": { "const": true }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "protocolVersion": {
+      "type": "string",
+      "description": "Schema protocol version for this pre-merge readiness document.",
+      "enum": ["1"]
+    },
+    "decisionAuthority": {
+      "type": "string",
+      "description": "Declares that this document is read-only evidence for the instructions-layer decision logic, never a decision by itself.",
+      "enum": ["instructions"]
+    },
+    "prHeadSha": {
+      "type": "string",
+      "description": "Commit SHA of the PR head this readiness snapshot was collected for.",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "now": {
+      "type": "string",
+      "description": "Timestamp the snapshot was collected at; the reference point for every elapsed-time and staleness calculation in this report.",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+    },
+    "reviewCurrency": {
+      "type": "object",
+      "description": "Comparison between the last posted review-watermark snapshot and current live PR activity, deciding whether cached review findings are still safe to rely on or the gate must return to E1 for a fresh review pass.",
+      "required": [
+        "watermarkPresent",
+        "watermark",
+        "live",
+        "comparisonRoute",
+        "comparisonReason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "watermarkPresent": {
+          "type": "boolean",
+          "description": "Whether a trusted review-watermark marker for the expected claim was found on the PR."
+        },
+        "watermark": {
+          "type": "object",
+          "description": "The most recent trusted review-watermark marker's recorded fields, or empty/\"none\" placeholders when watermarkPresent is false.",
+          "required": [
+            "agentId",
+            "claimId",
+            "headSha",
+            "maxActivityUpdatedAt",
+            "totalItemCount",
+            "latestCiCompletedAt",
+            "createdAt"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "agentId": {
+              "type": "string",
+              "description": "Agent identifier recorded on the watermark marker."
+            },
+            "claimId": {
+              "type": "string",
+              "description": "Claim identifier the watermark marker was posted under."
+            },
+            "headSha": {
+              "type": "string",
+              "description": "PR head commit SHA recorded at watermark time.",
+              "pattern": "^$|^[0-9a-f]{40}$"
+            },
+            "maxActivityUpdatedAt": {
+              "type": "string",
+              "description": "Latest comment/review/thread activity timestamp recorded at watermark time, or \"none\".",
+              "pattern": "^(none|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z)$"
+            },
+            "totalItemCount": {
+              "type": "integer",
+              "description": "Total comment, review, and thread count recorded at watermark time.",
+              "minimum": 0
+            },
+            "latestCiCompletedAt": {
+              "type": "string",
+              "description": "Latest completed CI check timestamp recorded at watermark time, or \"none\".",
+              "pattern": "^(none|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z)$"
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "GitHub creation timestamp of the watermark marker comment, or \"none\".",
+              "pattern": "^(none|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z)$"
+            }
+          }
+        },
+        "live": {
+          "type": "object",
+          "description": "Freshly computed activity snapshot for the current PR state, compared against the watermark above.",
+          "required": [
+            "totalItemCount",
+            "maxActivityUpdatedAt",
+            "latestCiCompletedAt",
+            "latestPassingCiCompletedAt",
+            "counts",
+            "ackOnly",
+            "effective"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "totalItemCount": {
+              "type": "integer",
+              "description": "Current total comment, review, and thread count, after filtering out trusted operational-marker comments.",
+              "minimum": 0
+            },
+            "maxActivityUpdatedAt": {
+              "type": "string",
+              "description": "Current latest comment/review/thread activity timestamp, or \"none\".",
+              "pattern": "^(none|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z)$"
+            },
+            "latestCiCompletedAt": {
+              "type": "string",
+              "description": "Current latest completed CI check timestamp across all checks, or \"none\".",
+              "pattern": "^(none|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z)$"
+            },
+            "latestPassingCiCompletedAt": {
+              "type": "string",
+              "description": "Current latest completed CI check timestamp restricted to pass-equivalent states, or \"none\".",
+              "pattern": "^(none|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z)$"
+            },
+            "counts": {
+              "type": "object",
+              "description": "Current raw item counts feeding totalItemCount.",
+              "required": ["comments", "reviews", "threads"],
+              "additionalProperties": false,
+              "properties": {
+                "comments": {
+                  "type": "integer",
+                  "description": "Current count of non-operational-marker issue/PR comments.",
+                  "minimum": 0
+                },
+                "reviews": {
+                  "type": "integer",
+                  "description": "Current count of PR reviews.",
+                  "minimum": 0
+                },
+                "threads": {
+                  "type": "integer",
+                  "description": "Current count of review threads.",
+                  "minimum": 0
+                }
+              }
+            },
+            "ackOnly": {
+              "type": "object",
+              "description": "Structural ack-only evidence: advisory-bot activity newer than the latest recognized disposition, which can explain new activity without reopening review.",
+              "required": [
+                "advisoryBotLogins",
+                "source",
+                "dispositionsPresent",
+                "latestDispositionAt",
+                "items"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "advisoryBotLogins": {
+                  "type": "array",
+                  "description": "Configured advisory-bot logins considered for ack-only classification.",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "source": {
+                  "type": "string",
+                  "description": "Provenance of the advisory-bot login list: an explicit flag, an environment variable, repository config, or none configured.",
+                  "enum": ["flag", "env", "config", "none"]
+                },
+                "dispositionsPresent": {
+                  "type": "boolean",
+                  "description": "Whether at least one disposition comment or thread reply by a recognized disposition author was found."
+                },
+                "latestDispositionAt": {
+                  "type": "string",
+                  "description": "Timestamp of the latest recognized disposition, or \"none\".",
+                  "pattern": "^(none|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z)$"
+                },
+                "items": {
+                  "type": "array",
+                  "description": "Individual ack-only comments and thread replies posted after the latest disposition.",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "kind",
+                      "id",
+                      "author",
+                      "activityAt",
+                      "bodyPreview"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "description": "Whether the ack-only item is a regular comment or a review-thread reply.",
+                        "enum": ["comment", "thread-reply"]
+                      },
+                      "id": {
+                        "type": "string",
+                        "description": "Identifier of the ack-only comment or thread reply."
+                      },
+                      "author": {
+                        "type": "string",
+                        "description": "Login of the advisory bot that posted the ack-only item."
+                      },
+                      "activityAt": {
+                        "type": "string",
+                        "description": "Timestamp of the ack-only item's activity, or \"none\".",
+                        "pattern": "^(none|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z)$"
+                      },
+                      "bodyPreview": {
+                        "type": "string",
+                        "description": "Truncated preview of the ack-only item's body."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "effective": {
+              "type": "object",
+              "description": "Live activity recomputed with ack-only items excluded, used to decide whether activity newer than the watermark is substantive.",
+              "required": ["maxActivityUpdatedAt", "totalItemCount"],
+              "additionalProperties": false,
+              "properties": {
+                "maxActivityUpdatedAt": {
+                  "type": "string",
+                  "description": "Latest activity timestamp after excluding ack-only items, or \"none\".",
+                  "pattern": "^(none|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z)$"
+                },
+                "totalItemCount": {
+                  "type": "integer",
+                  "description": "Total item count after excluding ack-only items.",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        },
+        "comparisonRoute": {
+          "type": "string",
+          "description": "Whether the watermark still covers current activity (\"proceed\") or the gate must return to E1 for a fresh review pass (\"return-to-e1\").",
+          "enum": ["proceed", "return-to-e1"]
+        },
+        "comparisonReason": {
+          "type": "string",
+          "description": "Specific reason the comparison chose comparisonRoute, e.g. missing-watermark, head-changed, newer-activity, ci-pass-drift, ack-only-post-disposition, or snapshot-current.",
+          "minLength": 1
+        }
+      }
+    },
+    "threads": {
+      "type": "object",
+      "description": "Review-thread classification counts and per-thread detail consumed by the unresolved-threads merge gate.",
+      "required": [
+        "unresolvedCount",
+        "actionableCount",
+        "awaitingReviewerCount",
+        "amdBlockingCount",
+        "conversationResolveAgentCount",
+        "conversationResolveAuthorCount",
+        "classifications"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "unresolvedCount": {
+          "type": "integer",
+          "description": "Total count of review threads not marked resolved on GitHub, before gate-specific classification.",
+          "minimum": 0
+        },
+        "actionableCount": {
+          "type": "integer",
+          "description": "Count of unresolved threads classified as blocking the merge gate (actionable-blocking, amd-blocking, or conversation-resolve-agent/author).",
+          "minimum": 0
+        },
+        "awaitingReviewerCount": {
+          "type": "integer",
+          "description": "Count of unresolved threads whose latest comment is from an IDD agent or the PR author and are waiting on a human reviewer; does not block the gate.",
+          "minimum": 0
+        },
+        "amdBlockingCount": {
+          "type": "integer",
+          "description": "Count of unresolved threads awaiting a maintainer decision: an IDD-agent reply starting \"Awaiting maintainer decision\" with no later reply.",
+          "minimum": 0
+        },
+        "conversationResolveAgentCount": {
+          "type": "integer",
+          "description": "Count of unresolved threads blocking only because the base branch requires conversation resolution and the latest reply is from an IDD agent.",
+          "minimum": 0
+        },
+        "conversationResolveAuthorCount": {
+          "type": "integer",
+          "description": "Count of unresolved threads blocking only because the base branch requires conversation resolution and the latest reply is from the PR author.",
+          "minimum": 0
+        },
+        "classifications": {
+          "type": "array",
+          "description": "Per-thread gate classification for every unresolved thread.",
+          "items": {
+            "type": "object",
+            "required": ["id", "classification"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Review thread's GraphQL node id.",
+                "minLength": 1
+              },
+              "classification": {
+                "type": "string",
+                "description": "Gate classification assigned to this unresolved thread.",
+                "enum": [
+                  "actionable-blocking",
+                  "amd-blocking",
+                  "awaiting-reviewer",
+                  "conversation-resolve-agent",
+                  "conversation-resolve-author"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "unrepliedComments": {
+      "type": "object",
+      "description": "Regular PR comments from a non-IDD-agent author with no later IDD-agent reply or recognized disposition. Feeds the F2 unreplied-comments check, not the readiness rollup.",
+      "required": ["count", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "Count of unreplied regular comments.",
+          "minimum": 0
+        },
+        "items": {
+          "type": "array",
+          "description": "Individual unreplied regular comments.",
+          "items": {
+            "type": "object",
+            "required": ["id", "authorLogin", "createdAt", "bodyPreview"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Comment identifier.",
+                "minLength": 1
+              },
+              "authorLogin": {
+                "type": "string",
+                "description": "Login of the comment's author.",
+                "minLength": 1
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Comment creation timestamp.",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+              },
+              "bodyPreview": {
+                "type": "string",
+                "description": "Truncated preview of the comment body."
+              }
+            }
+          }
+        }
+      }
+    },
+    "reviewerStates": {
+      "type": "object",
+      "description": "Required-review and CODEOWNER approval state derived from PR reviews, branch protection/ruleset requirements, and CODEOWNERS.",
+      "required": [
+        "reviewDecision",
+        "requiredApprovingReviewCount",
+        "requireCodeOwnerReview",
+        "requiresConversationResolution",
+        "requiredReviewerLogins",
+        "requiredReviewerTeams",
+        "codeownerUserLogins",
+        "codeownerTeamSlugs",
+        "unmatchedCodeownerFiles",
+        "latestByAuthor",
+        "humanApprovedCount",
+        "requiredApprovalsSatisfied",
+        "codeownerApprovalSatisfied",
+        "codeownerSelfApproval",
+        "humanChangesRequestedCount",
+        "blockingChangesRequestedLogins"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "reviewDecision": {
+          "type": "string",
+          "description": "GitHub's own aggregate review decision for the PR."
+        },
+        "requiredApprovingReviewCount": {
+          "type": "integer",
+          "description": "Configured minimum number of approving reviews required by branch protection/ruleset.",
+          "minimum": 0
+        },
+        "requireCodeOwnerReview": {
+          "type": "boolean",
+          "description": "Whether branch protection/ruleset requires a CODEOWNER approval."
+        },
+        "requiresConversationResolution": {
+          "type": "boolean",
+          "description": "Whether branch protection/ruleset requires all review threads to be resolved before merge."
+        },
+        "requiredReviewerLogins": {
+          "type": "array",
+          "description": "User logins required as reviewers by branch protection/ruleset.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "requiredReviewerTeams": {
+          "type": "array",
+          "description": "Team slugs required as reviewers by branch protection/ruleset.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "codeownerUserLogins": {
+          "type": "array",
+          "description": "User logins matched as CODEOWNERS for the PR's changed files.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "codeownerTeamSlugs": {
+          "type": "array",
+          "description": "Team slugs matched as CODEOWNERS for the PR's changed files.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "unmatchedCodeownerFiles": {
+          "type": "array",
+          "description": "Changed files that matched no CODEOWNERS rule.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "latestByAuthor": {
+          "type": "array",
+          "description": "Each reviewer's latest gating review, one entry per author.",
+          "items": {
+            "type": "object",
+            "required": [
+              "login",
+              "state",
+              "submittedAt",
+              "isHuman",
+              "isAdvisoryBot",
+              "isCodeowner",
+              "isRequiredReviewer"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "login": {
+                "type": "string",
+                "description": "Reviewer's login.",
+                "minLength": 1
+              },
+              "state": {
+                "type": "string",
+                "description": "Reviewer's latest review state (e.g. APPROVED, CHANGES_REQUESTED).",
+                "minLength": 1
+              },
+              "submittedAt": {
+                "type": "string",
+                "description": "Timestamp the reviewer's latest review was submitted.",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+              },
+              "isHuman": {
+                "type": "boolean",
+                "description": "Whether the reviewer is not a recognized advisory bot."
+              },
+              "isAdvisoryBot": {
+                "type": "boolean",
+                "description": "Whether the reviewer is a recognized advisory bot."
+              },
+              "isCodeowner": {
+                "type": "boolean",
+                "description": "Whether the reviewer is an eligible CODEOWNER for the PR's changed files."
+              },
+              "isRequiredReviewer": {
+                "type": "boolean",
+                "description": "Whether the reviewer is named as a required reviewer by branch protection/ruleset."
+              }
+            }
+          }
+        },
+        "humanApprovedCount": {
+          "type": "integer",
+          "description": "Count of distinct non-bot reviewers whose latest review state is APPROVED.",
+          "minimum": 0
+        },
+        "requiredApprovalsSatisfied": {
+          "type": "boolean",
+          "description": "Whether the required-approving-review-count and any per-reviewer requirements are all satisfied."
+        },
+        "codeownerApprovalSatisfied": {
+          "type": "boolean",
+          "description": "Whether CODEOWNER approval is satisfied: not required, no explicit CODEOWNERS match, a human codeowner approved, or GitHub's aggregate decision stands in because individual reviews could not be classified."
+        },
+        "codeownerSelfApproval": {
+          "type": "object",
+          "description": "Diagnostic for the case where the PR author is also the sole eligible CODEOWNER for the changed files, which can otherwise deadlock the CODEOWNER-approval gate.",
+          "required": [
+            "status",
+            "reason",
+            "prAuthorLogin",
+            "directCodeownerUserLogins",
+            "codeownerTeamSlugs",
+            "requireCodeOwnerReview",
+            "codeownerApprovalSatisfied",
+            "bypassDetected",
+            "bypassMode",
+            "currentUserCanBypass",
+            "rulesetBypassUnreadable",
+            "prAuthorIsSoleEligibleCodeowner",
+            "codeownerEligibilityUnreadable"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Overall self-approval deadlock status, escalating from not applicable through a resolvable or unverifiable bypass to a genuine deadlock.",
+              "enum": [
+                "not_applicable",
+                "clear",
+                "possible_deadlock",
+                "deadlock"
+              ]
+            },
+            "reason": {
+              "type": "string",
+              "description": "Specific reason behind status, e.g. why a bypass, deadlock, or ambiguity was found.",
+              "minLength": 1
+            },
+            "prAuthorLogin": {
+              "type": "string",
+              "description": "PR author's login, normalized to lowercase."
+            },
+            "directCodeownerUserLogins": {
+              "type": "array",
+              "description": "All direct-user CODEOWNERS logins matched for the changed files, before eligibility filtering.",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "codeownerTeamSlugs": {
+              "type": "array",
+              "description": "Team-based CODEOWNERS slugs matched for the changed files.",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "requireCodeOwnerReview": {
+              "type": "boolean",
+              "description": "Whether CODEOWNER review is required by branch protection/ruleset (mirrors reviewerStates.requireCodeOwnerReview)."
+            },
+            "codeownerApprovalSatisfied": {
+              "type": "boolean",
+              "description": "Whether CODEOWNER approval is currently satisfied (mirrors reviewerStates.codeownerApprovalSatisfied)."
+            },
+            "bypassDetected": {
+              "type": "boolean",
+              "description": "Whether an applicable pull-request bypass actor (classic protection or ruleset) is configured for the current viewer."
+            },
+            "bypassMode": {
+              "type": "string",
+              "description": "Kind of pull-request bypass detected across the relevant rulesets, or none when no applicable bypass is configured.",
+              "enum": ["none", "pull_request", "always", "exempt", "mixed"]
+            },
+            "currentUserCanBypass": {
+              "type": "string",
+              "description": "GitHub-reported bypass eligibility for the current viewer across the relevant rulesets.",
+              "enum": [
+                "unknown",
+                "never",
+                "always",
+                "pull_requests_only",
+                "exempt",
+                "mixed"
+              ]
+            },
+            "rulesetBypassUnreadable": {
+              "type": "boolean",
+              "description": "True when a codeowner-requiring ruleset's detail read was masked-404 unreadable, so bypassDetected could not rule out an actual configured bypass. Diagnostic only: never flips status to clear by itself, but downgrades an otherwise-certain deadlock to possible_deadlock."
+            },
+            "prAuthorIsSoleEligibleCodeowner": {
+              "type": "boolean",
+              "description": "True only when the PR author is the sole eligible direct-user codeowner (no team codeowners, no email codeowners, at least one eligible direct-user codeowner, and every eligible direct-user codeowner equals the author). This is the narrow self-CODEOWNER-deadlock topology fact; a 'clear' status/reason alone does not imply it, because the bypass-detected and non-author-owner-available branches can both report 'clear' without checking this condition."
+            },
+            "codeownerEligibilityUnreadable": {
+              "type": "boolean",
+              "description": "True when at least one direct-user codeowner's collaborator-permission lookup failed for a reason other than \"not a collaborator\" (403/5xx/network/timeout). When true, prAuthorIsSoleEligibleCodeowner is forced to false regardless of what the (possibly incomplete) eligible set otherwise computed, because a transient lookup failure for a genuinely eligible non-author codeowner must never be silently treated the same as that codeowner having no write access at all."
+            }
+          }
+        },
+        "humanChangesRequestedCount": {
+          "type": "integer",
+          "description": "Count of non-bot reviewers whose latest review state is CHANGES_REQUESTED.",
+          "minimum": 0
+        },
+        "blockingChangesRequestedLogins": {
+          "type": "array",
+          "description": "Logins of non-bot reviewers whose latest review state is CHANGES_REQUESTED.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "advisoryWait": {
+      "type": "object",
+      "description": "Copilot advisory-review wait-state evaluation, deciding whether the E14/F2 gate must keep waiting, request a fresh review, or is satisfied.",
+      "required": [
+        "outcome",
+        "f3Outcome",
+        "lastCopilotCommit",
+        "copilotPending",
+        "copilotPendingCoversHead",
+        "sameHeadMarkerPresent",
+        "earliestSameHeadAt",
+        "sameHeadMarkerCount",
+        "requestMarkerCount",
+        "requestCap",
+        "pendingWindowMinutes",
+        "settledWindowMinutes",
+        "pollIntervalMinutes",
+        "capExhaustedRoute",
+        "elapsedMinutes",
+        "copilotUnavailable",
+        "copilotUnavailableWaived"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "outcome": {
+          "type": "string",
+          "description": "E14/F2 advisory-wait state machine's current outcome, evaluated from Copilot's pending/reviewed state, same-head markers, and the elapsed/settled windows below.",
+          "enum": [
+            "SATISFIED",
+            "WAIT",
+            "REQUEST_NEEDED",
+            "RECOVERY_NEEDED",
+            "CAP_EXHAUSTED"
+          ]
+        },
+        "f3Outcome": {
+          "type": "string",
+          "description": "F3-specific advisory-wait outcome, which treats a settled (no-longer-pending) Copilot request as SATISFIED even when outcome above is not.",
+          "enum": [
+            "SATISFIED",
+            "WAIT",
+            "REQUEST_NEEDED",
+            "RECOVERY_NEEDED",
+            "CAP_EXHAUSTED"
+          ]
+        },
+        "lastCopilotCommit": {
+          "type": "string",
+          "description": "Commit SHA of the latest Copilot review found, or empty when none exists.",
+          "pattern": "^$|^[0-9a-f]{40}$"
+        },
+        "copilotPending": {
+          "type": "boolean",
+          "description": "Whether Copilot currently has an outstanding review request on the PR."
+        },
+        "copilotPendingCoversHead": {
+          "type": "boolean",
+          "description": "Whether the pending Copilot review request was made for the current PR head commit."
+        },
+        "sameHeadMarkerPresent": {
+          "type": "boolean",
+          "description": "Whether a trusted advisory-wait marker recorded for the current head SHA was found."
+        },
+        "earliestSameHeadAt": {
+          "type": "string",
+          "description": "Timestamp of the earliest trusted same-head advisory-wait marker, or empty when none exists.",
+          "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+        },
+        "sameHeadMarkerCount": {
+          "type": "integer",
+          "description": "Count of trusted advisory-wait markers matching the current head SHA.",
+          "minimum": 0
+        },
+        "requestMarkerCount": {
+          "type": "integer",
+          "description": "Count of trusted advisory-wait request markers posted for this PR.",
+          "minimum": 0
+        },
+        "requestCap": {
+          "type": "integer",
+          "description": "Configured maximum number of advisory-wait review requests before the gate reports CAP_EXHAUSTED.",
+          "minimum": 1
+        },
+        "pendingWindowMinutes": {
+          "type": "number",
+          "description": "Configured minutes to wait, once a same-head marker is present, while Copilot's review is still pending before treating the wait as satisfied.",
+          "exclusiveMinimum": 0
+        },
+        "settledWindowMinutes": {
+          "type": "number",
+          "description": "Configured minutes to wait, once a same-head marker is present and Copilot is no longer pending, before treating the wait as satisfied.",
+          "exclusiveMinimum": 0
+        },
+        "pollIntervalMinutes": {
+          "type": "number",
+          "description": "Configured polling interval, in minutes, for re-checking the advisory-wait state.",
+          "exclusiveMinimum": 0
+        },
+        "capExhaustedRoute": {
+          "type": "string",
+          "description": "Configured routing once requestCap is reached: phase-specific handling, or an unconditional hold.",
+          "enum": ["phase-specific", "hold"]
+        },
+        "elapsedMinutes": {
+          "type": "integer",
+          "description": "Minutes elapsed since the earliest same-head advisory-wait marker, compared against pendingWindowMinutes/settledWindowMinutes.",
+          "minimum": 0
+        },
+        "copilotUnavailable": {
+          "type": "boolean",
+          "description": "#1570/#1572: true when buildCopilotRecoverySummary reports state === COPILOT_UNAVAILABLE for this HEAD. Computed by the caller (pre-merge-readiness.mts); false is the unmigrated default."
+        },
+        "copilotUnavailableWaived": {
+          "type": "boolean",
+          "description": "#1570: true when copilotUnavailable is true AND a valid maintainer external-check waiver exists for the idd-advisory-convergence selector on current HEAD."
+        }
+      }
+    },
+    "ci": {
+      "type": "object",
+      "description": "Required-check evaluation derived from live CI check runs plus branch protection/ruleset required-check configuration.",
+      "required": [
+        "status",
+        "noRequiredChecksConfigured",
+        "protectionReadsUnreadable",
+        "presentRunConclusion",
+        "requiredCheckCount",
+        "generatedRequiredCheckCount",
+        "requiredChecksGenerated",
+        "requiredChecksPassing",
+        "requiredCheckNames",
+        "missingRequiredCheckNames",
+        "discardedNonPassingRequiredChecks",
+        "sourcePinnedRequiredCheckNames",
+        "sourcePinnedUnresolved",
+        "identityUnresolvedRequiredCheckNames",
+        "preDowngradeStatus",
+        "checks"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Rollup classification of the required checks, accounting for missing checks and the source-pinned downgrade of an otherwise-passing result.",
+          "enum": ["missing", "success", "pending", "failed", "unknown"]
+        },
+        "noRequiredChecksConfigured": {
+          "type": "boolean",
+          "description": "Whether no required checks are configured for the base branch. Never true when protection/ruleset reads were unreadable or a required check is source-pinned."
+        },
+        "protectionReadsUnreadable": {
+          "type": "boolean",
+          "description": "#1377: true when a branch-protection or ruleset read threw a masked-403-as-404 that was not trusted as genuinely empty (ciGate.trustEmptyProtectionReads). noRequiredChecksConfigured is always false when this is true."
+        },
+        "presentRunConclusion": {
+          "type": "string",
+          "description": "Conclusion across all present check runs, with waiver-covered runs counted as passing; used as the F2 fallback when no required checks are configured.",
+          "enum": ["all-passing", "some-failing", "pending", "none"]
+        },
+        "requiredCheckCount": {
+          "type": "integer",
+          "description": "Count of required check names resolved from branch protection/ruleset.",
+          "minimum": 0
+        },
+        "generatedRequiredCheckCount": {
+          "type": "integer",
+          "description": "Count of required checks that have at least one matching run reported for the current head.",
+          "minimum": 0
+        },
+        "requiredChecksGenerated": {
+          "type": "boolean",
+          "description": "Whether every required check name has a matching run reported for the current head (no missing required checks)."
+        },
+        "requiredChecksPassing": {
+          "type": "boolean",
+          "description": "Whether at least one required check is configured and the overall status is success."
+        },
+        "requiredCheckNames": {
+          "type": "array",
+          "description": "Names of every required check resolved from branch protection/ruleset.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "missingRequiredCheckNames": {
+          "type": "array",
+          "description": "Required check names with no matching run reported for the current head.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "discardedNonPassingRequiredChecks": {
+          "type": "array",
+          "description": "#1745: same-producer (name/type/workflowName/workflowPath -- kurone-kito/idd-skill#2919 widened this from the original name/type/workflowName 3-tuple) required-check instances discarded by the latest-per-producer dedup while the dedup-selected representative for that group is pass-equivalent -- surfaces the exact PR #1741 divergence, where a CANCELLED idd-advisory-convergence instance was masked by a same-producer SUCCESS instance even though GitHub's own statusCheckRollup.state disagreed. Empty (never omitted) when no such discarded sibling exists.",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "type",
+              "workflowName",
+              "selectedState",
+              "selectedCompletedAt",
+              "discardedState",
+              "discardedCompletedAt"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Discarded check's reported name."
+              },
+              "type": {
+                "type": "string",
+                "description": "Discarded check's producer-identity type (e.g. check-run or status-context)."
+              },
+              "workflowName": {
+                "type": "string",
+                "description": "Actions workflow name the discarded check ran under, when applicable."
+              },
+              "selectedState": {
+                "type": "string",
+                "description": "State of the same-producer instance the dedup selected as latest instead of this discarded one.",
+                "minLength": 1
+              },
+              "selectedCompletedAt": {
+                "type": ["string", "null"],
+                "description": "Completion timestamp of the selected instance, or null when not yet completed."
+              },
+              "discardedState": {
+                "type": "string",
+                "description": "Non-passing state of this discarded sibling instance.",
+                "minLength": 1
+              },
+              "discardedCompletedAt": {
+                "type": ["string", "null"],
+                "description": "Completion timestamp of this discarded instance, or null when not yet completed."
+              }
+            }
+          }
+        },
+        "sourcePinnedRequiredCheckNames": {
+          "type": "array",
+          "description": "#1689: required check names whose green state was downgraded to `unknown` (via `status` above) because their ruleset/classic-protection entry carries an `app_id`/`integration_id` (source-pinned) and the `ciGate.trustSourcePinnedRequiredChecks` opt-in was not set. Producer verification itself is not implemented (no GitHub App identity is fetched for a live check-run anywhere in this codebase); the opt-in is a human-authorized trust decision, not a runtime check. Lets a caller's blocker detail name the source-pinned cause explicitly instead of a generic \"CI is not all-passing\" message. Empty (never omitted) when no such downgrade occurred.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "sourcePinnedUnresolved": {
+          "type": "boolean",
+          "description": "#1689: true when the downgrade above fired at least partly because of a pinned source that could not be attributed to any check name (a ruleset `workflows` rule, or a pinned entry with no `context`/`name`/`check`). Distinct from `sourcePinnedRequiredCheckNames` being empty, which alone is ambiguous between \"no pinning\" and \"pinning exists but is unnamed.\" An unresolvable pinned source is never covered by the `ciGate.trustSourcePinnedRequiredChecks` opt-in, even when a separate, named-and-pinned entry also exists on the same required-check set."
+        },
+        "identityUnresolvedRequiredCheckNames": {
+          "type": "array",
+          "description": "kurone-kito/idd-skill#2919 (round 2): required check names whose green state was downgraded to `unknown` (via `status` above) because this collection pass could not fully resolve their real workflow-file producer identity (a parse failure on some, but not all, live instances; a thrown `listCheckRunWorkflowPaths` call; an empty resolved path; a `detailsUrl` that repeats -- either among the resolved `checkSuite.workflowRun` associations or among the live rollup's own matching instances -- and so cannot be joined back to a single instance safely (kurone-kito/idd-skill#2926); or a run-id count exceeding the collector's own lookup ceiling) -- see `CheckLike`'s own doc comment for why an unresolved producer identity cannot be trusted as passing (it cannot rule out a same-display-name decoy workflow). Lets a caller's blocker detail name this cause explicitly instead of a generic \"CI is not all-passing\" message. Empty (never omitted) when no such downgrade occurred.",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "preDowngradeStatus": {
+          "type": "string",
+          "description": "kurone-kito/idd-skill#2919 (round 5): the dedup+waiver-adjusted classification `status` BEFORE the source-pinned/identity-unresolved downgrades above could narrow it -- `success` here means every required check was already fully resolved as passing through `classifyCiChecks`'s own dedup/waiver logic, so any non-success final `status` can only be attributed to those two named downgrades. Lets a caller (`computePreMergeReadinessBlockers`) determine, exactly, whether a genuinely separate concurrent CI cause exists alongside a pinned/identity-unresolved cause, without re-deriving per-check pass/fail evidence itself. `unknown` when no required checks are configured, mirroring `status`'s own initial default in that case.",
+          "enum": ["missing", "success", "pending", "failed", "unknown"]
+        },
+        "checks": {
+          "type": "array",
+          "description": "Every check run reported for the current head, normalized with required/waiver status.",
+          "items": {
+            "type": "object",
+            "required": ["name", "state", "completedAt", "required"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Check's reported name.",
+                "minLength": 1
+              },
+              "state": {
+                "type": "string",
+                "description": "Check's normalized state.",
+                "minLength": 1
+              },
+              "completedAt": {
+                "type": "string",
+                "description": "Check's completion timestamp, or empty when not yet completed.",
+                "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+              },
+              "required": {
+                "type": "boolean",
+                "description": "Whether this check name is one of the resolved required checks."
+              },
+              "coveredByWaiver": {
+                "type": "boolean",
+                "description": "Present and true only when a valid, policy-configured external-check waiver rewrote this non-passing check to pass-equivalent for gate purposes."
+              }
+            }
+          }
+        }
+      }
+    },
+    "claim": {
+      "type": "object",
+      "description": "Claim-ownership validation comparing this session's expected claim/agent identifiers to the claim issue's currently active claim.",
+      "required": [
+        "expectedClaimId",
+        "expectedAgentId",
+        "activeClaimPresent",
+        "activeClaim",
+        "matchesExpectedClaim",
+        "claimLost",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "expectedClaimId": {
+          "type": "string",
+          "description": "Claim id this session expects to still be active, as recorded at claim time."
+        },
+        "expectedAgentId": {
+          "type": "string",
+          "description": "Agent id this session expects to still be active, as recorded at claim time."
+        },
+        "activeClaimPresent": {
+          "type": "boolean",
+          "description": "Whether any active claim was resolved from the claim issue's comment stream."
+        },
+        "activeClaim": {
+          "type": "object",
+          "description": "Fields of the currently active claim, or empty strings when none is present.",
+          "required": [
+            "agentId",
+            "claimId",
+            "supersedes",
+            "branch",
+            "createdAt"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "agentId": {
+              "type": "string",
+              "description": "Active claim's recorded agent id."
+            },
+            "claimId": {
+              "type": "string",
+              "description": "Active claim's opaque claim id."
+            },
+            "supersedes": {
+              "type": "string",
+              "description": "Prior claim id this active claim superseded, or empty for a fresh claim."
+            },
+            "branch": {
+              "type": "string",
+              "description": "Implementation branch recorded on the active claim."
+            },
+            "createdAt": {
+              "type": "string",
+              "description": "GitHub creation timestamp of the active claim's latest valid claimed-by comment.",
+              "pattern": "^$|^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+            }
+          }
+        },
+        "matchesExpectedClaim": {
+          "type": "boolean",
+          "description": "Whether the active claim's agent id, claim id, and (when supplied) activation nonce all match the expected values."
+        },
+        "claimLost": {
+          "type": "boolean",
+          "description": "Whether ownership no longer matches the expected claim; the inverse of matchesExpectedClaim."
+        },
+        "reason": {
+          "type": "string",
+          "description": "Why claim-ownership resolution matched or failed.",
+          "enum": [
+            "match",
+            "missing-active-claim",
+            "claim-id-mismatch",
+            "agent-id-mismatch",
+            "activation-nonce-mismatch",
+            "not-applicable"
+          ]
+        }
+      }
+    },
+    "dispositionEvidence": {
+      "type": "object",
+      "description": "E7 disposition-completeness evidence: whether every reviewer comment and unresolved thread has a recorded IDD-agent disposition, gating a return to E1 when evidence is missing.",
+      "required": [
+        "route",
+        "reason",
+        "blockingCount",
+        "missingRegularCommentCount",
+        "missingThreadCount",
+        "soleCauseAckOnlyPostDisposition",
+        "soleCauseInPlaceEditOnly",
+        "missingRegularComments",
+        "missingThreads"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "route": {
+          "type": "string",
+          "description": "Whether disposition evidence is complete (\"proceed\") or the gate must return to E1 (\"return-to-e1\").",
+          "enum": ["proceed", "return-to-e1"]
+        },
+        "reason": {
+          "type": "string",
+          "description": "Whether disposition evidence is complete, or evidence is missing.",
+          "enum": ["complete", "missing-disposition-evidence"]
+        },
+        "blockingCount": {
+          "type": "integer",
+          "description": "Total count of outstanding items (missing regular comments plus missing threads) blocking the disposition-evidence gate.",
+          "minimum": 0
+        },
+        "missingRegularCommentCount": {
+          "type": "integer",
+          "description": "Count of regular comments with no recognized IDD-agent disposition.",
+          "minimum": 0
+        },
+        "missingThreadCount": {
+          "type": "integer",
+          "description": "Count of unresolved or undispositioned review threads.",
+          "minimum": 0
+        },
+        "soleCauseAckOnlyPostDisposition": {
+          "type": "boolean",
+          "description": "Advisory-only: true when at least one blocking item exists and every blocking item is a resolved thread blocking solely due to post-disposition advisory-bot ack-only activity. Never changes route by itself."
+        },
+        "soleCauseInPlaceEditOnly": {
+          "type": "boolean",
+          "description": "Advisory-only, a stricter subset of soleCauseAckOnlyPostDisposition: also true only when every qualifying ack-only reply is an in-place edit of pre-existing content rather than a new post-disposition comment. Never changes route by itself."
+        },
+        "missingRegularComments": {
+          "type": "array",
+          "description": "Regular comments still missing a recognized IDD-agent disposition.",
+          "items": {
+            "type": "object",
+            "required": ["id", "authorLogin", "createdAt", "bodyPreview"],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Comment identifier.",
+                "minLength": 1
+              },
+              "authorLogin": {
+                "type": "string",
+                "description": "Login of the comment's author.",
+                "minLength": 1
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Comment creation timestamp.",
+                "format": "date-time",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z$"
+              },
+              "bodyPreview": {
+                "type": "string",
+                "description": "Truncated preview of the comment body."
+              },
+              "hint": {
+                "type": "string",
+                "description": "Diagnostic-only note, present only when applicable: names the exact required disposition phrase or literal prefix an IDD-agent reply attempt was close to but missed -- either a recognized advisory non-review notice with a wrong-phrase reply (#1833), or any missing comment with a plain-text reply attempt that never satisfies the required bold **Accepted**/**Rejected** prefix (#2249)."
+              }
+            }
+          }
+        },
+        "missingThreads": {
+          "type": "array",
+          "description": "Unresolved or undispositioned review threads.",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "isResolved",
+              "reason",
+              "ackOnlyPostDisposition",
+              "inPlaceEditOnly"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Review thread's GraphQL node id.",
+                "minLength": 1
+              },
+              "isResolved": {
+                "type": "boolean",
+                "description": "Whether the thread is marked resolved on GitHub."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Why this thread is still outstanding, distinguishing an incomplete comment page from a missing or stale disposition.",
+                "enum": [
+                  "incomplete-thread-comments",
+                  "missing-fresh-disposition",
+                  "unresolved-without-fresh-disposition"
+                ]
+              },
+              "ackOnlyPostDisposition": {
+                "type": "boolean",
+                "description": "Advisory-only: true when this resolved thread blocks solely because of post-disposition advisory-bot ack-only activity newer than the review-currency snapshot boundary."
+              },
+              "inPlaceEditOnly": {
+                "type": "boolean",
+                "description": "Advisory-only, narrower than ackOnlyPostDisposition: true only when every qualifying reply is an in-place edit of content that already existed at or before the thread's disposition."
+              }
+            }
+          }
+        }
+      }
+    },
+    "waiverEvidence": {
+      "type": "object",
+      "description": "External-check waiver markers grouped by validity outcome, evaluated against the current PR head, active claim, trusted-actor policy, and the configured waivable-check surface.",
+      "required": [
+        "valid",
+        "expired",
+        "wrongHead",
+        "wrongClaim",
+        "unauthorized",
+        "malformed",
+        "notConfigured",
+        "modeDisabled"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "valid": {
+          "type": "array",
+          "description": "Waivers that passed every validity check and cover a policy-configured waivable check.",
+          "items": {
+            "type": "object",
+            "required": [
+              "authorLogin",
+              "checkSelector",
+              "reason",
+              "expiresAt",
+              "createdAt",
+              "runId"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "authorLogin": {
+                "type": "string",
+                "description": "Login of the waiver's author, normalized to lowercase."
+              },
+              "checkSelector": {
+                "type": "string",
+                "description": "Check-name selector the waiver targets."
+              },
+              "reason": {
+                "type": "string",
+                "description": "Maintainer-authored justification recorded on the waiver."
+              },
+              "expiresAt": {
+                "type": "string",
+                "description": "Waiver's recorded expiry timestamp."
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "Waiver comment's own creation timestamp (#2034), or 'none' when unparseable; the moment a generic waivable check's waiver became genuinely active, used to gate coveredByWaiver on a fresh post-waiver check run.",
+                "pattern": "^(none|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z)$"
+              },
+              "runId": {
+                "type": "string",
+                "description": "kurone-kito/idd-skill#2657: the marker's optional run-id: field, verbatim ('' when absent). Only the self-referential-bootstrap-auto consumer in advisory-convergence.mts reads this; every other caller of the shared summarizer is unaffected by its presence."
+              }
+            }
+          }
+        },
+        "expired": {
+          "type": "array",
+          "description": "Waivers whose expiry has passed, or whose validity window exceeded the configured maximum.",
+          "items": {
+            "type": "object",
+            "required": [
+              "authorLogin",
+              "checkSelector",
+              "expiresAt",
+              "reason",
+              "runId",
+              "createdAt"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "authorLogin": {
+                "type": "string",
+                "description": "Login of the waiver's author, normalized to lowercase."
+              },
+              "checkSelector": {
+                "type": "string",
+                "description": "Check-name selector the waiver targets."
+              },
+              "expiresAt": {
+                "type": "string",
+                "description": "Waiver's recorded expiry timestamp."
+              },
+              "reason": {
+                "type": "string",
+                "description": "kurone-kito/idd-skill#2911: the marker's reason: field, verbatim -- needed to identify a self-referential-bootstrap-auto marker even after it has expired out of the valid bucket."
+              },
+              "runId": {
+                "type": "string",
+                "description": "kurone-kito/idd-skill#2911: the marker's optional run-id: field, verbatim ('' when absent) -- mirrors the valid bucket's own runId field."
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "kurone-kito/idd-skill#2911 (Copilot review, PR #2915): the marker comment's own createdAt server timestamp -- the lower bound of the marker's validity window, paired with expiresAt as the upper bound."
+              }
+            }
+          }
+        },
+        "wrongHead": {
+          "type": "array",
+          "description": "Waivers bound to a PR head commit other than the current head.",
+          "items": {
+            "type": "object",
+            "required": ["authorLogin", "checkSelector", "waiverHeadSha"],
+            "additionalProperties": false,
+            "properties": {
+              "authorLogin": {
+                "type": "string",
+                "description": "Login of the waiver's author, normalized to lowercase."
+              },
+              "checkSelector": {
+                "type": "string",
+                "description": "Check-name selector the waiver targets."
+              },
+              "waiverHeadSha": {
+                "type": "string",
+                "description": "PR head commit SHA recorded on the waiver, which does not match the current head."
+              }
+            }
+          }
+        },
+        "wrongClaim": {
+          "type": "array",
+          "description": "Waivers bound to a claim id other than the currently active claim.",
+          "items": {
+            "type": "object",
+            "required": [
+              "authorLogin",
+              "checkSelector",
+              "waiverClaimId",
+              "reason",
+              "runId",
+              "createdAt",
+              "expiresAt"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "authorLogin": {
+                "type": "string",
+                "description": "Login of the waiver's author, normalized to lowercase."
+              },
+              "checkSelector": {
+                "type": "string",
+                "description": "Check-name selector the waiver targets."
+              },
+              "waiverClaimId": {
+                "type": "string",
+                "description": "Claim id recorded on the waiver, which does not match the active claim."
+              },
+              "reason": {
+                "type": "string",
+                "description": "kurone-kito/idd-skill#2911: see expired[].reason's description above -- the identical need applies to a wrongClaim-classified marker, which likewise never reaches the valid bucket."
+              },
+              "runId": {
+                "type": "string",
+                "description": "kurone-kito/idd-skill#2911: see expired[].runId's description above."
+              },
+              "createdAt": {
+                "type": "string",
+                "description": "kurone-kito/idd-skill#2911 (Copilot review, PR #2915): see expired[].createdAt's description above -- the identical lower-bound need applies to a wrongClaim-classified marker."
+              },
+              "expiresAt": {
+                "type": "string",
+                "description": "kurone-kito/idd-skill#2911 (Codex review, PR #2915, P2): the marker's recorded expiry timestamp -- wrongClaim classification runs before the expiry check in summarizeExternalCheckWaivers, so a marker can be both wrong-claim and already-expired yet only ever reach this bucket; needed as the upper bound of the marker's validity window, paired with createdAt as the lower bound."
+              }
+            }
+          }
+        },
+        "unauthorized": {
+          "type": "array",
+          "description": "Waivers posted by an author who is not a trusted marker actor.",
+          "items": {
+            "type": "object",
+            "required": ["authorLogin", "checkSelector", "expiresAt"],
+            "additionalProperties": false,
+            "properties": {
+              "authorLogin": {
+                "type": "string",
+                "description": "Login of the waiver's author, normalized to lowercase."
+              },
+              "checkSelector": {
+                "type": "string",
+                "description": "Check-name selector the waiver targets."
+              },
+              "expiresAt": {
+                "type": "string",
+                "description": "Waiver's recorded expiry timestamp."
+              }
+            }
+          }
+        },
+        "malformed": {
+          "type": "array",
+          "description": "Comments that matched the external-check-waiver marker prefix but could not be parsed.",
+          "items": {
+            "type": "object",
+            "required": ["authorLogin", "bodyPreview"],
+            "additionalProperties": false,
+            "properties": {
+              "authorLogin": {
+                "type": "string",
+                "description": "Login of the comment's author, normalized to lowercase."
+              },
+              "bodyPreview": {
+                "type": "string",
+                "description": "Truncated preview of the unparseable comment body."
+              }
+            }
+          }
+        },
+        "notConfigured": {
+          "type": "array",
+          "description": "Waivers that passed every validity check but name a check the policy never declared waivable; excluded from valid and never fold a check into requiredChecksPassing.",
+          "items": {
+            "type": "object",
+            "required": ["authorLogin", "checkSelector", "expiresAt"],
+            "additionalProperties": false,
+            "properties": {
+              "authorLogin": {
+                "type": "string",
+                "description": "Login of the waiver's author, normalized to lowercase."
+              },
+              "checkSelector": {
+                "type": "string",
+                "description": "Check-name selector the waiver targets."
+              },
+              "expiresAt": {
+                "type": "string",
+                "description": "Waiver's recorded expiry timestamp."
+              }
+            }
+          }
+        },
+        "modeDisabled": {
+          "type": "array",
+          "description": "#2046: waivers that passed every validity and waivable-selector check but the policy's ciGate.externalCheckWaivers.mode is not maintainer-authorized; excluded from valid and never fold a check into requiredChecksPassing, mirroring advisory-convergence.mts's own mode guard.",
+          "items": {
+            "type": "object",
+            "required": ["authorLogin", "checkSelector", "expiresAt"],
+            "additionalProperties": false,
+            "properties": {
+              "authorLogin": {
+                "type": "string",
+                "description": "Login of the waiver's author, normalized to lowercase."
+              },
+              "checkSelector": {
+                "type": "string",
+                "description": "Check-name selector the waiver targets."
+              },
+              "expiresAt": {
+                "type": "string",
+                "description": "Waiver's recorded expiry timestamp."
+              }
+            }
+          }
+        }
+      }
+    },
+    "advisoryConvergenceWaiverPrecondition": {
+      "type": "object",
+      "description": "#2021: deadline/terminal precondition gating whether a posted idd-advisory-convergence waiver counts toward ci.coveredByWaiver -- mirrors advisory-convergence.mts's own deadline clock (a 24h deadline anchored on the current HEAD commit's own committedDate) and its terminal Copilot-unavailability escape hatch, so this evidence collector never reports a check as covered before that gate itself would call the waiver waived.",
+      "required": [
+        "checkSelector",
+        "deadlineMinutes",
+        "headCommittedAt",
+        "elapsedMinutes",
+        "deadlinePassed",
+        "terminalUnavailable",
+        "open"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "checkSelector": {
+          "type": "string",
+          "description": "The idd-advisory-convergence check selector this precondition gates."
+        },
+        "deadlineMinutes": {
+          "type": "number",
+          "description": "Configured advisory convergence deadline in minutes (advisoryWait.convergenceDeadline, default 1440 = 24h).",
+          "minimum": 0
+        },
+        "headCommittedAt": {
+          "type": "string",
+          "description": "ISO timestamp of the current HEAD commit itself, or the literal 'none' when unavailable."
+        },
+        "elapsedMinutes": {
+          "type": ["integer", "null"],
+          "description": "Whole minutes elapsed from headCommittedAt to now, or null when headCommittedAt is invalid or absent."
+        },
+        "deadlinePassed": {
+          "type": "boolean",
+          "description": "True when elapsedMinutes is known and has reached deadlineMinutes."
+        },
+        "terminalUnavailable": {
+          "type": "boolean",
+          "description": "The caller-supplied #1572 terminal Copilot-unavailability verdict (same value as advisoryWait.copilotUnavailable)."
+        },
+        "open": {
+          "type": "boolean",
+          "description": "True when deadlinePassed or terminalUnavailable -- the precondition that must hold before a posted idd-advisory-convergence waiver counts toward ci.coveredByWaiver."
+        }
+      }
+    },
+    "secondaryQuietWindow": {
+      "type": "object",
+      "description": "#2335: the advisoryWait.secondaryQuietWindow gate status -- once the E-phase convergence conditions are already met, requires the configured window to have elapsed since the last substantive (non-ack-only) activity before treating the review as settled. Anchored on reviewCurrency.live.effective.maxActivityUpdatedAt; stateless by design.",
+      "required": [
+        "minutes",
+        "anchorAt",
+        "elapsedMinutes",
+        "elapsed",
+        "remainingMinutes",
+        "declined"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "minutes": {
+          "type": "integer",
+          "description": "Configured secondary quiet window in whole minutes (advisoryWait.secondaryQuietWindow, default 0 = off).",
+          "minimum": 0
+        },
+        "anchorAt": {
+          "type": "string",
+          "pattern": "^(none|declined|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?Z)$",
+          "description": "ISO timestamp of the last substantive (non-ack-only) activity this window anchors on, the literal 'none' when no such activity exists, or the literal 'declined' when the #2547 secondaryBotDeclined short-circuit fired. Still the real timestamp (not 'none') when minutes is 0 but a valid activity timestamp exists."
+        },
+        "elapsedMinutes": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Whole minutes elapsed from anchorAt to now, or null when the window is off, declined is true (anchorAt is the literal 'declined', not a timestamp), anchorAt is otherwise invalid/absent, or now failed to parse."
+        },
+        "elapsed": {
+          "type": "boolean",
+          "description": "True when the configured window has elapsed since anchorAt -- always true when minutes is 0 (off), anchorAt is unavailable, or declined is true."
+        },
+        "remainingMinutes": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Whole minutes remaining until the window elapses. 0 when the window is off (minutes is 0), declined is true, or anchorAt is invalid/absent; otherwise null only when elapsedMinutes itself is null (now failed to parse)."
+        },
+        "declined": {
+          "type": "boolean",
+          "description": "#2547: true when the configured secondary advisory bot has definitively declined (a rate-limit / skip-review notice, with no later genuine comment) to review the CURRENT HEAD -- the wait is skipped entirely (elapsed: true, remainingMinutes: 0) rather than requiring the full configured window."
+        }
+      }
+    },
+    "claimIdentityInstalledAt": {
+      "type": "string",
+      "description": "kurone-kito/idd-skill#2911: the non-mutable timestamp at which the active claim's (agentId, claimId) identity was last installed (a fresh claim, a stale takeover, or a forced handoff) -- as opposed to claim.activeClaim.createdAt, which is overwritten on every same-claim heartbeat. '' when no event ever produced an active claim. Deliberately outside claim (not claim.activeClaimInstalledAt): ClaimValidationSummary's shape is embedded in schemas beyond this one, so this stays a top-level, pre-merge-readiness-only field instead."
+    },
+    "staleSelfWaiver": {
+      "type": "object",
+      "description": "kurone-kito/idd-skill#2911: evidence for the stale-self-waiver merge blocker -- whether the currently-passing idd-advisory-convergence check (the deduplicated newest instance) rests on a self-referential-bootstrap-auto waiver that has since gone stale (expired, or claim-invalid across a genuine claim-identity transition), with no rerun since. Reported unconditionally (never omitted); stale is false and reason is null whenever the blocker does not apply (including when touchesSelfReferentialAllowlist was not supplied as true, or the configured ciGate.externalCheckWaivers.mode/waivableSelectors policy could never have made this mechanism's waiver valid).",
+      "required": [
+        "stale",
+        "checkSelector",
+        "reason",
+        "expiresAt",
+        "waiverClaimId"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "stale": {
+          "type": "boolean",
+          "description": "True when the currently-passing check's pass rests on a stale, run-verified self-referential-bootstrap-auto waiver."
+        },
+        "checkSelector": {
+          "type": "string",
+          "description": "The advisory-convergence check selector this evidence evaluates."
+        },
+        "reason": {
+          "type": ["string", "null"],
+          "enum": ["expired", "wrong-claim", null],
+          "description": "Which stale condition fired: an expired marker with no rerun since, or a marker bound to a claim identity the current transition no longer matches. null when stale is false."
+        },
+        "expiresAt": {
+          "type": "string",
+          "description": "The stale marker's own recorded expiry timestamp, when reason is 'expired'; '' otherwise."
+        },
+        "waiverClaimId": {
+          "type": "string",
+          "description": "The stale marker's own recorded claim id, when reason is 'wrong-claim'; '' otherwise."
+        }
+      }
+    },
+    "branchCurrency": {
+      "description": "#1513: whether the base branch's protection or ruleset requires an up-to-date head before merge, paired with the PR's live mergeable/mergeStateStatus.",
+      "type": "object",
+      "required": [
+        "mergeStateStatus",
+        "mergeable",
+        "requiresUpToDateHead",
+        "requiresUpToDateHeadSource"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "mergeStateStatus": {
+          "type": "string",
+          "description": "Live GitHub merge-state status for the PR head, used to detect a stale head requiring an update before merge.",
+          "enum": [
+            "",
+            "BEHIND",
+            "BLOCKED",
+            "CLEAN",
+            "DIRTY",
+            "DRAFT",
+            "HAS_HOOKS",
+            "UNKNOWN",
+            "UNSTABLE"
+          ]
+        },
+        "mergeable": {
+          "type": "string",
+          "description": "Live GitHub mergeability value for the PR head.",
+          "enum": ["", "CONFLICTING", "MERGEABLE", "UNKNOWN"]
+        },
+        "requiresUpToDateHead": {
+          "type": "boolean",
+          "description": "Whether the base branch's ruleset or classic protection requires the PR head to be up to date with the base branch before merge."
+        },
+        "requiresUpToDateHeadSource": {
+          "description": "Provenance of requiresUpToDateHead: a confirmed ruleset or classic-protection read, an unreadable read that fails closed to true, or a genuinely readable 'no rule found'.",
+          "type": "string",
+          "enum": [
+            "ruleset",
+            "classic-protection",
+            "unreadable-fail-closed",
+            "none"
+          ]
+        }
+      }
+    },
+    "trustedMarkerActors": {
+      "type": "array",
+      "description": "Configured trusted marker actor logins used to validate operational markers (claim, watermark, waiver, and related markers) for this snapshot.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "trustedMarkerActorsSource": {
+      "type": "string",
+      "description": "Provenance of trustedMarkerActors: an explicit flag, an environment variable, repository config, or none configured.",
+      "enum": ["flag", "env", "config", "none"]
+    },
+    "localValidationEvidence": {
+      "type": "object",
+      "description": "#2323: the caller-precomputed resolveLocalValidationEvidence result (local-validation-evidence.mts), reported verbatim. Omitted entirely when the caller does not pass it. Purely informational -- computePreMergeReadinessBlockers has no reference to this field, so it can never remove or downgrade a required-check blocker; an unavailable required check stays a blocker regardless of this field's contents.",
+      "additionalProperties": true
+    },
+    "developmentBranchTarget": {
+      "type": "object",
+      "description": "#2272: the caller-precomputed resolveEffectiveDevelopmentBranch result (policy-helpers.mts) paired with the live PR baseRefName, reported verbatim. Omitted entirely when the caller does not pass it. Unlike localValidationEvidence above, this DOES feed computePreMergeReadinessBlockers: an invalid/unavailable status, or a branch that differs from baseRefName, adds a development-branch-target blocker.",
+      "required": ["status", "baseRefName"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "'configured' (an explicit developmentBranch policy value) or 'default' (policy absent, live repository default branch used) never block; 'invalid' (malformed policy value) or 'unavailable' (policy absent and the live default branch could not be read) always block.",
+          "enum": ["configured", "default", "invalid", "unavailable"]
+        },
+        "branch": {
+          "type": "string",
+          "description": "Present when status is 'configured' or 'default'."
+        },
+        "reason": {
+          "type": "string",
+          "description": "Present when status is 'invalid'."
+        },
+        "baseRefName": {
+          "type": "string",
+          "description": "The PR's live base branch, read alongside the same headRefOid/baseRefName pr view fetch this report already performs."
+        }
+      }
+    },
+    "ready": {
+      "description": "Strict merge-gate rollup: true only when blockers is empty. Does NOT apply the dispositionEvidence.soleCauseAckOnlyPostDisposition override (a separate flag the F2 checklist layers on top).",
+      "type": "boolean"
+    },
+    "blockers": {
+      "description": "One entry per unmet F3 merge gate, in gate order; empty when ready.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["gate", "detail"],
+        "additionalProperties": false,
+        "properties": {
+          "gate": {
+            "type": "string",
+            "description": "Identifier of the unmet pre-merge gate, e.g. ci, required-reviews, claim-ownership, or branch-currency."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Human-readable explanation of why this gate is unmet."
+          }
+        }
+      }
+    }
+  }
+}

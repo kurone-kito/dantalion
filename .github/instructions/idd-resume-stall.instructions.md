@@ -9,7 +9,7 @@ This file applies only to unattended stale-takeover evidence for a
 non-owned claim. Human-gated forced handoff is a separate recovery path
 and is routed from `idd-resume.instructions.md` before this file runs.
 
-Read `idd-overview.instructions.md` and
+Read `idd-overview-core.instructions.md` and
 `idd-resume.instructions.md` first.
 
 ## Inputs to collect
@@ -28,8 +28,59 @@ Before deciding, gather:
    remote branch tip SHA and update time when no PR exists.
 5. Latest trusted review watermark and baseline marker timestamps for
    the same active claim (if present).
+6. A server-anchored `now` for the S2/S4 quiet-window bound — see
+   "Deriving a server-anchored `now`" below.
 
 Use GitHub server timestamps only.
+
+### Deriving a server-anchored `now`
+
+The S2/S4 quiet-window bound `[now - 30 min, now]` must share the same
+clock as the activity timestamps gathered above (GitHub server time),
+not the executor's local clock — the local clock can be skewed ahead of
+or behind the server, which can push genuinely recent activity outside
+the window and make `quiet_window_met` spuriously `true`.
+
+Obtain a server-anchored `now` from the `Date` HTTP response header of a
+`gh api` call — pass `--include` to see response headers. Reuse one
+already made while gathering the inputs above when one happened to use
+`gh api --include`; otherwise issue one lightweight `gh api --include`
+call for this purpose (a single extra request, not one per check).
+Extract the header value, then convert it to ISO8601 UTC — Node is
+already a required dependency for helper runtime and parses RFC 7231
+dates directly, so prefer it over shell `date` utilities (whose flags
+differ across GNU/BSD/Windows executors). Use a Node-only extraction
+that works in both POSIX shells and PowerShell:
+
+```bash
+SERVER_NOW=$(gh api repos/<owner>/<repo>/issues/<number> --include | node -e '
+  const fs = require("node:fs");
+  const input = fs.readFileSync(0, "utf8");
+  const dateLine = input.split(/\r?\n/).find((line) => /^date:/i.test(line));
+  if (!dateLine) process.exit(1);
+  process.stdout.write(dateLine.replace(/^date:\s*/i, "").trim());
+')
+node -e "console.log(new Date(process.argv[1]).toISOString().replace(/\.\d{3}Z$/, 'Z'))" \
+  "$SERVER_NOW"
+```
+
+The Node parser strips the `Date:` header label and selects the first
+response header, so only the RFC 7231 timestamp value (e.g. `Wed, 15 Jul
+2026 03:42:53 GMT`) reaches the conversion. This avoids shell-specific
+`grep`, `head`, `sed`, and `tr` flags and remains safe when a paginated
+call emits one `Date` header per page. On PowerShell, use the equivalent
+pipeline below:
+
+```powershell
+$serverNow = gh api repos/<owner>/<repo>/issues/<number> --include | Out-String | node -e "const fs = require('node:fs'); const input = fs.readFileSync(0, 'utf8'); const dateLine = input.split(/\r?\n/).find((line) => /^date:/i.test(line)); if (!dateLine) process.exit(1); process.stdout.write(dateLine.replace(/^date:\s*/i, '').trim());"
+$now = node -e "console.log(new Date(process.argv[1]).toISOString().replace(/\.\d{3}Z$/, 'Z'))" "$serverNow"
+```
+
+Pass the resulting value as `--now` to `idd-stalled-session-quiet-check`
+in S2 and again (freshly re-derived, not reused) in S4. **Hand-computing
+fallback** (helper runtime unavailable): use this same server-derived
+value, not `new Date()` / the local wall clock, as the upper bound of
+the manual quiet-window check described in S2.
 
 ## Decision rules
 
@@ -43,6 +94,14 @@ Use GitHub server timestamps only.
   stalled-session takeover case. Return to
   `idd-resume.instructions.md` Step 1 and use the forced-handoff route
   instead. Do not apply the quiet-window or stale-threshold gates here.
+- If the active claim satisfies Step 0's full operator-present release
+  condition in `idd-resume.instructions.md` — including that this
+  session has received the operator-supplied input — this is not a
+  stalled-session takeover case either. Return to
+  `idd-resume.instructions.md` Step 0 and use that path instead. Do not
+  apply the quiet-window or stale-threshold gates here. Pause evidence
+  alone, with the input not yet received, does not match this bullet;
+  fall through to the next.
 - If the active claim belongs to another `{claim-id}`, continue.
 
 ### S2 — Quiet-window check (stall evidence, not ownership transfer)
@@ -54,25 +113,68 @@ remote branch tip movement, no running CI activity (`queued` or
 `in_progress` checks/runs), and no new review/comment/CI completion
 activity.
 
-When helper runtime is enabled, use
+When helper runtime is enabled **and an active PR number is known**, use
 `idd-stalled-session-quiet-check` as the canonical read-only evidence
-collector for this step. Pass the active PR number and, when known, the
-latest valid trusted `claimed-by` `created_at` from the active non-owned
-claim:
+collector for this step. If `{pr-number}` is `none`, do not invoke the
+helper: use the written S2 procedure with remote branch-tip evidence for
+the claimed branch instead. Both paths still require the server-anchored
+timestamp derived above. For the PR path, always pass `--now` with that
+timestamp ("Deriving a server-anchored `now`"), together with the active PR
+number and, when known, the latest valid trusted
+`claimed-by` `created_at` from the active non-owned claim:
 
 ```bash
 idd-stalled-session-quiet-check \
   --pr <pr-number> \
+  --now <server-anchored-ISO8601> \
   --claim-created-at <latest-valid-claimed-by-created_at>
 ```
 
-Use `node scripts/stalled-session-quiet-check.mjs ...` as the vendored
-equivalent when the packaged binary is unavailable. Consume the helper's
-stable fields `quiet_window_met`, `quiet_window_ms`, `window_start`,
-`now`, `latest_activity`, `latest_activity_type`, `reason`, and
-`evidence` (`activity_count_in_window`, `blocking_activities`,
+Omitting `--now` falls back to the helper's local-clock default
+(`docs/stalled-session-quiet-check.md`), which does not satisfy the
+"server timestamps only" mandate above — always pass it explicitly.
+
+For `source`/`vendored-node`, use
+`node scripts/stalled-session-quiet-check.mjs ...` as the local helper
+equivalent. For `package-manager`/`ephemeral-npx`, resolve and invoke the
+profile-selected `idd-stalled-session-quiet-check` command from
+`docs/idd-helper-scripts.md`; those profiles do not vendor the `scripts/`
+tree. Consume the helper's stable fields `quiet_window_met`,
+`quiet_window_ms`, `window_start`, `now`, `latest_activity`,
+`latest_activity_type`, `reason`, and `evidence`
+(`activity_count_in_window`, `blocking_activities`,
 `has_heartbeat_in_window`, `has_ci_running`,
-`has_pr_head_movement`, `has_branch_tip_movement`).
+`has_branch_tip_movement`, `branch_tip_evidence_source`,
+`branch_tip_evidence_head_sha`, `branch_tip_evidence_complete`).
+
+Before accepting any helper result, perform the cross-field checks that
+JSON Schema cannot express: `policy.quiet_window_ms` must equal the
+top-level `quiet_window_ms`, and `window_start` must equal
+`now - quiet_window_ms` after parsing all three timestamps as UTC. A
+mismatch, a non-integral duration, or a timestamp arithmetic failure is
+contradictory evidence and routes to hold. This prevents a helper from
+evaluating a shorter duplicated window while reporting the configured
+policy duration.
+
+The helper's branch-tip signal must come from a GitHub-server PR timeline
+or ref-update event (`committed`, `head_ref_force_pushed`, `synchronize`,
+or an equivalent server-side head snapshot). A commit object's author or
+committer date is not a server-side movement timestamp. If that evidence is
+missing, pagination is incomplete, or the source is ambiguous, treat the
+quiet check as hold/inconclusive and do not take over.
+
+Do not enable a helper profile until its pinned producer and schema also
+report the evidence source, current PR head SHA binding, and completeness
+flag. A helper that reports only a commit author/committer date is
+non-conforming; keep the repository on `instructions-only` until that
+producer is updated.
+
+Before accepting `quiet_window_met: true`, validate the complete evidence
+tuple against the schema and the live PR: `branch_tip_evidence_complete`
+must be `true`, the source must be `pr-timeline`, `ref-update`, or
+`head-snapshot`, and `branch_tip_evidence_head_sha` must equal the current
+PR head SHA. A missing, `none`, null, or mismatched value is a hold even
+when the helper reports a quiet window.
 
 The helper gathers evidence only. It never decides trusted-marker
 validity, stale-age, advisory state, forced-handoff routing, or takeover
@@ -90,7 +192,7 @@ waives the stale-threshold gate in S3.
 
 ### S3 — Stale-threshold gate (ownership transfer gate)
 
-Apply the shared stale rule from `idd-overview.instructions.md` and
+Apply the shared stale rule from `idd-overview-core.instructions.md` and
 `claim-stale-age` in `docs/policy-constants.md`:
 takeover is allowed only when the active non-owned claim is stale
 (`latest valid claimed-by created_at >= 24h`).
@@ -98,6 +200,15 @@ takeover is allowed only when the active non-owned claim is stale
 - Claim age `< 24h`: **hold and stop**. Keep waiting for the shared
   stale threshold.
 - Claim age `>= 24h`: takeover is eligible; continue to S4.
+
+**Heartbeat-overdue is diagnostic only, not a shortcut.** Discovery's
+`activeClaim.heartbeatOverdue` (`claimTiming.heartbeatInterval`, default
+12h) is an expected, human-visible signal worth a glance or a live-status
+digest note — it is not, by itself, evidence for S2 or an alternate S3
+threshold. A heartbeat-overdue claim younger than 24h is still `< 24h`
+above: **hold and stop**, exactly as any other non-stale claim. Do not
+treat a missed heartbeat as shortening the wait or as quiet-window
+evidence.
 
 ### S4 — Race-safe takeover recheck
 
@@ -107,10 +218,18 @@ Immediately before posting takeover:
 2. Confirm the active claim still uses the same non-owned `{claim-id}`
    observed in S1-S3.
 3. Confirm it is still stale at this moment.
-4. Re-run `idd-stalled-session-quiet-check` (or repeat the written
-   manual procedure when helper runtime is unavailable) against the
-   latest externally visible activity. If new progress appeared after
-   S2, stop and restart.
+4. Re-derive a **fresh** server-anchored `now` the same way as S2
+   ("Deriving a server-anchored `now`") — do not reuse the S2 value,
+   since time has passed — and re-check the latest externally visible
+   activity. Re-parse the latest valid trusted `claimed-by` `created_at`
+   at this point as well. When an active PR number is known and helpers are
+   enabled, re-run `idd-stalled-session-quiet-check` with that fresh
+   `--now` and pass the freshly re-read `--claim-created-at`. When no PR
+   exists, or when the profile is `instructions-only`, do not invent a PR
+   number or invoke a missing helper; repeat the written manual procedure
+   using the claimed branch's remote-tip evidence and the same fresh
+   server-derived bound. If new progress appeared after S2, stop and
+   restart.
 5. Re-check closed/merged guards. If the issue is now closed or the PR
    is now merged, stop and return to `idd-resume.instructions.md` Step 1
    cleanup behavior.

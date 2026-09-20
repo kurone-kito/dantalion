@@ -7,6 +7,9 @@
     "configFile": "vitest.config.mts"
   },
   "reporters": ["progress", "clear-text", "json"],
+  "thresholds": {
+    "break": 85
+  },
   "concurrency": 2,
   "mutate": [
     "src/**/*.ts",

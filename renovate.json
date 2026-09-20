@@ -2,11 +2,13 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
+    "helpers:pinGitHubActionDigests",
     "group:allNonMajor",
     "schedule:weekly",
     ":separateMajorReleases",
     ":semanticCommitsDisabled"
   ],
+  "minimumReleaseAge": "7 days",
   "commitMessagePrefix": "chore(deps):",
   "commitMessageAction": "bump",
   "labels": ["dependencies"],
@@ -28,6 +30,10 @@
     {
       "matchPackageNames": ["node"],
       "enabled": false
+    },
+    {
+      "matchPackageNames": ["marked"],
+      "allowedVersions": "<16"
     }
   ]
 }

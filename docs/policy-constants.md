@@ -46,7 +46,7 @@ places, the table below identifies which file to update.
 | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | Marker prefix                                                                               | `.github/idd/config.json` **and** all instruction files containing embedded marker strings (especially `.github/instructions/idd-discover.instructions.md`, `.github/instructions/idd-overview-core.instructions.md`), docs, and template onboarding notes | `markerPrefix`                                                                                                |
 | IDD config version                                                                          | `.github/idd/config.json` during distribution upgrades                                                                                                                                                                                                | `iddVersion`                                                                                                  |
-| Issue scope                                                                                 | `.github/idd/config.json` **and** `.github/instructions/idd-overview-core.instructions.md` Project commands row (`issue-scope`)                                                                                                                            | `issueScope` (optional; defaults to `roadmap`)                                                                |
+| Issue scope                                                                                 | `.github/idd/config.json` **and** `.github/instructions/idd-overview-core.instructions.md` Project commands row (`issue-scope`)                                                                                                                            | `issueScope` (optional; defaults to `roadmap-first`)                                                         |
 | Orphan-first policy                                                                         | `.github/idd/config.json` **and** `.github/instructions/idd-overview-core.instructions.md` Project commands row (`orphan-first-policy`)                                                                                                                    | `orphanFirstPolicy` (optional; defaults to `none`)                                                            |
 | Maintainer approval actor policy                                                            | Repository-local policy docs, onboarding, and `.github/idd/config.json`; the distributed discover/claim runtime already reads this enum                                                                                                               | `maintainerApprovalActorPolicy` (optional enum; absent defaults to `owners-and-maintainers-only`)             |
 | Maintainer approval actor allowlist                                                         | Repository-local policy docs and optional metadata notes; the schema supports an explicit GitHub login allowlist, but the distributed discover/claim runtime does not enforce it yet                                                                  | `maintainerApprovalActors` (optional explicit GitHub login allowlist; metadata until runtime support expands) |
@@ -229,6 +229,20 @@ merge-based post-publication sync path as fully active, align the
 downstream E/F-phase conflict instructions, pre-merge behavior, and any
 resume-routing helpers with the same policy.
 
+## High-contention shared files
+
+Some repository-level files attract edits from many concurrent IDD
+sessions. The discovery tie-breaker that prefers non-overlapping
+candidate files should treat these paths as shared contention hotspots:
+
+- F-phase bundle or workflow-policy files that every merge path updates;
+- `audit/sync-manifest.json`; and
+- any repository-local file a helper manifest documents as a shared
+  merge/readiness surface.
+
+This preference is advisory only. It may reorder otherwise tied
+candidates, but it never overrides suitability, claim, or review gates.
+
 ## External-Check Waiver Defaults
 
 | Policy default                                                            | Distributed value                                             | Owning surface                                                                                                                                                                                                           | Onboarding expectation                                                                                                                                |
@@ -243,7 +257,7 @@ resume-routing helpers with the same policy.
 
 | Policy default               | Distributed value                                                           | Owning surface                                                                                                                                                                                           | Onboarding expectation                                                                                                                              |
 | ---------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Merge policy when unrecorded | `fully_autonomous_merge` (distributed default for production repositories)  | [Merge handoff](../.github/instructions/idd-merge-handoff.instructions.md), [Merge](../.github/instructions/idd-merge.instructions.md), [Customization](customization.md), [Permissions](permissions.md) | Keep for production repositories; opt out to `human_merge` for public/OSS repositories, or customize to `separate_merge_agent` for split authority. |
+| Merge policy when unrecorded | `human_merge` (fail-safe distributed default)  | [Merge handoff](../.github/instructions/idd-merge-handoff.instructions.md), [Merge](../.github/instructions/idd-merge.instructions.md), [Customization](customization.md), [Permissions](permissions.md) | Record an explicit policy for unattended execution; dantalion selects `fully_autonomous_merge` in `.github/idd/config.json`, while public/OSS repositories may retain `human_merge` or use `separate_merge_agent`. |
 | Merge method                 | Merge commits (squash and rebase merge are disabled in repository settings) | [Merge](../.github/instructions/idd-merge.instructions.md), [GitHub Flow rules](./../.github/copilot-instructions.md)                                                                                    | Keep unless the repository has a different merge strategy; customize only with branch protection changes.                                           |
 | Post-merge comment cleanup   | Minimize operational markers and resolved feedback after merge succeeds     | [Merge](../.github/instructions/idd-merge.instructions.md), audit scripts, and helper tooling                                                                                                            | Keep as best-effort; safe cleanup candidates are enumerated in [comment minimization](idd-comment-minimization.md).                                 |
 
@@ -268,25 +282,38 @@ pull-request-only bypass actor that can satisfy GitHub at F3.
 
 ## Runtime Instruction Size and Bundle Budgets
 
-CI enforces two layers of instruction file size limits via `audit/sync-manifest.json`.
+The current upstream dogfooding layout keeps the shared core separate from
+each phase bundle. Dantalion does not vendor upstream's
+`audit/sync-manifest.json` checker, but these compatibility budgets document
+the limits that the imported instruction corpus is expected to follow.
 
 ### Per-file limits
 
 | Limit type    | Value        | Applies to                                                                 |
 | ------------- | ------------ | -------------------------------------------------------------------------- |
 | Always-loaded | 20,000 bytes | Files with `applyTo: "**"` in `.github/instructions/idd-*.instructions.md` |
-| Phase         | 30,000 bytes | Other files in `.github/instructions/idd-*.instructions.md`                |
+| Phase         | 36,000 bytes | Other files in `.github/instructions/idd-*.instructions.md`                |
 
-### Bundle limits
+The 36,000-byte phase ceiling is the upstream value used by the current
+dogfooding corpus; it replaces the older 30,000-byte value that predates the
+core/phase bundle split.
 
-| Bundle ID          | Files included                                                                                   | Limit        |
-| ------------------ | ------------------------------------------------------------------------------------------------ | ------------ |
-| `bundle-discovery` | `idd-overview-core` + `idd-overview-appendix` + `idd-discover` + `idd-suitability` + `idd-claim` | 75,300 bytes |
-| `bundle-resume`    | `idd-overview-core` + `idd-overview-appendix` + `idd-resume`                                     | 46,000 bytes |
+### Bundle layout
 
-Bundle checks run unconditionally (not filtered by changed files) and
-measure the combined byte length of all listed files. Adjust limits in
-`audit/sync-manifest.json` when deliberate growth is accepted.
+| Bundle ID                    | Phase-specific files                                                                |
+| ---------------------------- | ----------------------------------------------------------------------------------- |
+| `bundle-core`                | `idd-overview-core` + `idd-overview-appendix`                                      |
+| `bundle-discovery-phase`     | `idd-discover` + `idd-claim`                                                       |
+| `bundle-suitability-phase`   | `idd-suitability`                                                                  |
+| `bundle-resume-phase`        | `idd-resume`                                                                       |
+| `bundle-work-phase`          | `idd-work`                                                                         |
+| `bundle-review-triage-phase` | `idd-review-snapshot` + `idd-review-triage`                                        |
+| `bundle-review-fix-phase`    | `idd-review-fix` + `idd-advisory-wait` + `idd-ci`                                  |
+| `bundle-merge-phase`         | `idd-pre-merge` + `idd-merge-handoff` + `idd-merge` + `idd-advisory-wait` + `idd-ci` |
+
+Upstream's `audit/sync-manifest.json` remains the authoritative source for
+volatile bundle byte limits. When that checker is later adopted locally, use
+the same split rather than restoring the retired monolithic discovery bundle.
 
 ## Changing A Default
 

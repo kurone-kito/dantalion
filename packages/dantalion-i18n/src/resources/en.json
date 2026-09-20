@@ -23,7 +23,7 @@
   },
   "communication": {
     "detail": {
-      "detail": "Depending on the person, they can divide into the “$t(communication.fix.name)” type or the “$t(communication.flex.name) type.",
+      "detail": "Depending on the person, they can divide into the “$t(communication.fix.name)” type or the “$t(communication.flex.name)” type.",
       "name": "Ways of thinking in dialogue"
     },
     "fix": {
@@ -49,7 +49,7 @@
     "details": "List of available personality type codes",
     "genius1": "A person has three of these personalities, and the personality that emerges varies depending on the situation.",
     "genius2": "Of these, “$t(genius.detail.descriptions.inner)” accounts for most of a person's personality.",
-    "invalid": "An invalid birthday {{type}} has been detected. This app is only available from Feb 01, 1873, to Dec 32, 2050.",
+    "invalid": "An invalid birthday {{type}} has been detected. This app is only available from Feb 01, 1873, to Dec 31, 2050.",
     "personality": "The personality of the person whose birthday is {{type}} and how to handle them.",
     "strategy": "Strategies for this personality type",
     "weak": "Weaknesses of this personality type"
@@ -75,13 +75,13 @@
       "name": "Perfectionism type",
       "summary": "They are severe and stubborn, like a top-notch businessperson who doesn't show weakness!",
       "strategy": [
-        "They are influencing by flattery and VIP treatment.",
-        "They love to surprise you, but be aware that they will complain that they lost face if you deny them."
+        "They are easily swayed by flattery and VIP treatment, so use that to your advantage if you want to get along with them.",
+        "Someone with the $t(genius.100.name) personality may love to surprise you, but be aware that they will complain that they lost face if you deny them.",
+        "When collaborating with someone, cutting corners is generally a bad thing, but doing so with someone who has the $t(genius.100.name) personality will make you especially angry."
       ],
       "weak": [
         "They tend to be hard on themselves and others and are too concerned about public opinion to take challenging actions.",
-        "They are influencing by flattery and VIP treatment.",
-        "When collaborating with someone, cutting corners is generally a bad thing, but doing it with them will make you especially angry."
+        "They can be a little weak to flattery and VIP treatment."
       ]
     },
     "108": {
@@ -319,7 +319,8 @@
     },
     "investment": {
       "detail": [
-        "This type of person is strong with numbers and has a remarkable ability to see the meaning of the values they represent."
+        "This type of person is strong with numbers and has a remarkable ability to see the meaning of the values they represent.",
+        "Many of them are cautious and have a calm analytical eye."
       ],
       "name": "They would like to be a down-to-earth collector."
     },
@@ -540,11 +541,7 @@
         "$t(potentials.Fi.detail.0)",
         "$t(potentials.Fi.detail.1)"
       ],
-      "Fo": [
-        "$t(potentials.Eo.detail)",
-        "$t(potentials.Fi.detail.0)",
-        "$t(potentials.Fi.detail.1)"
-      ],
+      "Fo": ["$t(potentials.Ei.detail)", "$t(potentials.Fo.detail)"],
       "Ii": [
         "$t(potentials.Ei.detail)",
         "$t(potentials.Ii.detail.0)",
@@ -558,8 +555,8 @@
       ],
       "No": [
         "$t(potentials.Ei.detail)",
-        "$t(potentials.Io.detail.0)",
-        "$t(potentials.Io.detail.1)"
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
       ]
     },
     "Eo": {
@@ -570,11 +567,7 @@
         "$t(potentials.Fi.detail.0)",
         "$t(potentials.Fi.detail.1)"
       ],
-      "Fo": [
-        "$t(potentials.Eo.detail)",
-        "$t(potentials.Fi.detail.0)",
-        "$t(potentials.Fi.detail.1)"
-      ],
+      "Fo": ["$t(potentials.Eo.detail)", "$t(potentials.Fo.detail)"],
       "Ii": [
         "$t(potentials.Eo.detail)",
         "$t(potentials.Ii.detail.0)",
@@ -588,8 +581,8 @@
       ],
       "No": [
         "$t(potentials.Eo.detail)",
-        "$t(potentials.Io.detail.0)",
-        "$t(potentials.Io.detail.1)"
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
       ]
     },
     "Fi": {
@@ -606,12 +599,12 @@
       "Ii": [
         "$t(potentials.Fi.detail.0)",
         "$t(potentials.Fi.detail.1)",
-        "$t(potentials.Io.detail.0)"
+        "$t(potentials.Ii.detail.0)"
       ],
       "Io": [
         "$t(potentials.Fi.detail.0)",
         "$t(potentials.Fi.detail.1)",
-        "$t(potentials.Fo.detail)"
+        "$t(potentials.Io.detail.0)"
       ],
       "Ni": [
         "$t(potentials.Fi.detail.0)",
@@ -640,8 +633,8 @@
       ],
       "No": [
         "$t(potentials.Fo.detail)",
-        "$t(potentials.Io.detail.0)",
-        "$t(potentials.Io.detail.1)"
+        "$t(potentials.No.detail.0)",
+        "$t(potentials.No.detail.1)"
       ]
     },
     "Ii": {

@@ -55,7 +55,7 @@ They are excellent at logical thinking.
 
 ## Ways of thinking in dialogue
 
-Depending on the person, they can divide into the “**Fix**: Clarification-oriented” type or the “**Flex**: Liquidity-oriented type.
+Depending on the person, they can divide into the “**Fix**: Clarification-oriented” type or the “**Flex**: Liquidity-oriented” type.
 
 ### **Fix**: Clarification-oriented
 
@@ -106,7 +106,7 @@ They grow motivation where the environment that they can do on their plan.
 `;
 
 exports[`LANG=en > \`getPersonalityMarkdown()\` function > (t, 1873-02-01) — canonical wording tripwire 1`] = `
-"# Dantalion: The personality of the person whose birthday is Sat Feb 01 1873 and how to handle them.
+"# Dantalion: The personality of the person whose birthday is Sat, Feb 01, 1873 and how to handle them.
 
 ## Major categories of personality
 
@@ -181,6 +181,7 @@ They prefer aimless wandering and utilize sharp intuition and flashes of inspira
 They would like to be a down-to-earth collector.
 
 - This type of person is strong with numbers and has a remarkable ability to see the meaning of the values they represent.
+- Many of them are cautious and have a calm analytical eye.
 
 ## Potentials
 
@@ -202,7 +203,7 @@ They are excellent at **intuitive thinking**.
 
 ## Ways of thinking in dialogue
 
-Depending on the person, they can divide into the “**Fix**: Clarification-oriented” type or the “**Flex**: Liquidity-oriented type.
+Depending on the person, they can divide into the “**Fix**: Clarification-oriented” type or the “**Flex**: Liquidity-oriented” type.
 
 ### **Flex**: Liquidity-oriented
 
@@ -362,7 +363,7 @@ exports[`LANG=ja > \`getDetailMarkdown()\` function > (t, 555) — canonical wor
 `;
 
 exports[`LANG=ja > \`getPersonalityMarkdown()\` function > (t, 1873-02-01) — canonical wording tripwire 1`] = `
-"# Dantalion: 誕生日が Sat Feb 01 1873 の人の性格と、取扱方法
+"# Dantalion: 誕生日が 1873年2月01日(土) の人の性格と、取扱方法
 
 ## 性格の大分類
 

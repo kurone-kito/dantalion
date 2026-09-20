@@ -37,14 +37,17 @@ export default (source: FactorSource): Factors => {
     date,
     month: { early, month, shifted },
     monthlyCoefficient: monthlyCoefficients,
-    year: { full, hi, lo },
+    year: { full },
   } = source;
   const lessThan = date < monthlyCoefficients;
+  const adjustedYear = full - early();
+  const adjustedHi = Math.floor(adjustedYear * 0.01);
+  const adjustedLo = adjustedYear % 100;
   const outer = shiftAndModulo(month - (lessThan ? 1 : 0), 12) + 1;
   const workStyle = full + 9 - early(lessThan);
-  const cycle = new Int32Array([hi * 4.25, (shifted + 1) * 0.6]).reduce(
+  const cycle = new Int32Array([adjustedHi * 4.25, (shifted + 1) * 0.6]).reduce(
     (acc, cur) => acc + cur,
-    Math.floor((lo - early()) * 5.25) + date + 7,
+    Math.floor(adjustedLo * 5.25) + date + 7,
   );
   const potentials = [workStyle - 2, full * 2 + outer + 2].map((v) =>
     shiftAndModulo(v, 10),
@@ -52,7 +55,7 @@ export default (source: FactorSource): Factors => {
   return {
     cycle: shiftAndModulo(cycle, 10) as HeavenlyStem,
     getXY: (value: number): Source2D => ({ x: value - 1, y: cycle % 10 }),
-    inner: shiftAndModulo(shifted * 6 + hi * 4 + cycle - 6, 12),
+    inner: shiftAndModulo(shifted * 6 + adjustedHi * 4 + cycle - 6, 12),
     lifeBase: date - monthlyCoefficients,
     outer: shiftAndModulo(outer, 12),
     potentials: [assertDefined(potentials[0]), assertDefined(potentials[1])],

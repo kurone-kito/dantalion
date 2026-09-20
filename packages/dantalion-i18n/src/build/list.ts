@@ -9,8 +9,12 @@ export const createListFunc =
   (
     /** The strings. */
     ...source: readonly (string | undefined)[]
-  ): string =>
-    `${source
+  ): string => {
+    const definedSource = source.filter(
+      (value): value is string => value !== undefined,
+    );
+    if (definedSource.length === 0) return '';
+    return `${definedSource
       .reduce<string>(
         (acc, cur) => `${acc}
 ${prefix}${cur}`,
@@ -18,6 +22,7 @@ ${prefix}${cur}`,
       )
       .trim()}
 `;
+  };
 
 /** Create the multiline from the array string. */
 export const line = createListFunc();
