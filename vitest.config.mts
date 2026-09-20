@@ -22,7 +22,9 @@ export default defineConfig({
           lines: 98,
         },
         // Baseline measured 2026-05-20 after #152 landed.
-        // The entry-point guard and version fallback run only in a subprocess.
+        // The entry-point guard and unknown-version fallback remain partially
+        // uncovered. Normal version reads run in-process, but the fallback
+        // sentinel is reached only when both package paths fail.
         '**/dantalion-cli/src/**': {
           statements: 80,
           branches: 50,
