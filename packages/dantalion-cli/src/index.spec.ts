@@ -213,6 +213,19 @@ describe('dantalion CLI smoke', () => {
     });
 
     it.each([
+      '0',
+      'February 30, 2020',
+    ])('rejects a loosely parsed birthday: %s', async (birthday) => {
+      const { exitCode, stdout, stderr } = await runCli([
+        'personality',
+        birthday,
+      ]);
+      expect(exitCode).not.toBe(0);
+      expect(stdout).toBe('');
+      expect(stderr).toMatch(/invalid birthday/i);
+    });
+
+    it.each([
       { mode: 'default', outputOptions: [] },
       { mode: 'raw', outputOptions: ['--raw'] },
     ])('an invalid Genius ID fails with valid-ID guidance in $mode mode', async ({

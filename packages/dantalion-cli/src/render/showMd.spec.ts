@@ -1,3 +1,4 @@
+import { marked } from 'marked';
 import { describe, expect, it, vi } from 'vitest';
 import showMd from './showMd.js';
 
@@ -26,6 +27,19 @@ describe('showMd', () => {
       expect(infoSpy).toHaveBeenCalledOnce();
     } finally {
       infoSpy.mockRestore();
+    }
+  });
+
+  it('rejects an asynchronous Markdown result', () => {
+    const parseSpy = vi
+      .spyOn(marked, 'parse')
+      .mockReturnValue(Promise.resolve('rendered'));
+    try {
+      expect(() => showMd('# heading')).toThrow(
+        'Markdown rendering returned an asynchronous result.',
+      );
+    } finally {
+      parseSpy.mockRestore();
     }
   });
 });
