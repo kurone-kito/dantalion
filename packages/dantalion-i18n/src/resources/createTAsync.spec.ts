@@ -22,6 +22,14 @@ describe('`createTAsync()` function', () => {
     expect((await createTAsync({ lng: 'ja' })).locale).toBe('ja');
   });
 
+  it('Falls back to English for unsupported locales', async () => {
+    const translate = await createTAsync({ lng: 'fr' });
+
+    expect(translate('descriptions.detail', { type: 'example' })).toContain(
+      'Details of people',
+    );
+  });
+
   it('Preserves a requested regional locale', async () => {
     expect((await createTAsync({ lng: 'en-GB' })).locale).toBe('en-GB');
   });
@@ -41,6 +49,23 @@ describe('`createTAsync()` function', () => {
       'Custom details for example.',
     );
     expect(additions).toStrictEqual(before);
+  });
+
+  it('Preserves Markdown interpolation values', async () => {
+    const translate = await createTAsync({
+      lng: 'en',
+      additions: {
+        en: {
+          translation: {
+            descriptions: { detail: 'Custom details for {{type}}.' },
+          },
+        },
+      },
+    });
+
+    expect(translate('descriptions.detail', { type: "Tom & Jerry's" })).toBe(
+      "Custom details for Tom & Jerry's.",
+    );
   });
 
   it('Accepts a single third-party plugin', async () => {
