@@ -284,6 +284,11 @@ other GitHub side effect, confirm all of the following:
 
 ## E14 — Re-review request
 
+<!-- markdownlint-disable MD029 -->
+<!-- Numbering intentionally continues past the interrupting paragraph
+   below and skips 9 (owned by a step in the standard file); other
+   sections cite these exact numbers (e.g. "step 4", "step 10"). -->
+
 1. For each human reviewer whose latest state is `CHANGES_REQUESTED` and
    whose items are all addressed, request a re-review:
    `gh pr edit {pr-number} --add-reviewer {reviewer-login}`.
@@ -409,6 +414,8 @@ polling head guard below does not replace this fresh transition check.
     explicitly requested. A human `CHANGES_REQUESTED` reviewer is not
     advisory and stays under the hold/escalation path in the standard
     file.
+
+<!-- markdownlint-enable MD029 -->
 
 ## E15 — Wait for CI
 

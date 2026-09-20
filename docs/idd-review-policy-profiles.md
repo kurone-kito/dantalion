@@ -31,6 +31,15 @@ Use this profile when GitHub Copilot pull request review is available
 and the operator accepts it as an advisory signal rather than a required
 human approval.
 
+## Dantalion selection
+
+Dantalion records `copilot-advisory` with `fast-agent-resolve` in the
+current import. The `human-required`, `no-advisory`, and `external-bot`
+directories are inactive reference artifacts; selecting one requires a
+single reviewed change to the listed phase files and a new verification
+record. The repository does not register advisory convergence as a
+required Ruleset check through this documentation issue.
+
 The advisory wait windows, request cap, and CI wait defaults are named in
 [IDD policy constants](policy-constants.md), so adopters can record those
 values separately from the review profile choice.

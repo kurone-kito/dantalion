@@ -1,14 +1,39 @@
 # Onboarding Reference — Policy Decisions
 
-Use this reference alongside `idd-template/ONBOARDING.md` when you need
-the detailed policy-decision guidance that the thin onboarding entry
-point now links to.
+Use this reference alongside the pinned upstream onboarding guide when
+you need the detailed policy-decision guidance that the local onboarding
+entry point links to. Dantalion's resolved selections are recorded in
+[`project-tuning.md`](project-tuning.md).
 
 This page is the detailed companion for:
 
 - Step 1B — confirm operator policy decisions
 - Step 2 — re-check the selected policy before importing files
 - Step 3 — record the selected policy in repository documentation
+
+## Dantalion recorded hearing
+
+The current import has already resolved the policy choices below. They
+are recorded here so an execution session does not infer them from
+defaults or from issue prose.
+
+| Decision | Selected value |
+| --- | --- |
+| Merge policy | `fully_autonomous_merge` |
+| PR review profile | `copilot-advisory` |
+| Thread resolution | `fast-agent-resolve` |
+| Issue scope | `roadmap-first` |
+| Bootstrap | `issue-mediated` |
+| Issue-author approval | enabled by default; owners and maintainers only |
+| Claim timing | stale after 24 h; heartbeat every 12 h |
+| CI wait | `rerun-once` |
+| Helper direction | `package-manager`, staged until #177 updates config |
+| Issue-authoring destination | `.agents/skills/issue-authoring/`, owned by #176 |
+
+The exact repository, marker, actor, command, and upstream-pin values
+are maintained in [`project-tuning.md`](project-tuning.md). A later
+policy change must update this record, the machine-readable config, and
+the enforcing phase files together.
 
 ## Decisions that require explicit operator confirmation
 

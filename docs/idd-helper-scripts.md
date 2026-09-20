@@ -1,5 +1,11 @@
 # IDD Helper Script Evaluation
 
+This reference is reconciled against upstream `idd-skill` main at
+`5c2704a1b50901f29d87865002047b1eb491865e`. The package-manager profile
+described here is the confirmed target for dantalion, while the local
+runtime remains `instructions-only` until #177 installs and verifies the
+exact helper dependency.
+
 This document records the current decision on optional helper scripts for
 the IDD workflow. It exists so future reviews can reference the trade-off
 directly instead of re-evaluating the same suggestion from scratch.

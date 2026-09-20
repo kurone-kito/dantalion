@@ -9,6 +9,21 @@ For the shortest procedural path, start with
 [Getting started](getting-started.md). For phase routing and file
 ownership, use the [IDD workflow guide](idd-workflow.md).
 
+## IDD as loop engineering
+
+The imported v0.12 surface treats IDD as a bounded control loop, not as
+an instruction to make an unreviewed commit. Discovery selects work from
+the active roadmap, claim markers establish per-issue ownership, and the
+same claim is revalidated before each external side effect. The PR then
+passes independent CI, review, freshness, and merge gates before cleanup
+returns the session to discovery.
+
+This repository keeps the loop issue-mediated and roadmap-first. The
+package-manager helper profile is the confirmed target for the import,
+while the machine-readable runtime remains staged at
+`instructions-only` until the helper-runtime issue installs and verifies
+the pinned dependency.
+
 ## Claims and Heartbeats
 
 IDD agents coordinate through GitHub issue comments instead of a

@@ -1,22 +1,23 @@
 # Template Distribution Maintainer Reference
 
-Use this page when maintaining the file distribution surface for
-`idd-template/ONBOARDING.md`. The onboarding entry point remains the
-operator-facing import path; this page explains how the file list and
-fetch examples stay correct when the template gains, removes, or moves
-files.
+Use this page when maintaining the file distribution surface for the
+pinned upstream `idd-template/ONBOARDING.md`. The onboarding entry point
+remains the operator-facing import path; this page explains how the file
+list and fetch examples stay correct when the template gains, removes,
+or moves files.
 
-This is primarily a maintainer reference for the `idd-skill` source
-repository. Adopters who receive it with the copied template can treat it
-as background unless they intentionally customize their local template
-distribution lists.
+The source repository is `kurone-kito/idd-skill` at
+`5c2704a1b50901f29d87865002047b1eb491865e`. Adopters who receive this
+reference with the copied template can treat it as background unless
+they intentionally customize their local template distribution lists.
 
 ## Distribution surfaces
 
 The template has three distribution surfaces:
 
-1. **Core template files** copied from `idd-template/` into the adopter
-   repository. These include `.github/idd/`, `.github/instructions/`,
+1. **Core template files** copied from the pinned `idd-template/` tree
+   into the adopter repository. These include `.github/idd/`,
+   `.github/instructions/`,
    `docs/`, and `profiles/`.
 2. **Optional issue-authoring companion files** copied from
    `skills/issue-authoring/` only when the operator explicitly opts into
@@ -25,7 +26,7 @@ The template has three distribution surfaces:
    `idd-template/` directory from a cloned `idd-skill` checkout instead
    of fetching individual files.
 
-`idd-template/ONBOARDING.md` keeps the executable import snippets for
+The pinned upstream onboarding guide keeps the executable import snippets for
 the first two surfaces so a raw-URL onboarding run can still complete
 without opening this reference first.
 
@@ -39,7 +40,7 @@ The authoritative generated lists are configured in
 - `generatedBlocks[].id == "issue-authoring-companion-files"` owns the
   optional issue-authoring companion list.
 - `shellFileLists` ties each generated list to the `gh api` and `curl`
-  loops in `idd-template/ONBOARDING.md`.
+  loops in the pinned upstream onboarding guide.
 
 When adding a core template file, update both `sourceGlobs` and `paths`
 for `idd-template-core-files` when the new path is not already covered.
@@ -53,7 +54,7 @@ requires every adopter to receive them.
 
 ## Remote fetch examples
 
-The `gh api` and `curl` loops in `idd-template/ONBOARDING.md` intentionally
+The `gh api` and `curl` loops in the pinned upstream onboarding guide intentionally
 list every file instead of fetching directories. This keeps raw-content
 imports deterministic and makes missing files visible during onboarding.
 
@@ -74,7 +75,7 @@ copy the contents of `idd-template/` while preserving relative paths.
 That means new core files under `idd-template/` are automatically covered
 by local-copy installs after they are committed.
 
-Keep the local-copy prose in `idd-template/ONBOARDING.md` short. Use this
+Keep the local-copy prose in the pinned upstream onboarding guide short. Use this
 reference for maintenance details and the generated remote-fetch snippets
 for exact file coverage.
 
@@ -83,9 +84,9 @@ for exact file coverage.
 Before merging a distribution-surface change, verify:
 
 - `audit/sync-manifest.json` includes every required new core file.
-- the generated core file block in `idd-template/ONBOARDING.md` includes
+- the generated core file block in the pinned upstream onboarding guide includes
   the new path.
-- the `gh api` and `curl` loops in `idd-template/ONBOARDING.md` include
+- the `gh api` and `curl` loops in the pinned upstream onboarding guide include
   the same path.
 - optional issue-authoring files remain in the optional companion list.
 - `idd-template/README.md` mentions the new reference page when it is
