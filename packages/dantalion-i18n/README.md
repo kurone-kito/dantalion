@@ -107,7 +107,7 @@ and
 | Name        | Type                        | Defaults    | Description                                  |
 | :---------- | :-------------------------- | :---------- | :------------------------------------------- |
 | `lng`       | `string?`                   | (\*)        | The language to use                          |
-| `additions` | `i18next.Resource?` | `undefined` | Specify the additional language and namespace resources if you need |
+| `additions` | `i18next.Resource?` | `undefined` | Specify additional resources; additions deep-merge after built-ins, and arrays replace built-in arrays |
 
 (\*: If omitted, the language used is detected from the current environment.
 See: [useLocale()](#getlocale-string--undefined))
@@ -270,7 +270,7 @@ interface CreateTAsyncOptions {
 
 | Property    | Type                                    | Description                                                                                  |
 | :---------- | :-------------------------------------- | :------------------------------------------------------------------------------------------- |
-| `additions` | `i18next.Resource \| undefined` | Specify the additional language and namespace resources if you need                            |
+| `additions` | `i18next.Resource \| undefined` | Specify additional resources; additions deep-merge after built-ins, and arrays replace built-in arrays |
 | `lng`       | `string \| undefined`                   | The language to use. If omitted, the language used is detected from the current environment. |
 | `use`       | _(\*)_                                  | The use function is there to load additional plugins to i18next.                             |
 
@@ -287,6 +287,12 @@ const additions: i18next.Resource = {
   },
 };
 ```
+
+Additional resources are merged after the built-in English and Japanese
+resources, so matching additions override built-in values while nested objects
+are merged. Arrays replace the corresponding built-in arrays wholesale instead
+of merging by index. The `additions` object is not mutated. The property names
+`__proto__`, `constructor`, and `prototype` are ignored at every level.
 
 ### `DescriptionsType`
 
