@@ -20,4 +20,33 @@ describe('getPersonality date normalization', () => {
       getPersonality('2011-12-31'),
     );
   });
+
+  it.each([
+    '2000-02-30',
+    '2001-02-29',
+    '2000-04-31',
+    '2000-13-01',
+    '2000-00-10',
+  ])('rejects impossible date-only calendar day %s', (value) => {
+    expect(getPersonality(value)).toBeUndefined();
+  });
+
+  it.each([
+    '2000-02-29',
+    '1873-02-01',
+    '2050-12-31',
+  ])('accepts real date-only calendar day %s', (value) => {
+    expect(getPersonality(value)).toBeDefined();
+  });
+
+  it('does not revalidate Date or number inputs after caller normalization', () => {
+    const normalizedDate = new Date(2000, 1, 30);
+
+    expect(getPersonality(normalizedDate)).toStrictEqual(
+      getPersonality('2000-03-01'),
+    );
+    expect(getPersonality(normalizedDate.getTime())).toStrictEqual(
+      getPersonality(normalizedDate),
+    );
+  });
 });
