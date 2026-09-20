@@ -1,25 +1,307 @@
+---
+type: reference
+title: IDD Autonomy Contract
+description: Classifies every externally visible IDD mutation as reversible or irreversible and names the gate or undo path for each.
+tags: [autonomy, mutations]
+---
+
 # IDD Autonomy Contract
 
-This page classifies the externally visible mutations used by the
-dantalion IDD loop. It is derived from the phase instructions and adds
-no authority of its own. A mutation not listed here is treated as
-irreversible until the owning instruction classifies it.
+<!-- cspell:words unminimize -->
 
-| Mutation | Classification | Required gate or recovery |
-| --- | --- | --- |
-| A4.5 suitability diagnostic comment | Reversible | Ordinary issue-comment history; no state is changed |
-| Fresh issue claim or heartbeat | Reversible | Verified claim state; release with matching `unclaimed-by` when aborting |
-| Stale-claim takeover | Reversible | Prior trusted claim is at least 24 hours stale and `supersedes` matches |
-| Branch and sibling worktree creation | Reversible | Remove the exact worktree and delete the unmerged local branch |
-| Commit and feature-branch push | Reversible | Revert or amend before publication rules permit; post-publication fixes go through review |
-| Pull-request creation or update | Reversible | Claim revalidation, reviewable history, and PR cleanup rules |
-| Review disposition or thread resolution | Reversible | E-phase snapshot/triage rules and the configured thread policy |
-| Claim release | Reversible | Matching agent ID and claim ID; a later session may claim fresh |
-| Roadmap close | Irreversible in the loop | A1.5 completion audit proves all descendants and success criteria complete |
-| Ruleset or branch-protection change | Human-only | Maintainer policy task; never inferred from an issue body |
-| Pull-request merge | Irreversible in the loop | F1/F2 freshness, CI, review, advisory, required-review, and claim gates |
-| Comment minimization | Irreversible in practice | F4 cleanup contract; no normal IDD path restores minimized comments |
+This page classifies every externally visible mutation the IDD loop
+performs — GitHub side effects (issue/PR comments, labels, claim
+markers, reviewer requests, thread resolution, comment minimization,
+merges) and git side effects (branches, commits, pushes) — as one of
+two kinds:
 
-The repository's issue-authoring `status:authoring` hold is a separate
-control boundary. Publication, hold release, and execution claim are not
-the same approval. Human-only issues retain their blocker labels.
+- **Reversible**: a clean undo command or reversal path exists, named
+  in the row. Some reversible mutations still have an eligibility
+  precondition (for example, a stale-claim takeover requires the prior
+  claim to be ≥ 24 h old) — that precondition governs when the action
+  may run, not whether it can be undone afterward, so the row stays
+  Reversible.
+- **Irreversible**: no clean undo path exists, or the loop only runs
+  it after a dedicated, named gate — a merge-readiness checklist, a
+  human-gated policy, or (for a small set of GitHub-minimize actions)
+  because no IDD instruction path ever reverses it. The row names the
+  governing gate or the reason no reversal path exists.
+
+**Default rule**: a mutation not listed in any table below is treated
+as **irreversible** until it is classified here.
+
+## Derivation disclaimer
+
+This document is **derived from** the instruction corpus swept below —
+it introduces no autonomy rule the instructions do not already state.
+On any disagreement between this page and an instruction file, the
+instruction file wins, and the disagreement is itself a bug: file an
+issue so this page can be corrected.
+
+## GitHub-minimize convention
+
+Several rows below use `minimize-superseded-markers.mjs` or
+`audit-pr-cleanup.mjs` to hide a stale or completed comment
+(classifiers `OUTDATED` / `RESOLVED`). GitHub's API technically
+supports reversing a minimize (`unminimizeComment`), but no IDD
+instruction file ever invokes it — every minimize path in this
+workflow is one-directional in practice. This page classifies all such
+rows **irreversible** for that reason, stated once here rather than
+repeated per row.
+
+## Mutation classification
+
+### Discovery & suitability (A0-A4.5)
+
+No claim exists yet in this group; every row here runs before A5.
+
+| Mutation                                                                                        | Reversible / Irreversible | Undo path / Governing gate         | Source                                   |
+| ----------------------------------------------------------------------------------------------- | ------------------------- | ---------------------------------- | ---------------------------------------- |
+| Post "A4.5 suitability gate rejection" diagnostic comment                                       | Reversible                | Ordinary comment; no state to undo | A4.5 (`idd-suitability.instructions.md`) |
+| Apply optional `triage:{outcome}` label                                                         | Reversible                | Remove the label                   | A4.5 (`idd-suitability.instructions.md`) |
+| Post one-line reconciliation comment (Standing-rejection pre-check, kurone-kito/idd-skill#2803) | Reversible                | Ordinary comment; no state to undo | A4.5 (`idd-suitability.instructions.md`) |
+
+### Claim & ownership (A5)
+
+| Mutation                                                        | Reversible / Irreversible | Undo path / Governing gate                                                                                                                                                                 | Source                                                                                                                      |
+| --------------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| Fresh claim (`claimed-by`, `supersedes: none`)                  | Reversible                | Post `unclaimed-by` with the same `{agent-id}`/`{claim-id}`                                                                                                                                | A5 (`idd-claim.instructions.md`)                                                                                            |
+| Stale-claim takeover (`claimed-by`, `supersedes: <prior>`)      | Reversible                | Post `unclaimed-by`; a later session can claim fresh once released                                                                                                                         | A5 pre-check (c); eligible only when the prior claim is stale (≥ 24 h, `claim-stale-age`) and race-safe verification passes |
+| Activation-nonce marker                                         | Reversible                | Superseded by the next claim's own nonce; carries no standalone state                                                                                                                      | A5 (`idd-claim.instructions.md`)                                                                                            |
+| Heartbeat (`claimed-by`, same `{claim-id}`)                     | Reversible                | No-op if omitted; simply stops refreshing the stale clock                                                                                                                                  | A5 Heartbeat posting                                                                                                        |
+| Release claim (`unclaimed-by`)                                  | Reversible                | Re-claim fresh later                                                                                                                                                                       | A5 / Abort (`idd-overview-appendix.instructions.md`)                                                                        |
+| Hide superseded claim-chain markers (`OUTDATED`) after takeover | Irreversible              | See GitHub-minimize convention above                                                                                                                                                       | A5 "Hide displaced claim chain on takeover"                                                                                 |
+| Consume forced-handoff marker (adopt-verbatim)                  | Irreversible              | Gate: `forcedHandoff.mode: human-gated`, authorized human actor, matching `oldAgentId`/`oldClaimId`/`branch`. Autopilot never authors this marker, only consumes already-recorded evidence | A5 Claim verification; `idd-overview-core.instructions.md` rule 7                                                           |
+
+### Roadmap audit (A1.5)
+
+All rows below run under a `roadmap-audit/<number>-<slug>` coordination
+claim, scoped to the roadmap issue only.
+
+| Mutation                                                           | Reversible / Irreversible | Undo path / Governing gate                                                                                                                                               | Source                                                                                                                                  |
+| ------------------------------------------------------------------ | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Roadmap-audit coordination claim                                   | Reversible                | Same as Claim & ownership above                                                                                                                                          | `idd-roadmap-audit.instructions.md`                                                                                                     |
+| Post "IDD roadmap completion audit" comment + close roadmap        | Irreversible              | Gate: full completion-audit evidence — every child/descendant closed or complete, success criteria verified against repo state, bottom-up nested-roadmap order respected | `idd-roadmap-audit.instructions.md` "Audit passes"                                                                                      |
+| Create a new follow-up issue for an autonomous gap                 | Reversible                | Close the created issue                                                                                                                                                  | `idd-roadmap-audit.instructions.md` "Autonomous gaps found"; eligible only after a narrow duplicate/reuse check finds no existing match |
+| Link an existing issue as the follow-up for an autonomous gap      | Reversible                | Remove the added link from the roadmap task list                                                                                                                         | `idd-roadmap-audit.instructions.md` "Autonomous gaps found"; the duplicate/reuse check found a matching existing issue                  |
+| Update roadmap task list with a follow-up link                     | Reversible                | Edit the roadmap body again                                                                                                                                              | `idd-roadmap-audit.instructions.md` "Autonomous gaps found"                                                                             |
+| Apply needs-decision / blocked-by-human label (non-autonomous gap) | Reversible                | Remove the label once the gap is resolved                                                                                                                                | `idd-roadmap-audit.instructions.md` "Non-autonomous gaps found"                                                                         |
+| Release roadmap-audit claim                                        | Reversible                | Re-claim if audit resumes                                                                                                                                                | `idd-roadmap-audit.instructions.md`                                                                                                     |
+
+### Work, branch, worktree & follow-up authoring
+
+| Mutation                                                                                                                                   | Reversible / Irreversible | Undo path / Governing gate                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Source                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Create branch + sibling worktree                                                                                                           | Reversible                | `git worktree remove` + `git branch -d`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | B1 (`idd-work.instructions.md`)                                                                                                               |
+| Post/refine the B2 implementation-plan issue comment                                                                                       | Reversible                | Edit or post a follow-up comment                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | B2 (`idd-work.instructions.md`, `idd-work-lite.instructions.md`)                                                                              |
+| B2.0 verify-then-close (a sibling PR already shipped the work)                                                                             | Irreversible              | Gate: mechanical evidence only — a closed-by-merged-PR signal or a same-candidate-file signal — verified against the acceptance criteria before closing                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | B2.0 (`idd-work.instructions.md`)                                                                                                             |
+| Create or publish a follow-up issue, or edit its held body, under the `issue-authoring` Stage 1 hold                                       | Reversible                | Close a newly created issue or restore its previous body; gate: the companion is installed, the mechanical pre-publish gate and critique pass are green, and the configured authoring label (default: `status:authoring`) remains until explicit release, or the target carries the review-fix-loop-cutoff marker (see the label-removal row below)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | B3-C (`idd-work.instructions.md`, `idd-work-lite.instructions.md`, optional companion contract)                                               |
+| Append a per-target Stage 1/2 owner marker comment                                                                                         | Irreversible              | Owner comments are append-only; only a trusted actor's unique `acquire`/`resume`/`bootstrap`/`heartbeat`/`release`/`release-guard`/`release-complete` marker can change generation state; every marker carries the set anchor; `bootstrap` requires a stale legacy-unowned target and `supersedes=none`; a `heartbeat` retains the current owner/set and refreshes freshness before edits; on conflict, stop and leave the label in place; `resume` must match the stale generation's owner token, `release` requires the current owner/set plus `supersedes` equal to that owner, and anchor-only `release-complete` is the durable terminal event after every target label removal is verified                                                                                                                                                                                                                                                                                                                                                                                                                  | Stage 1/2 (optional companion contract; install root selected during onboarding)                                                              |
+| Create the configured issue-authoring repository label (default: `status:authoring`) during Stage 1                                        | Reversible                | Verify that no other held issue uses the label; delete it only when Stage 1 created it and repository permission allows, otherwise leave it intact and record the non-destructive correction                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Stage 1 (optional companion contract; install root selected during onboarding)                                                                |
+| Apply the configured issue-authoring label (default: `status:authoring`) to a follow-up issue                                              | Reversible                | Restore the previous body or close the newly created issue before removing the label; if restoration or closure is incomplete, leave the label in place; otherwise follow the Stage 2 release checklist and explicit release request, or the narrow review-fix-loop-cutoff auto-release exception (see the label-removal row below)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Stage 1 (optional companion contract; install root selected during onboarding)                                                                |
+| Close a newly created issue after atomic publication or owner-marker acquisition fails                                                     | Reversible                | Reopen only after the configured label and owner marker are successfully applied and verified and Stage 1 publication can resume; otherwise leave the issue closed                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Stage 1 (optional companion contract; install root selected during onboarding)                                                                |
+| Remove the configured issue-authoring label from every Stage 2 target during provisional release (before completion)                       | Reversible                | Reapply verified removals and leave generations open if any later removal or verification fails; gate: explicit user release, green checklist, matching release markers, a fresh owner/set re-read immediately before each removal, verified removal for every target, and no completion marker yet reconciled; narrow exception: a target whose body carried the `<!-- <marker-prefix>-authoring-defer-source: review-fix-loop-cutoff -->` marker at Stage 1 publication time completes this same gate without the explicit-user-release precondition, gated on its own provenance check (fresh body-sha256 must equal the target's `mode=acquire` digest, reverified immediately before this same removal, `kurone-kito/idd-skill#2877`) — every other listed condition, and every other target, is unaffected; this exception never extends to a roadmap anchor (accepted limitation, `kurone-kito/idd-skill#2877`) — under `issue-scope: roadmap` with orphan discovery disabled, a marked anchor still needs the ordinary explicit release request, see `contract.md`'s narrow auto-release exception bullet | Stage 2 (optional companion contract; install root selected during onboarding)                                                                |
+| Reconcile the anchor-only `mode=release-complete` marker after set-level release                                                           | Irreversible              | No undo after reconciliation: a later label application starts a fresh generation and cannot undo released execution; gate: re-fetch every target's release marker, absent label, and expected body immediately before posting, then reconcile the returned ID and paginated anchor log; the same narrow review-fix-loop-cutoff auto-release exception above applies here too — a marked target's reconciliation proceeds without a prior explicit user release, unchanged in every other respect                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Stage 2 (optional companion contract; install root selected during onboarding)                                                                |
+| Apply the configured blocked-by-human label (default: `status:blocked-by-human`) to a Stage 1 candidate with autopilot-suitability score 1 | Reversible                | Remove the label only after the human blocker clears or restore the previous label state; keep it while blocked and do not release the issue without the corresponding human decision                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Stage 1 (optional companion contract; install root selected during onboarding)                                                                |
+| Post a Stage 1 cross-reference comment for a reused or related follow-up issue                                                             | Reversible                | Post a correcting comment or edit the cross-reference; gate: the reuse-first active-claim/open-PR check permits the cross-reference                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Stage 1 (optional companion contract; install root selected during onboarding)                                                                |
+| Record a non-ready Stage 1 outcome or follow-up proposal in a separate issue comment                                                       | Reversible                | Post a correcting or follow-up comment; do not create an issue directly from the work route                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | B3-C (`idd-work.instructions.md`, `idd-work-lite.instructions.md`)                                                                            |
+| Local commit (before push)                                                                                                                 | Reversible                | `git reset` / amend; nothing published yet                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | B3, C5, E9 (`idd-work.instructions.md`, `idd-review-fix.instructions.md`)                                                                     |
+| Rebase onto `main` (pre-publication only)                                                                                                  | Reversible                | `git rebase --abort` before the first push                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | D1 (`idd-pr-submit.instructions.md`)                                                                                                          |
+| Merge `main` into the feature branch (post-publication sync)                                                                               | Reversible                | `git merge --abort` / local reset — but only before its own push; once pushed it joins the Push row below and is no longer separately undoable. Caveat: while the PR carries unresolved review threads, unreplied comments, or a reviewer's `CHANGES_REQUESTED` state, `idd-review-fix.instructions.md`, `idd-review-triage.instructions.md`, and `idd-review-fix-lite.instructions.md` require standing operator confirmation before this merge regardless of this Reversible classification — the gate protects reviewer attention from an unreviewed merge commit appearing mid-review, not against data loss.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | E11, E-phase branch-sync check (`idd-review-fix.instructions.md`, `idd-review-triage.instructions.md`, `idd-review-fix-lite.instructions.md`) |
+| Delete local worktree + branch                                                                                                             | Reversible                | Can be recreated from the remote branch or claim state                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | F4 (`idd-merge.instructions.md`)                                                                                                              |
+
+For the issue-authoring rows above, owner tokens are per target and must be
+validated independently; only the set ID, anchor identity, and owning session
+are shared across the set. When a parent roadmap is part of a Stage 1 set,
+publish and acquire a valid roadmap shell before publishing or acquiring its
+children; renew and revalidate the anchor immediately around each child
+acquisition. Every owner-marker log read uses paginated, deterministically
+ordered issue-comment retrieval. Immediately before each Stage 2 label
+removal, a verified target/anchor heartbeat and fresh read are required. After
+the final label removal, re-fetch every target and verify its release marker,
+absent label, and current body SHA-256 against the persisted per-target
+snapshot before recomputing and appending the anchor-only
+`mode=release-complete` marker; reconcile its returned comment ID and the
+paginated anchor log with bounded retries. A successful POST or verification
+timeout is inconclusive: a discovered trusted marker keeps labels absent and
+closes the set, while a complete fresh read that conclusively proves no trusted
+marker was appended requires restoring the labels and leaving the generations
+open. If reads remain inconclusive, keep the release guard and current
+labels/state in place, leave the set held, and record a recovery hold. Never
+infer marker absence or roll back from a verification timeout. Absent labels or
+a session-local re-read are not completion evidence. If a new issue's marker
+POST or verification is uncertain, reconcile the returned comment ID and
+paginated log
+with bounded retries; a discovered trusted marker keeps the label and requires
+recovery or reopening before publication continues, while an absent marker
+permits the guarded close.
+
+### Portable authoring-owner protocol
+
+An instructions-only installation uses this minimum resolver when the optional
+issue-authoring companion is unavailable. An owner marker is an HTML-first
+comment with this exact field grammar:
+
+```html
+<!-- <marker-prefix>-authoring-owner: target=<owner>/<repo>#<number>; anchor=<owner>/<repo>#<number>; mode=acquire|resume|bootstrap|heartbeat|release|release-guard|release-complete; owner=<opaque-owner-token>; set=<opaque-set-id>; session=<opaque-session-id>; body-sha256=<64-lowercase-hex|none>; snapshot-sha256=<64-lowercase-hex|none>; supersedes=<opaque-owner-token|none> -->
+```
+
+Resolve `<marker-prefix>` from the target repository before parsing or posting;
+never guess it. Only the authenticated actor after a successful
+Write/Maintain/Admin permission check, a configured trusted bot/app, or an
+explicitly enabled Write/Maintain/Admin collaborator may create a valid marker.
+For a marker needed by a later session, the author's trust must also be
+re-evaluable from a durable policy such as `trustedMarkerActors`, a configured
+trusted bot/app login, or an explicitly enabled collaborator whose permission
+can be re-read; the current-session exception cannot establish historical
+membership by itself. Without a durable trust source, leave the label and hold
+in place and stop.
+For `acquire`, `resume`, `bootstrap`, `heartbeat`, and `release`,
+`body-sha256` is the SHA-256 digest of the exact UTF-8 issue body returned by
+the fresh read immediately before the marker POST; do not normalize or
+rewrite the body before hashing. Anchor-only `release-guard` uses
+`body-sha256=none` and `snapshot-sha256=none`. The anchor-only
+`release-complete` marker uses `body-sha256=none` and a required
+`snapshot-sha256`.
+The originating durable hold persists, for every target, its verified
+release-marker ID, absent-label result, and expected `body-sha256`. It also
+persists the canonical set snapshot as the SHA-256 digest, over UTF-8, of the
+target set's `<owner>/<repo>#<number>:<body-sha256>` lines (one per target,
+using each target's currently-verified `body-sha256`). Define the canonical
+repository identity by applying
+`NFC(Unicode-default-lowercase(NFC(component)))` to each `<owner>` and `<repo>`
+component and joining them with `/`; serialize every line with that normalized
+identity. Sort first by the identity's UTF-8 byte sequence in unsigned
+lexicographic order (compare bytes from left to right, with a shorter equal
+prefix first), then by issue number in ascending order, and join with a
+single `\n` character with no trailing
+newline; the same `snapshot-sha256` must be carried by `release-complete`. A
+later session must re-fetch every target, recompute and compare each body
+digest, verify the release marker and absent label, and recompute the set
+snapshot before accepting `release-complete`. This repository-first order
+applies to new `release-complete` markers; a marker produced under the former
+issue-number-first rule is migration input only. Accept it only when the
+snapshot is recomputed under this canonical algorithm and matches; a legacy
+digest that does not match, or any other unverifiable evidence, fails closed
+and leaves the hold and labels in place. Because the marker format has no
+algorithm-version field, a legacy digest that happens to match the corrected
+recomputation is indistinguishable from a new one and can only be accepted on
+that current verification. This legacy-marker behavior is preventive; no
+observed incident yet.
+Read every issue comment page and order valid markers by GitHub `created_at`,
+then comment ID. Replay that ordered log as a state machine: an
+`acquire`/`bootstrap` with `supersedes=none` starts a generation only when no
+generation is open or the prior exact set has a trusted `release-complete`; a
+`resume` starts the next generation only for the exact interrupted set and
+matching prior owner. Within an open generation, the first valid acquisition
+or permitted resume wins and later conflicting activations are contested.
+A `resume` is valid only when the exact interrupted set's latest trusted
+generation marker is older than `issueAuthoring.authoringStaleAge`; a
+`bootstrap` with an existing authoring hold additionally requires its
+authoring-label event or legacy hold to be older than that age. A fresh marker
+or label blocks recovery; staleness is a prerequisite, not ownership or
+completion evidence.
+Owner tokens are per target, while `anchor`, `set`, and `session` must match
+the set. A `heartbeat` must match and supersede the current owner, set, anchor,
+and session and only refreshes freshness. A `release` must match and supersede
+the current owner and set and remains provisional; `release-guard` is
+anchor-only. A
+`release-complete` closes only the exact anchor/set/session release generation
+after every target's release marker and absent authoring label have been
+re-fetched and its body SHA-256 has matched the persisted snapshot; the
+canonical set snapshot must also match the marker. Only then may a later
+`acquire` start a fresh generation. A child log, absent label, or session-local
+read is never completion evidence. When resuming, enumerate the anchor's
+`## Tracks` plus a
+paginated repository comment scan scoped to the exact anchor/set markers.
+Malformed, untrusted, out-of-order, incomplete, or ambiguous evidence fails
+closed: leave the authoring label in place and do not edit, claim, release, or
+close.
+
+### PR publication (D2-D3.5)
+
+| Mutation                                 | Reversible / Irreversible | Undo path / Governing gate                                                                                                                                                  | Source                                                                      |
+| ---------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| First push (publishes the branch)        | Irreversible              | No ordinary undo: force-push is forbidden after publication except a narrow, explicitly-authorized repository exception. Reversal requires a new commit (e.g. `git revert`) | D2 (`idd-pr-submit.instructions.md`)                                        |
+| Subsequent push (E12, E15 retries)       | Irreversible              | Same as first push — published history is append-only by policy                                                                                                             | E12 (`idd-review-fix.instructions.md`)                                      |
+| Create PR                                | Reversible                | Close the PR                                                                                                                                                                | D3 (`idd-pr-submit.instructions.md`)                                        |
+| Edit PR body (closing keyword fix, D3.5) | Reversible                | Edit again                                                                                                                                                                  | D3, D3.5 (`idd-pr-submit.instructions.md`)                                  |
+| Request a human/CODEOWNER reviewer       | Reversible                | `gh pr edit --remove-reviewer`                                                                                                                                              | D3, E13 (`idd-pr-submit.instructions.md`, `idd-review-fix.instructions.md`) |
+
+### Review markers & dispositions (E1-E15)
+
+| Mutation                                                                              | Reversible / Irreversible | Undo path / Governing gate                                                               | Source                                                                          |
+| ------------------------------------------------------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Post `review-watermark` marker                                                        | Reversible                | Superseded by the next watermark at the next E1 pass                                     | E1 (`idd-review-snapshot.instructions.md`)                                      |
+| Post `review-baseline` marker                                                         | Reversible                | Superseded by the next baseline at the next E2 pass                                      | E2 (`idd-review-snapshot.instructions.md`)                                      |
+| Hide superseded same-claim watermark/baseline (`OUTDATED`)                            | Irreversible              | See GitHub-minimize convention above                                                     | E1 "Hide superseded same-claim watermarks"                                      |
+| Post `**Accepted**` / `**Rejected**` disposition reply                                | Reversible                | Reviewer can reopen the thread or a maintainer can override, prompting a follow-up reply | E6, E13 (`idd-review-triage.instructions.md`, `idd-review-fix.instructions.md`) |
+| Post `**Awaiting maintainer decision**` reply                                         | Reversible                | Superseded once the maintainer responds (confirm or override)                            | E6 (`idd-review-triage.instructions.md`)                                        |
+| Resolve a review thread                                                               | Reversible                | The reviewer can reopen it; the agent must not undo its own resolution unilaterally      | E6, E13 (`idd-review-triage.instructions.md`, `idd-review-fix.instructions.md`) |
+| Escalate + apply needs-decision label, release claim (unresolved `CHANGES_REQUESTED`) | Reversible                | Remove the label and re-claim once the reviewer responds                                 | E6 (`idd-review-triage.instructions.md`)                                        |
+| Create a new issue ("reject now, do eventually")                                      | Reversible                | Close the created issue                                                                  | E6 (`idd-review-triage.instructions.md`)                                        |
+
+### Advisory-wait markers (AW1-AW6)
+
+| Mutation                                                                                                                 | Reversible / Irreversible | Undo path / Governing gate                                                  | Source                                                   |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Post `advisory-wait:` request marker                                                                                     | Reversible                | Superseded by the next marker for a later HEAD, or by the SATISFIED outcome | AW3 REQUEST_NEEDED (`idd-advisory-wait.instructions.md`) |
+| Post `advisory-wait-recovery:` marker                                                                                    | Reversible                | Same as above                                                               | AW3-R (`idd-advisory-wait.instructions.md`)              |
+| Post `advisory-reroll:` marker                                                                                           | Reversible                | Same as above                                                               | AW6 (`idd-advisory-wait.instructions.md`)                |
+| Request/remove primary or secondary bot reviewer                                                                         | Reversible                | `gh pr edit --remove-reviewer` / re-request                                 | E14 (`idd-review-fix.instructions.md`)                   |
+| Hide superseded `advisory-wait:`/`advisory-wait-recovery:`/`<!-- advisory-wait:`/`advisory-reroll:` markers (`OUTDATED`) | Irreversible              | See GitHub-minimize convention above                                        | AW3-H (`idd-advisory-wait.instructions.md`)              |
+| Approve a gated Actions run (bot-triggered `action_required`)                                                            | Reversible                | Does not destroy state; only unblocks a run                                 | `idd-ci.instructions.md` Rerun mechanics                 |
+
+### Merge execution (F2.5-F3)
+
+| Mutation                                                                           | Reversible / Irreversible | Undo path / Governing gate                                                                                                                                                                                                                         | Source                                          |
+| ---------------------------------------------------------------------------------- | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Post merge-policy handoff summary comment (`human_merge` / `separate_merge_agent`) | Reversible                | Ordinary comment; the merge itself (not this comment) is what is gated                                                                                                                                                                             | F2.5 (`idd-merge-handoff.instructions.md`)      |
+| `gh pr merge --merge` (plain)                                                      | Irreversible              | Gate: full F2/F2.5/F3 checklist — review currency, advisory convergence `SATISFIED`, all required CI green, zero unresolved actionable threads, claim ownership current, `fully_autonomous_merge` / eligible `separate_merge_agent` policy routing | F3 Gate checklist (`idd-merge.instructions.md`) |
+| `gh pr merge --merge --admin` (solo-CODEOWNER fallback)                            | Irreversible              | Gate: the plain-merge Gate checklist fully green **and** `reviewerStates.codeownerSelfApproval.status: clear` with `prAuthorIsSoleEligibleCodeowner: true` and `codeownerEligibilityUnreadable: false`, re-verified immediately before the call    | F3 step 5 (`idd-merge.instructions.md`)         |
+
+### Post-merge cleanup (F4)
+
+| Mutation                                                              | Reversible / Irreversible | Undo path / Governing gate                                                                                                                  | Source                           |
+| --------------------------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Minimize PR comments (`RESOLVED` / `OUTDATED`) via `audit-pr-cleanup` | Irreversible              | See GitHub-minimize convention above; additionally gated by the mandatory-apply decision tree (only after PR merged, only eligible classes) | F4 (`idd-merge.instructions.md`) |
+| Post cleanup evidence / failure / permission-blocked comment          | Reversible                | Ordinary comment; explicit evidence, not a merge gate                                                                                       | F4 (`idd-merge.instructions.md`) |
+| Delete remote branch (when GitHub auto-delete is disabled)            | Reversible                | Content is preserved via the merge commit on `main`; only runs after a successful merge                                                     | F4 (`idd-merge.instructions.md`) |
+| Update local `main`                                                   | Reversible                | Trivial fast-forward re-fetch                                                                                                               | F4 (`idd-merge.instructions.md`) |
+
+### Live status digest & hold comments
+
+| Mutation                                             | Reversible / Irreversible | Undo path / Governing gate                                                                                            | Source                                                                                                  |
+| ---------------------------------------------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| Create or upsert the `idd-live-status` digest        | Reversible                | Edited freely on the next authoritative re-read; the digest is UI-only and never authoritative for workflow decisions | `idd-overview-appendix.instructions.md` "Live status digest"                                            |
+| Post a hold comment (stop and wait for a maintainer) | Reversible                | Ordinary comment; superseded by a follow-up comment once the block clears and the phase resumes                       | `idd-overview-appendix.instructions.md` "Hold / suspend"; invoked across every phase file's hold routes |
+
+### CI recovery
+
+| Mutation                        | Reversible / Irreversible | Undo path / Governing gate                                                  | Source                                   |
+| ------------------------------- | ------------------------- | --------------------------------------------------------------------------- | ---------------------------------------- |
+| Rerun a CI run (`gh run rerun`) | Reversible                | Idempotent retry; destroys no state; bounded by `ciWait.rerunPolicy` budget | `idd-ci.instructions.md` Rerun mechanics |
+
+## Not covered
+
+Two mutation-adjacent actions are deliberately out of this page because
+autopilot never performs them — only a human maintainer does:
+
+- **Authoring a `forced-handoff` marker.** Autopilot only consumes
+  already-recorded, human-gated forced-handoff evidence (see Claim &
+  ownership above); it never authors one itself.
+- **Posting an external-check waiver.** A trusted maintainer authorizes
+  skipping a specific registered check under
+  `ciGate.externalCheckWaivers`; the loop only reads and validates
+  `waiverEvidence`, never posts a waiver.
+
+## Coverage
+
+This page was derived from a full sweep of every
+`.github/instructions/*.instructions.md` file and every
+`.github/instructions/lite/*.instructions.md` file in this repository at
+authoring time, plus the optional `issue-authoring` companion contract installed
+at the target's selected native skill directory, which the B3–C Stage 1/2 rows
+delegate to. In this consumer repository, `.claude/skills/issue-authoring/` is the
+canonical local companion. Generated runtime copies are covered by their
+synchronization audit.

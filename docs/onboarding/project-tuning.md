@@ -26,7 +26,7 @@ requires a new issue plan and hearing rather than an in-place retarget.
 | Fix and validate | `pnpm run lint:fix && pnpm run lint` |
 | Pre-push | `pnpm run lint && pnpm run test && pnpm run build` |
 | Post-fix | `pnpm run lint && pnpm run test` |
-| Issue scope | `roadmap` |
+| Issue scope | `roadmap-first` |
 | Merge policy | `fully_autonomous_merge` |
 | PR review | `copilot-advisory` |
 | Thread resolution | `fast-agent-resolve` |

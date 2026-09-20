@@ -22,7 +22,7 @@ defaults or from issue prose.
 | Merge policy | `fully_autonomous_merge` |
 | PR review profile | `copilot-advisory` |
 | Thread resolution | `fast-agent-resolve` |
-| Issue scope | `roadmap` |
+| Issue scope | `roadmap-first` |
 | Bootstrap | `issue-mediated` |
 | Issue-author approval | enabled by default; owners and maintainers only |
 | Claim timing | stale after 24 h; heartbeat every 12 h |

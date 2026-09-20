@@ -1,44 +1,1475 @@
-# IDD Design Rationale
+---
+type: design
+title: IDD — Design Rationale and Maintainer Notes
+description: Collects maintainer-facing rationale for why IDD phase rules exist as they do, organized by phase file.
+tags: [design-rationale, maintainer-notes]
+---
 
-This page records the small set of design choices that matter when
-operating dantalion's imported IDD surface. It is explanatory only; the
-instruction files remain the runtime contract.
+# IDD — Design Rationale and Maintainer Notes
 
-## Why claims are per issue
+This document collects maintainer-facing rationale, diagnostics, and
+narrative justifications that explain _why_ IDD phase rules exist as
+they do. The rules themselves stay in
+`.github/instructions/*.instructions.md`; this file is the place to
+record the context that helps future maintainers evaluate edits to
+those rules without bloating the auto-loaded instruction surface.
 
-GitHub issues are the shared coordination surface available to every
-session. A claim names one issue, one branch, and one opaque claim ID.
-The claim is re-read before comments, pushes, review actions, and merge,
-so a stale session cannot continue merely because it remembers an old
-agent name.
+Each section corresponds to one phase file. Add new rationale entries
+under the matching phase heading. Behavior-changing constraints
+(fail-closed defaults, claim revalidation, marker authority) must
+remain in the instruction files.
 
-## Why discovery is roadmap-first
+## Discover
 
-The roadmap task list is the bounded work graph for this repository. It
-prevents a broad repository search from turning unrelated maintenance
-into an implicit user request. Child claims remain independent, allowing
-parallel sessions to work on different issues while still respecting
-explicit dependencies and human blockers.
+### A0-O roadmap-first fallback triggers
 
-## Why issue-mediated bootstrap is explicit
+The `roadmap-first` A0-O fallback originally fired only when **zero
+candidates reached A3.5** (trigger (a)) — A2 found no open execution
+leaves, or A3 filtered them all out as blocked. But a candidate can reach
+A3.5 and still be unworkable: the workshop leaves #553 (which runs a real
+external deployment) and #611 (a "published" convergence checkpoint)
+pass A3 readiness and A3.5 (the owner self-approves), then fail the A4
+viability gate (Autonomous completion). Because they reached A3.5, the
+original trigger stayed suppressed, so A4 stopped with "no viable
+issue" and never fell back to A0-O even when claimable orphan issues
+existed — forcing an operator opt-in every loop. The same shadowing
+occurred when A4 Step 1.5 eliminated the last A3.5-startable candidate.
 
-Importing the workflow changes the repository's future authority model.
-Dantalion records that choice as a reviewed issue plan, then keeps the
-source revision and local substitutions visible in onboarding docs. A
-later upstream advance must not silently alter an in-flight import.
+Trigger (b) closes that gap: the fallback also fires when the roadmap
+path yields no viable, startable, unclaimed candidate because A4
+Step 1 viability discards them all or Step 1.5 eliminates the last.
+Three guards keep it safe:
 
-## Why helper support is staged
+- **Approval hold precedence.** A non-empty A3.5 approval-needed
+  bucket is not a true zero; the fallback fires on viability/claim
+  exhaustion only, never on the approval hold, so it never re-scopes
+  around the approval gate.
+- **True zero only.** It fires only when no viable, startable,
+  unclaimed roadmap candidate remains — never when A4 discards some
+  candidates but keeps others.
+- **At most once per pass.** A0-O runs at most once as the
+  roadmap-first fallback per Discover pass. Once spent (via trigger
+  (a), (b), (c), or (d)), any later A4 Step 1 / Step 1.5 exhaustion —
+  reachable after trigger (b) or (d), once either one's own A0-O run
+  yields orphan candidates that later fail A4 — reports and stops (not
+  an abort) without re-entering A0-O. A **trigger (a)** or **trigger (c)** A0-O
+  run that finds no orphan routes to the A3 decision tree (both paths
+  genuinely empty); a **trigger (b)** or **trigger (d)** one reports
+  and stops instead — (b) because roadmap candidates reached A4, an
+  exhaustion the A3 tree's A2/A3-empty cases do not describe; (d)
+  because A1.5 already reported its own specific blocker, which the A3
+  tree's generic wording would misdescribe or duplicate. This prevents
+  an A1 ↔ A0-O or A4 ↔ A0-O loop.
 
-The repository already has a pnpm lockfile and package scripts, so the
-hearing selected the `package-manager` helper direction. The current
-tree remains `instructions-only` until the helper-runtime child installs
-and verifies the exact dependency. This avoids documentation claiming a
-runtime that the machine-readable config does not yet provide.
+When **trigger (a)** (zero A3.5-reaching candidates) and the orphan
+fallback both yield nothing, discovery lands in the A3 decision tree,
+exactly as the zero-reach-A3.5 case did before. **Trigger (b)** instead
+reports and stops (not an abort): roadmap candidates reached A4, so the
+A3 tree's A2/A3-empty reports would misdescribe the exhaustion.
+Triggers (a) and (b) are scoped to roadmap traversal (A2→A3→A4) — the
+A0-T explicit-target gate keeps its own no-fallback stop.
 
-## Why merge remains separately gated
+**Trigger (c)** closes a third gap, one step earlier than (a)/(b):
+triggers (a) and (b) both presuppose A1 already found a roadmap to
+traverse. When A1 itself finds **zero open roadmap issues** — not "the
+roadmap's graph is exhausted" but "no roadmap exists at all" — the
+original text still hard-aborted immediately, even though
+`roadmap-first`'s whole purpose is to fall back to orphan work when
+roadmap work runs dry. This surfaced live on 2026-07-18: roadmap #1445
+closed after its last tracked issue (#1501) shipped, leaving zero open
+roadmaps; Discover correctly identified A1's documented abort condition
+and stopped — a harder stop than (a)/(b) impose for what is, from an
+operator's perspective, the same underlying situation (no roadmap work
+available right now).
 
-`fully_autonomous_merge` records permission to complete F3 after all
-checks; it does not waive CI, review currency, unresolved threads,
-branch freshness, CODEOWNER rules, or claim ownership. A merge-capable
-credential is still subject to the narrow permissions and threat model
-in [Permissions](permissions.md).
+Trigger (c) fires at A1, before A1.5/A2/A3 ever run. Like trigger (a),
+an A0-O run it invokes that finds no orphan candidates routes to
+the A3 decision tree — the **true zero** and **at most once** guards
+above apply unchanged. The **approval hold precedence** guard doesn't apply
+to trigger (c) the same way: only the roadmap-side A3.5 pass is
+absent, since there is no roadmap candidate for it to run on — A0-O's
+own A3.5 pass on any orphan candidates it finds still runs and can
+still produce its own approval-needed bucket. Because
+(a)/(b) require A1 to have found a roadmap and (c) requires it to have
+found none, triggers (a)/(b)/(c) are mutually exclusive within one
+Discover pass — so "at most once per pass" already held across all
+three before trigger (d) below extends the same property to a fourth.
+
+**Trigger (d)** closes a fourth gap, this one downstream of A1 but
+upstream of A2. `idd-roadmap-audit.instructions.md`'s A1.5 (Audit
+completed roadmaps) can itself stop before A2 for two human-input
+outcomes — the roadmap-level blocked-by-human/needs-decision label
+check, and the "Non-autonomous gaps found" outcome — and both stopped
+unconditionally, with no `roadmap-first` fallback at all. Under
+`roadmap-first`, when either fires, A1 has already found a roadmap (so
+trigger (c) cannot fire) and A2 never runs (so triggers (a)/(b), which
+both presuppose A2 ran, cannot fire either) — the whole Discover pass
+simply stopped even when unrelated, claimable orphan issues existed in
+the repository, the exact situation `roadmap-first` exists to avoid.
+Trigger (d) fires strictly between A1 and A2 — after A1 finds a
+roadmap, before A2 ever runs — which is disjoint by construction from
+trigger (c) (A1 finds zero roadmaps) and from triggers (a)/(b) (both
+presuppose A2 already ran): all four triggers remain mutually
+exclusive within one Discover pass, and "at most once per pass"
+continues to hold automatically. Trigger (d) is scoped to A1.5's
+outcome reached via the normal A1 roadmap-selection path only — never
+A0-T's own scoped A1.5 invocation, which already governs its own
+outcome unconditionally and with no fallback. Preventive; no observed
+incident yet — #3090 identified the gap by inspection of A1.5's two
+stop outcomes against the triggers already defined here, not from a
+reproduced session that actually hit the stop.
+
+The `orphan-first` symmetric case — orphan candidates all failing A4,
+which would fall back to the roadmap path — is a separate concern and
+out of scope here.
+
+### A3 — Diagnostic: all candidates blocked by an open roadmap
+
+When the A3 decision tree reports zero ready-to-start candidates and
+every candidate is blocked by an
+`<!-- idd-skill-blocked-by: X -->` marker that points to an open
+roadmap, the markers may be misused as grouping tags. Sub-tasks that
+run while the roadmap is open belong in the task list
+(`- [ ] #NNN`); the `blocked-by` marker is reserved for issues that
+must wait for a separate roadmap to close first. Treat this pattern
+as a likely authoring defect, not a real dependency stall.
+
+### A4 Step 1.5 — Rationale: active-claim pre-scan
+
+Active-claim pre-scans eliminate known collisions deterministically
+and reduce wasted claim-post-recheck cycles, improving scale-out
+efficiency when multiple sessions start simultaneously. Without the
+pre-scan, parallel sessions all claim the lowest-numbered viable
+candidate at the same second, then race the same-second tie-break;
+the pre-scan moves the resolution earlier in the pipeline so most
+sessions never touch the same issue.
+
+### A4 Step 2 — Rationale: concurrent-selection desync
+
+A4 Step 1.5 (active-claim pre-scan) and A5(e) (collision detection plus
+same-second tie-break) only resolve a selection collision **reactively**:
+a losing session has already posted its claim and snapshot, then re-enters
+Discover and — because Step 2's tie-break is the fully deterministic
+lowest-issue-number — **re-collides** on the next candidate. Observed in a
+multi-session run as a 3-way race on one score-5 issue whose two losers
+then re-collided on the next lowest number.
+
+The opt-in `discover.selectionDesync: session-offset` knob adds a
+**proactive** desync: within a single highest-score tie band it picks the
+entry at `selectDesyncedIndex(session-token, band-size)` (a pure
+`hash(session-token) mod band-size`) instead of always index 0, spreading
+concurrent sessions across _different_ eligible issues up front.
+
+`session-token` must be a per-session-unique value, never the bare,
+session-shared `{agent-id}` alone: `idd-overview-core.instructions.md`
+defines `{agent-id}` as shared across concurrent sessions of the same
+agent type, with a unique session suffix only recommended, not required.
+Sessions that follow that core definition literally and omit the suffix
+all hash to the identical index and converge on the same issue — the
+same converge-and-collide shape as the 3-way race above. This specific
+bare-agent-id collapse is preventive; no observed incident yet — #1694
+identified it by inspection of the two files' definitions, not from a
+collision that already happened. `idd-discover.instructions.md` closes
+the gap by requiring the session-suffixed `{agent-id}` or, when the
+agent-id carries no unique component, a session-local fallback token
+generated once at Discover entry and reused for the session — with
+enough entropy
+(random or UUID-derived) to stay distinct across sessions launched at
+the same moment, since a bare timestamp alone would not.
+
+It is off by default and reorders **only within** a same-score tie band so
+the documented score-then-lowest-number ranking is the unchanged single-
+session and fallback behavior. The load-bearing invariant is that the
+branch name (`issue/<n>-<slug>`) derives from the issue, not selection
+order, so spreading sessions across different issues never breaks the
+same-issue branch convergence that A5(e) and the `branch-name` helper rely
+on. The desync never crosses score bands and never bypasses the A4.5/A5
+gates; the in-band offset function is replaceable without affecting these
+invariants.
+
+### A4 Step 2 — Rationale: milestone-scope preference
+
+A GitHub milestone groups scope for a release (e.g. `v0.8.0`) purely as
+human-facing material; Discover never read it before
+kurone-kito/idd-skill#2340. A4 Step 2
+already ranks by suitability score, then the optional concurrent-selection
+desync, then the effort hint — none of which prefer the work a release is
+actually waiting on, so concurrent autopilot sessions drain the backlog
+issue-by-issue with no way to converge on a milestone's scope first. An
+operator's only lever was re-explaining the priority to every session by
+hand.
+
+`discover.milestoneScope` (optional string; unset means off) closes that
+gap the same way `selectionDesync` and the effort hint do: a **soft**,
+same-score-band-only preference, never a gate. When set, a candidate whose
+**OPEN** milestone title equals the configured value sorts ahead of other
+candidates in the same suitability-score tie band, positioned after
+selection-desync (session spread stays available even within a
+milestone-preferred set) and before the effort hint (release intent
+outranks size preference, but both still apply only inside one band).
+
+The preference is symmetric-neutral by construction: an unset or empty
+`discover.milestoneScope`, a candidate with no milestone, a **closed**
+milestone, or a missing `milestone` field from the API all collapse to
+the same "no preference" case, so a partial or stale read never
+silently misroutes a candidate — it just falls through to the
+pre-existing effort/issue-number order. Closed milestones are
+deliberately excluded (not merely ranked lower) so a candidate never
+keeps sorting ahead of its band after its release has already shipped.
+`discover-roadmap-graph` and `discover-orphan-filter` surface the
+resolved `milestone` title in their own outputs so the ranking input is
+visible evidence, not a value an agent has to re-fetch to audit a pick.
+
+### A4 — Scored-vs-unscored floor tie-breaker: what still ties afterward
+
+Moved from the Discover phase file to keep the capped instruction
+surface lean. After the scored-vs-unscored floor tie-breaker resolves
+the mixed case, the remaining tie-breakers (concurrent-selection
+desync, effort hint, lowest issue number) still apply in unchanged
+relative order — for example, between two genuinely-scored candidates,
+or between two unscored candidates when no genuinely-scored one is
+present at that value.
+
+## Claim resolution
+
+### Forced-handoff strictness: strict resume vs. lenient relay-merge
+
+Both the resume-routing read (`evaluateResumeClaimRouting` in
+`resume-claim-routing.mts`) and the pre-merge write-gate
+(`summarizeClaimValidation` in `protocol-helpers.mts`) resolve the active claim
+through the **single** shared `resolveActiveClaim`, so there is no forked
+claim-state logic. They deliberately pass **different** forced-handoff options,
+and that difference is intentional policy, not drift:
+
+- **Resume routing is strict.** It sets `requireAuthorMatchesForcedBy: true`
+  (rule 7's author/`forcedBy` binding) and never passes `prFirstCommitAt`.
+  Resume is a _takeover_ decision, so it must block the same-identity
+  self-signed hijack and reject an issue-only handoff that targets a PR-backed
+  claim.
+- **The merge write-gate is lenient.** It leaves `requireAuthorMatchesForcedBy`
+  at its off default and passes `prFirstCommitAt`, applying the Part-B allowance
+  (kurone-kito/idd-skill#1058, an issue-only handoff predating the PR). The
+  merge gate re-validates an _already-verified_ session and must tolerate a
+  maintainer-authorized handoff relayed by a separate automation actor;
+  authorization then rests on `isAuthorizedForcedHandoff` alone.
+
+Because the two callers apply different strictness, they can return **different
+verdicts for the same corrected-handoff state** — resume may report
+`already_owned` while the merge gate reports `claimLost`. This is expected: the
+verdicts answer different questions (may I take over? vs. does this verified
+session still own the write?).
+
+The split is kept intentionally (see kurone-kito/idd-skill#1155): the structural
+risk the adopter raised — two divergent resolvers — is already removed by the
+shared `resolveActiveClaim`, and forcing both sides strict would break the
+legitimate relay use-case. Any future change here must preserve the single
+resolver (do not fork `resolveActiveClaim`) and the resume-side
+self-signed-hijack block.
+
+### Activation-nonce: why a separate marker, and what stays deferred
+
+kurone-kito/idd-skill#1480 found a verified near-miss: two independent
+sessions can both adopt-verbatim the identical forced-handoff sticky
+successor pair and both pass every `claim-id`-based check identically,
+because nothing is posted at adopt-verbatim time to distinguish "the
+session that legitimately adopted this pair" from "a second session that
+also adopted it." kurone-kito/idd-skill#1522 closes that gap with a
+standalone `activation-nonce` marker (`idd-claim.instructions.md`)
+rather than a new field on `claimed-by`: adopt-verbatim posts no
+`claimed-by` at all, so a field living inside `claimed-by`'s body could
+never appear on the one path that motivates the mechanism. The winner rule
+— lexicographically earliest `{nonce}` among however many trusted markers
+exist for a `{claim-id}` — is a pure function of the observed nonce set
+(mirroring the existing `{claim-id}` same-second tie-break), so two
+colliding sessions compute the identical winner independently, with no
+"both back off" livelock.
+
+**Scope for #1522**: the issue's acceptance criteria name the **Claim
+revalidation gate** (`idd-overview-core.instructions.md`) as the enforcement
+point, and that gate is fully wired: it fires before any mutating step for a
+live session holding its own posted nonce, and — since adopt-verbatim posts
+no `claimed-by` and so never enters _Claim verification_ at all — the
+adopt-verbatim paragraph in `idd-claim.instructions.md` carries its own
+inline verify-then-compare instruction, the one path #1480 actually
+exercises. Beyond the AC's letter, `evaluateResumeClaimRouting`
+(`resume-claim-routing.mts`) also accepts `--claim-id`/`--nonce` and is
+unit-tested, anticipating Resume Step 1 wiring — but the documented Resume
+Step 1 invocation (`idd-resume.instructions.md`) never threads either flag
+through, and a resumed process has no local memory of which nonce was its
+own to compare against in the first place. Cold recovery
+(kurone-kito/idd-skill#1529) now fail-closes: a resume that holds no
+local nonce treats 2+ trusted activation-nonce markers for the active
+claim-id as `disputed`/`stop` rather than guessing an owner.
+The merge write-gate half landed separately: `summarizeClaimValidation`
+(`protocol-helpers.mts`) now shares the same `findActivationNonceWinner`
+primitive via `pre-merge-readiness.mjs`'s `--nonce` flag
+(kurone-kito/idd-skill#1528), closing the one AC-adjacent surface #1522
+deliberately deferred. The instruction-level half landed separately too:
+`idd-pre-merge.instructions.md`'s F2 now instructs the session to pass
+its own locally-recorded activation-nonce as `--nonce` when invoking the
+readiness collector (kurone-kito/idd-skill#1615), so the merge-time
+write-gate's comparison is no longer a documented-but-unreachable
+no-op.
+
+### Wrong-branch commit recovery: cherry-pick, never force-push
+
+kurone-kito/idd-skill#815 named the risk directly: parallel worktrees
+let a `git switch` move a checkout out from under another run, so a
+commit lands on the wrong branch — typically the primary worktree's
+`main`, or another issue's branch. The Claim revalidation gate in
+`idd-overview-core.instructions.md` keeps the mechanical steps to a
+one-line pointer to stay inside its byte budget
+(kurone-kito/idd-skill#1525); this page owns the full procedure.
+
+Recover by **cherry-picking** the misplaced commit onto the correct
+issue branch (in its own sibling worktree), then restoring the
+contaminated branch:
+
+- **Unpushed** contaminated branch (typically the primary worktree's
+  `main`): `git reset --hard` it back to its upstream.
+- **Already pushed or shared**: do **not** `git reset --hard` then
+  force-push to erase the misplaced commit — that is the forbidden
+  force-push. Instead `git revert` the misplaced change, or let the
+  operator evacuate the branch.
+
+Either way, preserve that branch's real history and move only the
+misplaced commit. `scripts/idd-doctor.mjs` warns on the same
+primary-worktree-HEAD symptom this gate catches at mutation time.
+
+### Claim release has no compare-and-swap: deferred (2026-08-13)
+
+While resolving kurone-kito/idd-skill#1985 (PR kurone-kito/idd-skill#1993's
+"Operator-present release" recovery path), round 6 review found that the
+claim-marker protocol has no atomic compare-and-swap for releasing a
+claim: `idd-claim.instructions.md`'s Claim-state parsing rule 5 releases
+a claim via `unclaimed-by` on an exact `{agent-id}`/`{claim-id}` match
+alone, with no check on whether the releasing session's belief ("no
+later claimant activity") is still true at write time (preventive; no
+observed incident yet). The maintainer accepted this as a documented,
+bounded residual risk for kurone-kito/idd-skill#1985 specifically —
+blast radius already limited
+by the pre-existing claim revalidation gate, since a session that loses
+its claim mid-window detects it on its own next required pre-mutation
+check and stops, making this a detectable lost-claim event rather than
+silent double-ownership. kurone-kito/idd-skill#2000 recorded the broader
+protocol-level question that decision deliberately left open: should the
+claim-marker protocol close this gap generally, beyond that one path?
+
+**What "true CAS" would actually require.** Two GitHub-native mechanisms
+give genuine atomic compare-and-swap, and both were considered and
+rejected rather than being unavailable:
+
+- **Non-force git ref updates** (e.g. `refs/idd/claims/issue-N`) — a ref
+  update only succeeds as a fast-forward of its current value, which is
+  real CAS with zero external infrastructure. Rejected because it
+  abandons the append-only, human-readable, trusted-actor comment ledger
+  the entire IDD claim/audit/trust model is built on.
+- **GitHub Actions concurrency groups** — routing claim mutations through
+  a per-issue-serialized dispatched workflow gives real mutual exclusion.
+  Rejected on added latency, a hard dependency on Actions, and
+  incompatibility with the `instructions-only` helper profile, which by
+  design requires no workflow at all.
+
+Neither is impossible — both trade away a load-bearing IDD design
+property (portability, comment-ledger auditability, or
+infrastructure-free operation) that this repository has consistently
+protected elsewhere.
+
+**What's actually achievable without new infrastructure.** The claim
+protocol already has a self-healing, re-derivable consistency check for
+the _take_ side: Claim-state parsing rule 4 re-evaluates whether a
+superseded claim was genuinely stale **at the new comment's own
+`created_at`**, from the live comment timeline — not from whatever the
+superseding session believed when it decided to act. If a heartbeat
+lands between a session's stale-check read and its takeover post,
+replaying the timeline correctly invalidates the takeover. This is
+optimistic concurrency with post-hoc detection, not true atomicity, but
+it is genuinely self-healing. The _release_ side (rule 5) has no
+equivalent: it is a bare identity match with no timeline-derived
+liveness predicate. The parser-level fix would mirror rule 4's pattern
+for releases — e.g. an `unclaimed-by` variant that embeds the timestamp
+of the pause-evidence comment it is anchored to, honored only if no
+trusted claimant activity has a `created_at` between that anchor and the
+release event itself, re-derivable by any future parser exactly like
+rule 4's staleness check already is. This would need a **new sibling
+marker type** alongside the existing `unclaimed-by`, not a field added
+to that same token: the existing token is parsed by a strict whole-body
+anchor regex requiring exactly its current fields and nothing else, so
+every existing (and every not-yet-upgraded) parser would read an
+extended token as malformed and silently lose the release event. A new
+sibling type keeps old parsers on today's accepted-risk behavior while
+letting new parsers apply the stronger check.
+
+**Coverage is inherently partial either way.** Even with the parser
+extension, only comment-visible activity (heartbeats, comments, reviews)
+is re-derivable from the timeline. The Operator-present release path's
+own prose predicate also considers branch/PR movement, which a
+comment-timeline parser cannot see. Rule 4's existing stale-clock has the
+identical limitation today (only heartbeats refresh it, not pushes), so
+this would be consistent with the existing design rather than a new gap
+— but it means even the "real" fix would not fully close the class of
+race the round-6 finding raised.
+
+**Revisit triggers.** Reconsider this only if either becomes true:
+
+- An **actually-observed** instance of this race class occurs (not a
+  theoretical review finding) — i.e., a session genuinely loses work or
+  produces confusing state because of a stale-read release, takeover, or
+  forced-handoff decision.
+- This repository's operating model shifts toward materially higher
+  concurrent-session, multi-writer load on the same issues (today's
+  desync/contention tooling — `discover.selectionDesync`,
+  `discover-shared-file-overlap` — targets _different_-issue
+  parallelism, not concurrent claim decisions on the _same_ issue).
+
+**Candidate files (if ever pursued)**:
+
+- `idd-template/.github/instructions/idd-claim.instructions.md` (Claim-state
+  parsing rules, marker format)
+- `idd-template/.github/instructions/idd-overview-core.instructions.md`
+  (Claim format / Unclaim format sections)
+- `idd-template/.github/instructions/idd-resume.instructions.md`
+  (Operator-present release Step 2 — the actual writer of today's bare
+  `unclaimed-by`; a guarded release marker needs this call site too, or
+  the race it targets would remain unguarded here)
+- `src/scripts/marker-helpers.mts` (marker regex/parsing)
+- `src/scripts/protocol-helpers.mts` (marker classification)
+
+Deliberately deferred, not `needs-decision`: there is no currently
+blocking choice, since kurone-kito/idd-skill#1985 already resolved its
+own narrower question. This record moved here from
+kurone-kito/idd-skill#2000, which stayed open only as a findable record
+until one of the revisit triggers above fires.
+
+### Context-inheriting delegation residual risk
+
+kurone-kito/idd-skill#2624 adopted a documented positive-framed
+mitigation for the [Orchestrator delegation](../.github/instructions/idd-claim.instructions.md#orchestrator-delegation)
+context-inheriting fallback: the delegation brief must state
+explicitly that the delegate is the sole worker for the named issue,
+with no peer workers to coordinate with or wait on. `#2624` itself was
+scoped to the wake-up-discipline stall pattern and did not evaluate
+this mitigation against a different, related failure mode: a
+context-inheriting delegate mistaking itself for the orchestrator that
+dispatched it, rather than the worker the brief names it as.
+
+kurone-kito/idd-skill#2802 recorded direct field evidence that neither
+that positive-framed mitigation, nor an added explicit negative
+instruction naming the failure mode directly, reliably prevents it.
+Three independent occurrences: a context-inheriting fork (sharing the
+orchestrator's full transcript) whose brief opened with the documented
+positive-framed statement nearly verbatim still produced a first-turn
+status line functionally identical to the orchestrator's own
+immediately-preceding turn-ending text — "I dispatched a worker and am
+waiting for its completion notification" — despite there being no such
+sub-worker, in two independent occurrences (each corrected mid-session
+only by an explicit follow-up message naming the confusion directly).
+A third occurrence, during the authoring pass that drafted `#2802`
+itself (2026-09-09), added an explicit negative instruction ("you are
+not an orchestrator, there is no sub-worker, YOU are the worker") to
+the brief; the fork still ended its first turn describing having
+"delegated to a background fork" and "waiting for a completion
+notification," with zero tool calls made, and a second differently
+worded attempt with the same negative framing reproduced the identical
+zero-tool-call echo. Only abandoning delegation and performing the
+work directly in the orchestrating session's own turns made forward
+progress. After switching away from the context-inheriting mechanism
+in the originally reported session, the failure mode did not recur
+across roughly 13 further delegated dispatches in that session — a
+small, uncontrolled sample, but consistent with a non-context-inheriting
+mechanism addressing the failure at its root rather than through
+better-worded briefs.
+
+**Maintainer decision** (Groom hearing, 2026-09-10): adopt both
+mitigations together rather than continuing to iterate on brief
+wording the evidence shows does not reliably work. State the
+non-context-inheriting delegation mechanism as a strong preference,
+not merely a suggestion, whenever the calling tool offers one, and
+record the context-inheriting fallback's residual role-misread risk
+explicitly as a known, accepted limitation in both
+`idd-claim.instructions.md` and `docs/idd-workflow.md`'s Orchestrator
+fan-out variant section.
+
+## Work and self-review
+
+### B1 Step 3 — install-deps silent under-install detection
+
+Two independent fresh-worktree sessions observed `pnpm install
+--frozen-lockfile` report apparent success while silently leaving
+`node_modules/.bin/tsc` missing (root cause unconfirmed; suspected pnpm
+store/hardlink race). `scripts/verify-install-deps.mjs` is a thin
+generic wrapper: run the configured install command, verify a key
+binary exists, retry the install exactly once if it does not (including
+when the install command itself fails), and fail loudly with an
+actionable message if it is still missing after the retry. The existing
+install-deps idempotency contract is preserved — the wrapper never
+deletes or resets state, so reruns in fresh, reused, or recreated
+worktrees still need no manual cleanup (#1237). It also validates the
+resolved `pnpm --version` against the major pinned in `package.json`'s
+`packageManager` field before running the install command at all,
+replacing the fail-fast behavior `engines.pnpm` used to provide via
+pnpm's own `engineStrict` — removed because `engineStrict` enforced
+that field transitively against every downstream consumer installing
+this package, not only this repository's own contributors (#3043; see
+[docs/idd-helper-scripts.md's package-manager profile
+note](idd-helper-scripts.md#helper-runtime-profiles)).
+
+### WorkTrunk cwd caveat
+
+An adopter session, using WorkTrunk's automation-safe invocation (`wt
+switch --create ... -x true`), observed a `Cannot change directory —
+shell integration installed but not active` diagnostic that did not fail
+the command. From that point onward, the agent harness's own tool output
+repeatedly reported the shell's working directory as reverted to the primary
+worktree root, even immediately after a command that had run correctly in the
+sibling worktree. Attribution between the harness's own working-directory
+tracking and WorkTrunk's shell-integration hook could not be isolated (no
+control-group session was available), so this stays a documented structural
+gap in B1's guidance, not a claim against either component: the one-time B1
+self-check gives no signal to keep re-verifying the working directory after
+this diagnostic appears, even though the "working directory persists between
+commands" assumption can silently stop holding from that point on (#2332).
+
+**What to do**: once this diagnostic appears, treat the working directory
+as unverified for every later command in the session — confirm it (e.g.
+`pwd`) before trusting a command that depends on the current directory,
+rather than assuming it still matches the last-known worktree.
+
+### B1 self-check — Grok Build file tools bound to launch workspace
+
+A Grok Build session's file-read and file-edit tools resolve relative
+paths against the session's launch workspace — the primary clone,
+whose HEAD B1 keeps on `main` — not the shell's current directory, so
+a `cd` into the sibling worktree does not rebind them. Reproduced by
+creating a sibling worktree, writing a unique marker only into that
+worktree's uncommitted `README.md`, then running Grok's
+workspace-default grep for the marker: it found nothing, while the
+same grep given the sibling's absolute path found it immediately. A
+shell `cd` into the sibling and a `pwd` reporting the sibling path
+both looked like a passing B1 self-check throughout (#2819,
+2026-09-10).
+
+This is a different failure class from #2114's off-convention
+worktree-creation primitives (`grok --worktree`, `isolation:
+worktree`, `x.ai/git/worktree/*`): there, B1 creates the wrong
+worktree altogether; here the worktree is correct and only the file
+tools' workspace binding stays stale. It sits alongside #2332's
+WorkTrunk cwd-tracking caveat above as another way a harness's own
+working-directory signal can drift from what B1's self-check actually
+verifies.
+
+**What to do**: for a harness whose file-read/edit tools stay bound to
+the launch workspace, pass every such tool call the sibling worktree's
+absolute path instead of relying on a shell `cd`; a shell `pwd`
+reporting the sibling path is not evidence those tools moved with it.
+
+### C1/B2 critique pass — Grok `spawn_subagent` needs a bounded fallback
+
+Grok Build's critique-pass row, unlike Codex CLI's, had no fallback
+when `spawn_subagent` is unavailable, unsuitable, or fails — Grok
+_has_ `spawn_subagent`, so a successful-but-unbounded pass never fell
+back to a structured self-critique. In the Grok Build IDD loop that
+shipped PR #2814 for issue #2774 (observed 2026-09-09, #2814): B2 plan
+critique ran 387 s across 43 tool calls, C1 diff critique ran 575 s
+across 40 tool calls, and a C1 re-critique whose brief named two files
+plus
+`git diff origin/main...HEAD` and said "keep this short" still ran
+172 s across 25 tool calls and opened extra search rather than staying
+on the named slice. The findings were usable, but one docs-only issue
+spent roughly 19 minutes in critique subagents; Claude Code's `Agent`
+path for the same C1 role is typically a short bounded review, while
+Grok's general-purpose subagent treated the checklist as an
+open-ended explore (#2825).
+
+This is a different Grok gap from #2819's file tools bound to the
+launch workspace (above) and closed #2114's worktree-creation
+primitives: those are B1 worktree/tool-cwd; this is the C1/B2
+critique _mechanism_ row.
+
+**What to do**: give Grok's critique row the same fallback class Codex
+already has (structured self-critique when delegation is unavailable,
+unsuitable, or fails) without inventing a wall-clock or tool-call cap,
+and require the critique brief to name the files or diff under review
+so an unsuitable pass is easier to distinguish from a thorough one.
+
+### B2.1 — Premise verification (decision-transcription issues)
+
+Field evidence showed a worker asked to transcribe a maintainer's
+already-recorded decision into documentation, where the decision's own
+rationale asserted a checkable fact about what a prior change shipped
+that the shipped code's own comment contradicted. The worker held,
+surfaced the primary-source evidence, and only continued after the
+maintainer corrected the record via an addendum. Nothing in the shared
+instructions prompted that judgment call, and a documentation-only PR
+has no test suite to catch a silently transcribed false premise later
+(#1390).
+
+### B2.2 — Example field-name verification
+
+Issue `#2806`'s own "Proposed change" section cited an illustrative
+gate field, `claimValid: false`, that did not exist anywhere in
+`schemas/pre-merge-readiness.schema.json` — the real fields are
+`claim.matchesExpectedClaim` / `claim.claimLost`. B2.1 did not apply
+because that issue was an ordinary bugfix issue, not
+decision-transcription, and the fabricated field appeared in an
+illustrative example, not a rationale claim, so nothing in the written
+instructions caught it during that issue's own implementation, PR
+`#2875`; a Codex review caught it instead, after the text had already
+shipped once. A maintainer hearing recorded on issue `#2878` added
+this narrow, adjacent check rather than broadening B2.1's own
+condition.
+
+### B3 — De-duplication refactor: check for behavior parity, not just body equivalence
+
+Closes a real regression class hit during #1208's `gh-exec.mts`
+consolidation: 10 of 22 call sites silently lost `execFileSync` stdio
+isolation / timeout options that a local `runGh` wrapper had been
+adding when the wrapper was collapsed into one shared function. It was
+caught only by an ad hoc critique pass and a reviewer comment, not by
+written implementation guidance (#1238).
+
+### B–C — Follow-up discovery bypassed issue authoring
+
+On 2026-08-24, issue #2231 recorded that B-phase workers discovering
+separate follow-up work had no unconditional in-file route to the optional
+issue-authoring companion and had been observed creating issues directly.
+The B–C guard now routes that work through Stage 1 or preserves it in a
+durable issue comment when the companion is unavailable
+(kurone-kito/idd-skill#2231).
+
+### Stage 1 — Shared hold ownership conflict
+
+On 2026-08-24, issue #2231 also recorded that a shared authoring label did
+not identify the session holding a follow-up target, leaving concurrent
+passes able to race through reuse and body wiring. The per-target trusted
+owner-marker protocol, visible-note JSON posting, persisted anchor identity,
+fresh re-reads, and same-owner heartbeat renewal before edits close that
+observed conflict path (kurone-kito/idd-skill#2231).
+
+### Stage 1 — Non-atomic new-issue publication window
+
+During the 2026-08-24 remediation of issue #2231, review verified a concrete
+create-then-label race: a newly created follow-up could exist without the
+authoring label between two separate mutations, allowing another Discover
+pass to see it before the hold was applied. The atomic create-with-label
+requirement, capability check, and stop-before-create fallback close that
+publication window (kurone-kito/idd-skill#2231).
+
+### Stage 2 — Set-level release rollback safety
+
+The same remediation exposed a set-level rollback hazard: if an early label
+removal closed its target generation before a later removal failed, the
+restoration owner check could fail and leave that target visible to Discover.
+Release markers are therefore provisional until every target, with the anchor
+last, has been verified; release retries reuse the verified marker comment ID
+instead of appending an indistinguishable duplicate. Anchor identity is
+persisted in every owner marker, and every Stage 1 edit re-reads both the
+target and the set anchor (kurone-kito/idd-skill#2231).
+
+### B3 — Dependency drift vs. own diff: a typecheck/lint diagnostic
+
+A `typecheck`/`lint` failure in a file the current diff never touched
+can look like a bug in the diff itself, when it is really dependency
+drift or a broken `main` baseline — the #1164/#1193 incident cost real
+debugging time this way before the guidance below existed.
+
+### B3 — Local test flakiness under concurrent load: hosted CI is authoritative
+
+Field evidence from roughly eight to ten concurrent local worktree
+sessions on one machine showed delegated workers hitting local test
+timeouts on specs their diff never touched; every failure passed an
+isolated re-run and the hosted CI run (a dedicated, non-shared runner)
+stayed green each time. This was plain CPU/resource contention, but
+each occurrence cost real investigation before a worker could conclude
+"environmental, not my change" — and the pattern recurs more as
+adopters scale out concurrent sessions (#1391). Hosted CI governs when
+it disagrees with a local outcome for the same commit; that does not
+waive the fix-validate / pre-push-validate requirements themselves.
+
+### B3 — Edit the canonical source of a generated docs/instructions file, not its mirror
+
+This repository generates several `docs/**.md` and
+`.github/instructions/**.md` files from an `idd-template/` canonical
+source via `sync-docs.mjs`. Editing the generated mirror directly is
+silently discarded on the next `sync-docs.mjs --apply` run, since the
+mirror and its canonical source are often byte-identical or
+near-identical, giving no visual cue at a glance. Only a
+`.github/instructions/**.instructions.md` mirror carries an
+`idd-generated-from` banner at its top -- a `docs/**.md` mirror never
+does, so checking for the banner alone misses exactly this file class.
+Both real occurrences in this repository were `docs/**.md` files
+(`docs/idd-helper-scripts.md` and `docs/policy-constants.md`, both
+caught pre-commit via `git status` plus a manual
+`audit/sync-manifest.json` lookup, never merged but each costing a
+revert-and-redo cycle -- observed 2026-09-03, `#2548`), and a
+structurally identical bug independently surfaced the same session
+inside a brand-new `audit-docs.mjs` checker (observed 2026-09-03,
+`#2477`): its file-attribution logic
+initially cited the generated mirror in a drift finding instead of the
+canonical source, for the same root cause. Checking
+`audit/sync-manifest.json`'s `syncPairs` for a matching `target` entry
+closes that gap and catches this before any work is lost.
+
+### C1 — Search sibling code for the same defect shape before closing
+
+A bug fix scoped to the single reported call site can leave the
+identical defect shape unpatched elsewhere in the same file, or in an
+independently-maintained sibling implementation of the same logic.
+`#1471` fixed a stale-multi-instance-rollup defect in
+`classifyCiChecks` (`protocol-helpers.mts`); a follow-up C1 pass on
+that same PR separately found the identical shape in
+`ci-wait-state.mts`'s independently-maintained equivalent, filed as
+`#1478` -- outside the original issue's own acceptance criteria.
+`#2475` (a shared, loop-wide `consumedDispositionIndexes` `Set` in
+`matchTrustedAdvisoryStickyDispositions`, `protocol-helpers.mts`, that
+let only the alphabetically-first named bot be credited when a single
+disposition reply named several) repeated the pattern in the same
+file: the reported bug and its initial fix covered only that one
+function, and a separate critique pass -- run to verify the fix, not
+to search for new work -- found the identical shape unpatched in a
+second, structurally separate loop (the `#1018` notice carry-forward
+path, the more common of the two code paths in practice). When a bug's
+root cause is a reusable defect shape rather than a one-off typo,
+search the rest of the containing file -- and any
+independently-maintained sibling implementation of the same logic --
+for the same shape before treating the fix, or a C1 critique of it, as
+complete (observed 2026-09-03, `#2552`).
+
+## PR submit
+
+### D2 — Adding a new CI job: dispatch-first rollout
+
+This repository's `copilot_code_review` ruleset re-reviews every push
+to a PR branch, so Copilot/Codex review cost tracks push count roughly
+1:1 regardless of which files or CI jobs a given push touches. A new
+CI job whose target runner cannot be exercised locally compounds this:
+each debugging attempt needs a real push-and-wait round trip, so every
+unverified hypothesis about why the job fails costs a full review
+cycle on top of the CI minutes spent. Landing the job
+`workflow_dispatch`-first and validating it via manual dispatch runs
+does not reduce that review cost by itself -- the review re-run is
+driven by the push, not by the job's trigger wiring -- but it does
+stop an unproven job from auto-running (and burning runner minutes,
+and adding failure noise) on every unrelated push during the same pull
+request's remaining lifetime. The one path that does avoid review cost
+entirely is iterating a Windows-/macOS-targeted job on a branch with no
+open PR yet: this repository's `copilot_code_review` ruleset only
+reviews PR-associated pushes, so a push to a PR-less branch never
+triggers a review at all -- this is why that non-PR shakeout pattern is
+worth documenting as an option, scoped to CI-infrastructure-focused
+work, even though it deviates from the normal early-PR-then-iterate
+practice.
+
+Observed 2026-09-10 on PR #2897 (issue #2892): three
+independently-reasoned, unverified commits debugging a
+native-Windows-only CI hang in a new `lint-windows` job each triggered
+a fresh full Copilot and Codex review and left the job's own
+regression test failing at a near-identical elapsed time each round --
+direct evidence none of the three changed anything that mattered, and
+each round could only be diagnosed by pushing and waiting on a real
+run, since this repository's own IDD implementation sessions are
+WSL/Linux-only and cannot exercise a `windows-latest` runner locally
+(Refs #2892, non-blocking).
+
+## Review triage
+
+### Merge-main livelock under fast-moving `main`
+
+Under heavy concurrent-session load, `main` can advance before one
+{sync path → E1 → F1/F2} cycle finishes, re-triggering
+`behind-no-conflict`; naive repetition livelocks, never reaching F3
+while `main` keeps moving (observed 2026-07-22, PR #1612). The fix is
+procedural, not structural: post the `review-watermark` as the last
+action before F3's `idd-merge-execute.mjs --apply` on every pass, so
+anything that happens after — a CI rerun settling, a new disposition
+reply, another `main` advance — stales it and fails `--apply` closed
+on `review-currency` rather than merging on data the retry has since
+invalidated.
+
+### Zero-Accepted-PATH-A advisory re-review gate
+
+Without this gate, E8's zero-Accepted-PATH-A path would skip E14 (the
+only step that requests a fresh primary-advisory-bot review) entirely,
+so a PR whose Copilot findings were all Rejected in a given pass could
+reach F2's advisory-convergence check with the bot never having
+reviewed the resulting HEAD (#1442). The gate closes that gap by
+running E14's Primary advisory bot procedure at the now-stable HEAD
+whenever a durable marker records that the last non-empty snapshot at
+the current HEAD zeroed out on a completed-review PATH B disposition
+(condition (a)), before proceeding to F1.
+
+Condition (b) — the current HEAD's eligibility for AW3-S's
+settled-window (non-pending) entry — is a defense-in-depth backstop
+for a narrower subset of cases: D4 and F2 each already consult AW3-S
+independently for this same settled-window entry (#2726), but a
+true-virgin empty snapshot (one that never satisfies condition (a) on
+its own) otherwise never runs E14 through this gate specifically.
+Condition (b) guarantees that path also reaches the stale-request
+recovery cycle (and its route to `COPILOT_UNAVAILABLE`), rather than
+depending solely on D4/F2 revisits eventually accumulating enough
+AW3-S cycles on their own.
+
+The gate's own state was originally tracked only in the current
+session's in-memory recollection of its last E1-E3 pass ("this
+episode"), with no durable, GitHub-visible record: a session that
+crashed, restarted, or resumed after that pass had no way to
+reconstruct whether the gate should have fired for the current HEAD.
+This recurred, and was deferred, seven times across PR #3048's own
+review cycle (issue #3031, merged 2026-09-16) before a Groom-hearing
+decision (2026-09-17) scoped a narrow fix (#3064): a dedicated
+`zero-accepted-path-a-gate` marker (see
+`idd-review-triage.instructions.md`) now persists which condition
+fired and the HEAD SHA it was evaluated against, read back on every
+evaluation instead of relying on session-local memory; a marker
+recorded against a HEAD SHA that no longer matches the PR's current
+HEAD — for example, after a sync-path merge advances HEAD — is stale
+and does not satisfy the gate for the new HEAD.
+
+### An advisory bot's embedded-but-unthreaded findings: mirror the detection scope, not the gate scope
+
+`#2197`'s live 30-day sweep (337 merged PRs, observed 2026-09-03) found
+a `coderabbitai[bot]` review in the older "🧹 Nitpick comments" /
+"⚠️ Outside diff range comments" collapsible-body format can carry a
+specific, file/line-cited finding with **zero** corresponding threaded
+review comment — e.g. PR
+`#1897` review `4863787336` (zero threaded comments on that PR at
+all) and PR `#1871` review `4860403155` (a Major finding, only
+unrelated Copilot threads present). E1 Step 3's "Review bodies" rule
+only pulls
+a review into `ReviewItems_snapshot` when its state is
+`CHANGES_REQUESTED`; every sampled review here was `COMMENTED`
+(CodeRabbit's own state for a nitpick/outside-diff finding), so the
+whole review body — not just the embedded finding — was invisible to
+E1, and E4-E8 never Accepted or Rejected it (#2559).
+
+This is CodeRabbit's analogue of Copilot's already-solved
+`suppressedCount` gap (#1880, `advisory-convergence.mts`): a finding
+that exists in a bot's review but has no GitHub thread of its own.
+Unlike Copilot's, CodeRabbit is a non-gating PATH B advisory bot here
+— the fix mirrors #1880's _detection pattern_ (parse the embedded
+findings, compare against threaded-comment count) but not its
+_gate-enforcement scope_: an uncovered finding becomes an ordinary
+PATH B `ReviewItems_snapshot` entry, not a new merge-blocking check.
+
+`extractCodeRabbitEmbeddedFindings` / `countUncoveredCodeRabbitEmbeddedFindings`
+(`protocol-helpers.mts`) do the parsing: scoped section-by-section
+(heading to next heading), then file-grouping by file-grouping, then
+finding-header-line by finding-header-line — not a full HTML/Markdown
+parser, since CodeRabbit's own nested `<details>` structure has no
+documented grammar to parse against. One sharp edge found while
+building the severity-word regex: `\bTrivial\b` never matches inside
+`_Trivial_` (CodeRabbit wraps each metadata segment in markdown
+italics) — regex `\b` treats `_` as a word character, so there is no
+boundary between the closing `_` and the preceding letter. Dropping
+the trailing `\b` (there is no real ambiguity risk in this
+already-scoped metadata segment) fixed it.
+
+Newer-format CodeRabbit reviews (`Actionable comments posted: N`,
+individually threaded) carry neither collapsible-section heading, so
+this parser naturally returns no findings for them — no separate
+format-detection branch needed.
+
+### E4/E5 round-count defer cutoff
+
+E4/E5 scored each PATH A item Low/Medium/High with no ceiling on how
+many review-fix loop rounds (E1-E15) a PR could cycle through while new
+Low-severity findings kept arriving. `critiqueLoop.e10NoProgressHoldAfter`
+only fires when the **same** Accepted finding recurs without progress
+across consecutive E10 passes — its own "meaningful progress" carve-out
+explicitly does not fire when each round surfaces a genuinely new
+finding, since that is convergence, not stagnation, by its own
+definition. A PR where successive rounds each raise a different, real
+Low-severity finding (one advisory bot converges, then a second bot's
+own first review arrives after the first bot's findings are fixed,
+itself finding something new) triggered no existing guard while
+extending indefinitely.
+
+Live-observed cost evidence motivating `critiqueLoop.deferAfterRounds`
+(issue #2863, dated 2026-09-10; checkable via `gh api
+repos/kurone-kito/idd-skill/pulls/<n>/reviews`,
+`user.login == copilot-pull-request-reviewer[bot]`): Copilot
+review-submission counts of 11-59 per PR were observed on issue #2018,
+issue #2255, issue #2264, issue #2368, issue #2403, and issue #2840.
+Each review-submission count tracks one full E1-E15 loop iteration,
+since E14 requests a fresh review after every push, regardless of
+reviewer state.
+
+Repository-owner-confirmed scope (2026-09-10, before #2863 was
+drafted): only Low-severity PATH A items are eligible for the deferral
+disposition — Medium and High stay fully blocking, matching
+`e10NoProgressHoldAfter`'s own precedent ("unresolved High/Medium
+findings remain blockers until fixed or explicitly redirected by a
+maintainer"). The default threshold (`15`) is an explicit starting
+point the repository owner expects to tune once real usage data
+exists, not a final calibration.
+
+`Reject (defer)` reuses the existing `**Rejected**`-prefixed reply
+format instead of introducing a new top-level disposition category:
+`isDispositionComment` already parses "starts with `**Rejected**`," and
+F2/F3 pair dispositions to advisory comments 1:1 by count — a new
+category would require touching that parser and gate for no functional
+gain, since a deferred item's terminal state (rejected, with a reason
+and a linked follow-up) is identical in shape to an ordinary rejection.
+
+#### Sequencing the deferred follow-up against its originating issue (kurone-kito/idd-skill#2877)
+
+E6's follow-up-issue rule requires a `Refs #<originating-issue>` line
+on the deferred-work follow-up, and `Refs` is deliberately non-blocking
+everywhere else in this workflow (including `discover-roadmap-graph`'s
+cycle exemption) so an ordinary citation never stalls Discover. That
+general rule is wrong for this one follow-up shape specifically: the
+deferred work cannot be meaningfully implemented before the PR/issue it
+was deferred from actually lands, yet nothing stopped Discover from
+picking up the follow-up immediately. Rather than changing `Refs`'s
+general semantics, `discover-readiness-check.mts` adds a narrow,
+marker-scoped rule: when a candidate's body carries the
+`<!-- <marker-prefix>-authoring-defer-source: review-fix-loop-cutoff -->`
+marker, its `Refs #<N>` reference is resolved the same way an ordinary
+`Blocked by #<N>` line is — excluded from Discover while `#<N>` stays
+open. An unmarked issue's `Refs` lines are completely unaffected.
+
+#### 2026-09-15 recalibration to 12, using a month of real data (kurone-kito/idd-skill#2999)
+
+By 2026-09-14, roughly a month of historical review-fix-loop data
+existed to sample, even though the `15` default itself had only been
+live for 4 days (2026-09-10 to 2026-09-14) of that month — the
+analysis below draws on historical loop lengths recorded under
+whatever cutoff was active at each sampled PR's own time, not on `15`'s
+own accumulated track record; a smaller, dedicated post-rollout
+subsample (merged PRs since 2026-09-10) is examined separately below
+for that narrower, apples-to-apples comparison — see that subsection
+for its corrected size and figures; an earlier draft of this
+introduction cited a stale, since-corrected count here. Pulling the 400
+most recently merged PRs in this repository (`gh api graphql`,
+`repo:kurone-kito/idd-skill is:pr is:merged`, counting `reviews` nodes
+with `author.login == "copilot-pull-request-reviewer"` per PR — the
+same counting method the entry above already cites) over a `mergedAt`
+range of 2026-08-17 to 2026-09-14 (roughly 28 days) gave an initial
+full-sample (n=400) distribution of min=0, p25=1, median=2, p75=4,
+p90=7, p95=9, p99=17, max=22, mean=3.42, with only 1 PR (0.25%)
+reaching 20 or more rounds and none reaching 25 or more.
+
+**Correction (2026-09-15, same-day PR review, `chatgpt-codex-connector`):**
+a reviewer on this recalibration's own pull request found that a PR
+inside the sampled window with 59 Copilot reviews makes the
+above-reported max of 22 impossible, and asked for the sampling
+methodology to be reconciled before relying on it for calibration.
+Independently re-running the count with full result-set pagination
+(the initial pass, like this same mistake made once directly against
+this recalibration's own draft text, silently truncated any PR with
+more than 100 total review-timeline entries — precisely the highest
+outlier PRs) against the identical 400-PR sample gives a corrected
+distribution of min=0, p25=1, median=2, p75=4, p90=7, p95=9, **p99=21,
+max=59** (`#2264`), mean=3.63. Threshold coverage: 35 PRs (8.75%)
+reached 8 or more rounds, 17 (4.25%) reached 10 or more, 9 (2.25%)
+reached 12 or more, 7 (1.75%) reached 15 or more, 5 (1.25%) reached 20
+or more, and 3 (0.75%) reached 25 or more (the same 3 also reach 30 or
+more). Every percentile from p25 through p95, and the 9-PR (2.25%)
+count at the `12`-round threshold this recalibration actually turns
+on, are **unchanged** by the correction — only the tail beyond p95 (p99
+and max) and the coarser high-end threshold buckets (≥20/≥25/≥30) were
+affected, consistent with an undercount that only silently truncates
+the small number of PRs busy enough to exceed 100 total review-timeline
+entries.
+
+Of the six PRs originally cited for the stale `15` default, five merged
+inside this 400-PR window — issue `#2255`, issue `#2264`, issue
+`#2368`, issue `#2403`, and issue `#2840`; only issue `#2018` (merged
+2026-08-15) predates it — and their corrected, fully-paginated Copilot
+review-submission counts are 21, 59, 11, 11, and 32 respectively,
+spanning nearly the full original 11-59 citation range. Issue `#2264`'s
+59 is in fact this sample's new corrected max. This specific tension —
+between the 2026-09-10 rationale's 11-59 citation and this
+recalibration's own first-draft sample, which had wrongly reported a
+max of only 22 — traces entirely to the pagination undercount corrected
+above, and is resolved by that correction: it was a bug in this
+recalibration's own data collection, not a genuinely different or
+unreconcilable counting methodology between the two entries. This is a
+narrower claim than "the review-fix-loop measurement approach itself
+has no open questions" — see the two caveats below, which this
+correction does not resolve.
+
+Splitting the sample by merge date (older half 2026-08-17 to
+2026-09-03, n=185, versus newer half 2026-09-03 to 2026-09-14, n=215)
+showed a clear rising trend consistent with this repository's rising
+IDD concurrency and throughput over the same period: mean 3.15 to
+4.04 (+28%), p90 5 to 8 (+60%), p95 8 to 10 — matching, not correcting,
+this recalibration's originally-reported newer-half p95 of 10. An
+earlier draft of this note mis-reported the newer-half p95 as 9 using
+a non-standard percentile rounding rule inconsistent with the
+nearest-rank method used everywhere else in this analysis; a PR review
+correctly pointed out that full-pagination correction can only raise
+individual PR counts, never lower them, so a corrected percentile
+computed the same way as before can never _decrease_ — recomputing
+with the same nearest-rank method used throughout gives 10, unchanged.
+
+**Second correction (2026-09-15, later same-day PR review,
+`chatgpt-codex-connector`):** the "68 PRs merged since the `15`
+default went live (2026-09-10 onward)" cohort below used a coarse
+midnight UTC boundary rather than the actual rollout instant. The `15`
+default's own PR (kurone-kito/idd-skill#2867) merged at
+2026-09-10T09:20:17Z — 13 PRs credited to the post-rollout cohort
+actually merged earlier that same UTC day, before the rollout,
+including `#2840` (merged 2026-09-10T08:25:14Z, roughly 55 minutes
+before rollout) at 32 rounds. Re-filtering by the actual rollout
+timestamp gives a corrected post-rollout cohort of n=55 (not 68), with
+mean=5.4 (not 5.56), p90=10 (unchanged), and max=35 (`#2895`, unchanged
+— `#2895` merged after rollout either way); the four highest correctly
+in-cohort PRs are 35, 23, 17, and 14 rounds (`#2895`, `#2855`, `#2868`,
+`#2928`), not 35/32/23/17 as this note previously (still incorrectly)
+reported. No visible censoring at 15 either way, most plausibly because
+those specific high-round PRs' recurring findings were Medium/High-
+severity (exempt from deferral by design) rather than any compliance
+gap in the mechanism itself. Spot-checking the highest-count PRs found
+no bot/vendor-bump/mass-rename noise skewing the sample: every one is
+genuine human-authored feature/fix work, including some small-diff PRs
+with disproportionately high round counts from protracted
+back-and-forth rather than diff size. This cohort still only
+coarsely approximates behavior specifically under the `15` default: a
+PR merging after rollout can still carry review activity that started
+before it, so PR-merge-time filtering alone does not isolate reviews
+actually conducted under `15` — a further, disclosed limitation this
+recalibration does not attempt to resolve (see the caveats below).
+
+Twelve sits just above both the full-month p95 (9) and the
+most-recent-half p95 (10) — a modest, data-grounded tightening in
+response to the observed rising trend, while still exempting roughly
+97-98% of ordinary review-fix loops (only 9 of the 400 sampled PRs
+cross it, unchanged by either correction above) from the deferral path.
+This replaces the original value's stale, cherry-picked justification
+(six outlier PRs, not a representative sample) with one derived from a
+full representative month, without swinging to an aggressive cutoff
+that would defer a meaningfully larger share of ordinary loops. See
+kurone-kito/idd-skill#2999 for the full methodology and the acceptance
+criteria that applied it across every mirrored occurrence of this
+default, and PR kurone-kito/idd-skill#3004's own review threads for
+the pagination-undercount, percentile-method, and rollout-boundary
+findings and these corrections.
+
+**Open caveat, not resolved by this recalibration** (raised in the same
+PR review, `chatgpt-codex-connector`): every figure above counts
+Copilot review submissions per PR, the same proxy the original 2026-
+09-10 rationale already used to justify `15`. The mechanism this
+default actually gates is the same-claim `review-watermark` **post**
+count (`idd-review-triage.instructions.md`'s round-count cutoff
+section), which E1 refreshes once per snapshot and can refresh again
+after disposition activity independently of a fresh Copilot
+submission — so the two counters are not guaranteed to move 1:1, and
+watermark-post counts could run higher than Copilot-review counts on a
+PR with several disposition-driven refreshes in the same round. This
+recalibration reuses the existing proxy symmetrically for both the old
+and the new value rather than introducing a new one, so it does not, by
+itself, make the cutoff's real-world firing rate any less well
+understood than it already was under `15` — but a rigorous fix would
+mean re-deriving this whole distribution against actual watermark-post
+counts (parsing each sampled PR's comment history for the marker,
+not just its review list), which is a substantially larger effort than
+this issue's own scope of recalibrating an existing default using the
+existing counting convention. Left as a candidate follow-up rather than
+attempted here.
+
+**Second open caveat** (also raised by `chatgpt-codex-connector`,
+alongside the rollout-boundary correction above): filtering the
+post-rollout cohort by each PR's own merge timestamp only approximates
+"reviewed under the `15` default." A PR merging after rollout can
+still carry review activity — including some of its Copilot
+submissions — that started before rollout, so PR-merge-time filtering
+does not cleanly isolate review activity conducted while `15` was
+actually live. Precisely isolating that would require filtering by
+each individual review's own submission timestamp rather than the
+PR's merge timestamp, which this recalibration does not attempt; the
+corrected 55-PR cohort above should be read as a closer, not exact,
+approximation of behavior specifically under `15`.
+
+**Third open caveat** (also `chatgpt-codex-connector`): every sample
+above is `is:merged`, which excludes a PR whose review loop was still
+open (or was closed without merging) at the 2026-09-14 sampling
+cutoff — right-censoring that could, in principle, hide exactly the
+long, non-converging loops this cutoff exists to control, so the
+97-98%-exempt figure describes merged loops observed to completion,
+not every loop this policy is exposed to. A same-day spot-check found
+this repository had only 3 open PRs and 2 quickly-closed-without-
+merging PRs (each open under a day, not long-running) at sampling
+time, suggesting the current practical impact is small, but this does
+not establish the concern is unfounded in general, and this
+recalibration does not attempt to incorporate still-open loops into
+the distribution. Left as a candidate follow-up, alongside the two
+caveats above.
+
+### review-ack worked example
+
+A review posts a regular-comment finding plus a suppressed one.
+Disposition the regular-comment finding normally (`**Rejected** —
+verified placeholders-only`), then also post `review-ack:
+claude-code-1a2b3c4d 4b825dc642cb6eb9a060e54bf8d69288fbee4904
+2026-08-19T00:10:00Z` (plain text, no HTML comment) to cover the
+suppressed one — the regular-comment rejection alone never sets
+`converged`, and this is not a license to skip **AW6** or the fix flow
+when the suppressed finding needs a code change.
+
+## Advisory wait
+
+### AW3-S vs AW3-R: why two recovery paths
+
+`AW3-R` fires only once the pending Copilot request is already proven
+to cover HEAD (`COPILOT_PENDING_COVERS_HEAD = true`) and just needs a
+missing marker anchored. PR #1562 identified the opposite, unproven
+case — a pending request whose association with current HEAD cannot
+yet be confirmed — which `AW3-R`'s marker-only path cannot resolve,
+since there is nothing yet to anchor. `#1571` adds `AW3-S`'s bounded
+remove/re-request/verify/mark cycle for that case, deliberately capped
+far below the ordinary `REQUEST_CAP` (30) by an independent per-HEAD
+recovery-cycle budget (default 2), because each cycle mutates live
+reviewer state (remove + re-request) rather than merely posting a
+marker.
+
+### Terminal Copilot stall-recovery contract: why a separate signal
+
+`#1572` introduces `COPILOT_UNAVAILABLE` as a signal structurally
+independent from every existing advisory-satisfied field, rather than
+folding terminal unavailability into `outcome`/`f3Outcome` directly.
+Keeping it independent means a future readiness rollup can consume it
+without risking a silent, accidental widening of what already counts
+as "advisory satisfied" — the terminal signal only ever unlocks a
+maintainer waiver path, never merge readiness on its own. `AW3-S`'s
+`"cap-exhausted"` classification deliberately does not by itself prove
+`COPILOT_UNAVAILABLE`: a HEAD can exhaust its recovery-cycle budget
+while the terminal window has not yet elapsed, or while a fresh
+same-HEAD review has since landed — either fact alone would make an
+immediate terminal declaration premature.
+
+### Non-Copilot advisory convergence is intentionally not a merge gate
+
+Issue #909 (2026-06-17) decided the Copilot advisory-wait / convergence
+protocol stays **Copilot-only** in this repository's configuration,
+where Copilot is the configured `advisoryWait.primaryBotLogin`; the
+configured secondary, non-primary `advisoryBotLogins` (e.g.
+`coderabbitai[bot]`, `chatgpt-codex-connector[bot]`) get no equivalent
+merge-blocking required check. (A repository using the `external-bot`
+profile to route `advisoryWait.primaryBotLogin` to a non-Copilot bot
+instead would gate on that bot's convergence the same way — this
+reaffirmation is scoped to the non-primary advisory bots, not to
+"non-Copilot" as a fixed identity.) #899 recorded the deliberate
+scope and its two-part
+safety net: **pre-merge**, the E1 activity-universe snapshot plus
+`review-watermark` delta catches a late finding before merge by
+forcing a return to E1 when the F2/F3 pre-merge gate detects new
+activity; **post-merge**, the #931 merged-PR unresolved-feedback
+sweep (`scripts/merged-pr-feedback-sweep.mjs`) — a manually-invoked,
+read-only detector whose output an operator feeds into fresh issue
+authoring, not an automatic recovery path. It surfaces two kinds of
+item: (1) a top-level regular comment or `CHANGES_REQUESTED` review
+body with **no later** IDD disposition anywhere on the PR
+(`collectUnaddressedComments` compares each item's timestamp against
+a single global `latestDispositionAt` cutoff, not a per-item reply
+check, so an item posted before the latest disposition counts as
+"addressed" even when that disposition was for something else
+entirely, including a disposition reply found inside a review thread —
+the global cutoff folds those in even though `collectUnaddressedComments`'s
+own output only ever lists top-level comments and review bodies, never
+thread items); and (2) any review thread still **unresolved** at merge
+time and not opened by an IDD agent itself, regardless of whether it
+carries a disposition reply (`collectUnresolvedThreads` filters on
+resolution state and origin-comment author, flagging
+`dispositioned: true`/`false` either way). Symmetrically, the sweep
+has **no backstop** for: a comment or review body with _any_ later
+disposition, correct or not; a thread an IDD agent itself opened; or a
+review thread that was **resolved** — whether with a correct
+disposition, a false disposition, or no disposition reply at all.
+Resolving a thread removes it from `collectUnresolvedThreads`
+outright.
+
+Issue #1352 re-opened the question after #1341/#1342 shipped
+`idd-advisory-convergence` as a trusted-checkout required CI check for
+the Copilot dimension, and after a 2026-07-13 weak-model structural
+audit found a concrete non-Copilot fail-open: E6 can mis-classify a
+CodeRabbit/Codex **non-review notice** (rate-limit, "usage limits
+reached", queued) as a completed clean review, and E7's disposition
+verifier validates the model's own self-report rather than live
+GitHub — so an omitted or false disposition passes. Under
+`fully_autonomous_merge`, that path can reach merge without a
+GitHub-side block.
+
+The maintainer **reaffirmed #909** on #1352 (2026-07-14): the
+operational objections are unchanged and still outweigh a hard gate —
+non-Copilot bots are capricious (a run may post nothing at all, and
+CodeRabbit's first post is often a PR summary rather than actionable
+findings), re-review is mention-only with no clean per-HEAD completion
+signal, and pinging a bot risks waking a lenient reviewer mid-merge.
+The E6 mis-classification and E7 self-attested-disposition path are
+therefore recorded as an **accepted risk** under
+`fully_autonomous_merge`, not a defect — the pre-merge snapshot net
+still catches a late-arriving finding before merge, but a false
+disposition it already produced has no #931 sweep backstop (see
+above), same as #909 originally decided to accept. A future
+weak-model audit that re-discovers this fail-open should treat it as
+a decided trade-off — see #909, #899, #931, #1352 — rather than
+re-filing it.
+
+## CI
+
+### 404-vs-403 ambiguity on branch-protection/ruleset reads
+
+None of the three required-check-discovery endpoints (branch
+protection, ruleset list, ruleset detail) documents `403` as a possible
+response at all: the branch-protection reference lists only
+`200`/`404`
+(<https://docs.github.com/en/rest/branches/branch-protection#get-branch-protection>),
+and the ruleset-list/ruleset-detail references list only
+`200`/`404`/`500`
+(<https://docs.github.com/en/rest/repos/rules#get-all-repository-rulesets>,
+<https://docs.github.com/en/rest/repos/rules#get-a-repository-ruleset>).
+GitHub's own REST troubleshooting guide documents this as general API
+behavior: a `404` on a private resource substitutes for `403` to avoid
+confirming the resource's existence, and insufficient token scope is a
+listed cause of a `404` on a resource that actually exists
+(<https://docs.github.com/en/rest/using-the-rest-api/troubleshooting-the-rest-api#404-not-found-for-an-existing-resource>).
+Because these endpoints never document `403`, a `404` on any of them
+is structurally ambiguous between "genuinely nothing configured" and
+"the token cannot read this" — the response body cannot resolve that
+ambiguity, and an actor's collaborator role cannot either (role is not
+proof the caller's own token carries the scope the endpoint requires).
+kurone-kito/idd-skill#1377 is why
+`idd-ci.instructions.md`'s Required-check discovery step 4 treats every
+`404` on these reads exactly like a `403` unless the repository opts
+out via `ciGate.trustEmptyProtectionReads: true`.
+
+### Rulesets-API write-side 404 for `gh`-CLI-default-OAuth-App tokens
+
+kurone-kito/idd-skill#3080 (2026-09-17) recorded a separate,
+write-side finding from the read-side ambiguity documented above:
+`PATCH /repos/{owner}/{repo}/rulesets/{id}` can 404 for a
+`gh`-CLI-default-OAuth-App-authenticated token even with confirmed
+`admin: true` permission and a successful `GET` on the identical
+resource immediately before the `PATCH`. The classic
+`PUT /repos/{owner}/{repo}/branches/{branch}/protection` endpoint
+remains a working fallback for the equivalent write with the same
+token. This was observed specifically with the `gh` CLI's default
+OAuth App token; whether a fine-grained PAT or a GitHub App
+installation token behaves differently was not tested, and is left as
+an open question rather than asserted either way. idd-skill ships no
+helper or documented procedure that writes a ruleset via the REST API
+today, so this is a defensive documentation note rather than a
+functional gap.
+
+## Pre-merge
+
+### The non-advisory pre-merge dimensions are model-attested, not GitHub-side enforced
+
+F2's pre-merge condition check (`idd-pre-merge.instructions.md`) and
+F3's merge-time re-verification (`idd-merge.instructions.md`) gate
+claim ownership/freshness, late non-Copilot review currency,
+non-Copilot unresolved threads, and `dispositionEvidence` completeness
+through the `computePreMergeReadinessBlockers` rollup
+(`scripts/protocol-helpers.mjs`) — called directly by
+`scripts/idd-merge-execute.mjs`, and reproduced in the same
+`{ ready, blockers }` shape by `scripts/pre-merge-readiness.mjs`'s
+`buildPreMergeReadinessSummary`. Unreplied comments are a separate
+case: `unrepliedComments` deliberately does not feed that deterministic
+rollup, so this dimension is gated only by the written F2 checklist.
+None of these dimensions has a dedicated GitHub-side required check
+backing it — unlike the Copilot advisory-convergence dimension,
+promoted to a trusted-checkout required check by #1341/#1342. (A repo
+that separately turns on GitHub's branch-protection conversation-
+resolution requirement gets GitHub-side enforcement for the
+unresolved-threads dimension specifically, as a side effect of that
+unrelated setting — see the conversation-resolution exception in
+`idd-pre-merge.instructions.md` — but that is opt-in and not part of
+this reaffirmed posture.)
+
+The helper is explicitly allowed to be **discarded**: F2 states that
+when helper execution fails, its output is invalid, or live GitHub
+state disagrees with it, the session discards the helper output and
+falls back to a direct live fetch plus the written prose rules. #1353
+asked whether that posture should gain a session-aware GitHub-side
+backstop, given a weak model can reach `gh pr merge` via the
+self-attested prose path without the deterministic verdict actually
+forcing the block.
+
+The maintainer **reaffirmed** on #1353 (2026-07-14): the
+helper-Preferred-plus-F2/F3-checklist posture stays the end state; no
+session-aware required check is added. The "discard on
+unavailable/invalid/conflict → prose fallback" clause is a deliberate
+adopter-resilience valve (the helper runtime is optional per
+`docs/idd-helper-scripts.md`, and a pure PR-level required check
+cannot see a session's live `claim-id`/`agent-id` context the way the
+model-run helper can). A full session-aware required check would also
+fight the deliberate `pull_request`-only CI topology (#832 dropped
+the redundant `push`-triggered runs; for this repository's own
+PR-triggered runs, `lint`/`pnpm-boundary`/`idd-doctor` run against
+GitHub's synthetic PR merge-ref checkout — not the literal PR head
+SHA — and never independently re-check the actual merge commit that
+lands on `main`; `pnpm-boundary` also keeps a `workflow_call` trigger
+for downstream reusable-workflow callers, which runs against the
+caller's own ref instead) and #993's existing F3 checklist
+hardening.
+Under `fully_autonomous_merge` this is an **accepted risk**; adopter
+repos on `human_merge` retain a human as the backstop the autonomous
+path lacks, and repos on `separate_merge_agent` substitute a second,
+independently-invoked trusted session for that final gate instead of a
+human (`docs/permissions.md`). A future weak-model audit that
+re-discovers this fail-open should treat it as a decided trade-off —
+see #832, #993, #1341, #1342, #1353 — rather than re-filing it.
+
+## Instruction delivery
+
+### Skill-based on-demand delivery of phase instructions: no-go (2026-07-16)
+
+Issue #1416 investigated packaging IDD phase instructions
+(`.github/instructions/idd-*.instructions.md`) as Claude-compatible
+skill bundles (`SKILL.md` under `.claude/skills/` / `.opencode/skills/`),
+on demand, motivated by issue #1413's OpenCode support track: OpenCode's
+only conditional-loading mechanism is skills, unlike Copilot's `applyTo`
+frontmatter. The full findings live in
+`docs/skills-delivery-investigation.md`, which reaffirms and extends
+`docs/claude-skill-strategy.md`'s prior Claude-Code-only no-go (which
+evaluated wrapping the whole execution loop as a skill) to explicitly
+cover OpenCode.
+
+The decision: **no-go**, for either agent, under the current phase-file
+boundaries. Once issue #1414 generalizes `AGENTS.md` into the shared
+OpenCode/Codex CLI entry stub, OpenCode gains the same
+routing-table-plus-on-demand-Read mechanism Claude Code already has, so
+a skill wrapper would change only _how_ a phase file is requested, not
+_whether_ it already loads on demand. More importantly, neither runtime
+documents a "must load unconditionally" primitive for skills — every
+invocation path is either an explicit model/user action or a subagent
+preload, never a forced load at session start — so converting a
+load-bearing phase file (e.g. `idd-claim.instructions.md`,
+`idd-pre-merge.instructions.md`) into a skill would replace a
+deterministic routing-table read with a probabilistic model judgment
+call, weakening exactly the fail-closed guarantee the
+overview-core claim-revalidation gate relies on those phase files being
+read for. A third synchronized surface alongside `idd-template/` and the
+generated `.github/instructions/` files would also multiply the drift
+matrix for every phase-file edit.
+
+Conditions that would revisit this: recorded evidence of routing-table
+navigation failures on either agent at a material rate; either runtime
+documenting a mandatory/required skill-invocation primitive; or explicit
+adopter demand for skill-form delivery with a concrete use case the
+routing table does not already serve. A future audit that re-discovers
+this question (see issues #1413, #1414, and #1416) should treat it as a
+decided trade-off rather than re-running the investigation.
+
+### Microsoft APM as an additional distribution channel: no-go (2026-08-02)
+
+Issue #1727 investigated whether this repository should distribute the
+IDD template through [Microsoft APM](https://github.com/microsoft/apm)
+(Agent Package Manager), a pre-1.0 MIT-licensed package manager for
+agent context, beside the existing `idd-template/ONBOARDING.md`
+raw-fetch-and-copy flow. The full findings live in
+`docs/apm-distribution-strategy.md`.
+
+The decision: **no-go** for the core template. Five payload classes
+(`.github/workflows/idd-advisory-convergence.yml`, `.githooks/`,
+`.github/idd/config.json`, `profiles/`, `idd-template/docs/**`) have no
+APM primitive at all — APM's `hooks` primitive is a false-friend name
+collision with `.githooks/`, since it covers harness-runtime
+lifecycle callbacks, not git hooks. The phase-instruction corpus's real
+activation key is workflow-step position, which does not map onto
+APM's file-glob-scoped `applyTo` frontmatter; encoding it either way
+degrades current behavior (a meaningless glob, or folding every phase
+file into the always-loaded compiled context and blowing the
+`instructionSizeBudgets`/`bundleBudgets` caps). APM's `apm.lock.yaml`
+pins per-file content hashes, which is structurally incompatible with
+the template's 26 `{{...}}` placeholder occurrences that onboarding
+substitutes in place — every onboarded repository would carry
+permanent, unresolvable drift from completion onward. Multi-target
+compilation also breaks the corpus's own cross-references (bare-prose
+mentions of `<name>.instructions.md`, the large majority of the
+corpus's ~200 such references) on every non-Copilot target, since each
+target compiles instructions to a different directory and, for several
+targets, a different file extension. Net, adopting APM for the phase
+corpus reproduces the "third synchronized surface" objection that
+already decided the skill-delivery no-go above, now as a new external
+CLI dependency rather than a same-repo generated file tree.
+
+The one favorable exception: `skills/issue-authoring/` already
+conforms to APM's skill-frontmatter contract, already uses the
+`references/` convention, carries no placeholders, and its drift
+arithmetic is net-neutral — APM's skill-bundle deployment would
+plausibly **replace**, not add to, the existing
+`skills/issue-authoring` → `.claude/skills/issue-authoring`
+`mode: "exact"` sync pair. That exception is recorded as a named
+revisit condition, not an adoption; APM's pre-1.0 release cadence (10
+tagged releases in roughly 6.5 weeks as of this analysis) is an
+independent, ongoing maintenance-risk factor even for that narrow case.
+
+Conditions that would revisit this: APM reaching a stable schema; APM's
+`instructions` primitive gaining a workflow-step-scoped activation mode;
+explicit adopter demand with a concrete use case the raw-URL path does
+not already serve; or a bounded pilot of `skills/issue-authoring/`
+alone. A future audit that re-discovers this question (see #1727)
+should treat it as a decided trade-off rather than re-running the
+investigation.
+
+## Documentation conventions
+
+### Cite the observed incident
+
+Issue #1596 adopted this convention after observing that
+`mew-ton/soloscrum` cites a concrete incident for each entry in its
+anti-pattern lists (for example, "Observed 2026-05-09 on issues 8 and
+9" in that project's own tracker — not this repository's). A citation
+raises the authority of a documented prohibition for
+both humans and weak models — the rule reads as field evidence, not
+authorial preference — and lets a later session check whether the
+cited incident still motivates the rule.
+
+When documentation or instruction text names an anti-pattern or
+failure mode, cite the concrete incident that motivated it: a date
+plus an issue or PR reference, when one exists. When no such incident
+exists — the rule is preventive rather than a response to something
+that already happened — say so explicitly, using the phrase
+"preventive; no observed incident yet", so the absence of a citation
+reads as a deliberate statement rather than an omission.
+
+The convention applies **forward**, to new or edited passages only.
+Retrofitting an existing passage with a citation is in scope on
+budget-exempt `docs/` surfaces, but out of scope for
+`.github/instructions/` files: do not edit an instruction file solely
+to add a citation. That exemption is not retrofit-only — a brand-new
+`.github/instructions/` passage that names an anti-pattern or failure
+mode is exempt from the citation requirement too, for the same
+reason: those bundle budgets already sit near their ceiling (see the
+headroom review in #1525; scope clarified by #1647 after CodeRabbit
+read the original wording as covering only retrofits).
+
+When an instruction passage's motivating incident is worth recording
+in full, put the date-plus-reference in a paired
+`docs/idd-design-rationale.md` entry and link to it by section anchor,
+as most cited passages already do. A bare issue-number aside directly
+in the instruction text remains acceptable in place of that link when
+no paired entry exists — both forms fit inside the tight
+instruction-bundle budget that motivates the exemption; neither is
+required.
+
+### Trace a documented output field to its print/return call site, not a type or variable name
+
+While drafting #2474's documentation of field-name variance across
+this repository's evidence-collector helper scripts, an initial pass
+made several confident, specific claims about which top-level JSON
+keys a given helper actually returns. A fact-checking pass found that
+roughly half of those claims were wrong — not because the underlying
+behavior was misunderstood, but because a TypeScript **type name** or
+an internal **local variable name** had been mistaken for an actual
+printed/returned field. For example, `advisory-convergence.mts`'s
+printed object was described as returning a `verdict` field: `verdict`
+is only the local variable name holding the whole printed document
+(the `AdvisoryConvergenceVerdict` type), never a key nested inside it.
+`discover-viability-gate.mts` was described as returning a `passed`
+field: `passed` exists only on an internal per-issue helper result and
+is never copied into the printed top-level object. A second,
+independent verification pass, re-tracing every claim to the file's
+actual `JSON.stringify(...)` / `process.stdout.write(...)` call site
+rather than to the nearest plausible-looking name, caught and
+corrected every instance before the documentation merged (observed
+2026-09-03, #2474).
+
+When documenting what a script or function actually returns or
+prints, trace every claimed field name to its literal
+`JSON.stringify(...)` / `process.stdout.write(...)` / `return` call
+site in the current source — never infer it from a type name, an
+interface field, or a local variable name that merely looks like it
+could be the same thing.
