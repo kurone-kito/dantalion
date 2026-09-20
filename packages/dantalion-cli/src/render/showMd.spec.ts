@@ -9,9 +9,9 @@ describe('showMd', () => {
     try {
       showMd('# heading\n\nbody text');
       expect(infoSpy).toHaveBeenCalledOnce();
-      const arg = infoSpy.mock.calls[0]?.[0] as string;
+      const arg = infoSpy.mock.calls[0]?.[0];
       expect(typeof arg).toBe('string');
-      expect(arg.length).toBeGreaterThan(0);
+      expect(String(arg).length).toBeGreaterThan(0);
     } finally {
       infoSpy.mockRestore();
     }

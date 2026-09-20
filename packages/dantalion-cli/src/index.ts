@@ -38,6 +38,7 @@ const readVersion = (): string => {
  */
 export const buildProgram = (): Command => {
   const program = new Command();
+  program.name('dantalion');
   program.addOption(
     new Option('--lang <en|ja>', 'Select the output language.').choices([
       'en',
@@ -47,6 +48,7 @@ export const buildProgram = (): Command => {
   for (const {
     getDescriptionAsync,
     getObject,
+    validate,
     alias,
     command,
     description,
@@ -57,6 +59,10 @@ export const buildProgram = (): Command => {
       .option('-r, --raw', 'Returns the raw JSON')
       .description(description)
       .action(async (arg: string | undefined, { raw }: { raw?: boolean }) => {
+        const validationError = validate(arg);
+        if (validationError !== undefined) {
+          throw new Error(validationError);
+        }
         if (raw) {
           showJson(await getObject(arg));
         } else {
@@ -90,10 +96,15 @@ const isProgramEntry = (): boolean => {
     return false;
   }
 };
-if (isProgramEntry()) {
-  const program = buildProgram();
-  program.parse(argv);
-  if (argv.length < 1) {
-    program.help();
+export const runProgram = async (args: string[] = argv): Promise<void> => {
+  try {
+    await buildProgram().parseAsync(args);
+  } catch (error: unknown) {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
   }
+};
+
+if (isProgramEntry()) {
+  void runProgram();
 }

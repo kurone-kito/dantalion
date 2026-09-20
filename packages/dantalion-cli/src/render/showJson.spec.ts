@@ -9,8 +9,9 @@ describe('showJson', () => {
     try {
       showJson({ a: 1, b: 'two' });
       expect(infoSpy).toHaveBeenCalledOnce();
-      const arg = infoSpy.mock.calls[0]?.[0] as string;
-      const parsed = JSON.parse(arg);
+      const arg = infoSpy.mock.calls[0]?.[0];
+      expect(typeof arg).toBe('string');
+      const parsed = JSON.parse(String(arg));
       expect(parsed).toEqual({ a: 1, b: 'two' });
     } finally {
       infoSpy.mockRestore();
