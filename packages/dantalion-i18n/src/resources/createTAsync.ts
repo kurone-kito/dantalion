@@ -7,10 +7,10 @@ import type {
   ThirdPartyModule,
 } from 'i18next';
 import i18next from 'i18next';
-import merge from 'lodash.merge';
 import getLocale from '../getLocale.js';
 import enDocument from './en.json' with { type: 'json' };
 import jaDocument from './ja.json' with { type: 'json' };
+import { mergeResources } from './mergeResources.js';
 import type { LocaleDocumentType } from './types.js';
 
 /** The language that uses as a fallback. */
@@ -56,7 +56,10 @@ export type LocalizedTFunction = TFunction & {
  * @param addition The additional language and namespace resources.
  */
 const initResources = (addition?: Resource): Resource =>
-  merge({}, { en: { translation: en }, ja: { translation: ja } }, addition);
+  mergeResources(
+    { en: { translation: en }, ja: { translation: ja } },
+    addition,
+  );
 
 /** Create and initialize the i18next instance asynchronously. */
 export default async (
