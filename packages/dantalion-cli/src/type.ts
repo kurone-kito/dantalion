@@ -3,6 +3,7 @@ export interface CommandOptions {
 }
 
 export interface Command {
+  readonly validate: (arg?: string) => string | undefined;
   readonly getDescriptionAsync: (
     arg?: string,
     options?: CommandOptions,

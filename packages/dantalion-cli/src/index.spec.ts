@@ -8,7 +8,7 @@ const { version: pkgVersion } = createRequire(import.meta.url)(
   '../package.json',
 ) as { version: string };
 
-const runCli = (args: string[], env?: Record<string, string>) =>
+const runCli = (args: string[], env?: NodeJS.ProcessEnv) =>
   execa(
     'node',
     [binPath, ...args],
@@ -121,6 +121,8 @@ describe('dantalion CLI smoke', () => {
     it('LANG=ja_JP.UTF-8 produces Japanese-character output', async () => {
       const { exitCode, stdout } = await runCli(['detail', '555'], {
         LANG: 'ja_JP.UTF-8',
+        LC_ALL: undefined,
+        LC_CTYPE: undefined,
       });
       expect(exitCode).toBe(0);
       // Hiragana / Katakana / CJK Unified Ideographs ranges.
@@ -194,28 +196,70 @@ describe('dantalion CLI smoke', () => {
   });
 
   describe('invalid input handling', () => {
-    it('an invalid date returns a soft "undefined" payload (current behavior)', async () => {
-      // The `personality.ts` command swallows out-of-range dates by
-      // emitting `undefined` and exiting 0. Lock the behavior in so a
-      // future change to make this fail-closed is visible.
-      const { exitCode, stdout } = await runCli([
+    it.each([
+      { mode: 'default', outputOptions: [] },
+      { mode: 'raw', outputOptions: ['--raw'] },
+    ])('an invalid birthday fails cleanly in $mode mode', async ({
+      outputOptions,
+    }) => {
+      const { exitCode, stdout, stderr } = await runCli([
         'personality',
-        'NaN',
-        '--raw',
+        'not-a-date',
+        ...outputOptions,
       ]);
-      expect(exitCode).toBe(0);
-      expect(stdout.trim()).toBe('undefined');
+      expect(exitCode).not.toBe(0);
+      expect(stdout).toBe('');
+      expect(stderr).toMatch(/invalid birthday/i);
     });
 
-    it('an invalid Genius ID falls back to the type-list output', async () => {
-      // `getDetail()` returns undefined for unknown Genius IDs and the
-      // CLI then prints the canonical Genius list via `types.genius`.
-      // Lock the behavior in.
-      const { exitCode, stdout } = await runCli(['detail', 'INVALID', '--raw']);
+    it.each([
+      '0',
+      'February 30, 2020',
+    ])('rejects a loosely parsed birthday: %s', async (birthday) => {
+      const { exitCode, stdout, stderr } = await runCli([
+        'personality',
+        birthday,
+      ]);
+      expect(exitCode).not.toBe(0);
+      expect(stdout).toBe('');
+      expect(stderr).toMatch(/invalid birthday/i);
+    });
+
+    it.each([
+      { mode: 'default', outputOptions: [] },
+      { mode: 'raw', outputOptions: ['--raw'] },
+    ])('an invalid Genius ID fails with valid-ID guidance in $mode mode', async ({
+      outputOptions,
+    }) => {
+      const { exitCode, stdout, stderr } = await runCli([
+        'detail',
+        'INVALID',
+        ...outputOptions,
+      ]);
+      expect(exitCode).not.toBe(0);
+      expect(stdout).toBe('');
+      expect(stderr).toMatch(/invalid genius id/i);
+      for (const id of ['000', '555', '919']) {
+        expect(stderr).toContain(id);
+      }
+    });
+
+    it('an unknown command fails on stderr without stdout', async () => {
+      const { exitCode, stdout, stderr } = await runCli(['unknown-command']);
+      expect(exitCode).not.toBe(0);
+      expect(stdout).toBe('');
+      expect(stderr).toMatch(/unknown command/i);
+    });
+
+    it('falls back to English under an unsupported locale', async () => {
+      const { exitCode, stdout, stderr } = await runCli(['detail', '555'], {
+        LC_ALL: 'fr_FR.UTF-8',
+        LANG: 'fr_FR.UTF-8',
+        LC_CTYPE: 'fr_FR.UTF-8',
+      });
       expect(exitCode).toBe(0);
-      const parsed = JSON.parse(stdout);
-      expect(Array.isArray(parsed)).toBe(true);
-      expect(parsed).toContain('555');
+      expect(stderr).toBe('');
+      expect(stdout).toContain('Details of people whose personality type');
     });
   });
 
@@ -223,6 +267,7 @@ describe('dantalion CLI smoke', () => {
     it('--help lists both subcommands and exits 0', async () => {
       const { exitCode, stdout } = await runCli(['--help']);
       expect(exitCode).toBe(0);
+      expect(stdout).toMatch(/Usage: dantalion/);
       expect(stdout).toContain('personality');
       expect(stdout).toContain('detail');
     });

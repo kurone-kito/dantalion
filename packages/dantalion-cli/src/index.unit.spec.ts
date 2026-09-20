@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { buildProgram } from './index.js';
+import { buildProgram, runProgram } from './index.js';
 
 describe('buildProgram (in-process)', () => {
   it('registers both subcommands', () => {
@@ -57,8 +57,9 @@ describe('buildProgram (in-process)', () => {
         const program = buildProgram();
         await program.parseAsync(['node', 'cli', 'detail', '555', '--raw']);
         expect(infoSpy).toHaveBeenCalledOnce();
-        const arg = infoSpy.mock.calls[0]?.[0] as string;
-        const parsed = JSON.parse(arg);
+        const arg = infoSpy.mock.calls[0]?.[0];
+        expect(typeof arg).toBe('string');
+        const parsed = JSON.parse(String(arg));
         expect(parsed).toEqual(
           expect.objectContaining({ affinity: expect.any(Object) }),
         );
@@ -75,12 +76,36 @@ describe('buildProgram (in-process)', () => {
         const program = buildProgram();
         await program.parseAsync(['node', 'cli', 'personality', '1993-10-09']);
         expect(infoSpy).toHaveBeenCalledOnce();
-        const arg = infoSpy.mock.calls[0]?.[0] as string;
+        const arg = infoSpy.mock.calls[0]?.[0];
         expect(typeof arg).toBe('string');
-        expect(arg.length).toBeGreaterThan(0);
+        expect(String(arg).length).toBeGreaterThan(0);
       } finally {
         infoSpy.mockRestore();
       }
     });
+  });
+
+  it('reports invalid action arguments on stderr with a non-zero exit code', async () => {
+    const errorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    const previousExitCode = process.exitCode;
+    process.exitCode = undefined;
+    try {
+      await runProgram(['node', 'cli', 'personality', 'not-a-date']);
+      await runProgram(['node', 'cli', 'detail', 'INVALID']);
+      expect(errorSpy).toHaveBeenNthCalledWith(
+        1,
+        expect.stringMatching(/invalid birthday/i),
+      );
+      expect(errorSpy).toHaveBeenNthCalledWith(
+        2,
+        expect.stringMatching(/invalid genius id/i),
+      );
+      expect(process.exitCode).toBe(1);
+    } finally {
+      process.exitCode = previousExitCode;
+      errorSpy.mockRestore();
+    }
   });
 });

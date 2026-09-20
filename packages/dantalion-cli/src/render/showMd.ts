@@ -11,6 +11,9 @@ marked.use(markedTerminal());
  * @param source The markdown document.
  */
 export default (source: string): void => {
-  // biome-ignore lint/suspicious/noConsole: this CLI's stdout contract
-  console.info(marked.parse(source));
+  const rendered = marked.parse(source);
+  if (typeof rendered !== 'string') {
+    throw new Error('Markdown rendering returned an asynchronous result.');
+  }
+  console.info(rendered);
 };
