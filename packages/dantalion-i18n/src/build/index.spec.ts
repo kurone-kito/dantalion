@@ -1,6 +1,8 @@
 import type { Genius } from '@kurone-kito/dantalion-core';
 import { describe, expect, it } from 'vitest';
-import { createAccessors } from '../resources/createAccessorsAsync.js';
+import createAccessorsAsync, {
+  createAccessors,
+} from '../resources/createAccessorsAsync.js';
 import createTAsync from '../resources/createTAsync.js';
 import { getDetailMarkdown, getPersonalityMarkdown } from './index.js';
 
@@ -255,6 +257,16 @@ describe.each(['en', 'ja'])('LANG=%s', (lng) => {
         TRIPWIRE_BIRTHDAY,
       );
       expect(actual).toBe(expected);
+    });
+
+    it('falls back to English for unsupported regional locales', async () => {
+      const accessors = await createAccessorsAsync('fr-FR');
+      const actual = getPersonalityMarkdown(accessors, '2000-01-07');
+
+      expect(actual).toMatch(/^#/m);
+      expect(actual).toContain(
+        'The personality of the person whose birthday is',
+      );
     });
   });
 });

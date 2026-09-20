@@ -64,7 +64,12 @@ export default async (
 ): Promise<LocalizedTFunction> => {
   const { additions, lng = getLocale(), use } = options;
   const instance = i18next.createInstance();
-  const init: InitOptions = { lng, resources: initResources(additions) };
+  const init: InitOptions = {
+    fallbackLng,
+    interpolation: { escapeValue: false },
+    lng,
+    resources: initResources(additions),
+  };
   const modules = use ? (Array.isArray(use) ? use : [use]) : [];
   for (const module of modules) {
     instance.use(module);
