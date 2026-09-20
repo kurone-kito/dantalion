@@ -141,6 +141,13 @@ jobs:
           HUSKY: 0
         run: pnpm install --frozen-lockfile --prefer-offline
       - run: pnpm --filter @kurone-kito/dantalion-core run test:mutation
+      - name: Upload mutation report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dantalion-core-mutation-report
+          path: packages/dantalion-core/reports/mutation/mutation.json
+          if-no-files-found: error
 
   dependency-audit:
     name: dependency audit
