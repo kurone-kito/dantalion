@@ -13,11 +13,24 @@ import getBirthdayDetails from './getBirthdayDetails.js';
 import getFactors from './getFactors.js';
 
 const DATE_ONLY_PATTERN = /^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})$/;
+const DAYS_IN_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+const isLeapYear = (year: number) =>
+  year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+
+const isRealCalendarDate = (year: number, month: number, day: number) => {
+  if (month < 1 || month > 12 || day < 1) {
+    return false;
+  }
+  const daysInMonth =
+    month === 2 && isLeapYear(year) ? 29 : DAYS_IN_MONTH[month - 1];
+  return daysInMonth !== undefined && day <= daysInMonth;
+};
 
 /** Parse date-only strings into calendar components before native Date parsing. */
 const normalizeBirth = (
   birth: ConstructorParameters<typeof Date>[0],
-): Date | CalendarDate => {
+): Date | CalendarDate | undefined => {
   if (typeof birth !== 'string') {
     return new Date(birth);
   }
@@ -29,7 +42,18 @@ const normalizeBirth = (
   if (year === undefined || month === undefined || day === undefined) {
     return new Date(birth);
   }
-  return { date: Number(day), month: Number(month), year: Number(year) };
+  const calendarDate = {
+    date: Number(day),
+    month: Number(month),
+    year: Number(year),
+  };
+  return isRealCalendarDate(
+    calendarDate.year,
+    calendarDate.month,
+    calendarDate.date,
+  )
+    ? calendarDate
+    : undefined;
 };
 
 /** The details for Personality. */
@@ -54,16 +78,22 @@ export interface Personality {
  * to December 31, 2050.
  *
  * Date-only strings in year-month-day form are interpreted as local calendar
- * dates. Date and number inputs use the local calendar date of the resulting
- * Date, and time information is ignored after the input is normalized.
+ * dates; impossible calendar days return `undefined`. Date and number inputs
+ * use the local calendar date of the resulting Date, and time information is
+ * ignored after the caller normalizes the input without re-validating its
+ * calendar components.
  * @returns The object that the personality information.
  *
- * If the date is over the range, it will be `undefined`.
+ * If the date is over the supported range or a date-only string does not
+ * represent a real calendar day, it will be `undefined`.
  */
 export default (
   birth: ConstructorParameters<typeof Date>[0],
 ): Personality | undefined => {
   const birthObj = normalizeBirth(birth);
+  if (birthObj === undefined) {
+    return undefined;
+  }
   const monthlyCoefficients = getMonthlyCoefficients(birthObj);
   if (Number.isNaN(monthlyCoefficients)) {
     return undefined;

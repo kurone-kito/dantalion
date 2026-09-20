@@ -202,8 +202,11 @@ type getPersonality = (
 
 #### Returns
 
-The object that the personality information. If the date is over the range,
-it will be `undefined`.
+The object that contains personality information. If the date is over the supported
+range or a date-only string does not represent a real calendar day, it will be
+`undefined`. `Date` and number inputs are normalized by the caller before this
+function receives them, so their resulting calendar components are not
+re-validated.
 
 ### `toCC`
 
