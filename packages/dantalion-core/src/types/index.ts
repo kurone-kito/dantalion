@@ -32,7 +32,7 @@ export interface AllTypes {
   readonly heavenlyStem: readonly HeavenlyStem[];
   /** The list that the base of ego type. */
   readonly lifeBase: readonly LifeBase[];
-  /** The list that the base of ego type. */
+  /** A table of LifeBase to CC. */
   readonly lifeBaseCC: Record<LifeBase, string>;
   /** The list of the types that the risk management method. */
   readonly management: readonly Management[];
@@ -42,9 +42,9 @@ export interface AllTypes {
   readonly position: readonly Position[];
   /** The list of the types that the potential. */
   readonly potential: readonly Potential[];
-  /** The list of the types that the potential. */
+  /** A table of Potential to CC. */
   readonly potentialCC: Record<Potential, string>;
-  /** The list of the types that the role. */
+  /** The list of the types that the response. */
   readonly response: readonly Response[];
   /** The list of personality types. */
   readonly vector: readonly Vector[];

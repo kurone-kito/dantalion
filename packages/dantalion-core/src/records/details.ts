@@ -57,7 +57,7 @@ export interface Detail {
   motivation: Motivation;
   /** The types for role. */
   position: Position;
-  /** The types for role. */
+  /** The types for response. */
   response: Response;
   /** Vector of genius type. */
   vector: Vector;

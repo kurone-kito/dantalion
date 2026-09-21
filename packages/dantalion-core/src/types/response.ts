@@ -1,5 +1,5 @@
 /**
- * The types for role.
+ * The types for response.
  *
  * |   Key    | Value                                                                 |
  * | :------: | :-------------------------------------------------------------------- |
@@ -8,5 +8,5 @@
  */
 export type Response = 'action' | 'mind';
 
-/** The list of the types that the role. */
+/** The list of the types that the response. */
 export default Object.freeze<Response[]>(['action', 'mind']);
