@@ -61,9 +61,12 @@ export default (source: FactorSource): Factors => {
   // variable-length month's worth of days without a lookup table.
   // +7 is a fixed epoch offset aligning the computed index to stem 0
   // at the algorithm's reference date.
-  // Math.trunc rounds each product toward zero (never down, unlike
-  // Math.floor), matching the fixed-point truncation this formula's
-  // rate constants depend on.
+  // Math.trunc (round toward zero, unlike Math.floor which rounds
+  // down) is used for these two products specifically because that is
+  // the integer-truncation behavior the original algorithm's design
+  // relies on for them; Math.floor is used for the adjustedLo term
+  // above because that one is always non-negative here, where floor
+  // and trunc agree.
   const cycle =
     Math.floor(adjustedLo * 5.25) +
     date +
