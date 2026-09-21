@@ -3,6 +3,3 @@ ignores:
   - .github/CONTRIBUTING*
   - '**/node_modules/**/*'
   - '**/test-results/**/*'
-  - AUDIT-SUMMARY.md
-  - LINTING_VERIFICATION_*.md
-  - PLAN.md
