@@ -41,7 +41,7 @@
     "lint:fix:markdown": "markdownlint-cli2 --fix \"**/*.md\"",
     "prepare": "husky",
     "test": "pnpm run \"/test:.+/\"",
-    "test:ts": "pnpm --aggregate-output --workspace-concurrency=0 -r exec tsc -p tsconfig.test.json --noEmit",
+    "test:ts": "tsc -p tsconfig.test.json --noEmit && pnpm --aggregate-output --workspace-concurrency=0 -r exec tsc -p tsconfig.test.json --noEmit",
     "test:vitest": "vitest run --coverage",
     "pretest": "pnpm --aggregate-output --if-present --workspace-concurrency=0 -r run build"
   },
