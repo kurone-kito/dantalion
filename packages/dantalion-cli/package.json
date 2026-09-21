@@ -21,12 +21,23 @@
   "author": "kurone-kito <krone@kit.black> (https://kit.black/)",
   "type": "module",
   "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js",
+      "default": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "bin": {
     "dantalion": "./dist/src/index.js"
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "!src/**/*.spec.ts",
+    "!dist/**/*.tsbuildinfo"
   ],
   "repository": {
     "type": "git",

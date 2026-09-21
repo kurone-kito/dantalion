@@ -18,8 +18,10 @@ _Four Pillars of Destiny (Ba-Zi)_.
 
 ## Breaking changes since v0.19.x
 
-- ESM-only output. Consumers must use `import` rather than
-  `require`; no CommonJS bridge is provided.
+- ESM-only source; no separate CommonJS build is shipped. `import`
+  works directly, and `require` also resolves on Node >=22.12
+  (unflagged; earlier 22.x needs `--experimental-require-module`) via
+  its require-of-ESM support.
 - `engines.node` raised to `^22 || >=24` (was `>=12`).
 - `package.json#exports` replaces `main` / `types` for module
   resolution.
@@ -117,7 +119,7 @@ dantalion personality --raw 1993-10-09
 NOTE: It omits some minor information.
 
 ```sh
-dantalion details 555
+dantalion detail 555
 ```
 
 <!-- markdownlint-disable MD033 -->
@@ -146,7 +148,7 @@ There are three main types of humans personality: “Focused on authority”, �
 #### If you want the **JSON formatted** result
 
 ```sh
-dantalion details --raw 555
+dantalion detail --raw 555
 ```
 
 <!-- markdownlint-disable MD033 -->
@@ -200,7 +202,7 @@ dantalion details --raw 555
 ### Get the types list of personality
 
 ```sh
-dantalion details
+dantalion detail
 ```
 
 <!-- markdownlint-disable MD033 -->
