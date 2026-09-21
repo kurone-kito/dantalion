@@ -117,7 +117,7 @@ dantalion personality --raw 1993-10-09
 NOTE: It omits some minor information.
 
 ```sh
-dantalion details 555
+dantalion detail 555
 ```
 
 <!-- markdownlint-disable MD033 -->
@@ -146,7 +146,7 @@ There are three main types of humans personality: “Focused on authority”, �
 #### If you want the **JSON formatted** result
 
 ```sh
-dantalion details --raw 555
+dantalion detail --raw 555
 ```
 
 <!-- markdownlint-disable MD033 -->
@@ -200,7 +200,7 @@ dantalion details --raw 555
 ### Get the types list of personality
 
 ```sh
-dantalion details
+dantalion detail
 ```
 
 <!-- markdownlint-disable MD033 -->
