@@ -61,16 +61,19 @@ export default (source: FactorSource): Factors => {
   // variable-length month's worth of days without a lookup table.
   // +7 is a fixed epoch offset aligning the computed index to stem 0
   // at the algorithm's reference date.
-  // Int32Array's number-to-int32 coercion truncates toward zero
-  // (ECMAScript ToInt32), which for these date-derived magnitudes
-  // (always far inside the int32 range) is exactly Math.trunc.
+  // Math.trunc rounds each product toward zero (never down, unlike
+  // Math.floor), matching the fixed-point truncation this formula's
+  // rate constants depend on.
   const cycle =
     Math.floor(adjustedLo * 5.25) +
     date +
     7 +
     Math.trunc(adjustedHi * 4.25) +
     Math.trunc((shifted + 1) * 0.6);
-  // -2 is an epoch alignment offset for the potentials cycle.
+  // -2 and the second element's trailing +2 are epoch alignment
+  // offsets for the potentials cycle (the same calibration role as
+  // +7/+9/-6 above); full * 2 carries the year's own contribution
+  // into that cycle before the offset is applied.
   const potentials = [workStyle - 2, full * 2 + outer + 2].map((v) =>
     shiftAndModulo(v, 10),
   );
