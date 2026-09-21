@@ -38,6 +38,9 @@
       "command": "node tools/idd-critique-telemetry.mjs"
     }
   },
+  "issueAuthoring": {
+    "journalIssue": "kurone-kito/dantalion#250"
+  },
   "forcedHandoff": {
     "mode": "human-gated",
     "authorityPolicy": "owners-and-maintainers-only"
