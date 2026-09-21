@@ -24,11 +24,6 @@
   "private": true,
   "type": "module",
   "files": [],
-  "workspaces": {
-    "packages": [
-      "./packages/*"
-    ]
-  },
   "scripts": {
     "build": "pnpm --aggregate-output --if-present --workspace-concurrency=0 -r run build",
     "clean": "pnpm run --no-bail \"/^clean:.+/\"",
@@ -45,11 +40,9 @@
     "lint:fix:biome": "biome check --write",
     "lint:fix:markdown": "markdownlint-cli2 --fix \"**/*.md\"",
     "prepare": "husky",
-    "publish": "pnpm -r publish --no-git-checks",
-    "publish:next": "pnpm -r publish --tag next --no-git-checks",
     "test": "pnpm run \"/test:.+/\"",
-    "test:ts": "pnpm --aggregate-output --workspace-concurrency=0 -r exec tsc -p tsconfig.test.json --noEmit",
-    "test:vitest": "NODE_OPTIONS=\"--conditions=browser\" vitest run --coverage",
+    "test:ts": "tsc -p tsconfig.test.json --noEmit && pnpm --aggregate-output --workspace-concurrency=0 -r exec tsc -p tsconfig.test.json --noEmit",
+    "test:vitest": "vitest run --coverage",
     "pretest": "pnpm --aggregate-output --if-present --workspace-concurrency=0 -r run build"
   },
   "devDependencies": {
