@@ -42,6 +42,10 @@ describe('toCC', () => {
   });
 
   it('reverses potentials via reduceRight (potentialCC["Io"]="a", potentialCC["Ii"]="b", reversed → "-b-a" suffix)', () => {
+    // Maintainer verdict (2026-07-14): this reversed order is
+    // intended and CANCODE-compatible, but unverified against the
+    // unpublished full-code spec (public sources only document the
+    // 9-digit portion) — see toCC.ts's JSDoc.
     const cc = toCC({ ...samplePersonality, potentials: ['Io', 'Ii'] });
     // reduceRight visits the last element first, so for ['Io', 'Ii']
     // the suffix is `-${cc[Ii]}-${cc[Io]}` = `-b-a`.

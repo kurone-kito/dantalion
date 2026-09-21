@@ -3,17 +3,18 @@ import type { CalendarDate } from '../types/calendarDate.js';
 /** Details for a month. */
 export interface MonthDetails {
   /**
-   * Gets 1 if it is January and 0 otherwise.
-   * @param febrary Specifies whether to return 1 even in February.
+   * Gets 1 if it is January, or February when `february` is `true`;
+   * 0 otherwise.
+   * @param february Specifies whether to return 1 even in February.
    *
-   * If ommited, it's `true`.
+   * If omitted, it's `true`.
    */
-  early(febrary?: boolean): number;
+  early(february?: boolean): number;
   /** The month. */
   month: number;
   /**
-   * It contains the month from 3 to 14, with January replaced by 13 and
-   * February moved by 14.
+   * It contains the month from 3 to 14, with January and February
+   * shifted to 13 and 14 respectively.
    */
   shifted: number;
 }
@@ -46,8 +47,8 @@ export default (date: Date | CalendarDate): BirthdayDetails => {
   const day = date instanceof Date ? date.getDate() : date.date;
   const month = date instanceof Date ? date.getMonth() + 1 : date.month;
   const year = date instanceof Date ? date.getFullYear() : date.year;
-  const early: MonthDetails['early'] = (containFebrary = true) =>
-    month === 1 || (month === 2 && containFebrary) ? 1 : 0;
+  const early: MonthDetails['early'] = (containFebruary = true) =>
+    month === 1 || (month === 2 && containFebruary) ? 1 : 0;
   return {
     date: day,
     month: { early, month, shifted: month + early() * 12 },

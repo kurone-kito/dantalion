@@ -6,6 +6,16 @@ const NUMERIC_INPUT = genius.map((_, i) => i);
 const STRING_INPUT = genius.map((_, i) => `val${i}`);
 
 describe('createGeniusRecord', () => {
+  describe('length assertion', () => {
+    it('throws when the source has fewer values than the 12 canonical Genius IDs', () => {
+      expect(() => createGeniusRecord(NUMERIC_INPUT.slice(0, -1))).toThrow();
+    });
+
+    it('throws when the source has more values than the 12 canonical Genius IDs', () => {
+      expect(() => createGeniusRecord([...NUMERIC_INPUT, 99])).toThrow();
+    });
+  });
+
   describe('key structure', () => {
     it('produces a record with exactly the 12 canonical Genius IDs as keys', () => {
       const result = createGeniusRecord(NUMERIC_INPUT);

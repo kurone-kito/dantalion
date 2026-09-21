@@ -36,27 +36,60 @@ export default (source: FactorSource): Factors => {
   const {
     date,
     month: { early, month, shifted },
-    monthlyCoefficient: monthlyCoefficients,
+    monthlyCoefficient,
     year: { full },
   } = source;
-  const lessThan = date < monthlyCoefficients;
+  const lessThan = date < monthlyCoefficient;
   const adjustedYear = full - early();
   const adjustedHi = Math.floor(adjustedYear * 0.01);
   const adjustedLo = adjustedYear % 100;
   const outer = shiftAndModulo(month - (lessThan ? 1 : 0), 12) + 1;
+  // +9 is an epoch alignment offset for the working-style cycle.
   const workStyle = full + 9 - early(lessThan);
-  const cycle = new Int32Array([adjustedHi * 4.25, (shifted + 1) * 0.6]).reduce(
-    (acc, cur) => acc + cur,
-    Math.floor(adjustedLo * 5.25) + date + 7,
-  );
+  // The Heavenly Stem cycle has 10 stems, and a non-leap year is 365
+  // days (365 % 10 === 5), so each calendar year the same date's stem
+  // drifts ~5 positions; 5.25 folds in a quarter-day-per-year leap
+  // correction on top of that drift, scaled across the 2-digit year
+  // (adjustedLo).
+  // The Gregorian century rule (a century is a leap year only when
+  // divisible by 400) breaks the naive quarter-day-per-year assumption
+  // at century boundaries; 4.25 carries that century-scale correction
+  // forward, scaled across the century digits (adjustedHi).
+  // 0.6 is the reduced form of the classic "30.6-day month"
+  // approximation (the Julian Day Number month-length trick,
+  // floor(30.6 * (month + 1))) used to advance the stem count by a
+  // variable-length month's worth of days without a lookup table.
+  // +7 is a fixed epoch offset aligning the computed index to stem 0
+  // at the algorithm's reference date.
+  // Math.trunc (round toward zero, unlike Math.floor which rounds
+  // down) is used for these two products specifically because that is
+  // the integer-truncation behavior the original algorithm's design
+  // relies on for them; Math.floor is used for the adjustedLo term
+  // above because that one is always non-negative here, where floor
+  // and trunc agree.
+  const cycle =
+    Math.floor(adjustedLo * 5.25) +
+    date +
+    7 +
+    Math.trunc(adjustedHi * 4.25) +
+    Math.trunc((shifted + 1) * 0.6);
+  // -2 and the second element's trailing +2 are epoch alignment
+  // offsets for the potentials cycle (the same calibration role as
+  // +7/+9/-6 above); full * 2 carries the year's own contribution
+  // into that cycle before the offset is applied.
   const potentials = [workStyle - 2, full * 2 + outer + 2].map((v) =>
     shiftAndModulo(v, 10),
   );
   return {
     cycle: shiftAndModulo(cycle, 10) as HeavenlyStem,
     getXY: (value: number): Source2D => ({ x: value - 1, y: cycle % 10 }),
+    // -6 is a fixed epoch alignment offset for the inner-personality
+    // cycle, the same class of calibration constant as +7/+9/-2 above
+    // (shifted * 6 and adjustedHi * 4 carry the month's and century's
+    // own contributions into this 12-branch cycle before it is
+    // calibrated back to branch 0 at the algorithm's reference date).
     inner: shiftAndModulo(shifted * 6 + adjustedHi * 4 + cycle - 6, 12),
-    lifeBase: date - monthlyCoefficients,
+    lifeBase: date - monthlyCoefficient,
     outer: shiftAndModulo(outer, 12),
     potentials: [assertDefined(potentials[0]), assertDefined(potentials[1])],
     workStyle: shiftAndModulo(workStyle, 12),
