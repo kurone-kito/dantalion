@@ -77,6 +77,11 @@ export default (source: FactorSource): Factors => {
   return {
     cycle: shiftAndModulo(cycle, 10) as HeavenlyStem,
     getXY: (value: number): Source2D => ({ x: value - 1, y: cycle % 10 }),
+    // -6 is a fixed epoch alignment offset for the inner-personality
+    // cycle, the same class of calibration constant as +7/+9/-2 above
+    // (shifted * 6 and adjustedHi * 4 carry the month's and century's
+    // own contributions into this 12-branch cycle before it is
+    // calibrated back to branch 0 at the algorithm's reference date).
     inner: shiftAndModulo(shifted * 6 + adjustedHi * 4 + cycle - 6, 12),
     lifeBase: date - monthlyCoefficient,
     outer: shiftAndModulo(outer, 12),
