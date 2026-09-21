@@ -18,8 +18,9 @@ yet, but we'll gradually support multiple languages.
 
 ## Breaking changes since v0.19.x
 
-- ESM-only output. Consumers must use `import` rather than
-  `require`; no CommonJS bridge is provided.
+- ESM-only source; no separate CommonJS build is shipped. `import`
+  works directly, and `require` also resolves on Node >=22 via its
+  require-of-ESM support.
 - `engines.node` raised to `^22 || >=24` (was `>=12`).
 - `package.json#exports` replaces `main` / `types` for module
   resolution.
