@@ -10,7 +10,8 @@ First stable release on the modernized toolchain.
 
 - All published packages are now **ESM-only** source; no separate
   CommonJS build is shipped. `import` works directly, and `require`
-  also resolves on Node >=22 via its require-of-ESM support.
+  also resolves on Node >=22.12 (unflagged; earlier 22.x needs
+  `--experimental-require-module`) via its require-of-ESM support.
 - `engines.node` raised to `^22 || >=24`. Node 12 / 14 / 16 / 18 /
   20 are no longer supported. (Node 20 "Iron" reached EOL on
   2026-04-30; it was dropped before the first `v1.0.0` publish.)

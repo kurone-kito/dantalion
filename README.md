@@ -31,7 +31,9 @@ The library can compute personalities for any birthday between
 ## Requirements
 
 - **Node.js** `^22 || >=24` (the published packages are ESM-only
-  source; `require` still resolves via Node's require-of-ESM support)
+  source; `require` still resolves via Node's require-of-ESM support,
+  unflagged from 22.12 — earlier 22.x needs
+  `--experimental-require-module`)
 - **pnpm** 10+ for contributor work (consumers can install via npm,
   yarn, or any package manager)
 
@@ -75,8 +77,9 @@ console.log(getDetail('555'));
 ## Migration from v0.19.x
 
 - ESM-only source; no separate CommonJS build is shipped. `import`
-  works directly, and `require` also resolves on Node >=22 via its
-  require-of-ESM support.
+  works directly, and `require` also resolves on Node >=22.12
+  (unflagged; earlier 22.x needs `--experimental-require-module`) via
+  its require-of-ESM support.
 - Node.js floor raised from `>=12.1` (originally) to
   `^22 || >=24`.
 - The `Personality.potentials` field is plural (a 2-tuple). The
