@@ -94,16 +94,16 @@ export default (
   if (birthObj === undefined) {
     return undefined;
   }
-  const monthlyCoefficients = getMonthlyCoefficients(birthObj);
-  if (Number.isNaN(monthlyCoefficients)) {
+  const monthlyCoefficient = getMonthlyCoefficients(birthObj);
+  if (Number.isNaN(monthlyCoefficient)) {
     return undefined;
   }
-  const { month, ...details } = getBirthdayDetails(birthObj);
+  const birthdayDetails = getBirthdayDetails(birthObj);
+  const { month } = birthdayDetails;
   const { cycle, getXY, inner, lifeBase, outer, potentials, workStyle } =
     getFactors({
-      ...details,
-      month,
-      monthlyCoefficient: monthlyCoefficients,
+      ...birthdayDetails,
+      monthlyCoefficient,
     });
   const lifeBaseCoef = lifeBaseCoefficients(month.month, lifeBase);
   const p = potentials.map((v) => potentialTable(getXY(v)));
