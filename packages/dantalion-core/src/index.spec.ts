@@ -31,7 +31,6 @@ describe('integration testing', () => {
     it.each(
       Object.entries(getDetailTestData()) as [Genius, DetailTestData][],
     )('Outputs the same value as the data source from all genius: %s', (genius, expected) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const result = getDetail(genius);
       if (result === undefined) {
         throw new Error(`Expected details for known Genius ${genius}`);
@@ -51,7 +50,6 @@ describe('integration testing', () => {
       expect(getPersonality(date)).toBeUndefined());
     it('Outputs the same value as the data source from all dates in the range', () => {
       testData.forEach((source) => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const result = getPersonality(source.date)!;
         expect({ ...result, date: source.date }).toStrictEqual(source);
       });
